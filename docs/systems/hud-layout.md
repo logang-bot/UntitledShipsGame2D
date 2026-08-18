@@ -47,7 +47,59 @@ exactly match `AspectRatioFitter`'s computed pillarbox bar width, closing
 the gap between the gameplay viewport and the HUD. Also `[ExecuteAlways]`
 for Editor preview without Play.
 
-Key public fields: `aspectFitter`, `leftSidebar`, `rightSidebar`.
+Key public fields: `aspectFitter`, `leftSidebar`, `rightSidebar`. Note:
+`rightSidebar` points directly at `BossPanel` — there's no separate
+`RightSidebar` wrapper GameObject (see Scene wiring below).
+
+## PartyFrameUI.cs
+
+**Attached to:** `PartyFrame.prefab` (see Prefabs below) — reusable, not
+scene-specific.
+**Requires:** `public void Initialize(GameObject player)` to be called
+before it does anything useful — see `PartyFrameManager.cs` below. Also
+holds Inspector-dragged references to the frame's own children: avatar
+`Image`, health bar `Image`, and four `TextMeshProUGUI` children (role,
+health, move speed, fire rate) — these bake into the prefab fine since
+they're internal to it.
+
+`playerHealth`/`playerRole`/`playerController` are **private**, set only by
+`Initialize()` — not Inspector fields. A prefab asset can't hold a
+serialized reference to a specific scene's `Player` object, so wiring moved
+from drag-and-drop to runtime: `Initialize(GameObject player)` does the
+three `GetComponent<>()` lookups, then runs one-time setup (role text set
+to `"Role: " + PlayerRole`, tints avatar/health-bar/role-text to
+`Stats.tintColor`, matching the ship sprite's tint). `Update()` early-returns
+until `Initialize()` has run, then keeps health bar `fillAmount`, `"HP:
+current/max"` text, and move-speed/fire-rate text (read live from
+`PlayerController` every frame — already role-multiplier-adjusted by then)
+up to date. Only real, data-backed stats are shown — no "Attack"/"Defense"
+labels, since those aren't mechanics that exist yet (bullet damage is still
+hardcoded in `Bullet.cs`). `PlayerName` text is static placeholder text
+("Player 1") — there's no name data anywhere in the codebase to bind it to.
+
+Key public fields: `healthBarFill`, `avatarImage`, `roleText`, `healthText`,
+`moveSpeedText`, `fireRateText`. Key public method: `Initialize(GameObject)`.
+
+## PartyFrameManager.cs
+
+**Attached to:** `LeftSidebar`.
+**Requires:** `player` (drag the `Player` GameObject) and `partyFrame1`
+(drag `PartyFrame_1`'s `PartyFrameUI`) — both Inspector-dragged, matching
+this project's explicit-wiring style (no `FindObjectOfType`).
+
+In `Awake()`, calls `partyFrame1.Initialize(player)`. Using `Awake()` (not
+`Start()`) matters: Unity guarantees every object's `Awake()` finishes
+before any `Start()` begins, so this runs before anything could observe a
+half-initialized frame — same ordering hazard already documented for
+`PlayerRoleComponent.Stats`, avoided the same way.
+
+This is deliberately **not** a real multi-player spawner — it's the minimal
+seam for the current single-player scene. The natural extension once local
+co-op exists: a version of this manager that loops over connected players
+and `Instantiate()`s `PartyFrame.prefab` per player instead of holding one
+fixed reference.
+
+Key public fields: `player`, `partyFrame1`.
 
 ## Scene wiring
 
@@ -69,13 +121,30 @@ the pillarbox. Used for sidebar content visible outside the gameplay area.
 | Canvas                   | Render Mode: Screen Space - Overlay                                          |
 | Canvas Scaler            | UI Scale Mode: Scale With Screen Size (reference resolution to taste)        |
 | **HUDSidebarFitter.cs**  | aspectFitter: drag Main Camera here, leftSidebar/rightSidebar: sidebar rect transforms |
+| **PartyFrameManager.cs** | player: drag `Player`, partyFrame1: drag `PartyFrame_1`'s `PartyFrameUI` |
 
-**Children:**
-- **LeftSidebar** — Vertical Layout Group. Contains `PartyFrame_1` (and
-  future `PartyFrame_2..4`). See [../unity-notes.md](../unity-notes.md) for
-  Layout Group configuration details.
-- **RightSidebar** — Placeholder for `BossPanel` (boss HP, cast bar, wave
-  counter).
+**Children** (direct children of `HUDCanvas`, siblings of each other — there
+is no `RightSidebar` wrapper, confirmed by reading the live scene):
+- **LeftSidebar** — Vertical Layout Group, and now also carries
+  `PartyFrameManager.cs` (table above). Contains a single **`PartyFrame_1`**
+  — an instance of `PartyFrame.prefab` (see Prefabs below). The old
+  `PartyFrame_2..4` stub GameObjects (flat layout, never wired, went stale
+  the moment `PartyFrame_1` was reworked) were deleted; more frames are
+  added later by instantiating the prefab, not by hand-duplicating scene
+  objects. See [../unity-notes.md](../unity-notes.md) for Layout Group
+  configuration details.
+- **BossPanel** — a background `Image` with one centered `TextMeshProUGUI`
+  child reading "Boss stats coming soon". No HP bar/cast bar/wave counter
+  sub-elements exist yet; that content is deferred until a boss actually
+  exists (see [../roadmap.md](../roadmap.md)'s priority order).
+
+### Prefabs
+
+**`Assets/Prefabs/PartyFrame.prefab`** — the party frame, avatar + role +
+live stats, `PartyFrameUI.cs` attached. Reusable: instantiate one per
+player once local co-op exists (see `PartyFrameManager.cs` above) instead
+of hand-duplicating scene objects, which is what the old `PartyFrame_2..4`
+were and why they went stale.
 
 ### GameplayCanvas
 
@@ -98,8 +167,13 @@ world-space/gameplay work; toggle back on for UI work. Isolation View
 
 ## Not yet built
 
-- `PartyFrame_1` is placeholder only; `PartyFrame_2..4` and `BossPanel`
-  content don't exist yet — tracked under "Finish the HUD" in
-  [../roadmap.md](../roadmap.md).
-- No role display on the party frame yet (depends on
-  [player-roles.md](player-roles.md)).
+- No spawner for players 2–4 yet — `PartyFrame.prefab` exists and
+  `PartyFrameManager.cs` is the seam, but the actual "loop over connected
+  players and `Instantiate()`" logic is deferred until local co-op exists.
+  Tracked under "Finish the HUD" in [../roadmap.md](../roadmap.md).
+- `BossPanel`'s real content (HP bar, cast bar, wave counter) is still just
+  the "coming soon" placeholder text — deferred until a boss exists.
+- `PlayerName` text is still static placeholder ("Player 1") — no name data
+  model exists.
+- Avatar is an untinted-sprite placeholder box (tinted to role color) — no
+  ship art exists yet.

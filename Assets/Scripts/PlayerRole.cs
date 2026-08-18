@@ -38,17 +38,3 @@ public static class PlayerRoleStats
 
     public static RoleStats Get(PlayerRole role) => stats[role];
 }
-
-public class PlayerRoleComponent : MonoBehaviour
-{
-    public PlayerRole role = PlayerRole.Attacker;
-
-    public RoleStats Stats => PlayerRoleStats.Get(role);
-
-    void Awake()
-    {
-        SpriteRenderer sprite = GetComponent<SpriteRenderer>();
-        if (sprite != null)
-            sprite.color = Stats.tintColor;
-    }
-}

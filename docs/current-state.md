@@ -37,9 +37,12 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - No networking/multiplayer — only one player instance exists in the scene;
   local co-op isn't wired up.
 - No game-over/respawn flow — the ship just disables at 0 HP.
-- HUD shows placeholder text only — no real health bar, role display, or
-  boss panel content.
-- No real art (placeholder colored squares) or audio.
+- Only one party frame is shown — `PartyFrame_1` is a reusable prefab now
+  (`Assets/Prefabs/PartyFrame.prefab`), but nothing spawns more copies of it
+  yet (no second player exists to spawn one for). `BossPanel` is still just
+  a "coming soon" placeholder.
+- No real art — the avatar slot and ship are placeholder colored squares, no
+  audio.
 
 See [roadmap.md](roadmap.md)'s "Development priority order" for the
 authoritative build sequence: full basic mechanics first, then
@@ -57,6 +60,8 @@ real networking last, then art/audio.
    or **left mouse button** to fire — it auto-fires while held.
 5. Watch enemy waves spawn from the top and drift down; avoid or out-DPS
    their return fire. Taking hits reduces HP; at 0 HP the ship disables.
+   The left-sidebar party frame shows an avatar placeholder plus live
+   role/HP/move-speed/fire-rate text, all tinted to match the role.
 6. To see the different roles side by side, stop Play, change the Role
    field, and Play again — compare HP taken to disable, fire rate, move
    speed, and tint color against the table in

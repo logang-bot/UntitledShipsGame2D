@@ -85,6 +85,38 @@ from Scene view while doing gameplay work; toggle back for UI work. Isolation Vi
 
 ---
 
+## Script serialization: filename must match a MonoBehaviour/ScriptableObject class
+
+Unity allows multiple classes in one `.cs` file, but reliable script
+serialization depends on the file's *matching-name* class being the
+`MonoBehaviour`/`ScriptableObject`. If the matching-name class is something
+else (an enum, a plain struct, a static class) and a differently-named
+`MonoBehaviour` lives in the same file, adding that `MonoBehaviour` as a
+component can silently produce a broken script reference — no compile
+error, the Inspector even shows the component's fields correctly — but the
+serialized `m_Script` entry in the scene/prefab YAML ends up missing its
+`guid`/`type` (just a bare `fileID`), which is not resolvable on
+deserialization. Symptoms: Console logs "The referenced script (Unknown) on
+this Behaviour is missing!" and any other object holding a reference to
+that component gets `null` at runtime (`NullReferenceException` in
+whatever tried to use it), even though everything looks fine in the Editor
+immediately after adding it.
+
+Hit this with `PlayerRoleComponent`, originally bundled into `PlayerRole.cs`
+(matching class: the `PlayerRole` enum). Fix: move it to its own
+`PlayerRoleComponent.cs` — one class per file, filename matching class name,
+same convention every other script in this project already follows.
+Confirmed the fix via `UnityEditor.MonoScript.FromMonoBehaviour(component)` +
+`AssetDatabase.TryGetGUIDAndLocalFileIdentifier` returning a real asset path
+and GUID afterward (both were empty/failing before).
+
+A stuck broken instance (once created) can resist `DestroyImmediate` via
+`GetComponent<T>()` lookups — if cleanup doesn't seem to take, loop over
+`gameObject.GetComponents<T>()` and destroy all of them, or use
+`GameObjectUtility.RemoveMonoBehavioursWithMissingScript()`.
+
+---
+
 ## ExecuteAlways and Editor Preview
 
 Regular `MonoBehaviour` scripts only run in Play mode. Adding `[ExecuteAlways]`

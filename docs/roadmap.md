@@ -28,7 +28,7 @@ reference docs live under `systems/`.
   handled automatically by `AspectRatioFitter.cs` at runtime.
 - HUD canvas structure: `GameplayCanvas` (camera-confined) and `HUDCanvas`
   (full-screen overlay) split. Sidebars auto-sized by `HUDSidebarFitter.cs`.
-- Placeholder party frame (`PartyFrame_1`) with name/role/health-bar layout.
+- Live party frame (`PartyFrame_1`): avatar slot, name, role, health/move-speed/fire-rate stats.
 - **Ship orientation resolved**: static (no rotation), Galaga-style — ships
   strafe within the viewport and always fire straight up. `PlayerController.cs`
   already matches this (`Vector2.up` fire direction); omnidirectional enemy
@@ -43,8 +43,17 @@ reference docs live under `systems/`.
 
 ## In Progress
 
-- **Finish the HUD** — duplicate `PartyFrame_1` for players 2–4; build out
-  `BossPanel` (boss HP bar, cast/telegraph bar, wave counter) using the same
+- **Finish the HUD** — `PartyFrame_1` shows a role-tinted avatar slot, role
+  label, and live health/move-speed/fire-rate stats, all driven by the real
+  `Player`; it's now `Assets/Prefabs/PartyFrame.prefab`, reusable via
+  `PartyFrameUI.Initialize(player)` (`systems/hud-layout.md`). The old
+  unwired `PartyFrame_2..4` stub objects were deleted rather than kept in
+  sync by hand. `BossPanel` has a "coming soon" placeholder. Remaining,
+  deferred until there's real data to drive them: an actual spawner that
+  loops over connected players and `Instantiate()`s `PartyFrame.prefab`
+  once local co-op exists (`PartyFrameManager.cs` is the seam, not the
+  spawner itself yet); `BossPanel`'s real content (boss HP bar,
+  cast/telegraph bar, wave counter — needs a boss) using the
   nested-Layout-Group + Layout-Element pattern in `unity-notes.md`.
 
 ## Planned (not yet started)

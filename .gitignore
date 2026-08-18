@@ -75,3 +75,6 @@ crashlytics-build.properties
 *.swp
 .DS_Store
 Thumbs.db
+
+# Unity MCP verification screenshots (disposable test artifacts)
+/[Aa]ssets/[Ss]creenshots/
