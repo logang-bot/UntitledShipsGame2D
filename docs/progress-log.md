@@ -115,7 +115,7 @@ sine-wave movement and return fire, collision/damage in both directions.
 
 Spent significant time debugging nested Layout Group behavior while building
 `PartyFrame_1` (name/role/health-bar). Full detailed notes moved to
-`05-unity-notes.md` since these are reusable lessons, not one-off bugs —
+`unity-notes.md` since these are reusable lessons, not one-off bugs —
 worth reading before building any further UI panels.
 
 ### Scene view canvas visualization
@@ -156,7 +156,49 @@ Placeholder party frame UI built and correctly laid out.
 
 ### Still open
 
-- Ship rotation approach (twin-stick vs auto-face-movement) — question was
-  raised, not yet answered/implemented. See `03-next-steps.md`.
-- Omnidirectional enemy spawning (from any screen edge) — not started, depends
-  on the rotation decision above.
+- **Resolved**: ship rotation approach — decided static (no rotation), Galaga-
+  style. Ships strafe only and always fire straight up; matches the current
+  `PlayerController.cs` behavior (`Vector2.up` fire direction), so no code
+  change was needed.
+- Omnidirectional enemy spawning (from any screen edge) — no longer planned,
+  since it was only motivated by twin-stick rotation. Enemies continue to
+  spawn from the top, matching current `EnemySpawner.cs` behavior.
+
+## Session 4 — Role Architecture
+
+### PlayerRole system
+
+- Wrote `PlayerRole.cs`: `PlayerRole` enum (`Attacker`, `Tank`, `Medic`,
+  `Support`), `RoleStats` struct (health/fire-rate/move-speed multipliers +
+  sprite tint `Color`), a static `PlayerRoleStats` lookup table with one
+  `RoleStats` per role (placeholder balancing values — Tank tankier/slower,
+  Attacker squishier/faster-firing, Medic/Support close to baseline), and
+  `PlayerRoleComponent` (holds the `role` field, exposes `Stats` computed on
+  access, tints its own `SpriteRenderer` in `Awake`).
+- Updated `PlayerController.cs` (`Start`) and `PlayerHealth.cs` (`Awake`) to
+  multiply their base stats by the role's multipliers via
+  `GetComponent<PlayerRoleComponent>()`, null-checked so behavior is unchanged
+  if the component isn't present.
+- Added `PlayerRoleComponent` to the `Player` GameObject in the scene, default
+  `role = Attacker`.
+- **Found while testing**: despite Session 3's notes, `PlayerHealth` had never
+  actually been added as a component to the `Player` GameObject in the scene
+  (script existed, scene wiring didn't) — verified live via the Unity MCP
+  bridge (`GetComponent`/component list came back without it, both before and
+  after entering/exiting Play mode). Added it now alongside
+  `PlayerRoleComponent`, confirmed both persist correctly across Play mode,
+  and re-saved the scene.
+- No ScriptableObject asset workflow introduced — kept role data as a static
+  in-code table to match the project's existing plain-`MonoBehaviour`,
+  low-infra style. Easy to migrate to ScriptableObjects later if hand-tuning
+  in the Inspector becomes worth the friction.
+
+### Still open
+
+- HUD does not yet display role (name/role text on `PartyFrame_1` is still
+  placeholder) — tracked under "Finish the HUD" in `roadmap.md`.
+- Only one `Player` instance exists in the scene; local co-op (multiple
+  players/roles at once) isn't wired up yet.
+- Role-specific abilities (Tank taunt, Medic heal, Support buffs) are not
+  implemented — this session only covers passive stat multipliers + tint, per
+  the roadmap's stated scope for this item.

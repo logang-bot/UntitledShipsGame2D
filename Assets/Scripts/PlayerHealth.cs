@@ -10,6 +10,10 @@ public class PlayerHealth : MonoBehaviour
 
     void Awake()
     {
+        PlayerRoleComponent roleComponent = GetComponent<PlayerRoleComponent>();
+        if (roleComponent != null)
+            maxHealth = Mathf.RoundToInt(maxHealth * roleComponent.Stats.healthMultiplier);
+
         currentHealth = maxHealth;
     }
 

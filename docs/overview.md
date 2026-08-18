@@ -14,6 +14,9 @@ A Galaga-inspired top-down arcade shooter with online co-op boss encounters.
 - **Coordination requirement**: like an MMO raid, the team must coordinate role
   responsibilities to beat the boss — this is the central design hook, and what
   differentiates the project from existing neon arcade shooters (see Prior Art below).
+- **Ship orientation**: fixed (no rotation), matching Galaga rather than a
+  twin-stick shooter. Ships strafe within the viewport and always fire straight
+  up. This is a deliberate design decision, not a placeholder.
 - **Visual style**: cyberpunk / neon, high-contrast glow aesthetic.
 - **Platforms**: targeting Steam and Google Play (crossplay) — this drives some
   ongoing decisions (portrait orientation, input scheme flexibility).
@@ -21,7 +24,7 @@ A Galaga-inspired top-down arcade shooter with online co-op boss encounters.
   platforms. On phones this fills the screen naturally. On PC/desktop, the
   gameplay area is centered with pillarbox bars on either side, and those bars
   are used as HUD space (party frames, boss info) rather than left empty — see
-  `03-scene-setup.md` and `05-unity-notes.md` for the implementation approach.
+  `systems/hud-layout.md` and `unity-notes.md` for the implementation approach.
 
 ## Prior Art / Positioning
 
@@ -52,8 +55,11 @@ Researched to confirm this isn't a re-tread of an existing game:
 ## Architecture Principles
 
 1. **Prove gameplay is fun before investing in infrastructure.** Build order is:
-   local single-player prototype → single boss with one role mechanic → only then
-   networking → only then final art.
+   local single-player prototype → full basic mechanics → player-vs-boss mechanics
+   (single boss, one role mechanic) validated with CPU-controlled AI teammates
+   filling the non-human roles → only then real (human) networking, which upgrades
+   those AI teammates to real players → only then final art. See `roadmap.md` for
+   the current status against this order.
 2. **Server-authoritative for boss encounters.** Clients send input, server (Nakama)
    resolves combat — required so a 4-player boss fight's state can't desync or be
    cheated.

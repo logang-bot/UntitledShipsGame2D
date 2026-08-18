@@ -756,6 +756,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 385018070}
   m_CullTransparentMesh: 1
+--- !u!115 &415193697
+MonoScript:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 7
+  m_DefaultReferences: {}
+  m_Icon: {fileID: 0}
+  m_Type: 0
+  m_ExecutionOrder: 0
+  m_ClassName: PlayerRoleComponent
+  m_Namespace: 
+  m_AssemblyName: Assembly-CSharp
 --- !u!1 &472545572
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,9 +1009,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
+    x: 0.34179688
     y: 0
-    width: 1
+    width: 0.31640625
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -1241,6 +1256,9 @@ GameObject:
   - component: {fileID: 729504114}
   - component: {fileID: 729504113}
   - component: {fileID: 729504118}
+  - component: {fileID: 729504119}
+  - component: {fileID: 729504121}
+  - component: {fileID: 729504120}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1445,6 +1463,45 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &729504119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 729504112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1520127765}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRoleComponent
+  role: 0
+--- !u!114 &729504120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 729504112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 415193697}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRoleComponent
+  role: 0
+--- !u!114 &729504121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 729504112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 494c00752cdb74743b295743c4969f45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  maxHealth: 5
 --- !u!1 &746622515
 GameObject:
   m_ObjectHideFlags: 0
@@ -1717,7 +1774,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 0}
+  m_SizeDelta: {x: 875, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &952499539
 MonoBehaviour:
@@ -2525,6 +2582,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1466846391}
   m_CullTransparentMesh: 1
+--- !u!115 &1520127765
+MonoScript:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 7
+  m_DefaultReferences: {}
+  m_Icon: {fileID: 0}
+  m_Type: 0
+  m_ExecutionOrder: 0
+  m_ClassName: PlayerRoleComponent
+  m_Namespace: 
+  m_AssemblyName: Assembly-CSharp
 --- !u!1 &1582872549
 GameObject:
   m_ObjectHideFlags: 0
@@ -2697,7 +2769,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 200, y: 0}
+  m_SizeDelta: {x: 875, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1593914216
 MonoBehaviour:

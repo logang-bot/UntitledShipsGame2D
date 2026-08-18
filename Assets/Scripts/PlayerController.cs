@@ -23,6 +23,13 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
+
+        PlayerRoleComponent roleComponent = GetComponent<PlayerRoleComponent>();
+        if (roleComponent != null)
+        {
+            moveSpeed *= roleComponent.Stats.moveSpeedMultiplier;
+            fireRate *= roleComponent.Stats.fireRateMultiplier;
+        }
     }
 
     void Update()
