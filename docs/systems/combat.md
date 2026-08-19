@@ -45,12 +45,73 @@ Key public fields: `lifeTime` (default 3s).
 **Requires:** nothing external.
 
 Tracks player HP. `TakeDamage(int)` is called by `Bullet.cs` on enemy-bullet
-collision. `Die()` disables the GameObject (placeholder — no game-over flow
-yet). `CurrentHealth` property exposes current HP for HUD hookup (not wired
-up yet — see [hud-layout.md](hud-layout.md)).
+collision: fatal hits (`currentHealth <= 0`) call `Die()`, non-fatal hits
+invoke `OnDamaged` instead — the two are mutually exclusive, a killing blow
+does not also fire `OnDamaged`, since `Die()` deactivates the `Player`
+GameObject (which would cut off an in-flight flash/shake coroutine) and
+`GameOverUI` takes the screen immediately anyway. `Die()` disables the
+GameObject, then invokes the `OnDeath` `UnityEvent` so other systems can
+react (game-over UI, HUD) without `PlayerHealth` knowing who's listening.
+`CurrentHealth` property exposes current HP for HUD hookup.
 
 Key public fields: `maxHealth` (default 5; scaled by role — see
-[player-roles.md](player-roles.md)).
+[player-roles.md](player-roles.md)), `OnDeath` (`UnityEvent`, fires only on
+the killing blow — see Game Over / Restart below), `OnDamaged` (`UnityEvent`,
+fires only on non-fatal hits — see Damage Feedback below).
+
+## GameOverUI.cs
+
+**Attached to:** `GameOverPanel` (child of `HUDCanvas` — see
+[hud-layout.md](hud-layout.md)).
+**Requires:** `panelRoot` (Inspector-dragged, set to `GameOverPanel` itself).
+
+Purely event-driven, no `Update()`. `Awake()` hides `panelRoot` so it's
+invisible during normal play. `Show()` is wired as a listener on `Player`'s
+`PlayerHealth.OnDeath` — reveals the panel. `Restart()` is wired to the
+panel's Restart `Button.OnClick()` — calls
+`SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex)`, reloading
+`SampleScene` from scratch so every stateful script (`PlayerHealth`,
+`EnemySpawner`, `PartyFrameManager`, ...) resets itself via its own
+`Awake`/`Start`, with no hand-written reset logic needed.
+
+Key public field: `panelRoot`. Key public methods: `Show()`, `Restart()`.
+
+## PlayerDamageFlash.cs
+
+**Attached to:** `Player` GameObject.
+**Requires:** a `SpriteRenderer` and a `PlayerRoleComponent` on the same
+GameObject (see [player-roles.md](player-roles.md)).
+
+Flashes the ship's sprite on a non-fatal hit. Wired as a listener on
+`PlayerHealth.OnDamaged`. `Flash()` restarts the coroutine (`StopCoroutine`
++ `StartCoroutine`) so rapid hits re-flash at full brightness instead of
+stacking or blending. **Critical detail:** the routine reverts
+`SpriteRenderer.color` to `PlayerRoleComponent.Stats.tintColor`, not
+`Color.white` — `PlayerRoleComponent.Awake()` only tints the sprite once and
+never re-applies it, so reverting to white would permanently erase the role
+tint on the very first hit.
+
+Key public fields: `flashColor` (default white), `flashDuration` (default
+0.12s). Key public method: `Flash()`.
+
+## CameraShake.cs
+
+**Attached to:** `Main Camera` GameObject (alongside `AspectRatioFitter.cs` —
+see [hud-layout.md](hud-layout.md)).
+**Requires:** nothing external.
+
+Shakes the camera on a non-fatal player hit. Wired as a listener on
+`PlayerHealth.OnDamaged`. Caches `transform.localPosition` once in `Awake()`
+as the base to return to; `Shake()` restarts the coroutine the same way as
+`PlayerDamageFlash.Flash()`. Offsets `transform.localPosition` by a
+linearly-decaying random offset each frame, then **explicitly** resets to
+the cached base position when done rather than relying on the decay to land
+at exactly zero — confirmed safe alongside `AspectRatioFitter`, which only
+ever touches `camera.rect` (the pillarbox viewport), never `transform`, so
+the two cannot conflict.
+
+Key public fields: `shakeDuration` (default 0.2s), `shakeMagnitude` (default
+0.15). Key public method: `Shake()`.
 
 ## Enemy.cs
 
@@ -83,11 +144,32 @@ Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 | Component            | Key inspector values                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
 | **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, fireRate: 0.2, bulletSpeed: 12 |
-| **PlayerHealth.cs**   | maxHealth: 5                                                            |
+| **PlayerHealth.cs**   | maxHealth: 5, OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` |
+| **PlayerDamageFlash.cs** | flashColor: white, flashDuration: 0.12 |
 
 Both `PlayerHealth.cs` and `PlayerRoleComponent` are confirmed attached and
 verified working via the Unity MCP bridge (component values checked live in
-Play mode, tint/health/fire-rate all applied correctly).
+Play mode, tint/health/fire-rate all applied correctly). The `OnDeath` and
+`OnDamaged` event listeners were both wired live via the MCP bridge and
+verified end-to-end in Play mode: forcing 0 HP shows `GameOverPanel` and
+grays the party frame with Restart cleanly reloading the scene; a non-fatal
+hit flashes the sprite and shakes the camera, both reverting exactly to
+their pre-hit state (role tint color, base camera position) with no drift,
+and rapid repeated hits re-trigger cleanly with no stacking.
+
+### Main Camera (combat-relevant components)
+
+| Component          | Key inspector values                  |
+| ------------------- | ---------------------------------------- |
+| **CameraShake.cs**  | shakeDuration: 0.2, shakeMagnitude: 0.15 |
+
+### GameOverPanel
+
+Child of `HUDCanvas` (see [hud-layout.md](hud-layout.md) for why it lives
+there instead of `GameplayCanvas`). Full-rect dark overlay (`Image`, ~75%
+alpha black), a centered "Game Over" `TextMeshProUGUI`, and a centered
+Restart `Button` (+ `TextMeshProUGUI` label). Starts active in the saved
+scene; `GameOverUI.Awake()` force-hides it at Play-mode start.
 
 ### Spawner
 

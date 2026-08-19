@@ -1,8 +1,11 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth = 5;
+    public UnityEvent OnDeath;
+    public UnityEvent OnDamaged;
 
     private int currentHealth;
 
@@ -22,10 +25,13 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= amount;
         if (currentHealth <= 0)
             Die();
+        else
+            OnDamaged?.Invoke();
     }
 
     void Die()
     {
         gameObject.SetActive(false);
+        OnDeath?.Invoke();
     }
 }

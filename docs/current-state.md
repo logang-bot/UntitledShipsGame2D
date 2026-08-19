@@ -17,9 +17,11 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   periodically fire straight down. Player and enemy bullets both deal
   collision damage in their respective directions. See
   [systems/combat.md](systems/combat.md).
-- **Player health** — the ship has HP; enemy bullets deal 1 damage each hit.
-  At 0 HP the ship is disabled (no game-over screen or respawn flow yet).
-  See [systems/combat.md](systems/combat.md).
+- **Player health, damage feedback & game over** — the ship has HP; enemy
+  bullets deal 1 damage each hit. A non-fatal hit flashes the ship's sprite
+  and briefly shakes the camera. At 0 HP the ship disables and a full-screen
+  "Game Over" overlay appears with a Restart button that reloads the scene
+  from scratch. See [systems/combat.md](systems/combat.md).
 - **Player roles** — the ship can be assigned a role (`Attacker`, `Tank`,
   `Medic`, `Support`) via the `PlayerRoleComponent` in the Inspector, which
   changes health, fire rate, move speed, and sprite tint color. There's no
@@ -36,7 +38,11 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   passive role stat multipliers exist so far.
 - No networking/multiplayer — only one player instance exists in the scene;
   local co-op isn't wired up.
-- No game-over/respawn flow — the ship just disables at 0 HP.
+- Only one scene exists (`Assets/Scenes/SampleScene.unity`) — no Main Menu,
+  Role Select, or Lobby scenes yet (Game Over is a same-scene UI overlay, not
+  a separate scene — see [systems/combat.md](systems/combat.md)). See
+  `roadmap.md`'s "Networking (last)" section for where scene scaffolding
+  fits into the build order.
 - Only one party frame is shown — `PartyFrame_1` is a reusable prefab now
   (`Assets/Prefabs/PartyFrame.prefab`), but nothing spawns more copies of it
   yet (no second player exists to spawn one for). `BossPanel` is still just
@@ -59,14 +65,18 @@ real networking last, then art/audio.
 4. Move with **WASD** (arrow keys are not currently bound). Hold **Space**
    or **left mouse button** to fire — it auto-fires while held.
 5. Watch enemy waves spawn from the top and drift down; avoid or out-DPS
-   their return fire. Taking hits reduces HP; at 0 HP the ship disables.
-   The left-sidebar party frame shows an avatar placeholder plus live
-   role/HP/move-speed/fire-rate text, all tinted to match the role.
-6. To see the different roles side by side, stop Play, change the Role
+   their return fire. Taking hits reduces HP, flashes the ship, and shakes
+   the camera; at 0 HP the ship disables. The left-sidebar party frame shows
+   an avatar placeholder plus live role/HP/move-speed/fire-rate text, all
+   tinted to match the role.
+6. At 0 HP, a "Game Over" overlay appears and the party frame's health bar
+   grays out. Click **Restart** to reload the scene from scratch (HP,
+   enemies, and party frame all reset).
+7. To see the different roles side by side, stop Play, change the Role
    field, and Play again — compare HP taken to disable, fire rate, move
    speed, and tint color against the table in
    [systems/player-roles.md](systems/player-roles.md).
-7. *(Optional)* Resize the Game view window (or check the Scene view via
+8. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`
    so this previews without even pressing Play.

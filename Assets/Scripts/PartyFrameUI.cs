@@ -14,6 +14,7 @@ public class PartyFrameUI : MonoBehaviour
     private PlayerHealth playerHealth;
     private PlayerRoleComponent playerRole;
     private PlayerController playerController;
+    private bool isDead;
 
     public void Initialize(GameObject player)
     {
@@ -29,9 +30,16 @@ public class PartyFrameUI : MonoBehaviour
         avatarImage.color = tint;
     }
 
+    public void OnPlayerDied()
+    {
+        isDead = true;
+        healthBarFill.color = Color.gray;
+    }
+
     void Update()
     {
         if (playerHealth == null) return;
+        if (isDead) return;
 
         healthBarFill.fillAmount = (float)playerHealth.CurrentHealth / playerHealth.maxHealth;
         healthText.text = $"HP: {playerHealth.CurrentHealth}/{playerHealth.maxHealth}";

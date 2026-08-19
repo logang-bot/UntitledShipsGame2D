@@ -24,6 +24,17 @@ reference docs live under `systems/`.
   return fire), collision and damage in both directions.
 - Player health system: `PlayerHealth.cs` component, enemy bullets deal 1 damage on
   hit, player disables at 0 HP.
+- **Game-over / respawn flow**: `PlayerHealth.OnDeath` (`UnityEvent`) fires on death;
+  `GameOverUI.cs` shows a full-screen Game Over overlay (`GameOverPanel` on
+  `HUDCanvas`) and its Restart button reloads `SampleScene` via
+  `SceneManager.LoadScene`, resetting all state for free. Party frame grays out
+  and stops polling stale values on death (`PartyFrameUI.OnPlayerDied()`).
+- **Damage feedback**: `PlayerHealth.OnDamaged` (`UnityEvent`, fires only on
+  non-fatal hits) drives `PlayerDamageFlash.cs` (sprite flash, reverting to
+  the role's tint color, not white) and `CameraShake.cs` (brief camera
+  offset decaying back to base position) — wired live via the Unity MCP
+  bridge and verified end-to-end in Play mode, including rapid repeated hits
+  and confirming a killing blow only triggers `OnDeath`, not `OnDamaged`.
 - Portrait-locked screen layout (9:16): pillarboxed on PC, full-width on phones,
   handled automatically by `AspectRatioFitter.cs` at runtime.
 - HUD canvas structure: `GameplayCanvas` (camera-confined) and `HUDCanvas`
@@ -58,13 +69,6 @@ reference docs live under `systems/`.
 
 ## Planned (not yet started)
 
-### Basic mechanics (remaining)
-
-- **Game-over / respawn flow** — `PlayerHealth.Die()` currently just disables
-  the GameObject; no game-over screen or respawn exists yet.
-- **Damage feedback** — no visual feedback on taking damage (flash,
-  screen shake, etc.) — not started.
-
 ### Player-vs-boss dynamics (CPU AI first)
 
 - **Role abilities beyond stat multipliers** — Tank taunt, Medic heal,
@@ -80,6 +84,12 @@ reference docs live under `systems/`.
 
 ### Networking (last)
 
+- **Scene scaffolding** — Main Menu, Role Select, and Lobby scenes; the
+  project currently has only `SampleScene`. Deferred until role abilities
+  and the boss prototype exist to inform what these screens actually need
+  to show (e.g. which role abilities to preview on the select screen).
+  Prerequisite for wiring up Nakama matchmaking below, since a lobby needs
+  somewhere to live before players can be matched into it.
 - **Nakama networking** — self-hosted on Fly.io, authoritative combat/boss
   state, matchmaking for 1–4 players. Offline/host mode using the same
   simulation layer. Only starts once the CPU-AI boss loop above is proven

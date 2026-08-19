@@ -137,6 +137,11 @@ is no `RightSidebar` wrapper, confirmed by reading the live scene):
   child reading "Boss stats coming soon". No HP bar/cast bar/wave counter
   sub-elements exist yet; that content is deferred until a boss actually
   exists (see [../roadmap.md](../roadmap.md)'s priority order).
+- **GameOverPanel** — full-rect dark overlay + "Game Over" text + Restart
+  button, `GameOverUI.cs` attached. Hidden by default (shown on
+  `PlayerHealth.OnDeath`). Lives here rather than `GameplayCanvas` because it
+  needs to cover the pillarbox bars too. See
+  [combat.md](combat.md#gameoverpanel) for the death/restart flow.
 
 ### Prefabs
 

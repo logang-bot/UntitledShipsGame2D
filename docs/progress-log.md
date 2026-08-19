@@ -202,3 +202,182 @@ Placeholder party frame UI built and correctly laid out.
 - Role-specific abilities (Tank taunt, Medic heal, Support buffs) are not
   implemented — this session only covers passive stat multipliers + tint, per
   the roadmap's stated scope for this item.
+
+## Session 5 — Game Over / Respawn Flow
+
+### Scene scaffolding gap noticed first
+
+Reviewing the docs surfaced that the project only has one scene
+(`SampleScene`) with no Main Menu, Role Select, Lobby, or Game Over scene.
+Decision: split this into two separate roadmap items rather than one —
+a minimal Game Over/Restart flow (needed now, since `PlayerHealth.Die()`
+had nowhere to send the player) versus full scene scaffolding (Main Menu,
+Role Select, Lobby), which was deliberately deferred to right before the
+Nakama networking phase since building it earlier would lock in UI/flow
+decisions before role abilities and the boss prototype exist to inform what
+those screens actually need to show.
+
+### Approach: same-scene overlay, not a second scene
+
+For the Game Over flow itself, considered three options: a genuinely
+separate Game Over scene, a same-scene UI overlay with hand-written state
+reset, or a same-scene overlay backed by `SceneManager.LoadScene` reloading
+`SampleScene` itself. Went with the third: reloading the scene re-runs
+every `Awake`/`Start` exactly as at boot, so `PlayerHealth`, `EnemySpawner`,
+and `PartyFrameManager` all reset themselves for free with zero hand-written
+reset code. A second scene would have been the project's first multi-scene
+setup for no real content difference, and manual state reset would have
+been strictly more code for the same result. This keeps the deferred
+"Scene scaffolding" roadmap item consistent — no scenes added ahead of when
+the roadmap actually calls for them.
+
+### Death signal: first UnityEvent in the codebase
+
+`PlayerHealth.Die()` was `private` and had no way to notify listeners.
+Added `public UnityEvent OnDeath`, invoked at the end of `Die()` (after
+`SetActive(false)`). Used `UnityEvent` rather than a C# `event`/`Action` to
+match the project's existing "explicit Inspector-dragged references only,
+no `FindObjectOfType`" convention — it's wired in the Inspector exactly like
+any `Button.OnClick()`.
+
+This surfaced a real (if minor) latent bug, not just a missing feature:
+`PartyFrameUI.cs` lives on a separate GameObject from `Player` and its
+`Update()` kept polling `playerHealth.CurrentHealth` every frame even after
+`Player.SetActive(false)` — no exception, but frozen stale values with no
+"this player is dead" signal. Fixed by adding `PartyFrameUI.OnPlayerDied()`
+(grays out `healthBarFill`, sets an `isDead` guard checked in `Update()`),
+wired as a second listener on the same `OnDeath` event.
+
+### New script: GameOverUI.cs
+
+`Assets/Scripts/GameOverUI.cs` — `panelRoot` field, `Awake()` hides it,
+`Show()` reveals it (wired to `PlayerHealth.OnDeath`), `Restart()` calls
+`SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex)` (wired to
+the Restart button's `OnClick()`). First `SceneManager`/`Button.onClick`
+usage in the project, kept confined to this one file. No `GameManager`
+singleton introduced — nothing here needs cross-scene persistence.
+
+### Scene wiring via Unity MCP
+
+Built `GameOverPanel` (dark full-rect overlay + "Game Over" text + Restart
+button) under `HUDCanvas` — not `GameplayCanvas`, since Overlay canvas is
+needed to cover the pillarbox bars too, not just the 9:16 viewport — and
+wired both `OnDeath` listeners live through the Unity MCP bridge using
+`execute_code` (arbitrary Editor C# handles multi-object creation +
+`UnityEditor.Events.UnityEventTools.AddPersistentListener` wiring in one
+shot, versus dozens of individual `manage_gameobject`/`manage_components`
+calls for a UnityEvent that has no simple single-property representation).
+
+**Troubleshooting note:** `execute_code`'s C# runs as a method body, not a
+full file — `using` directives at the top threw "Unexpected symbol" errors.
+Fix: drop the `using`s and fully-qualify types instead (e.g.
+`UnityEngine.UI.Image`, `TMPro.TextMeshProUGUI`,
+`UnityEditor.Events.UnityEventTools`). Also: HTML-entity-encoded angle
+brackets (`&lt;`/`&gt;`) sent through the tool arrive literally rather than
+decoding to `<`/`>` — use real `<`/`>` in generic type params.
+
+### Verification
+
+Confirmed end-to-end in Play mode via the MCP bridge (no manual Editor
+interaction needed): called `PlayerHealth.TakeDamage(999)` directly →
+`GameOverPanel` became active, `PartyFrame_1`'s health bar turned gray.
+Invoked the Restart button's `onClick` → scene reloaded cleanly, `Player`
+active again with HP back to 4/4 (Attacker role multiplier), no console
+errors. Screenshot confirmed the overlay visually covers the full window
+including both pillarbox bars, not just the gameplay viewport.
+
+### Still open
+
+- Scene scaffolding (Main Menu, Role Select, Lobby) — deliberately deferred,
+  see above.
+
+## Session 6 — Damage Feedback (Sprite Flash + Screen Shake)
+
+### Scope and event design
+
+Completed the last item under "Basic mechanics (remaining)". Went with both
+sprite flash and camera shake in one pass rather than flash-only: all the
+prerequisite infra already existed (a cached-camera-reference pattern in
+`PlayerController.cs`, a coroutine precedent in `EnemySpawner.SpawnWaveRoutine()`),
+both are small single-purpose scripts, and shake defaults were kept
+conservative (0.2s duration, 0.15 magnitude) to avoid juice-creep — reverting
+to flash-only later would just be removing one Inspector listener, not a
+code change.
+
+Added `PlayerHealth.OnDamaged` (`UnityEvent`), mirroring `OnDeath`.
+**Decision: a fatal hit does not also fire `OnDamaged`**, only `OnDeath` —
+`Die()` deactivates the `Player` GameObject, which would cut off an
+in-flight flash coroutine before it could revert the sprite color, and
+`GameOverUI` takes the screen immediately anyway, so a flash on the killing
+blow would be pointless and added a revert-race risk for no benefit.
+
+### Critical constraint: don't clobber the role tint
+
+`PlayerRoleComponent.Awake()` tints the Player's `SpriteRenderer.color` to
+the role's color **once** and never re-applies it. `PlayerDamageFlash.cs`'s
+`FlashRoutine()` therefore reverts to `PlayerRoleComponent.Stats.tintColor`,
+not `Color.white` — reverting to white would have permanently erased the
+role tint the first time a player took non-fatal damage. Caught during
+planning (research phase), not as a live bug.
+
+### New scripts
+
+- `Assets/Scripts/PlayerDamageFlash.cs` (on `Player`) — `Flash()` restarts a
+  coroutine (`StopCoroutine` + `StartCoroutine`) so rapid hits re-flash at
+  full brightness instead of stacking or blending; reverts to the role tint
+  as above.
+- `Assets/Scripts/CameraShake.cs` (on `Main Camera`) — caches
+  `transform.localPosition` once in `Awake()` as the base position;
+  `Shake()` offsets it by a linearly-decaying random offset per frame, then
+  **explicitly** resets to the cached base when done rather than trusting
+  the decay to land at exactly zero. Confirmed safe alongside
+  `AspectRatioFitter.cs` by re-reading it in full: it only ever touches
+  `camera.rect` (the pillarbox viewport), never `transform` — the two
+  properties can't conflict.
+
+### Scene wiring via Unity MCP
+
+Same approach as Session 5: attached both components via
+`manage_gameobject`, then wired `PlayerHealth.OnDamaged`'s two listeners
+(`PlayerDamageFlash.Flash()`, `CameraShake.Shake()`) via `execute_code` +
+`UnityEditor.Events.UnityEventTools.AddPersistentListener`.
+
+**New troubleshooting note:** editing script files directly on disk (via
+the Write/Edit tools, not through an MCP asset-write action) left Unity's
+asset database unaware of the changes — `manage_gameobject`'s
+`components_to_add` failed with "Component type not found" even though the
+files existed and had no syntax errors. Fixed by explicitly calling
+`UnityEditor.AssetDatabase.ImportAsset(...)` per new file (or
+`refresh_unity` with `scope: "scripts"`, `compile: "request"`) before
+attaching components — needed once per newly-created script file, not
+needed for edits to already-imported files.
+
+### Verification
+
+Confirmed in Play mode via the MCP bridge: a single non-fatal
+`PlayerHealth.TakeDamage(1)` immediately set `SpriteRenderer.color` to
+`flashColor` and offset `Main Camera.transform.localPosition`; after enough
+elapsed time both reverted exactly — sprite to `PlayerRoleComponent.Stats.tintColor`
+(not white), camera to the exact cached base position with no drift. Two
+rapid non-fatal hits in immediate succession re-triggered cleanly with no
+stacking bugs. A lethal `TakeDamage` (and, separately, an organic death from
+live enemy fire during background simulation) correctly triggered only
+`OnDeath`/`GameOverPanel`, never `OnDamaged`, with no console errors.
+
+**Testing note:** discovered mid-session that this Unity Editor instance
+does not tick Play-mode `Update()`/coroutines at all while its window is
+unfocused and idle — `Time.time` stayed frozen across tool calls and even a
+real 3-second wall-clock sleep. Each `manage_camera` screenshot call with
+`include_image: true` forces exactly one manual frame step (~0.02s), which
+was used to pump enough frames for the flash/shake timers to complete
+deterministically. Calling `EditorApplication.QueuePlayerLoopUpdate()`
+manually from `execute_code` (attempted before finding the screenshot-step
+technique) caused benign "PlayerLoop called recursively" console warnings —
+harmless but avoid combining it with Unity's own automatic pump.
+
+### Still open
+
+- Role abilities beyond stat multipliers (Tank taunt, Medic heal, Support
+  buffs) — next roadmap item, prerequisite for the boss encounter prototype.
+- Scene scaffolding (Main Menu, Role Select, Lobby) — deliberately deferred,
+  see Session 5.
