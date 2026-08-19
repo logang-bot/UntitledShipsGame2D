@@ -17,9 +17,11 @@ methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
   - `Move` — Value / Vector2, 2D Vector composite (WASD only — arrow keys
     are **not** currently bound, despite early notes saying otherwise)
   - `Fire` — Button (Space and left mouse button)
+  - `Ability` — Button (`E`)
 
 `OnMove`/`OnFire` are consumed by `PlayerController.cs` — see
-[movement.md](movement.md) and [combat.md](combat.md).
+[movement.md](movement.md) and [combat.md](combat.md). `OnAbility` is
+consumed by `PlayerAbility.cs` — see [player-roles.md](player-roles.md).
 
 ## Scene wiring — Player
 

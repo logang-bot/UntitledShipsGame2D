@@ -13,11 +13,15 @@ public class PlayerController : MonoBehaviour
     public float fireRate = 0.2f;
     public float bulletSpeed = 12f;
 
+    [Header("Recoil")]
+    public float recoilDamping = 8f;
+
     private Rigidbody2D rb;
     private Camera cam;
     private Vector2 moveInput;
     private bool isFiring;
     private float nextFireTime;
+    private Vector2 recoilVelocity;
 
     void Start()
     {
@@ -49,7 +53,9 @@ public class PlayerController : MonoBehaviour
 
     void HandleMovement()
     {
-        Vector2 move = moveInput.normalized * moveSpeed;
+        recoilVelocity = Vector2.Lerp(recoilVelocity, Vector2.zero, recoilDamping * Time.fixedDeltaTime);
+
+        Vector2 move = moveInput.normalized * moveSpeed + recoilVelocity;
         Vector2 newPos = rb.position + move * Time.fixedDeltaTime;
 
         Vector3 min = cam.ViewportToWorldPoint(new Vector3(0, 0, 0));
@@ -80,10 +86,32 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void AddRecoil(Vector2 impulse)
+    {
+        recoilVelocity += impulse;
+    }
+
     void Fire()
     {
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        Bullet b = bullet.GetComponent<Bullet>();
+        SpawnBullet(1f, 1);
+    }
+
+    public void FireBigShot(float widthMultiplier, int damageAmount)
+    {
+        SpawnBullet(widthMultiplier, damageAmount);
+    }
+
+    void SpawnBullet(float widthMultiplier, int damageAmount)
+    {
+        GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        if (widthMultiplier != 1f)
+        {
+            Vector3 scale = bulletObj.transform.localScale;
+            scale.x *= widthMultiplier;
+            bulletObj.transform.localScale = scale;
+        }
+        Bullet b = bulletObj.GetComponent<Bullet>();
+        b.damage = damageAmount;
         b.Init(Vector2.up, bulletSpeed, "Player");
     }
 

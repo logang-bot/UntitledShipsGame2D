@@ -631,6 +631,7 @@ GameObject:
   - component: {fileID: 729504121}
   - component: {fileID: 729504122}
   - component: {fileID: 729504123}
+  - component: {fileID: 729504124}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -656,6 +657,7 @@ MonoBehaviour:
   firePoint: {fileID: 951841067}
   fireRate: 0.2
   bulletSpeed: 12
+  recoilDamping: 8
 --- !u!61 &729504114
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -929,6 +931,56 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDamageFlash
   flashColor: {r: 1, g: 1, b: 1, a: 1}
   flashDuration: 0.12
+--- !u!114 &729504124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 729504112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd98367d25d1aed4caf32174d6103430, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAbility
+  tauntCooldown: 5
+  OnTaunt:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 729504123}
+        m_TargetAssemblyTypeName: PlayerDamageFlash, Assembly-CSharp
+        m_MethodName: Flash
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 519420034}
+        m_TargetAssemblyTypeName: CameraShake, Assembly-CSharp
+        m_MethodName: Shake
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  healCooldown: 6
+  healAmount: 2
+  buffCooldown: 8
+  buffDuration: 4
+  buffMoveSpeedMultiplier: 1.3
+  buffFireRateMultiplier: 0.7
+  bigShotCooldown: 3
+  bigShotWidthMultiplier: 3
+  bigShotDamage: 3
+  recoilForce: 6
 --- !u!224 &746622516 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6869735387822469564, guid: 55944dc1f57d13e4e872a8c821a01903, type: 3}
@@ -2413,6 +2465,30 @@ PrefabInstance:
       propertyPath: 'm_fontSharedMaterials.Array.data[0]'
       value: 
       objectReference: {fileID: 926927104}
+    - target: {fileID: 8205018821550883730, guid: 55944dc1f57d13e4e872a8c821a01903, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8205018821550883730, guid: 55944dc1f57d13e4e872a8c821a01903, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8205018821550883730, guid: 55944dc1f57d13e4e872a8c821a01903, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8205018821550883730, guid: 55944dc1f57d13e4e872a8c821a01903, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8205018821550883730, guid: 55944dc1f57d13e4e872a8c821a01903, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8205018821550883730, guid: 55944dc1f57d13e4e872a8c821a01903, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8685626683188920867, guid: 55944dc1f57d13e4e872a8c821a01903, type: 3}
       propertyPath: m_Name
       value: PartyFrame_1

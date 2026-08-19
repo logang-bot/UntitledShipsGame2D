@@ -58,27 +58,33 @@ scene-specific.
 **Requires:** `public void Initialize(GameObject player)` to be called
 before it does anything useful — see `PartyFrameManager.cs` below. Also
 holds Inspector-dragged references to the frame's own children: avatar
-`Image`, health bar `Image`, and four `TextMeshProUGUI` children (role,
-health, move speed, fire rate) — these bake into the prefab fine since
-they're internal to it.
+`Image`, health bar `Image`, and five `TextMeshProUGUI` children (role,
+health, move speed, fire rate, ability) — these bake into the prefab fine
+since they're internal to it.
 
-`playerHealth`/`playerRole`/`playerController` are **private**, set only by
-`Initialize()` — not Inspector fields. A prefab asset can't hold a
-serialized reference to a specific scene's `Player` object, so wiring moved
-from drag-and-drop to runtime: `Initialize(GameObject player)` does the
-three `GetComponent<>()` lookups, then runs one-time setup (role text set
-to `"Role: " + PlayerRole`, tints avatar/health-bar/role-text to
-`Stats.tintColor`, matching the ship sprite's tint). `Update()` early-returns
-until `Initialize()` has run, then keeps health bar `fillAmount`, `"HP:
-current/max"` text, and move-speed/fire-rate text (read live from
-`PlayerController` every frame — already role-multiplier-adjusted by then)
-up to date. Only real, data-backed stats are shown — no "Attack"/"Defense"
-labels, since those aren't mechanics that exist yet (bullet damage is still
-hardcoded in `Bullet.cs`). `PlayerName` text is static placeholder text
-("Player 1") — there's no name data anywhere in the codebase to bind it to.
+`playerHealth`/`playerRole`/`playerController`/`playerAbility` are
+**private**, set only by `Initialize()` — not Inspector fields. A prefab
+asset can't hold a serialized reference to a specific scene's `Player`
+object, so wiring moved from drag-and-drop to runtime:
+`Initialize(GameObject player)` does the four `GetComponent<>()` lookups,
+then runs one-time setup (role text set to `"Role: " + PlayerRole`, tints
+avatar/health-bar/role-text to `Stats.tintColor`, matching the ship sprite's
+tint). `Update()` early-returns until `Initialize()` has run, then keeps
+health bar `fillAmount`, `"HP: current/max"` text, move-speed/fire-rate text
+(read live from `PlayerController` every frame — already
+role-multiplier-adjusted by then), and `abilityText` (`"{AbilityName}:
+{StatusText}"`, reading `PlayerAbility`'s public status getters — see
+[player-roles.md](player-roles.md)) up to date. `PlayerFrameUI` never
+computes cooldown/buff math itself, only formats what `PlayerAbility`
+already exposes — same "HUD only reads, never owns game state" pattern as
+the health/movement stats. Only real, data-backed stats are shown — no
+"Attack"/"Defense" labels, since those aren't mechanics that exist yet.
+`PlayerName` text is static placeholder text ("Player 1") — there's no name
+data anywhere in the codebase to bind it to.
 
 Key public fields: `healthBarFill`, `avatarImage`, `roleText`, `healthText`,
-`moveSpeedText`, `fireRateText`. Key public method: `Initialize(GameObject)`.
+`moveSpeedText`, `fireRateText`, `abilityText`. Key public method:
+`Initialize(GameObject)`.
 
 ## PartyFrameManager.cs
 
@@ -150,6 +156,19 @@ live stats, `PartyFrameUI.cs` attached. Reusable: instantiate one per
 player once local co-op exists (see `PartyFrameManager.cs` above) instead
 of hand-duplicating scene objects, which is what the old `PartyFrame_2..4`
 were and why they went stale.
+
+**Background contrast fix**: the root `Image`'s color was originally white
+at 39% alpha (`RGBA(1,1,1,0.392)`) — confirmed live via the Unity MCP bridge
+that this is *not* actually grey, it's a near-transparent white blended
+over `HUDCanvas`'s dark backdrop, which reads as a washed-out light panel.
+All the `TextMeshProUGUI` children are opaque white, so the real problem
+was white-on-near-white, not white-on-mid-grey. Fixed by changing the root
+`Image` to a solid dark panel (`RGBA(0.05, 0.05, 0.08, 0.85)`), consistent
+with the project's stated cyberpunk/dark-neon aesthetic (`../overview.md`)
+— text stays white and now has genuine contrast regardless of what's behind
+the canvas. Edited on the prefab (not just the scene instance) so it's the
+default for every future party frame; confirmed via MCP that `PartyFrame_1`
+picked up the change with no stale per-instance override.
 
 ### GameplayCanvas
 

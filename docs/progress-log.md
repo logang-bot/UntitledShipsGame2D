@@ -381,3 +381,234 @@ harmless but avoid combining it with Unity's own automatic pump.
   buffs) — next roadmap item, prerequisite for the boss encounter prototype.
 - Scene scaffolding (Main Menu, Role Select, Lobby) — deliberately deferred,
   see Session 5.
+
+## Session 7 — Role Abilities (Tank Taunt / Medic Heal / Support Buff)
+
+### The target-less-ability problem
+
+The scene has exactly one `Player` GameObject — no boss, no AI teammates, no
+local co-op. Re-reading `Enemy.cs` confirmed it has **zero** targeting/aggro
+concept (its sine-wave movement is computed purely from `startX`/`Time.time`,
+never references the player), so Tank taunt has no boss to redirect and
+Medic heal has no ally to heal. Only Support's buff has an obvious,
+non-contrived single-player test path.
+
+**Decision: no targeting/aggro concept was added to `Enemy.cs`.** Taunt's
+entire point is changing *boss* AI behavior — inventing a `currentTarget`
+field now would mean guessing at a data shape the boss prototype hasn't
+earned yet, and a wrong guess becomes dead code to delete later. Matches the
+project's "prove gameplay is fun before investing in infrastructure"
+principle and the Session 4 precedent of keeping role data a static
+dictionary instead of ScriptableObjects. Instead, built the full ability
+**framework** with every ability's mechanics fully real: Tank taunt is a
+real, cooldown-gated `UnityEvent` broadcast with no listener yet (the boss
+prototype adds one later — a one-line Inspector wire-up, which is the whole
+point of building the framework now); Medic heal is a real, symmetric
+`Heal(int)` targeting self; Support buff is a real temporary stat multiplier,
+fully self-testable today. Attacker gets no ability this pass.
+
+### Architecture: one script, not four
+
+`PlayerAbility.cs` branches on `PlayerRoleComponent.role` in a single
+`OnAbility(InputValue)` handler rather than four per-role scripts or an
+`IAbility` interface — exactly one role is ever active per `Player`
+GameObject today, the same constraint that already justified `RoleStats`
+being a flat struct+dictionary rather than a class hierarchy. An `IAbility`
+abstraction only pays for itself once something needs a polymorphic
+collection (iterating "each teammate's ability") — that's boss-prototype/
+AI-teammate scope, not this one.
+
+### New input action
+
+Added `Ability` (Button, bound to `E` — Space is already Fire) to
+`Assets/Input/PlayerControls.inputactions` by hand-editing the JSON (same
+structure as the existing `Fire` action/binding, new GUIDs). `PlayerInput`'s
+existing Send Messages behavior auto-matches `Ability` → `OnAbility` by
+name — no other plumbing needed, confirmed by reading `PlayerController.cs`'s
+existing `OnMove`/`OnFire` pattern first.
+
+### New/changed scripts
+
+- `Assets/Scripts/PlayerAbility.cs` (new, on `Player`) — `Time.time`-based
+  cooldown gate (`nextAbilityTime`, same pattern as `PlayerController`'s
+  `nextFireTime`) shared across all three abilities. Support's buff uses the
+  same coroutine-restart pattern as `PlayerDamageFlash.cs`/`CameraShake.cs`.
+- `PlayerHealth.cs` — added `Heal(int)`, symmetric to `TakeDamage(int)`,
+  clamped at `maxHealth`. No new `UnityEvent` — `PartyFrameUI.cs` already
+  polls `CurrentHealth` every frame, so a heal shows up live for free.
+
+**Correctness constraint worth documenting** (found while testing, not a
+shipped bug): the buff's revert *divides out* a fixed multiplier rather than
+restoring a cached base value, so `buffCooldown` must stay ≥ `buffDuration`
+(shipped defaults: 8s ≥ 4s) — re-triggering before the previous buff has
+reverted would double-apply the multiplier. The cooldown gate already
+enforces this under shipped defaults; noted in `systems/player-roles.md` so
+future tuning doesn't break it silently.
+
+### Scene wiring via Unity MCP
+
+Same approach as Sessions 5-6: edited the `.inputactions` JSON and both
+scripts on disk, reimported via `AssetDatabase.ImportAsset` (Session 6's
+gotcha still applies to new files), waited for compile, attached
+`PlayerAbility` via `manage_gameobject`. `OnTaunt` was left with zero
+persistent listeners — nothing exists to listen yet, and a placeholder
+listener would have been scope creep.
+
+### Verification
+
+Confirmed per-role in Play mode via the MCP bridge, using reflection to call
+each ability's private trigger method directly (`TriggerHeal`/`TriggerTaunt`/
+`TriggerBuff`) since constructing a real `InputValue` outside an actual input
+callback isn't practical:
+- **Medic**: damaged self, healed, confirmed `CurrentHealth` increased and
+  clamped at `maxHealth`; confirmed the cooldown gate's condition would
+  block an immediate re-press.
+- **Tank**: temporarily attached a throwaway listener to `OnTaunt`, confirmed
+  it fires on activation and the cooldown gate blocks a second immediate
+  trigger; removed the listener again afterward (verification-only, not left
+  in the saved scene).
+- **Support**: confirmed the buff immediately multiplies `moveSpeed`/
+  `fireRate` correctly, and reverts to the exact pre-buff baseline with no
+  drift once `buffDuration` elapses.
+
+**Testing hazard hit twice this session:** with the Editor window focused,
+Play mode runs in real time in the background — enemy fire killed the test
+player mid-verification more than once (confirming the game loop itself
+still works correctly, but interrupting scripted tests). Recovered by
+restarting via the same `RestartButton.onClick.Invoke()` technique from
+Session 5. Also re-confirmed Session 6's frame-stepping technique
+(`manage_camera` screenshots with `include_image: true`) still works when
+unfocused, but pumping ~200 individual frames for a 4-second coroutine
+wasn't practical — instead, temporarily lowered `buffDuration` to a
+fraction of a second for the revert test only. This is safe because Play
+mode changes to serialized fields are automatically discarded when exiting
+Play mode; the saved scene keeps the real default (4s).
+
+### Still open
+
+- Tank taunt's listener and Medic heal's ally-targeting — both deferred
+  until the boss prototype / AI teammates exist to target.
+- Scene scaffolding (Main Menu, Role Select, Lobby) — deliberately deferred,
+  see Session 5.
+- Shrink ship sprites, enemy spawn pattern variety — newly added roadmap
+  items, not started.
+
+## Session 8 — Ability Feedback + Contrast Fix + Attacker "Big Shot"
+
+Playtesting Session 7's abilities surfaced three follow-up requests: ability
+activation was invisible (especially Tank taunt, with nothing to affect,
+and Support's buff, with no on/cooldown indicator), the party frame's text
+was hard to read, and Attacker still had no ability.
+
+### Contrast root cause (found via Unity MCP, not guessed)
+
+Read `PartyFrame_1`'s live component values before touching anything: the
+background `Image` was white at 39% alpha (`RGBA(1,1,1,0.392)`), not an
+actual grey — it only *read* as a washed-out light-grey box because it's
+blended over `HUDCanvas`'s dark backdrop. All 5 `TextMeshProUGUI` children
+were opaque white. So the real bug was white-on-near-white, not
+white-on-mid-grey. Fixed by darkening the *prefab's* root `Image` to
+`RGBA(0.05, 0.05, 0.08, 0.85)` — a real dark panel, matching the project's
+stated cyberpunk aesthetic — rather than changing text color, since the
+text was never the problem.
+
+### Ability status + cooldown display
+
+Added `CooldownRemaining`, `IsBuffActive`, `BuffRemaining`, `AbilityName`,
+and `StatusText` as public read-only getters on `PlayerAbility.cs` — the
+single source of truth for ability state, so `PartyFrameUI` only *formats*
+what `PlayerAbility` already knows (same "HUD reads, never owns state"
+pattern as health/movement stats) rather than duplicating cooldown math.
+Added a sixth party-frame stat line, `abilityText`, showing e.g. `"Buff:
++30% Spd +30% Rate (2.1s)"` while Support's buff is active, or `"Taunt:
+Ready"` / `"Taunt: 3.2s"` otherwise. Discovered live: all four abilities
+share **one** cooldown gate (`nextAbilityTime`), not per-ability cooldowns —
+switching role mid-cooldown correctly shows the leftover time from whatever
+ability last fired, which is the intended shared-gate design, not a bug.
+
+### Attacker — "Big Shot" ability
+
+Gave `Bullet.cs` a real `damage` field (previously hardcoded as the literal
+`1` in both `OnTriggerEnter2D` branches) — defaults to `1`, so enemy bullets
+and regular player fire are unaffected. Attacker's `E` now fires a bullet at
+3x width (`transform.localScale.x`) and 3x damage (3, vs. a regular
+bullet's 1) via a new `PlayerController.FireBigShot()`, sharing a
+`SpawnBullet()` helper with the regular `Fire()` path so there's one
+instantiation/`Init()` call site.
+
+**Recoil — the key technical constraint of this session:** re-reading
+`HandleMovement()` showed it recomputes position from `moveInput` and calls
+`rb.MovePosition()` unconditionally every `FixedUpdate`, with no term for
+accumulated velocity. A plain `Rigidbody2D.AddForce()` impulse — the
+obvious first approach — would have been silently overwritten the very next
+`FixedUpdate`, making recoil invisible. Instead, recoil is a `recoilVelocity`
+field that `HandleMovement()` itself decays (`Vector2.Lerp` toward zero,
+scaled by `recoilDamping`) and folds directly into its existing position
+formula, so it automatically respects the viewport-edge clamp too.
+
+### Scene/prefab wiring via Unity MCP
+
+Same reimport-before-attach approach as prior sessions for the script
+changes. The prefab edits (darkened background, new `AbilityText` child)
+used `PrefabUtility.LoadPrefabContents`/`SaveAsPrefabAsset` via
+`execute_code` — duplicated the existing `FireRateText` child as a styling
+template (same font/size/color) rather than building a `TextMeshProUGUI`
+from scratch, then renamed and rewired it. Confirmed via MCP that the live
+scene instance (`PartyFrame_1`) picked up both prefab changes cleanly with
+no stale per-instance override.
+
+### Verification
+
+Confirmed in Play mode via the MCP bridge: the party frame renders with
+genuine contrast at full resolution (a small/heavily-downscaled screenshot
+misleadingly still looked washed-out — always verify UI contrast at a
+reasonably large capture resolution, not a thumbnail). Support's buff shows
+the live `+30% Spd +30% Rate (Ns)` countdown; Tank/Medic show `Ready`/
+cooldown seconds correctly. Attacker's big shot: bullet `localScale.x`
+and `damage` both confirmed 3x normal; recoil visibly moved the ship and
+decayed to a stable stop. **The recoil's total displacement (-0.63 units)
+was verified against the closed-form sum of the decaying-velocity series**
+(`recoilForce × fixedDeltaTime × (1-k)/k` where `k = recoilDamping ×
+fixedDeltaTime`) rather than assumed correct from a single before/after
+position check — it matched exactly, confirming smooth convergence rather
+than a runaway or stuck value. No console errors throughout, including
+after an organic in-Play death from live enemy fire (same recurring testing
+hazard as Session 7 — Play mode runs in real time once the Editor window is
+focused).
+
+### Still open
+
+- Tank taunt's listener and Medic heal's ally-targeting — still deferred,
+  see Session 7.
+- Scene scaffolding, shrink ship sprites, enemy spawn pattern variety — not
+  started, see Session 5/7.
+
+## Session 9 — Tank Taunt Placeholder Feedback
+
+Playtesting Session 8 surfaced a fair complaint: Tank taunt has zero visible
+effect (by design — no boss/aggro system exists yet, see the new
+"Aggro/targeting" explainer in `systems/player-roles.md`), which reads as
+"is this broken?" rather than "there's just nothing to affect yet."
+
+Rather than inventing a fake targeting system on `Enemy.cs` to give taunt
+something to do (explicitly out of scope — that's the boss prototype's
+job), wired `PlayerAbility.OnTaunt` to the two feedback effects already
+built for `PlayerHealth.OnDamaged`: `PlayerDamageFlash.Flash()` and
+`CameraShake.Shake()`. Zero new code — this is purely two more
+`AddPersistentListener` calls via the Unity MCP bridge (same technique as
+every prior session), reusing infrastructure exactly as its event-driven
+design intended. Gives `E`-as-Tank an immediate "something happened" cue
+(flash + shake) without pretending it does anything mechanically yet.
+
+Verified via MCP: `OnTaunt.GetPersistentEventCount()` went from 0 to 2;
+triggering taunt flashed the sprite white as expected. Camera shake fired
+too (no errors, listener count confirms it ran) but its visible offset was
+swallowed by a large first-frame `Time.deltaTime` in this specific
+Editor-idle test snapshot — the same environment quirk documented in
+Session 6/8, not a wiring problem; the underlying `CameraShake.Shake()` code
+is unchanged from its already-verified `OnDamaged` usage.
+
+### Still open
+
+- Real aggro/targeting system and taunt's actual gameplay effect — boss
+  prototype scope, not started.

@@ -16,7 +16,23 @@ interval while held. Fire direction is hardcoded to `Vector2.up` — the ship
 has a fixed orientation by design (see [movement.md](movement.md)).
 
 Key public fields: `bulletPrefab`, `firePoint`, `fireRate` (default 0.2),
-`bulletSpeed` (default 12).
+`bulletSpeed` (default 12), `recoilDamping` (default 8, higher = faster
+decay).
+
+`Fire()` (regular Space/click fire) and `FireBigShot(float widthMultiplier,
+int damageAmount)` (Attacker's ability — see [player-roles.md](player-roles.md))
+both route through a shared private `SpawnBullet(widthMultiplier,
+damageAmount)` so there's one instantiation/`Init()` call site; `Fire()` is
+just `SpawnBullet(1f, 1)`. `AddRecoil(Vector2 impulse)` accumulates into a
+private `recoilVelocity` field that `HandleMovement()` itself decays
+(`Vector2.Lerp` toward zero, scaled by `recoilDamping`) and adds into its
+position calculation every `FixedUpdate`. **This is required, not a style
+choice**: `HandleMovement()` recomputes position from `moveInput` and calls
+`rb.MovePosition()` unconditionally every `FixedUpdate` — a plain
+`Rigidbody2D.AddForce()` impulse would be silently overwritten the very next
+step, since `MovePosition` never reads back accumulated velocity. Recoil
+respects the existing viewport-edge clamp automatically, since it's folded
+into the same position formula before clamping runs.
 
 ### Child: FirePoint
 
@@ -36,7 +52,17 @@ can damage on collision (`Player` bullets hit `Enemy` tag and vice versa).
 Self-destructs after `lifeTime` seconds as a safety net if it never hits
 anything.
 
-Key public fields: `lifeTime` (default 3s).
+`damage` is a plain public field (not passed through `Init()`, which only
+covers direction/speed/owner) — set directly on the instantiated bullet
+right after `Instantiate()`, before `Init()` runs. Defaults to `1`, so
+anything that doesn't touch it (enemy bullets, regular player fire) is
+unaffected. `PlayerController.SpawnBullet()` sets it explicitly for both
+regular fire (`1`) and Attacker's big shot (`3`, see
+[player-roles.md](player-roles.md)); the collider scales automatically with
+the bullet's `transform.localScale` (Unity `BoxCollider2D` behavior), so a
+wider bullet doesn't need any collider-size code.
+
+Key public fields: `lifeTime` (default 3s), `damage` (default 1).
 
 ## PlayerHealth.cs
 
@@ -143,7 +169,7 @@ Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 
 | Component            | Key inspector values                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
-| **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, fireRate: 0.2, bulletSpeed: 12 |
+| **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, fireRate: 0.2, bulletSpeed: 12, recoilDamping: 8 |
 | **PlayerHealth.cs**   | maxHealth: 5, OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` |
 | **PlayerDamageFlash.cs** | flashColor: white, flashDuration: 0.12 |
 

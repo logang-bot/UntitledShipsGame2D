@@ -22,11 +22,19 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   and briefly shakes the camera. At 0 HP the ship disables and a full-screen
   "Game Over" overlay appears with a Restart button that reloads the scene
   from scratch. See [systems/combat.md](systems/combat.md).
-- **Player roles** — the ship can be assigned a role (`Attacker`, `Tank`,
-  `Medic`, `Support`) via the `PlayerRoleComponent` in the Inspector, which
-  changes health, fire rate, move speed, and sprite tint color. There's no
-  in-game role-selection UI yet — it's Inspector-only for now. See
-  [systems/player-roles.md](systems/player-roles.md).
+- **Player roles & abilities** — the ship can be assigned a role
+  (`Attacker`, `Tank`, `Medic`, `Support`) via the `PlayerRoleComponent` in
+  the Inspector, which changes health, fire rate, move speed, and sprite
+  tint color. There's no in-game role-selection UI yet — it's Inspector-only
+  for now. Press **E** to use the role's ability: Tank broadcasts a taunt
+  event (flashes the ship and shakes the camera as placeholder feedback —
+  no boss/aggro system exists yet to actually redirect, see
+  [systems/player-roles.md](systems/player-roles.md)'s "Aggro/targeting"
+  section), Medic heals self, Support temporarily boosts move speed and
+  fire rate, Attacker fires a 3x-width,
+  3x-damage bullet with visible recoil. The party frame shows which
+  ability is boosted/by how much and its cooldown, on a legible dark panel.
+  See [systems/player-roles.md](systems/player-roles.md).
 - **Portrait/crossplay screen layout** — the gameplay area stays locked to a
   9:16 portrait aspect ratio and adapts automatically: full-width on
   narrow/phone-like aspects, pillarboxed with HUD sidebar space on wider
@@ -34,8 +42,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's NOT there yet
 
-- No boss encounter, no role abilities (Tank taunt, Medic heal, etc.) — only
-  passive role stat multipliers exist so far.
+- No boss encounter — Tank taunt has nothing to affect yet, and Medic heal
+  only targets self, pending a real boss/AI teammate to target.
 - No networking/multiplayer — only one player instance exists in the scene;
   local co-op isn't wired up.
 - Only one scene exists (`Assets/Scenes/SampleScene.unity`) — no Main Menu,
@@ -63,19 +71,25 @@ real networking last, then art/audio.
    different role's stats/tint. Do this in Edit mode, not while playing.
 3. Press **Play**.
 4. Move with **WASD** (arrow keys are not currently bound). Hold **Space**
-   or **left mouse button** to fire — it auto-fires while held.
+   or **left mouse button** to fire — it auto-fires while held. Press **E**
+   to use the current role's ability (see step 7 for what each role does).
 5. Watch enemy waves spawn from the top and drift down; avoid or out-DPS
    their return fire. Taking hits reduces HP, flashes the ship, and shakes
    the camera; at 0 HP the ship disables. The left-sidebar party frame shows
-   an avatar placeholder plus live role/HP/move-speed/fire-rate text, all
-   tinted to match the role.
+   an avatar placeholder plus live role/HP/move-speed/fire-rate/ability
+   text, all tinted to match the role, on a dark panel.
 6. At 0 HP, a "Game Over" overlay appears and the party frame's health bar
    grays out. Click **Restart** to reload the scene from scratch (HP,
    enemies, and party frame all reset).
 7. To see the different roles side by side, stop Play, change the Role
    field, and Play again — compare HP taken to disable, fire rate, move
    speed, and tint color against the table in
-   [systems/player-roles.md](systems/player-roles.md).
+   [systems/player-roles.md](systems/player-roles.md). Press **E** as Medic
+   to heal, as Support to briefly boost move speed/fire rate, or as Tank to
+   fire the taunt event (flash + camera shake — placeholder feedback, no
+   boss to actually affect yet) — watch the party frame's ability line show
+   the boost amount and cooldown countdown. As Attacker, **E** fires a
+   wider, harder-hitting shot with a visible backward recoil kick.
 8. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`

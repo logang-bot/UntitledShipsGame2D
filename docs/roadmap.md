@@ -51,6 +51,17 @@ reference docs live under `systems/`.
   to the `Player` GameObject. `PlayerController.cs` and `PlayerHealth.cs` apply
   the multipliers on `Start`/`Awake`. Values are placeholder balancing, tunable
   later. No HUD role display yet — that's part of "Finish the HUD" below.
+- **Role abilities beyond stat multipliers**: `PlayerAbility.cs` (on `Player`,
+  new `Ability` input action bound to `E`) — Tank taunt (`OnTaunt` UnityEvent,
+  cooldown-gated; no real aggro/targeting system exists yet — see
+  `systems/player-roles.md`'s "Aggro/targeting" section — so it drives a
+  placeholder flash+camera-shake for now, added in Session 9), Medic heal
+  (`PlayerHealth.Heal(int)`, self-targeted, clamps at `maxHealth`), Support
+  buff (temporary move-speed/fire-rate multiplier, coroutine-reverted),
+  Attacker Big Shot (3x-width, 3x-damage bullet with recoil — added in a
+  follow-up pass alongside a party frame ability/cooldown display and a
+  contrast fix, see Session 8 in `progress-log.md`). Wired live via the
+  Unity MCP bridge and verified end-to-end in Play mode for all four roles.
 
 ## In Progress
 
@@ -71,16 +82,21 @@ reference docs live under `systems/`.
 
 ### Player-vs-boss dynamics (CPU AI first)
 
-- **Role abilities beyond stat multipliers** — Tank taunt, Medic heal,
-  Support buffs. Only passive stat multipliers/tint exist today (see
-  `systems/player-roles.md`). These are a prerequisite for the boss
-  mechanic below.
-
 - **Boss encounter prototype** — single boss, 2 HP-based phases, one role
   mechanic (Tank taunt forces boss aggro), tested with a single human player
   plus **CPU-controlled AI teammates** filling the other roles — not human
   local co-op. Core design bet — must be reached quickly to validate that
   role coordination is actually fun.
+
+- **Shrink ship sprites** — reduce player/enemy sprite sizes so all four
+  roles' ships fit comfortably on screen together; relevant once
+  CPU-controlled AI teammates (and eventually local co-op) put multiple
+  ships on screen at once.
+
+- **Enemy spawn pattern variety** — design enemy spawn/movement patterns
+  beyond the current simple top-to-bottom sine-wave drift (`EnemySpawner.cs`
+  picks a random X, `Enemy.cs` sine-waves straight down); more varied
+  formations feed into the boss encounter's bullet-pattern design language.
 
 ### Networking (last)
 
