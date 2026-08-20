@@ -16,16 +16,21 @@ public class PlayerDamageFlash : MonoBehaviour
         roleComponent = GetComponent<PlayerRoleComponent>();
     }
 
-    public void Flash()
+    public void Flash() => Flash(flashColor);
+
+    // Overload lets other systems (e.g. Medic's heal aura) flash a
+    // different color than the default damage-flash color, while still
+    // sharing the same coroutine/revert-to-role-tint mechanics.
+    public void Flash(Color color)
     {
         if (flashCoroutine != null)
             StopCoroutine(flashCoroutine);
-        flashCoroutine = StartCoroutine(FlashRoutine());
+        flashCoroutine = StartCoroutine(FlashRoutine(color));
     }
 
-    IEnumerator FlashRoutine()
+    IEnumerator FlashRoutine(Color color)
     {
-        sprite.color = flashColor;
+        sprite.color = color;
         yield return new WaitForSeconds(flashDuration);
         sprite.color = roleComponent.Stats.tintColor;
         flashCoroutine = null;

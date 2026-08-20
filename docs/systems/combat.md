@@ -23,10 +23,12 @@ as of the boss-fight tuning pass — see [boss.md](boss.md); was `0.2`),
 decay).
 
 `Fire()` (regular Space/click fire) and `FireBigShot(float widthMultiplier,
-int damageAmount)` (Attacker's ability — see [player-roles.md](player-roles.md))
+float damageAmount)` (Attacker's ability — see [player-roles.md](player-roles.md))
 both route through a shared private `SpawnBullet(widthMultiplier,
 damageAmount)` so there's one instantiation/`Init()` call site; `Fire()` is
-just `SpawnBullet(1f, 1)`. `SpawnBullet()` passes `gameObject` into
+just `SpawnBullet(1f, 0.6f)` (`damageAmount` is `float`, not `int`, as of
+the boss HP/damage tuning pass — see [boss.md](boss.md)'s "Tuning"; was
+`SpawnBullet(1f, 1)`). `SpawnBullet()` passes `gameObject` into
 `Bullet.Init(..., ownerObject)` (see Bullet.cs below) so the boss can
 attribute damage back to the shooter for aggro. `AddRecoil(Vector2 impulse)`
 accumulates into a private `recoilVelocity` field that `HandleMovement()`
@@ -68,10 +70,12 @@ anything.
 
 `damage` is a plain public field (not passed through `Init()`, which only
 covers direction/speed/owner) — set directly on the instantiated bullet
-right after `Instantiate()`, before `Init()` runs. Defaults to `1`, so
-anything that doesn't touch it (enemy bullets, regular player fire) is
-unaffected. `PlayerController.SpawnBullet()` sets it explicitly for both
-regular fire (`1`) and Attacker's big shot (`3`, see
+right after `Instantiate()`, before `Init()` runs. **`float`, not `int`**
+(changed in the boss HP/damage tuning pass — see [boss.md](boss.md)'s
+"Tuning" — since player fire damage is no longer a whole number); defaults
+to `1`, so anything that doesn't set it (enemy/boss bullets) is unaffected.
+`PlayerController.SpawnBullet()` sets it explicitly for both regular fire
+(`0.6`, down from `1`) and Attacker's big shot (`1.8`, down from `3` — see
 [player-roles.md](player-roles.md)); the collider scales automatically with
 the bullet's `transform.localScale` (Unity `BoxCollider2D` behavior), so a
 wider bullet doesn't need any collider-size code.
@@ -84,16 +88,21 @@ compiling unchanged. Player-fired bullets now pass their shooter as
 in addition to its existing `Enemy.TakeDamage(damage)` call — also checks
 for a `Boss` component and calls `boss.TakeDamage(damage, ownerObject)`,
 attributing the hit to its shooter for the boss's aggro system. See
-[boss.md](boss.md).
+[boss.md](boss.md). Both `Enemy.TakeDamage`/`Boss.TakeDamage` now take a
+`float amount` for the same reason as `damage` above — each rounds
+(`Mathf.RoundToInt`) only at the point it subtracts from its own `int`
+health pool, so no fractional HP appears anywhere. The enemy-bullet-vs-
+`PlayerHealth` branch does the same rounding at its call site, since
+`PlayerHealth.TakeDamage(int)` stays `int` (see below).
 
-Key public fields: `lifeTime` (default 3s), `damage` (default 1).
+Key public fields: `lifeTime` (default 3s), `damage` (default `1f`).
 
 **Planned, not yet decided** (see [boss.md](boss.md)'s "Boss combat
 dynamism"): future boss/minion attacks may want bullets that re-aim at a
 moving target over their lifetime, or curve, rather than the fixed
 straight-line direction set once at `Init()` today. Flagged specifically
-because it interacts with the Tank's planned physical-blocking behavior
-(see [boss.md](boss.md)'s "AI teammate behavior" and
+because it interacts with the Tank's physical-blocking behavior (see
+[boss.md](boss.md)'s "Tank guard-point positioning" and
 [player-roles.md](player-roles.md)) — blocking relies on bullets traveling
 in a predictable straight line.
 
@@ -103,33 +112,38 @@ in a predictable straight line.
 `PlayerRoleComponent` — see [player-roles.md](player-roles.md)).
 **Requires:** nothing external.
 
-Tracks player HP. `TakeDamage(int)` is called by `Bullet.cs` on enemy-bullet
-collision: fatal hits (`currentHealth <= 0`) call `Die()`, non-fatal hits
-invoke `OnDamaged` instead — the two are mutually exclusive, a killing blow
-does not also fire `OnDamaged`, since `Die()` deactivates the `Player`
-GameObject (which would cut off an in-flight flash/shake coroutine) and
-`GameOverUI` takes the screen immediately anyway. `Die()` disables the
-GameObject, then invokes the `OnDeath` `UnityEvent` so other systems can
-react (game-over UI, HUD) without `PlayerHealth` knowing who's listening.
-`CurrentHealth` property exposes current HP for HUD hookup. `Heal(int)` is
-the symmetric inverse of `TakeDamage(int)` — adds HP, clamped at
-`maxHealth` — called by Medic's ability on self (see
-[player-roles.md](player-roles.md)); no event fires on heal since
-`PartyFrameUI` already polls `CurrentHealth` every frame, so a heal shows up
-live for free.
+Tracks player HP and shield. `TakeDamage(int)` is called by `Bullet.cs` on
+enemy-bullet collision: **shield absorbs first** — deducted from
+`currentShield` down to 0, only the remainder subtracts from
+`currentHealth` (see [player-roles.md](player-roles.md)'s "Shield stat").
+Fatal hits (`currentHealth <= 0`) call `Die()`, non-fatal hits invoke
+`OnDamaged` instead — the two are mutually exclusive, a killing blow does
+not also fire `OnDamaged`, since `Die()` deactivates the `Player` GameObject
+(which would cut off an in-flight flash/shake coroutine) and `GameOverUI`
+takes the screen immediately anyway. A hit fully absorbed by shield still
+fires `OnDamaged` (the player should still feel it), it just doesn't touch
+`currentHealth`. `Die()` disables the GameObject, then invokes the
+`OnDeath` `UnityEvent` so other systems can react (game-over UI, HUD)
+without `PlayerHealth` knowing who's listening. `CurrentHealth`/
+`CurrentShield` properties expose current values for HUD hookup. `Heal(int)`
+is the symmetric inverse of `TakeDamage(int)` — adds HP, clamped at
+`maxHealth`; `RestoreShield(int)` is the shield equivalent (clamps at
+`maxShield`). Both are called every tick, on any ally within range, by
+Medic's passive proximity aura (`PlayerAbility.TickAura()` — see
+[player-roles.md](player-roles.md) and [boss.md](boss.md)'s "Medic
+positioning + proximity aura"), not on self — Medic's old self-targeted
+instant heal was replaced by the aura entirely. No event fires on either
+call since `PartyFrameUI` already polls `CurrentHealth`/`CurrentShield`
+every frame, so a heal/shield-restore shows up live for free. **No passive
+shield regen anywhere** — shield only ever goes up via `RestoreShield(int)`,
+deliberately, to keep Tank dependent on Medic.
 
 Key public fields: `maxHealth` (default 5; scaled by role — see
-[player-roles.md](player-roles.md)), `OnDeath` (`UnityEvent`, fires only on
-the killing blow — see Game Over / Restart below), `OnDamaged` (`UnityEvent`,
-fires only on non-fatal hits — see Damage Feedback below). Key public
-methods: `TakeDamage(int)`, `Heal(int)`.
-
-**Planned, not yet implemented**: a second, shield pool (see
-[player-roles.md](player-roles.md)'s "Planned: Shield stat") that
-`TakeDamage(int)` would check first — damage deducts from shield before
-touching `currentHealth`, only overflowing once shield is at 0. Shield has
-no passive regen of its own; it's only refilled by Medic's planned proximity
-aura (see [boss.md](boss.md)'s "AI teammate behavior").
+[player-roles.md](player-roles.md)), `maxShield` (default 3, likewise
+scaled by role), `OnDeath` (`UnityEvent`, fires only on the killing blow —
+see Game Over / Restart below), `OnDamaged` (`UnityEvent`, fires on any
+non-fatal hit, shield-absorbed or not — see Damage Feedback below). Key
+public methods: `TakeDamage(int)`, `Heal(int)`, `RestoreShield(int)`.
 
 ## GameOverUI.cs
 
@@ -199,8 +213,8 @@ Key public fields: `shakeDuration` (default 0.2s), `shakeMagnitude` (default
 `EnemyBullet` prefab reference.
 
 Sine-wave downward movement, periodic downward fire (staggered per-instance
-via random initial delay), takes damage via `TakeDamage(int)`,
-self-destructs at 0 HP or when off-screen.
+via random initial delay), takes damage via `TakeDamage(float)` (was `int`
+— see Bullet.cs above), self-destructs at 0 HP or when off-screen.
 
 Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`, `health`,
 `bulletPrefab`, `fireInterval`, `bulletSpeed`.
@@ -223,7 +237,7 @@ Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 | Component            | Key inspector values                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
 | **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, fireRate: 0.35, bulletSpeed: 12, recoilDamping: 8 |
-| **PlayerHealth.cs**   | maxHealth: 5, OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` |
+| **PlayerHealth.cs**   | maxHealth: 5, maxShield: 3, OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` |
 | **PlayerDamageFlash.cs** | flashColor: white, flashDuration: 0.12 |
 
 Both `PlayerHealth.cs` and `PlayerRoleComponent` are confirmed attached and

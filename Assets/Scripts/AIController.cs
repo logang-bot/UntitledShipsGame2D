@@ -9,7 +9,6 @@ public class AIController : MonoBehaviour
     public Boss boss;
     public float weaveFrequency = 0.8f;
     public float weaveSpeed = 1f;
-    public float medicHealThreshold = 0.6f; // fraction of maxHealth
 
     [Header("Tank positioning")]
     // The 3 Teammate_* transforms (self included - filtered out at runtime).
@@ -20,24 +19,45 @@ public class AIController : MonoBehaviour
     public float guardBias = 0.65f; // 0 = at ally center, 1 = at the boss
     public float guardDeadzone = 0.2f;
 
+    [Header("Medic positioning")]
+    public float medicBias = -0.3f; // negative = extrapolates past ally center, away from the boss
+    // Below this fraction of maxHealth OR maxShield, an ally is "hurt" and
+    // pulls the Medic toward it instead of its default hang-back position.
+    // Uses PlayerAbility.allies (all 4 ships, unlike teammates[] above)
+    // since the Medic should react to the human Player being hurt too.
+    public float medicApproachThreshold = 0.55f;
+
     private PlayerController controller;
     private PlayerAbility ability;
-    private PlayerHealth health;
     private PlayerRoleComponent role;
 
     void Awake()
     {
         controller = GetComponent<PlayerController>();
         ability = GetComponent<PlayerAbility>();
-        health = GetComponent<PlayerHealth>();
         role = GetComponent<PlayerRoleComponent>();
     }
 
     void Update()
     {
-        Vector2 moveDirection = role.role == PlayerRole.Tank
-            ? GuardPointDirection()
-            : new Vector2(Mathf.Sin(Time.time * weaveFrequency), 0f) * weaveSpeed;
+        Vector2 moveDirection;
+        switch (role.role)
+        {
+            case PlayerRole.Tank:
+                moveDirection = BiasedPositionDirection(guardBias, guardDeadzone);
+                break;
+            case PlayerRole.Medic:
+                {
+                    Transform hurtAlly = FindHurtAlly();
+                    moveDirection = hurtAlly != null
+                        ? ApproachDirection(hurtAlly)
+                        : BiasedPositionDirection(medicBias, guardDeadzone);
+                }
+                break;
+            default:
+                moveDirection = new Vector2(Mathf.Sin(Time.time * weaveFrequency), 0f) * weaveSpeed;
+                break;
+        }
         controller.SetMoveDirection(moveDirection);
         controller.SetFiring(true);
 
@@ -47,7 +67,11 @@ public class AIController : MonoBehaviour
                 if (boss != null && boss.CurrentTarget != gameObject) ability.TryUseAbility();
                 break;
             case PlayerRole.Medic:
-                if (health.CurrentHealth < health.maxHealth * medicHealThreshold) ability.TryUseAbility();
+                // TEMPORARY heuristic: fire the aura boost the instant it's
+                // off cooldown, regardless of whether anyone actually needs
+                // it. Flagged for rework once the aura AI is revisited - see
+                // docs/systems/boss.md's "AI teammate behavior".
+                ability.TryUseAbility();
                 break;
             default:
                 // Support/Attacker: the ability's own cooldown gate makes a retry-every-frame safe.
@@ -56,11 +80,52 @@ public class AIController : MonoBehaviour
         }
     }
 
+    // The ally (from PlayerAbility.allies - all 4 ships, unlike teammates[]
+    // above) with the lowest health-or-shield fraction, but only if that
+    // fraction is at/below medicApproachThreshold; null if everyone's fine.
+    // "Fine" requires both health AND shield above the threshold, so a
+    // single depleted pool (e.g. shield gone, health still full) still
+    // counts as hurt - mirrors TickAura()'s own health-or-shield check.
+    private Transform FindHurtAlly()
+    {
+        if (ability.allies == null) return null;
+
+        Transform hurtAlly = null;
+        float worstFraction = float.MaxValue;
+        foreach (Transform ally in ability.allies)
+        {
+            if (ally == null || ally == transform || !ally.gameObject.activeInHierarchy) continue;
+            PlayerHealth allyHealth = ally.GetComponent<PlayerHealth>();
+            if (allyHealth == null) continue;
+
+            float healthFraction = (float)allyHealth.CurrentHealth / allyHealth.maxHealth;
+            float shieldFraction = allyHealth.maxShield > 0 ? (float)allyHealth.CurrentShield / allyHealth.maxShield : 1f;
+            if (healthFraction > medicApproachThreshold && shieldFraction > medicApproachThreshold) continue;
+
+            float allyWorstFraction = Mathf.Min(healthFraction, shieldFraction);
+            if (allyWorstFraction < worstFraction)
+            {
+                worstFraction = allyWorstFraction;
+                hurtAlly = ally;
+            }
+        }
+        return hurtAlly;
+    }
+
+    private Vector2 ApproachDirection(Transform target)
+    {
+        Vector2 toTarget = (Vector2)target.position - (Vector2)transform.position;
+        return toTarget.magnitude < guardDeadzone ? Vector2.zero : toTarget.normalized;
+    }
+
     // Steers toward a point between the AI-controlled allies and the boss,
-    // so Tank physically stands in incoming bullets' paths (Bullet.cs
-    // doesn't home - it just hits whichever Player-tagged collider is in
-    // its straight-line path first, so standing in the way is enough).
-    private Vector2 GuardPointDirection()
+    // biased by `bias` (0 = at ally center, 1 = at the boss, negative =
+    // extrapolates past ally center away from the boss). Tank uses a
+    // positive bias to physically stand in incoming bullets' paths
+    // (Bullet.cs doesn't home - it just hits whichever Player-tagged
+    // collider is in its straight-line path first, so standing in the way
+    // is enough); Medic uses a negative bias to hang back from the boss.
+    private Vector2 BiasedPositionDirection(float bias, float deadzone)
     {
         if (boss == null) return Vector2.zero;
 
@@ -77,9 +142,11 @@ public class AIController : MonoBehaviour
         }
 
         Vector2 allyCenter = allyCount > 0 ? allySum / allyCount : (Vector2)transform.position;
-        Vector2 guardPoint = Vector2.Lerp(allyCenter, boss.transform.position, guardBias);
+        // LerpUnclamped (not Lerp, which clamps t to [0,1]) so a negative
+        // bias (Medic) can extrapolate past allyCenter, away from the boss.
+        Vector2 targetPoint = Vector2.LerpUnclamped(allyCenter, boss.transform.position, bias);
 
-        Vector2 toGuardPoint = guardPoint - (Vector2)transform.position;
-        return toGuardPoint.magnitude < guardDeadzone ? Vector2.zero : toGuardPoint.normalized;
+        Vector2 toTarget = targetPoint - (Vector2)transform.position;
+        return toTarget.magnitude < deadzone ? Vector2.zero : toTarget.normalized;
     }
 }

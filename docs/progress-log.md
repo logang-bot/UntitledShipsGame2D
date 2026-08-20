@@ -796,3 +796,317 @@ role-multiplied effective fire intervals matched expectations exactly
 is correct, not a bug — Medic 0.35s, Tank 0.42s). A screenshot confirmed
 visually: `Boss` unchanged and clearly larger, `Player`/teammates visibly
 smaller and still firing correctly.
+
+## Session 12 — Shield Stat, Tank AI Positioning, Boss HP/Damage Tuning
+
+Design work (role-differentiated AI behavior, a new shield stat, a
+manual-ability-trigger mechanic) had already been agreed and written up in
+`docs/systems/*.md` as "planned, not yet implemented." This session
+implemented the first slice — shield + Tank — then a follow-up tuning
+request came in for boss HP and player damage. Full technical detail lives
+in `systems/boss.md`, `systems/player-roles.md`, `systems/combat.md`,
+`systems/hud-layout.md`; this is the narrative version.
+
+### Shield stat
+
+Added `RoleStats.shieldMultiplier` (Tank `2.0`, highest; Attacker `1.0`,
+medium; Medic/Support `1.0`, placeholder — only two were specified by
+design) and a `maxShield`/`CurrentShield` pool on `PlayerHealth`, scaled by
+role the same way `maxHealth` already was. `TakeDamage(int)` now absorbs
+into shield first, only the overflow touching health — a hit fully absorbed
+by shield still fires `OnDamaged` (flash/shake), matching how a real hit
+should feel. Added `RestoreShield(int)` (symmetric to `Heal(int)`) even
+though nothing calls it yet — Medic's proximity aura is a separate,
+still-planned follow-up — same "build the real method before the consumer
+exists" precedent as Session 7's `Heal(int)`. Deliberately **no** passive
+regen anywhere: shield only ever goes up via `RestoreShield`, keeping Tank
+dependent on Medic by design.
+
+### Tank guard-point positioning
+
+`AIController.Update()` now branches on role: Tank calls a new private
+`GuardPointDirection()` instead of the shared sine-weave. It averages the
+positions of a new `teammates[]` array (Inspector-wired to the 3
+`Teammate_*` transforms, self excluded at runtime), lerps from that toward
+the boss by `guardBias` (0.65), and steers there (with a small deadzone to
+stop jitter on arrival). Physically blocking bullets needed **zero changes
+to `Bullet.cs`**: bullets already just travel in a straight line and damage
+whichever `Player`-tagged collider they hit first, so a Tank standing in
+the way already "blocks" an ally for free via the existing trigger
+collision — this was purely a positioning problem once that was confirmed
+by re-reading `Bullet.cs` rather than assumed. "Ignore the human player"
+was achieved for free too: `teammates[]` simply never includes `Player`, no
+runtime human-detection check needed, since the human always plays `Player`
+specifically (see `current-state.md`) and the 3 `Teammate_*` are always
+AI-controlled regardless of which role each currently has.
+
+### Gotcha: scene wiring didn't survive a save, twice
+
+First attempt at wiring `teammates[]` via `execute_code` +
+`EditorUtility.SetDirty()` reported success and the scene save reported
+success, but a fresh Play-mode check showed the array empty. Root cause:
+`Teammate_Tank` is a `Teammate.prefab` instance (Session 10), and an
+instance-level override on an object-reference field needs
+`PrefabUtility.RecordPrefabInstancePropertyModifications()` called on the
+component in addition to `SetDirty()`, or it silently doesn't serialize.
+Confirmed the fix by forcing a full scene reload from disk (not just
+trusting the in-memory value) — this became the standard verification
+method for the rest of the session, and caught the exact same class of
+issue again later (see below). `Teammate_Medic`/`Teammate_Support` (not
+prefab instances) never needed the extra call.
+
+### Verification
+
+All via the Unity MCP bridge in Play mode: forced `TakeDamage` calls
+confirmed shield absorbs first and only the overflow hits health, with
+`OnDamaged` firing even on a shield-only hit; `RestoreShield` clamps at
+`maxShield` correctly; read all 4 ships' live `maxShield` values and
+confirmed the role multipliers applied (Tank 6, Attacker/Medic/Support 3).
+Called the private `GuardPointDirection()` directly via reflection and
+confirmed it matched the hand-computed expected direction exactly (dot
+product 1.0), then let Play mode run and sampled positions over time: Tank
+converged toward the guard point (both X and Y changing) while
+Medic/Support kept moving only in X — confirming the non-Tank code path is
+genuinely unchanged, not just visually similar. A screenshot during a live
+fight showed Tank sitting between the boss and the other two teammates,
+and the boss's live aggro target had already become Tank, confirming the
+pre-existing taunt heuristic still works alongside the new positioning. The
+party frame's new shield bar tracked live shield values correctly for all
+4 frames once enough Play-mode frames had ticked (same Editor-idle quirk
+as prior sessions — a value can look stale for a beat after a forced
+`TakeDamage` call until the next pumped frame).
+
+### Boss HP / player damage tuning (follow-up request)
+
+Separate ask, same session: increase boss health, decrease all roles' fire
+damage by 40%. No specific numbers were given, so picked round ones and
+flagged them for the user to correct: `Boss.maxHealth` doubled (`30` →
+`60`); regular fire damage `1` → `0.6`; Attacker's Big Shot `3` → `1.8`
+(both hit values scale by the exact same 0.6× factor, so their 3:1 ratio is
+preserved). Enemy/boss-dealt damage was explicitly out of scope — only
+player-dealt damage.
+
+A flat 40% cut on a baseline of `1` isn't representable as a whole number,
+so `Bullet.damage` changed `int` → `float`, which rippled into
+`Enemy.TakeDamage`/`Boss.TakeDamage` (also `int` → `float`) — each still
+rounds (`Mathf.RoundToInt`) only at the point it subtracts from its own
+`int` health pool, so no fractional HP shows up anywhere; the
+enemy-bullet-vs-`PlayerHealth` path does the same rounding at its call
+site, since `PlayerHealth.TakeDamage(int)` deliberately stayed `int`.
+
+Hit the exact same "script default doesn't retroactively update an
+already-serialized scene/prefab-instance value" gotcha from Session 11,
+twice more: `Boss.maxHealth` and `PlayerAbility.bigShotDamage` both had to
+be set explicitly on the live scene instances (all 4 ships, for
+`bigShotDamage`) **and** on `Boss.prefab`/`Teammate.prefab`'s defaults, with
+`Teammate_Tank` again needing `RecordPrefabInstancePropertyModifications()`.
+Both caught immediately by the same "force a full disk reload, don't trust
+the in-memory value" verification habit established earlier this session —
+without it, both would have silently reverted to their old values.
+
+### Verified
+
+End-to-end in Play mode: all 4 ships' `Fire()` produced bullets with
+`damage == 0.6` (confirmed via `FindObjectsByType<Bullet>`); Attacker's Big
+Shot produced a `damage == 1.8` bullet; `Boss.maxHealth`/`CurrentHealth`
+read `60/60` after a full scene reload from disk. No compile errors or
+console warnings from the type changes.
+
+## Session 13 — Medic AI Positioning + Proximity Aura + Visual Feedback
+
+The roadmap's "Recommended next" item, second slice after Tank (Session
+12): Medic AI positioning (hang back from the boss) plus the proximity
+heal/shield aura design that had been sitting as "planned, not yet
+implemented" in `boss.md`/`player-roles.md` since Session 12.
+
+### Design refinement before implementation
+
+The originally-written design (a single always-large aura radius) got
+revised in conversation before any code was touched: the aura is **tiny by
+default** — allies need to almost touch the Medic to be healed — and
+pressing **E drastically expands the radius and heal rate for a limited
+duration**, replacing Medic's old instant self-heal ability entirely rather
+than being additive to it (explicitly confirmed with the user — "Replace
+with aura boost", not "do both"). This changes what `boss.md`/
+`player-roles.md` had already described, so both docs needed updating
+alongside the code, not just appending.
+
+### Architecture decision: aura lives on `PlayerAbility`, not `AIController`
+
+The aura and its boost ability were built on `PlayerAbility.cs`, **not**
+`AIController.cs`, even though the positioning half of this session's work
+*does* live on `AIController.cs`. Reasoning: `AIController` only exists on
+the 3 `Teammate_*` GameObjects; `PlayerAbility` exists identically on
+`Player` too. Per Session 10's stated principle that AI teammates are
+"mechanically identical to a human player in every way except how input is
+produced," the aura has to work the same way regardless of whether Medic is
+currently human- or AI-controlled — so it couldn't live in a teammate-only
+script. Positioning stays AI-only in `AIController.cs` since a human Medic
+just moves via WASD.
+
+### Positioning: generalized `GuardPointDirection()` instead of duplicating it
+
+Rather than writing a second near-identical method for Medic, Tank's
+existing `GuardPointDirection()` was generalized into `BiasedPositionDirection(bias,
+deadzone)`, parameterized on the Lerp bias — Tank keeps `guardBias = 0.65`
+(toward the boss, unchanged behavior), Medic gets a new `medicBias = -0.3`
+(away from the boss). `AIController.Update()`'s movement switch grew a
+third case instead of staying a binary Tank/everyone-else ternary.
+
+**Bug caught before it shipped**: `Vector2.Lerp` clamps its `t` parameter to
+`[0, 1]` in Unity — a negative `medicBias` would have silently clamped to
+`0` (landing exactly on ally center, not extrapolating past it) rather than
+actually pulling Medic away from the boss. Caught by reasoning about the
+API, not by testing a broken result. Fixed by switching both Tank's and
+Medic's calls to `Vector2.LerpUnclamped`, which lets `t` go outside `[0, 1]`
+and extrapolate.
+
+### Aura mechanics
+
+New fields/methods on `PlayerAbility.cs`: passive `TickAura()` runs every
+`auraTickInterval` (1s default) while `role == Medic`, healing/shielding
+(`Heal(int)`/`RestoreShield(int)`, both pre-existing) every ally in
+`allies[]` within `auraRadius` (0.5 — tiny by design). `TriggerAuraBoost()`
+(replacing the old `TriggerHeal()` in `TryUseAbility()`'s switch) is a
+coroutine flipping `auraBoosted` on for `auraBoostDuration` (4s), during
+which `TickAura()` uses `auraBoostRadius` (3) and a much shorter
+`auraBoostTickInterval` (0.25s) instead — same `StopCoroutine`/
+`StartCoroutine` restart-safety pattern as Support's `TriggerBuff()`, and
+the same "cooldown must stay ≥ duration" constraint Session 7 documented
+for that buff (`auraBoostCooldown` 10s ≥ `auraBoostDuration` 4s).
+
+**New wiring needed**: `allies[]`, a `Transform[]` of all 4 ships
+(self-included, filtered at runtime), had to be added fresh — the existing
+`AIController.teammates[]` array deliberately excludes `Player` (see
+Session 12), so it can't be reused for something that must also heal the
+human player. Wired identically on all 4 ships' `PlayerAbility` via
+`execute_code`, hitting the now-familiar prefab-instance gotcha once more:
+`Teammate_Tank` needed `RecordPrefabInstancePropertyModifications()`,
+`Teammate_Medic`/`Teammate_Support` didn't (not prefab instances, per
+Session 10/11). Verified by forcing a full scene reload from disk, same
+habit as every prior session that's hit this gotcha.
+
+### Follow-up: visual feedback
+
+Playtesting the mechanic surfaced the obvious gap immediately: nothing in
+the world shows the aura exists. Two additions, both requested together:
+
+- **Radius ring** — a `LineRenderer` circle (32 segments, `Sprites/Default`
+  shader, world-space so it isn't distorted by the ship's `0.6` transform
+  scale) built procedurally as a child of the Medic's `PlayerAbility` in
+  `Awake()` (only when `role == Medic`, so other roles don't pay for an
+  unused GameObject). Dim/thin by default, brighter/thicker while boosted —
+  updated every frame in `Update()` independent of the tick-gated
+  `TickAura()` call, so the ring's size/brightness reflects boost state
+  immediately even between heal ticks.
+- **Heal flash** — `PlayerDamageFlash.Flash()` gained a `Flash(Color)`
+  overload (existing parameterless `Flash()` now just calls it with the
+  component's own `flashColor` field, so `OnDamaged`/`OnTaunt`'s existing
+  wiring is unchanged) so `TickAura()` can flash a healed ally green
+  (`healFlashColor`) distinctly from the white damage flash — only on
+  allies that actually had missing health/shield that tick, not every ally
+  in range regardless of whether they needed healing.
+
+### Verified
+
+All via the Unity MCP bridge. Play mode, reflection-called `TickAura()`
+directly (same technique as Session 7-9's private-method verification):
+healed an ally at distance 0 (in range), confirmed no change to a
+subsequent hit while 20 units away (out of range), triggered the boost via
+`TryUseAbility()` and confirmed an ally 2 units away — outside the default
+radius but inside the boosted one — got healed. Confirmed the boost
+reverts automatically (`IsAuraBoosted` false again) after its duration
+using the same "temporarily shrink the duration for a fast test" technique
+Session 7 used for Support's buff. Confirmed via `BiasedPositionDirection()`
+reflection calls that Tank's direction dot-products ~+1 with "toward the
+boss" (matching Session 12's finding) while Medic's dot-products negative
+(away from the boss). **Swapped which `Teammate_*` GameObject played Medic
+mid-session and confirmed both the aura and the positioning followed the
+role, not the GameObject** — the real test of the `allies[]`/prefab-instance
+wiring. Screenshots confirmed the ring renders and visibly expands/brightens
+during the boost, and the party frame's ability line correctly shows "Aura
+Boost: Ready" / "Aura Boost: Boosted (Ns)" (no leftover "Heal" text
+anywhere — `PartyFrameUI.cs` reads `PlayerAbility.AbilityName`/`StatusText`
+generically, so it needed no changes itself). No console errors or warnings
+at any point.
+
+### Still open
+
+- Attacker/Support AI positioning — still planned, see `boss.md`'s "AI
+  teammate behavior". Medic and Tank are now both implemented.
+- Bullet-dodging, teammate separation, manual teammate-ability triggering
+  from the party frame — unchanged from Session 12, still designed but not
+  built.
+
+## Session 14 — Medic AI Trigger/Positioning Rework
+
+Playtesting Session 13 surfaced a real problem: the Medic AI's aura boost
+never fired in practice, not even once across a full test session. Root
+cause was the trigger heuristic itself — `medicBoostThreshold` gated the
+boost on the *Medic's own* HP dropping below 60%, but Medic's positioning
+(hanging back, away from the boss) means it rarely takes damage, so the
+gate almost never opened. The heuristic was checking the wrong ship's
+health entirely — the boost is meant to help *allies*, not itself.
+
+### New design
+
+Agreed replacement, in two independent parts:
+
+- **Ability trigger — temporary, explicitly flagged for rework**: Medic now
+  fires the aura boost the instant it's off cooldown, identical to
+  Support/Attacker's existing "retry every frame, let the cooldown gate
+  sort it out" pattern. No need-awareness at all for now — marked with an
+  explicit `TEMPORARY` comment in `AIController.cs` pointing back to this
+  doc, since a smarter trigger (e.g. "boost when an ally is hurt," now that
+  hurt-detection exists for positioning below) is an obvious near-term
+  follow-up once this dumb version is validated.
+- **Positioning — real, not temporary**: Medic's default is still hanging
+  back (Session 13's `BiasedPositionDirection(medicBias, ...)`), but it now
+  actively breaks from that position to approach whichever ally is hurt.
+  "Hurt" is decided per-ally: below `medicApproachThreshold` (55%) in
+  *either* health or shield fraction counts (mirrors `TickAura()`'s own
+  health-or-shield check, so positioning and healing agree on what "needs
+  help" means) — of potentially several hurt allies, Medic approaches
+  whichever has the single lowest fraction. Checked every frame, so Medic
+  re-targets immediately as the situation changes (an ally recovers, a
+  different ally drops lower, everyone's fine again and it returns to
+  hanging back).
+
+### Why `PlayerAbility.allies`, not `AIController.teammates[]`
+
+The hurt-ally check (`FindHurtAlly()`, new private method) iterates
+`ability.allies` — the array Session 13 added to `PlayerAbility` for the
+aura itself — rather than `AIController.teammates[]`, which was already
+wired and would have been the "obvious" reuse. `teammates[]` deliberately
+excludes `Player` (Tank's guard point is only supposed to average
+AI-controlled allies' positions, see Session 12), but the Medic should
+approach the human player if *they're* the one who's hurt just as readily
+as a CPU teammate — `allies[]` already covers all 4 ships for exactly this
+reason. No new wiring needed; it reuses Session 13's existing array as-is.
+
+### Cleanup
+
+`AIController`'s cached `PlayerHealth health` field became dead code once
+the ability-trigger heuristic stopped reading it (the new trigger doesn't
+check anyone's health) — removed rather than left unused.
+
+### Verified
+
+Unity MCP, Play mode: with the whole party at full health, a couple of
+frames in, `PlayerAbility.CooldownRemaining`/`IsAuraBoosted` on the Medic
+already showed the boost had fired (confirms the "as soon as available"
+trigger actually fires, unlike the old heuristic). Reflection-called
+`FindHurtAlly()` directly: returned `null` while everyone was healthy;
+after damaging Support down to 40% health / 0% shield, returned
+`Teammate_Support`, and `ApproachDirection()`'s returned direction
+dot-producted `1.00` against the exact hand-computed direction to Support
+(same verification style as Session 12's guard-point check). No console
+errors or warnings.
+
+### Still open
+
+- The "temporary" ability trigger is still just "fire on cooldown" — see
+  above for the flagged follow-up once this is validated as an improvement
+  over the old (broken) behavior.
+- Attacker/Support AI positioning, bullet-dodging, teammate separation,
+  manual teammate-ability triggering — unchanged, still not built.

@@ -63,19 +63,24 @@ below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
 - `CurrentHealth`, `IsPhase2`, `CurrentTarget` — read-only, drive
   `BossPanelUI.cs` (below) and are the values to inspect when testing via
   the Unity MCP bridge.
-- `TakeDamage(int amount, GameObject source)` — called by `Bullet.cs` on a
+- `TakeDamage(float amount, GameObject source)` — called by `Bullet.cs` on a
   player-bullet hit; `source` is the shooter, used for aggro attribution.
-  Crossing the 50%-HP threshold flips `IsPhase2` and fires `OnPhase2`;
-  reaching 0 HP fires `OnDefeated` then `Destroy(gameObject)`.
+  `amount` is `float`, not `int` (changed in the damage-tuning pass below,
+  since player fire damage is no longer a whole number) — `CurrentHealth`
+  itself stays `int`, `Mathf.RoundToInt(amount)` is subtracted from it, so
+  no fractional HP anywhere in the UI. Crossing the 50%-HP threshold flips
+  `IsPhase2` and fires `OnPhase2`; reaching 0 HP fires `OnDefeated` then
+  `Destroy(gameObject)`.
 - `TauntedBy(GameObject taunter)` — see above.
 - `OnPhase2`, `OnDefeated` — `UnityEvent`s for other systems to react to
   (currently only `OnDefeated` has a listener: `BossPanelUI.ShowDefeated()`).
 
-Key public fields: `maxHealth` (30), `sineAmplitude`/`sineFrequency` (2 /
-0.5), `bulletPrefab`, `phase1FireInterval`/`phase2FireInterval` (1.2 / 0.6),
-`bulletSpeed` (6), `spreadAngle` (15°), `targets[]`, `tauntBonus` (100),
-`enemySpawner` (drag `Spawner` — auto-disabled in `Awake()` so wave enemies
-from `EnemySpawner.cs` don't confound a boss-fight test).
+Key public fields: `maxHealth` (**60**, up from 30 — see "Tuning" below),
+`sineAmplitude`/`sineFrequency` (2 / 0.5), `bulletPrefab`,
+`phase1FireInterval`/`phase2FireInterval` (1.2 / 0.6), `bulletSpeed` (6),
+`spreadAngle` (15°), `targets[]`, `tauntBonus` (100), `enemySpawner` (drag
+`Spawner` — auto-disabled in `Awake()` so wave enemies from
+`EnemySpawner.cs` don't confound a boss-fight test).
 
 ## Bullet.cs — boss damage dispatch
 
@@ -87,7 +92,8 @@ aggro. `OnTriggerEnter2D`'s player-bullet-vs-`Enemy`-tag branch now also
 checks for a `Boss` component (in addition to the existing `Enemy` check)
 and calls `boss.TakeDamage(damage, ownerObject)` — needed because bullet
 damage previously only ever dispatched to `Enemy.TakeDamage`. See
-[combat.md](combat.md) for `Bullet.cs`'s full reference.
+[combat.md](combat.md) for `Bullet.cs`'s full reference, including the
+`damage: int` → `float` change from the damage-tuning pass below.
 
 ## AIController.cs
 
@@ -99,10 +105,13 @@ human `Player`) — reused as-is, no AI-specific duplicate logic.
 
 Drives a CPU-controlled teammate every `Update()`:
 
-- **Movement**: role-dependent. **Tank** steers toward a guard point via
-  `GuardPointDirection()` (private) — see "Tank guard-point positioning /
-  physical blocking" below. Every other role still does the original
-  sine-weave strafe (`weaveFrequency`/`weaveSpeed`). Both paths go through
+- **Movement**: role-dependent. **Tank** steers toward a point biased
+  toward the boss; **Medic** either does the same biased away from the boss
+  (its default "hang back" position) or, if an ally is hurt, breaks off to
+  approach that ally instead — see "Tank guard-point positioning" and
+  "Medic positioning + proximity aura" below. **Attacker**/**Support** still
+  do the original sine-weave strafe (`weaveFrequency`/`weaveSpeed`) — still
+  planned, see "Future work" below. All paths go through
   `PlayerController.SetMoveDirection(Vector2)` — a non-input entry point
   added to `PlayerController.cs` alongside the existing input-driven
   `OnMove(InputValue)`, so movement can be driven directly without
@@ -115,13 +124,15 @@ Drives a CPU-controlled teammate every `Update()`:
   directly and still goes through the same shared cooldown gate the human
   player uses. Per-role heuristic: **Tank** taunts whenever it doesn't
   currently hold the boss's aggro (`boss.CurrentTarget != gameObject`);
-  **Medic** heals itself below `medicHealThreshold` (60% of `maxHealth`);
-  **Support**/**Attacker** just retry every frame — safe and cheap since
-  `TryUseAbility()`'s own cooldown gate no-ops until ready.
+  **Medic** fires its aura boost the instant it's off cooldown — **TEMPORARY**,
+  see "Medic positioning + proximity aura" below for why this one heuristic
+  is flagged for rework and the others aren't; **Support**/**Attacker** just
+  retry every frame — safe and cheap since `TryUseAbility()`'s own cooldown
+  gate no-ops until ready.
 
 Key public fields: `boss` (drag the `Boss` instance), `weaveFrequency` (0.8),
-`weaveSpeed` (1), `medicHealThreshold` (0.6), `teammates[]`/`guardBias`
-(0.65)/`guardDeadzone` (0.2) — see below.
+`weaveSpeed` (1), `teammates[]`/`guardBias` (0.65)/`guardDeadzone` (0.2),
+`medicBias` (-0.3), `medicApproachThreshold` (0.55) — see below.
 
 ### Tank guard-point positioning / physical blocking (implemented)
 
@@ -134,21 +145,31 @@ a straight line from their spawn direction and damage whichever
 ally standing behind it, for free, via the existing trigger collision. Pure
 positioning problem, not a collision problem.
 
-`AIController.Update()` branches on `role.role == PlayerRole.Tank`: Tank
-calls the private `GuardPointDirection()`, every other role keeps the exact
-original sine-weave (unchanged code path — verified via Play-mode position
-sampling that Medic/Support still only move in X while Tank's Y also
-changes). `GuardPointDirection()`:
+`AIController.Update()`'s movement switch calls the private
+`BiasedPositionDirection(bias, deadzone)` for both Tank and Medic (see
+"Medic positioning + proximity aura" below); Attacker/Support keep the
+exact original sine-weave (unchanged code path — verified via Play-mode
+position sampling that they still only move in X while Tank's/Medic's Y
+also changes). Originally written Tank-only as `GuardPointDirection()`,
+generalized in Session 13 once Medic needed the same shape with a
+different bias, rather than duplicating the Lerp/deadzone logic a second
+time. `BiasedPositionDirection(bias, deadzone)`:
 
 1. Averages the positions of `teammates[]` entries that aren't `null`,
    aren't `transform` itself, and are `activeInHierarchy` (same liveness
    filter already used in `Boss.PickTarget()`).
-2. `Vector2.Lerp`s from that ally center toward `boss.transform.position`
-   by `guardBias` (0.65 — i.e. the guard point sits 65% of the way from the
-   allies toward the boss).
-3. Returns the normalized direction from Tank's current position to that
-   guard point, or `Vector2.zero` inside `guardDeadzone` (0.2 units) to
-   avoid jitter once it arrives.
+2. `Vector2.LerpUnclamped`s from that ally center toward
+   `boss.transform.position` by `bias` — Tank passes `guardBias` (0.65, so
+   the guard point sits 65% of the way from the allies toward the boss);
+   Medic passes `medicBias` (-0.3, a negative bias that extrapolates
+   *past* ally center, away from the boss). **`LerpUnclamped`, not
+   `Lerp`** — Unity's `Vector2.Lerp` silently clamps `t` to `[0, 1]`, which
+   would have collapsed Medic's negative bias to `0` (landing exactly on
+   ally center instead of pulling away from the boss) had it shipped
+   unnoticed.
+3. Returns the normalized direction from the caller's current position to
+   that target point, or `Vector2.zero` inside `deadzone` (`guardDeadzone`,
+   0.2 units, shared by both roles) to avoid jitter once it arrives.
 
 **`teammates[]` deliberately only ever contains the 3 `Teammate_*`
 transforms, never `Player`** — this is how "ignore the human player's
@@ -172,9 +193,86 @@ a reload, don't trust a "success" result alone. `Teammate_Medic`/
 `Teammate_Support` (not prefab instances, see Session 10/11) didn't need
 this extra call.
 
-Values for Attacker/Medic/Support's positioning, and the still-open
+Values for Attacker/Support's positioning, and the still-open
 bullet-dodging/separation/targeted-bullet questions, are unchanged from
-"Future work" below — this session only built Tank.
+"Future work" below — Session 12 built Tank, Session 13 built Medic (below).
+
+### Medic positioning + proximity aura (implemented)
+
+Built in Session 13, alongside the "Manual teammate ability triggering"
+design's prerequisites — see [player-roles.md](player-roles.md)'s
+"PlayerAbility.cs" for the full aura/boost mechanics reference; this
+section covers the positioning half and the pieces specific to
+`AIController.cs`.
+
+**Positioning**: Medic's default is `BiasedPositionDirection()` (see
+above), passed `medicBias` (-0.3) instead of `guardBias` — the negative
+bias extrapolates past ally center, away from the boss, giving Medic a
+"holds toward the back of the party" position rather than Tank's "stands
+between the party and the boss." But it's not unconditional (Session 14):
+every frame, `FindHurtAlly()` scans `PlayerAbility.allies` (all 4 ships,
+see "New wiring" below) for whichever ally has the lowest health-or-shield
+fraction, if any is at or below `medicApproachThreshold` (0.55) in either
+pool — mirrors `TickAura()`'s own "does this ally need anything" check, so
+positioning and healing agree on what counts as hurt. If one is found,
+Medic steers directly at it (`ApproachDirection()`) instead of hanging
+back, re-evaluated every frame so it re-targets immediately as the
+situation changes.
+
+**Aura + boost ability** (full mechanics in
+[player-roles.md](player-roles.md)): replaced Medic's old instant
+self-heal entirely — pressing `E` now triggers a temporary, drastic
+expansion of an always-on passive aura rather than an instant heal. This
+was a deliberate design revision made mid-session (superseding what this
+doc and `player-roles.md` previously described as "always a 2.25-ship
+radius"): the aura is **tiny by default** (allies must nearly touch the
+Medic) and **E temporarily makes it large and fast** instead. This also
+resolves the long-standing "Medic heal only targets self" item — as a
+proximity aura, not manual ally-targeting, matching the original design
+intent.
+
+**AI trigger heuristic — TEMPORARY (Session 14)**: `AIController` fires
+the boost the instant it's off cooldown, with no awareness of whether
+anyone actually needs it. The original heuristic (fire below 60% of the
+*Medic's own* HP) was worse than useless — Medic's positioning keeps it
+away from the boss specifically so it doesn't take damage, so that gate
+almost never opened, and playtesting confirmed it: the boost never fired
+once across a full session. Rather than guess at a better condition
+without more playtesting data, it was replaced with the same
+"fire on cooldown" pattern Support/Attacker already use, explicitly flagged
+in code and here for rework — the obvious next step is triggering off
+`FindHurtAlly()` (below) instead of nothing, but that wasn't done yet.
+
+**Why the aura lives on `PlayerAbility.cs`, not here**: unlike Tank's
+guard-point steering (an AI-only concern — a human Medic just moves via
+WASD), the aura must behave identically whether Medic is human- or
+AI-controlled, per Session 10's "AI teammates are mechanically identical to
+a human player except for input" principle. `AIController` only exists on
+the 3 `Teammate_*` GameObjects; `PlayerAbility` exists on `Player` too, so
+that's where role-specific ability/aura logic belongs — `AIController`'s
+only role in this feature is the movement/approach logic above and the
+(currently trivial) trigger heuristic just above.
+
+**New wiring**: `PlayerAbility.allies[]` — a `Transform[]` of all 4 ships,
+self included, filtered at runtime — had to be wired fresh on all 4 ships'
+`PlayerAbility` components, since `AIController.teammates[]` deliberately
+excludes `Player` and can't be reused for something that must also heal
+the human. Hit the familiar prefab-instance gotcha once more (see below):
+`Teammate_Tank` needed `RecordPrefabInstancePropertyModifications()`,
+`Teammate_Medic`/`Teammate_Support` didn't. Session 14's `FindHurtAlly()`
+reuses this same array (`ability.allies`, read from `AIController` via its
+already-cached `PlayerAbility` reference) rather than adding a second one
+— same reasoning: it needs to react to the human `Player` being hurt too,
+which `teammates[]` can't do.
+
+**Visual feedback** (requested as an immediate follow-up once the mechanic
+was working but invisible): a dim, thin `LineRenderer` ring around the
+Medic shows the aura's current radius live — bigger and brighter while
+boosted — built procedurally in `PlayerAbility.Awake()` only when
+`role == Medic`. Allies actually healed by a tick get a distinct green
+flash via a new `PlayerDamageFlash.Flash(Color)` overload (the existing
+parameterless `Flash()` is unchanged, now just a thin wrapper), separate
+from the white damage flash so the two read as different events.
 
 ## BossPanelUI.cs
 
@@ -204,8 +302,9 @@ going through `PlayerInput`'s input-callback path:
   `Player`.
 - `PlayerAbility.TryUseAbility()` — extracted from the private dispatch
   previously inline in `OnAbility(InputValue)`. The four `Trigger*` methods
-  (`TriggerTaunt`, `TriggerHeal`, `TriggerBuff`, `TriggerBigShot`) stay
-  private/unchanged.
+  (`TriggerTaunt`, `TriggerAuraBoost`, `TriggerBuff`, `TriggerBigShot` —
+  `TriggerHeal` originally, renamed when Medic's ability changed, see
+  "Medic positioning + proximity aura" above) stay private/unchanged.
 
 Also: `PlayerController.SpawnBullet()` now passes `gameObject` into
 `Bullet.Init(..., ownerObject)` so aggro attribution works for player fire
@@ -226,7 +325,7 @@ via a screenshot during testing, not by inspecting numbers alone).
 | Component      | Key inspector values                                                    |
 | --------------- | ----------------------------------------------------------------------- |
 | Transform       | position (0, 4.2, 0), scale (1.6, 1.6, 1) — **not** shrunk with the ships below |
-| **Boss.cs**     | `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `enemySpawner`: `Spawner`; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` |
+| **Boss.cs**     | `maxHealth`: 60 (see "Tuning" below); `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `enemySpawner`: `Spawner`; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` |
 
 ### Teammate_Tank / Teammate_Medic / Teammate_Support
 
@@ -289,6 +388,30 @@ Two follow-up balance passes on the base prototype:
   and `BoxCollider2D` needed no separate edit: Unity scales a child's
   effective position and a collider's size by the parent transform's scale
   automatically.
+- **Boss health + player damage** (a third follow-up pass, same session as
+  the Tank guard-point work above) — `Boss.maxHealth` doubled (`30` → `60`)
+  and every role's player-dealt fire damage cut 40%: regular fire damage
+  `PlayerController.Fire()`'s `1` → `0.6`, Attacker's Big Shot
+  `PlayerAbility.bigShotDamage`'s `3` → `1.8`. Together this meaningfully
+  lengthens the fight without touching fire cadence again. Values are
+  round/arbitrary picks (no specific numbers were requested), tunable like
+  everything else here. Boss/enemy-dealt damage is untouched — only
+  player-dealt damage was in scope. See [combat.md](combat.md) for the
+  `int` → `float` type change this required on `Bullet.damage` (and
+  `Enemy.TakeDamage`/`Boss.TakeDamage`'s signatures) to allow fractional
+  damage values, and the gotcha below about re-hitting the same
+  already-serialized-scene-value issue from the fire-cadence pass above.
+
+**Gotcha, hit twice in this pass**: same class of issue as the fire-cadence
+tuning above — changing a public field's *script* default (`Boss.maxHealth`,
+`PlayerAbility.bigShotDamage`) does **not** retroactively update a value
+already serialized on an existing scene GameObject or prefab instance. Both
+had to be set explicitly on the live scene instances (all 4 ships for
+`bigShotDamage`) **and** on `Boss.prefab`/`Teammate.prefab`'s defaults, with
+`Teammate_Tank`'s prefab-instance override additionally needing
+`PrefabUtility.RecordPrefabInstancePropertyModifications()` (same as the
+`teammates[]` gotcha above) — verified each time by forcing a full scene
+reload from disk rather than trusting the in-memory value.
 
 ## Known environment quirk hit during testing
 
@@ -339,52 +462,33 @@ position, or where the other teammates are. This was a deliberate "just
 prove the aggro/taunt mechanic" simplification for the prototype (see
 Session 10 in `../progress-log.md`), not a finished AI.
 
-**Decided design (not yet implemented)** — role-differentiated positioning
-and combat stats, agreed 2026-08-20, replacing the identical-for-every-role
-weave above. Applies only to AI-controlled `Teammate_*` ships — if a human
-plays a given role instead, none of this positioning/stat logic runs for
-that ship (there's no `AIController` on `Player`).
+**Decided design**, agreed 2026-08-20 — role-differentiated positioning and
+combat stats, replacing the identical-for-every-role weave above. Applies
+only to AI-controlled `Teammate_*` ships — if a human plays a given role
+instead, none of this positioning logic runs for that ship (there's no
+`AIController` on `Player`) — though Medic's aura itself still works for a
+human, since it lives on `PlayerAbility.cs`, not here (see "Medic
+positioning + proximity aura" above). **Tank and Medic are implemented** —
+see "Tank guard-point positioning / physical blocking" and "Medic
+positioning + proximity aura" above. Attacker/Support below are still
+planned, not yet built:
 
-- **Tank** — the highest shield value of the four roles (see "Planned:
-  Shield stat" in [player-roles.md](player-roles.md)), medium fire damage,
-  very low fire cadence. Positioning: steers to a guard point between the
-  boss (and, later, minions) and the rest of the **AI-controlled** party, so
-  it physically stands in incoming bullets' paths. This needs no new
-  collision code: `Bullet.cs` bullets don't home, they travel in a straight
-  line from their spawn direction (see Bullet.cs above and
-  [combat.md](combat.md)) and damage whichever `Player`-tagged collider they
-  hit first — so a correctly positioned Tank already "blocks" an ally behind
-  it for free, via the existing trigger collision. Deliberately **ignores
-  the human player's position** when computing its guard point (only guards
-  the other AI teammates) — chasing to stay in front of a human who's free
-  to roam anywhere would fight player agency rather than help. Tank AI keeps
-  its existing taunt heuristic alongside this (see `AIController.cs` above)
-  — taunt (aggro) and physical blocking are both active at once, not
-  alternatives.
 - **Attacker** — the highest fire damage and fire cadence of the four
   roles, medium shield. Positioning: patrols to cover the available screen
   width (maximize spread/coverage for DPS uptime) while staying clear of
   the boss and the top edge of the screen (avoiding the most bullet-dense
   area).
-- **Medic** — the lowest fire damage, medium fire cadence. New passive
-  behavior: every tick, regenerates both health **and** shield (see
-  "Planned: Shield stat" below) of allies within a 2.25-ship radius — this
-  is what shield's regen relies on, since shield deliberately has **no**
-  passive regen of its own (see player-roles.md). Additive to the existing
-  self-targeted `E` Heal ability, not a replacement for it — this also
-  resolves the "Medic heal only targets self" item (`../roadmap.md`), just
-  as a proximity aura rather than manual ally-targeting. Positioning: holds
-  toward the back of the party (furthest from the boss), matching a support
-  rather than frontline role.
 - **Support** — the same fire cadence as Attacker, the same fire damage as
   Tank (fast **and** hard-hitting relative to the other two). Positioning:
   intentionally the least constrained of the four — roams the available
   screen freely rather than holding a zone, reflecting that Support's kit
   is the most varied/reactive of the roles.
-- **Shield values for Medic and Support are not yet decided** — only Tank
-  (highest) and Attacker (medium) were specified; Medic/Support's shield
-  multipliers are placeholder/TBD until implementation, same status as
-  every other role-stat value in `player-roles.md`.
+- **Shield values for Support are not yet decided** — only Tank (highest)
+  and Attacker (medium) were specified; Support's shield multiplier is
+  placeholder/TBD until implementation, same status as every other
+  not-yet-tuned role-stat value in `player-roles.md`. (Medic's is also
+  still the placeholder `1.0×` baseline — implementing the aura didn't
+  require deciding this value.)
 
 Still open, from the original prototype-era list, and still needed
 regardless of the above:

@@ -32,8 +32,8 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
     }
 
-    // No passive regen - only ever called by Medic's planned proximity aura
-    // (see docs/systems/boss.md's "AI teammate behavior").
+    // No passive regen - only ever called by Medic's proximity aura
+    // (see PlayerAbility.cs's TickAura / docs/systems/boss.md's "AI teammate behavior").
     public void RestoreShield(int amount)
     {
         currentShield = Mathf.Min(currentShield + amount, maxShield);

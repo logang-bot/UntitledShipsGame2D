@@ -53,8 +53,10 @@ reference docs live under `systems/`.
   later. No HUD role display yet — that's part of "Finish the HUD" below.
 - **Role abilities beyond stat multipliers**: `PlayerAbility.cs` (on `Player`,
   new `Ability` input action bound to `E`) — Tank taunt (`OnTaunt` UnityEvent,
-  cooldown-gated), Medic heal (`PlayerHealth.Heal(int)`, self-targeted, clamps
-  at `maxHealth`), Support buff (temporary move-speed/fire-rate multiplier,
+  cooldown-gated), Medic aura boost (temporarily expands the passive
+  heal/shield aura's radius/tick rate — originally an instant self-heal,
+  replaced entirely once the aura shipped, see below), Support buff
+  (temporary move-speed/fire-rate multiplier,
   coroutine-reverted), Attacker Big Shot (3x-width, 3x-damage bullet with
   recoil — added in a follow-up pass alongside a party frame ability/cooldown
   display and a contrast fix, see Session 8 in `progress-log.md`). Wired live
@@ -83,6 +85,45 @@ reference docs live under `systems/`.
   reads as the central target) — done as part of tuning the boss fight, and
   leaves room for minions planned around the boss. See `systems/boss.md`.
 
+- **Shield stat + Tank AI positioning** — a second, health-like `shield`
+  pool per role (`PlayerHealth.maxShield`/`CurrentShield`, absorbs damage
+  before health, no passive regen — see `systems/player-roles.md`'s
+  "Shield stat"), and Tank teammates now steer to a guard point between the
+  boss and the rest of the AI-controlled party (`AIController.BiasedPositionDirection()`),
+  physically standing in bullets' paths for free (`Bullet.cs` bullets don't
+  home). A shield bar was added to the party frame. Attacker/Support
+  positioning is still planned, see below. Full writeup:
+  `systems/boss.md`'s "Tank guard-point positioning / physical blocking".
+
+- **Boss HP / player damage tuning** — `Boss.maxHealth` doubled (30 → 60)
+  and every role's player-dealt fire damage cut 40% (regular fire `1` →
+  `0.6`, Attacker's Big Shot `3` → `1.8`); `Bullet.damage` and
+  `Enemy.TakeDamage`/`Boss.TakeDamage` changed `int` → `float` to allow the
+  fractional values. Boss/enemy-dealt damage is unchanged. See
+  `systems/boss.md`'s "Tuning" section.
+
+- **Medic AI positioning + proximity aura** — Medic teammates default to
+  hanging back from the boss (`AIController.BiasedPositionDirection()`,
+  shared with Tank's guard point, generalized to take a bias parameter
+  instead of being Tank-only), but break off to approach whichever ally
+  has the lowest health/shield fraction once one drops to ≤55% in either
+  pool (`AIController.FindHurtAlly()`, checked every frame, reacts to the
+  human `Player` being hurt too). Medic's `E` ability was replaced
+  entirely: instead of an instant self-heal, Medic has a passive proximity
+  heal/shield aura (tiny by default, allies must nearly touch it) that `E`
+  temporarily expands into a large, fast aura for a few seconds. Works
+  identically whether Medic is human- or AI-controlled (lives on
+  `PlayerAbility.cs`, not `AIController.cs`). Resolves the long-standing
+  "Medic heal only targets self" gap. A radius ring and a green heal-flash
+  give it visual feedback. **The AI's trigger condition for actually
+  pressing `E` is still a temporary placeholder** ("fire the instant it's
+  off cooldown," no need-awareness) — the first version (fire below the
+  Medic's *own* HP threshold) turned out to almost never trigger, since
+  hanging back means Medic rarely takes damage itself; flagged in code and
+  docs for a smarter, need-aware rework. Full writeup: `systems/boss.md`'s
+  "Medic positioning + proximity aura", `systems/player-roles.md`'s
+  "PlayerAbility.cs".
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -97,21 +138,19 @@ reference docs live under `systems/`.
 
 ### Player-vs-boss dynamics (CPU AI first)
 
-- **AI teammate behavior** — `AIController.cs` currently only weaves in X
-  (`Mathf.Sin(Time.time * weaveFrequency)`, `Vector2.up` component always
-  `0`) with no bullet-, boss-, or teammate-awareness. Recommended **next**,
-  ahead of minions below: with dumb, non-dodging teammates constantly
-  eating hits, it's hard to tell whether a rough playtest result means "the
-  role-coordination mechanic isn't fun" or just "the AI can't dodge."
-  Role-differentiated positioning/combat stats (Tank physically blocking
-  bullets for the party while holding aggro, Attacker patrolling screen
-  width, Medic hanging back with a proximity heal/shield aura, Support
-  roaming freely) are now designed, along with a new shield stat and a
-  click/tap-to-trigger-teammate-ability mechanic on the party frame — see
-  `systems/boss.md`'s "AI teammate behavior" and "Manual teammate ability
-  triggering", and `systems/player-roles.md`'s "Planned: Shield stat".
-  Bullet-dodging and teammate separation are still undesigned. Not yet
-  implemented.
+- **AI teammate behavior (Attacker/Support)** — Tank's and Medic's
+  positioning are both implemented (see "Implemented" above);
+  `AIController.cs`'s remaining 2 roles still just weave in X
+  (`Mathf.Sin(Time.time * weaveFrequency)`) with no bullet-, boss-, or
+  teammate-awareness. Recommended **next**, ahead of minions below: with
+  dumb, non-dodging teammates constantly eating hits, it's hard to tell
+  whether a rough playtest result means "the role-coordination mechanic
+  isn't fun" or just "the AI can't dodge." Role-differentiated positioning
+  (Attacker patrolling screen width, Support roaming freely) and a
+  click/tap-to-trigger-teammate-ability mechanic on the party frame are
+  designed — see `systems/boss.md`'s "AI teammate behavior" and "Manual
+  teammate ability triggering". Bullet-dodging and teammate separation are
+  still undesigned. Not yet implemented.
 - **Boss combat dynamism** — `Boss.cs`'s movement (a subtle, slow sine
   drift) and both attack patterns (single aimed shot / 3-bullet spread,
   both flat-timer) are static; it reads as a stationary turret rather than

@@ -58,7 +58,8 @@ scene-specific.
 **Requires:** `public void Initialize(GameObject player)` to be called
 before it does anything useful — see `PartyFrameManager.cs` below. Also
 holds Inspector-dragged references to the frame's own children: avatar
-`Image`, health bar `Image`, and five `TextMeshProUGUI` children (role,
+`Image`, health bar `Image`, shield bar `Image` (`ShieldBar`, added in the
+shield-stat pass, see below), and five `TextMeshProUGUI` children (role,
 health, move speed, fire rate, ability) — these bake into the prefab fine
 since they're internal to it.
 
@@ -69,22 +70,34 @@ object, so wiring moved from drag-and-drop to runtime:
 `Initialize(GameObject player)` does the four `GetComponent<>()` lookups,
 then runs one-time setup (role text set to `"Role: " + PlayerRole`, tints
 avatar/health-bar/role-text to `Stats.tintColor`, matching the ship sprite's
-tint). `Update()` early-returns until `Initialize()` has run, then keeps
-health bar `fillAmount`, `"HP: current/max"` text, move-speed/fire-rate text
-(read live from `PlayerController` every frame — already
-role-multiplier-adjusted by then), and `abilityText` (`"{AbilityName}:
-{StatusText}"`, reading `PlayerAbility`'s public status getters — see
-[player-roles.md](player-roles.md)) up to date. `PartyFrameUI` never
-computes cooldown/buff math itself, only formats what `PlayerAbility`
-already exposes — same "HUD only reads, never owns game state" pattern as
-the health/movement stats. Only real, data-backed stats are shown — no
-"Attack"/"Defense" labels, since those aren't mechanics that exist yet.
-`PlayerName` text is static placeholder text ("Player 1") — there's no name
-data anywhere in the codebase to bind it to.
+tint — `shieldBarFill` is deliberately **not** tinted, see below). 
+`Update()` early-returns until `Initialize()` has run, then keeps health
+bar `fillAmount`, `"HP: current/max"` text, `shieldBarFill.fillAmount`
+(`CurrentShield`/`maxShield`, see [player-roles.md](player-roles.md)'s
+"Shield stat"), move-speed/fire-rate text (read live from
+`PlayerController` every frame — already role-multiplier-adjusted by then),
+and `abilityText` (`"{AbilityName}: {StatusText}"`, reading
+`PlayerAbility`'s public status getters — see
+[player-roles.md](player-roles.md)) up to date. `OnPlayerDied()` grays out
+`shieldBarFill` too, alongside `healthBarFill`. `PartyFrameUI` never
+computes cooldown/buff/shield math itself, only formats what
+`PlayerHealth`/`PlayerAbility` already expose — same "HUD only reads, never
+owns game state" pattern throughout. Only real, data-backed stats are
+shown — no "Attack"/"Defense" labels, since those aren't mechanics that
+exist yet. `PlayerName` text is static placeholder text ("Player 1") —
+there's no name data anywhere in the codebase to bind it to.
 
-Key public fields: `healthBarFill`, `avatarImage`, `roleText`, `healthText`,
-`moveSpeedText`, `fireRateText`, `abilityText`. Key public method:
-`Initialize(GameObject)`.
+Key public fields: `healthBarFill`, `shieldBarFill`, `avatarImage`,
+`roleText`, `healthText`, `moveSpeedText`, `fireRateText`, `abilityText`.
+Key public method: `Initialize(GameObject)`.
+
+**Shield bar (implemented, 2026-08-20)**: `ShieldBar` is a duplicate of the
+existing health bar `Image` (same technique as Session 8's `AbilityText`
+duplication — `PrefabUtility.LoadPrefabContents`/`SaveAsPrefabAsset`),
+added as a sibling directly after it in `PartyFrame.prefab`, with a **fixed**
+shield-blue tint (`RGBA(0.4, 0.8, 1, 1)`) rather than the role tint — reads
+as "shield" consistently across all four frames, distinct from the
+role-tinted health bar underneath it.
 
 **Planned, not yet implemented** (see [boss.md](boss.md)'s "Manual teammate
 ability triggering"): `abilityText` becomes a clickable/tappable UI element
@@ -93,8 +106,7 @@ the same public, cooldown-gated method `AIController.cs` and the human
 `Player`'s own `OnAbility(InputValue)` already use (see
 [player-roles.md](player-roles.md)). Click and tap both fire Unity UI's
 standard pointer-click event, so this needs no separate PC/mobile control
-scheme. Also planned: a second shield-bar `Image` alongside `healthBarFill`
-once the shield stat (`player-roles.md`) exists.
+scheme.
 
 ## PartyFrameManager.cs
 
@@ -221,7 +233,8 @@ world-space/gameplay work; toggle back on for UI work. Isolation View
   [boss.md](boss.md)'s "Tuning" section (`Player`/`Teammate_*` shrunk to
   0.6x scale; the avatar slot itself is unaffected since it's UI, not the
   world-space ship sprite).
-- Click/tap-to-trigger-ability on `abilityText` and a shield bar alongside
-  `healthBarFill` are designed but not implemented — see the
-  `PartyFrameUI.cs` section above and [boss.md](boss.md)'s "Manual teammate
-  ability triggering".
+- Click/tap-to-trigger-ability on `abilityText` is designed but not
+  implemented — see the `PartyFrameUI.cs` section above and
+  [boss.md](boss.md)'s "Manual teammate ability triggering". (The shield
+  bar it was previously grouped with here is now implemented — see
+  "Shield bar" above.)

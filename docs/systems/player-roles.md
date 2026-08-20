@@ -65,14 +65,24 @@ role's cooldown elapses.
   the taunter (`Boss.TauntedBy(GameObject)`). The Session 9 placeholder
   feedback (`Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()`)
   was kept alongside it, additive, not replaced.
-- **Medic — Heal**: calls the new `PlayerHealth.Heal(int)` (symmetric to
-  `TakeDamage(int)`, clamps at `maxHealth`) on **self**. Ally-targeting
-  isn't built yet, even though allies (the AI teammates — see
-  [boss.md](boss.md)) now exist to target. **Planned** (see
-  [boss.md](boss.md)'s "AI teammate behavior"): a passive proximity aura,
-  additive to this self-heal, that regenerates health *and* shield (below)
-  of allies within a 2.25-ship radius — this is intended to be what actually
-  resolves the ally-targeting gap, as an aura rather than manual targeting.
+- **Medic — Aura Boost** (implemented Session 13, replacing the original
+  instant self-heal entirely — see [boss.md](boss.md)'s "Medic positioning
+  + proximity aura"): Medic passively regenerates health *and* shield (see
+  "Shield stat" below) of every ally in `allies[]` within `auraRadius`
+  every `auraTickInterval`, whether human- or AI-controlled — this is what
+  finally resolves the old "Medic heal only targets self" gap, as a
+  proximity aura rather than manual ally-targeting. The default aura is
+  **deliberately tiny** (`auraRadius` 0.5 — allies must nearly touch the
+  Medic); pressing `E` (`TriggerAuraBoost()`) temporarily swaps to a much
+  larger `auraBoostRadius` (3) and a much faster `auraBoostTickInterval`
+  (0.25s vs. 1s) for `auraBoostDuration` (4s), via the same
+  `StopCoroutine`/`StartCoroutine` restart-safety pattern Support's buff
+  uses below — same "cooldown must stay ≥ duration" constraint applies
+  (`auraBoostCooldown` 10s ≥ `auraBoostDuration` 4s). A `LineRenderer` ring
+  around the Medic (dim/thin by default, bright/thick while boosted) shows
+  the live radius, and allies actually healed by a tick get a distinct
+  green flash (`PlayerDamageFlash.Flash(Color)`, a new overload of the
+  existing damage-flash mechanism) — both purely visual, no gameplay effect.
 - **Support — Buff**: temporarily multiplies `PlayerController.moveSpeed`
   and `fireRate` (both already role-scaled once at `Start()`), via a
   coroutine that reverts by dividing back out after `buffDuration` —
@@ -85,17 +95,25 @@ role's cooldown elapses.
   `buffCooldown` below `buffDuration` without changing the revert logic
   too.
 - **Attacker — Big Shot**: calls `PlayerController.FireBigShot(widthMultiplier,
-  damageAmount)` (`3x` width, `3` damage vs. a regular bullet's `1`) and
+  damageAmount)` (`3x` width, `1.8` damage vs. a regular bullet's `0.6` —
+  both cut 40% from their original `3`/`1` in the boss HP/damage tuning
+  pass, see [boss.md](boss.md)'s "Tuning") and
   `PlayerController.AddRecoil(Vector2.down * recoilForce)` — see
-  [combat.md](combat.md) for `Bullet.damage` and why recoil has to be a
-  decaying velocity blended into `HandleMovement()` rather than a physics
-  impulse (`MovePosition` overwrites plain `AddForce` every `FixedUpdate`).
+  [combat.md](combat.md) for `Bullet.damage` (now `float`, not `int`, to
+  allow that fractional value) and why recoil has to be a decaying velocity
+  blended into `HandleMovement()` rather than a physics impulse
+  (`MovePosition` overwrites plain `AddForce` every `FixedUpdate`).
 
-Key public fields: `tauntCooldown` (5s), `OnTaunt`; `healCooldown` (6s),
-`healAmount` (2); `buffCooldown` (8s), `buffDuration` (4s),
-`buffMoveSpeedMultiplier` (1.3), `buffFireRateMultiplier` (0.7, lower =
-faster); `bigShotCooldown` (3s), `bigShotWidthMultiplier` (3),
-`bigShotDamage` (3), `recoilForce` (6). Key public method:
+Key public fields: `tauntCooldown` (5s), `OnTaunt`; `allies[]`,
+`auraRadius` (0.5), `auraTickInterval` (1s), `auraHealPerTick`/
+`auraShieldPerTick` (1 each), `auraBoostRadius` (3), `auraBoostTickInterval`
+(0.25s), `auraBoostDuration` (4s), `auraBoostCooldown` (10s),
+`auraRingColor`/`auraRingBoostedColor`/`auraRingWidth`/
+`auraRingBoostedWidth`, `healFlashColor`; `buffCooldown` (8s),
+`buffDuration` (4s), `buffMoveSpeedMultiplier` (1.3),
+`buffFireRateMultiplier` (0.7, lower = faster); `bigShotCooldown` (3s),
+`bigShotWidthMultiplier` (3), `bigShotDamage` (**1.8**, down from `3` —
+`float` now, not `int`), `recoilForce` (6). Key public method:
 `OnAbility(InputValue)`.
 
 Also exposes read-only status for the HUD (see `PartyFrameUI.cs` in
@@ -115,26 +133,33 @@ ability triggering"): this same `TryUseAbility()` entry point is also meant
 to be called from a click/tap on that teammate's party frame, letting the
 human player force a specific teammate's ability to fire on demand.
 
-## Planned: Shield stat (not yet implemented)
+## Shield stat (implemented)
 
-Agreed design, see [boss.md](boss.md)'s "AI teammate behavior" for the
-motivating context (Tank physically blocking bullets). A second,
-health-like pool per role, alongside `RoleStats.healthMultiplier`:
+Agreed design, built 2026-08-20, see [boss.md](boss.md)'s "AI teammate
+behavior" for the motivating context (Tank physically blocking bullets). A
+second, health-like pool per role (`PlayerHealth.maxShield`/`CurrentShield`),
+alongside `RoleStats.healthMultiplier`'s new sibling
+`RoleStats.shieldMultiplier`:
 
-- **Absorbs damage before health** — incoming damage is deducted from
-  shield first; only overflows into health once shield is at 0. Mirrors
-  `PlayerHealth.TakeDamage(int)`'s existing shape, just as a value checked
-  first.
-- **No passive regen** — shield only refills via Medic's planned proximity
-  aura (see the Medic ability entry above and [boss.md](boss.md)), never on
-  its own over time. Deliberate: keeps Tank meaningfully dependent on Medic
-  rather than being self-sufficient, matching the MMO-raid "tank and
-  healer" coupling this project is modeled on (`../overview.md`).
-- **Per-role values**: only relative ordering for two roles is decided so
-  far — Tank has the highest shield, Attacker a medium shield. Medic and
-  Support's shield values are undecided/placeholder, same status as every
-  other role-stat value in the table below until tuned during
-  implementation.
+- **Absorbs damage before health** — `PlayerHealth.TakeDamage(int)` deducts
+  from `currentShield` first, down to 0; only the remainder subtracts from
+  `currentHealth`. A hit fully absorbed by shield still fires `OnDamaged`
+  (flash/shake feedback), same mutual-exclusivity-with-`Die()` rule as
+  before (see [combat.md](combat.md)).
+- **No passive regen of its own** — `PlayerHealth.RestoreShield(int)`
+  (symmetric to `Heal(int)`, clamps at `maxShield`) is only ever called by
+  Medic's proximity aura (see the Medic ability entry above and
+  [boss.md](boss.md)), never on its own over time. Deliberate: keeps Tank
+  meaningfully dependent on Medic rather than being self-sufficient,
+  matching the MMO-raid "tank and healer" coupling this project is modeled
+  on (`../overview.md`).
+- **Per-role values**: `maxShield` base is `3` (placeholder, smaller than
+  `maxHealth`'s `5` since it's a secondary layer). Only Tank (`2.0×`,
+  highest) and Attacker (`1.0×`, medium) were specified by design; Medic and
+  Support are left at the `1.0×` baseline, undecided/placeholder like every
+  other not-yet-tuned role-stat value — see the table below.
+- **Shield bar**: a fixed shield-blue bar on the party frame, not
+  role-tinted — see [hud-layout.md](hud-layout.md).
 
 ## Aggro / targeting (implemented — on `Boss`, not `Enemy`)
 
@@ -160,12 +185,17 @@ target — see [boss.md](boss.md) for the full design (a plain
 
 ## Current balancing values (placeholders, tunable)
 
-| Role     | Health ×   | Fire rate ×          | Move speed × | Tint            |
-| -------- | ---------- | --------------------- | ------------- | ---------------- |
-| Attacker | 0.8 (lower) | 0.75 (faster)          | 1.0            | red/orange        |
-| Tank     | 1.6 (higher)| 1.2 (slower)           | 0.8 (slower)   | blue               |
-| Medic    | 1.0         | 1.0                    | 1.0            | green              |
-| Support  | 1.0         | 1.0                    | 1.15 (faster)  | yellow/gold        |
+| Role     | Health ×   | Shield ×            | Fire rate ×          | Move speed × | Tint            |
+| -------- | ---------- | -------------------- | --------------------- | ------------- | ---------------- |
+| Attacker | 0.8 (lower) | 1.0 (medium)         | 0.75 (faster)          | 1.0            | red/orange        |
+| Tank     | 1.6 (higher)| 2.0 (highest)        | 1.2 (slower)           | 0.8 (slower)   | blue               |
+| Medic    | 1.0         | 1.0 (placeholder)    | 1.0                    | 1.0            | green              |
+| Support  | 1.0         | 1.0 (placeholder)    | 1.0                    | 1.15 (faster)  | yellow/gold        |
+
+Fire damage isn't role-differentiated (every role deals the same regular
+fire damage, `0.6`, down from `1` in the boss HP/damage tuning pass — see
+[boss.md](boss.md)'s "Tuning"), so it isn't in this table; only Attacker's
+Big Shot ability damage differs, per its entry above.
 
 ## Scene wiring — Player
 
@@ -179,15 +209,17 @@ entering Play mode with the default `Attacker` role showed `maxHealth` 5→4,
 `fireRate` 0.35→0.2625 (base fire interval as of the boss-fight tuning
 pass, [boss.md](boss.md); was 0.2→0.15 before that pass), and the sprite
 tinted red, matching the table above.
-`PlayerAbility` was verified the same way per-role: Medic heal clamps
-correctly at `maxHealth` and the cooldown gate blocks immediate re-use; Tank
-taunt's `OnTaunt` event fires and is cooldown-gated; Support's buff applies
-and reverts to the exact pre-buff baseline with no drift; Attacker's big
-shot spawns a bullet with `localScale.x` and `damage` both 3x a regular
-bullet's, and the recoil impulse visibly moves the ship and decays back to
-a stable, non-drifting stop (confirmed the total displacement matches the
-closed-form sum of the decaying-velocity series, not a runaway/broken
-value).
+`PlayerAbility` was verified the same way per-role: Medic's aura heals/
+shields allies within its (tiny, default) radius and not outside it, and
+`TryUseAbility()`'s boost expands the radius/tick rate for its duration
+before reverting automatically (see [boss.md](boss.md)'s "Medic positioning
++ proximity aura"); Tank taunt's `OnTaunt` event fires and is
+cooldown-gated; Support's buff applies and reverts to the exact pre-buff
+baseline with no drift; Attacker's big shot spawns a bullet with
+`localScale.x` and `damage` both 3x a regular bullet's, and the recoil
+impulse visibly moves the ship and decays back to a stable, non-drifting
+stop (confirmed the total displacement matches the closed-form sum of the
+decaying-velocity series, not a runaway/broken value).
 
 ## Not yet built
 
@@ -195,15 +227,12 @@ value).
   ships fighting alongside `Player` (`Teammate_Tank`/`Teammate_Medic`/
   `Teammate_Support`) are CPU-controlled via `AIController.cs`, not real
   players; see [boss.md](boss.md).
-- Medic heal only targets self — mechanically complete
-  (`PlayerHealth.Heal(int)`), just not extended to target an ally yet, even
-  though allies (the AI teammates) now exist to target. Planned resolution
-  (a proximity aura, not manual targeting) is designed but not implemented
-  — see the Medic ability entry above and [boss.md](boss.md).
-- Shield stat, AI teammate positioning/combat-stat differentiation per role,
-  and manual teammate-ability triggering from the party frame are all
-  designed (see "Planned: Shield stat" above and [boss.md](boss.md)'s
-  "AI teammate behavior" / "Manual teammate ability triggering") but not yet
+- Attacker/Support's AI positioning (Tank's and Medic's are implemented —
+  see "Shield stat" above and [boss.md](boss.md)'s "Tank guard-point
+  positioning" / "Medic positioning + proximity aura"), bullet-dodging,
+  teammate separation, and manual teammate-ability triggering from the
+  party frame are all designed (see [boss.md](boss.md)'s "AI teammate
+  behavior" / "Manual teammate ability triggering") but not yet
   implemented.
 
 Role display on the HUD (name/role text + tinted health bar) is now live
