@@ -108,15 +108,15 @@ public class PlayerController : MonoBehaviour
 
     void Fire()
     {
-        SpawnBullet(1f, 1);
+        SpawnBullet(1f, 0.6f); // was 1 - reduced 40% across all roles' fire damage
     }
 
-    public void FireBigShot(float widthMultiplier, int damageAmount)
+    public void FireBigShot(float widthMultiplier, float damageAmount)
     {
         SpawnBullet(widthMultiplier, damageAmount);
     }
 
-void SpawnBullet(float widthMultiplier, int damageAmount)
+void SpawnBullet(float widthMultiplier, float damageAmount)
     {
         GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         if (widthMultiplier != 1f)

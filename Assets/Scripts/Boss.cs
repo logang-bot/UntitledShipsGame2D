@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class Boss : MonoBehaviour
 {
     [Header("Health / Phases")]
-    public int maxHealth = 30;
+    public int maxHealth = 60; // was 30 - doubled alongside the -40% player damage tuning pass
     public UnityEvent OnPhase2;
     public UnityEvent OnDefeated;
 
@@ -103,9 +103,9 @@ void PickTarget()
         b.Init(dir, bulletSpeed, "Enemy");
     }
 
-    public void TakeDamage(int amount, GameObject source)
+    public void TakeDamage(float amount, GameObject source)
     {
-        CurrentHealth -= amount;
+        CurrentHealth -= Mathf.RoundToInt(amount);
         if (source != null && aggro.ContainsKey(source)) aggro[source] += amount;
 
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2)

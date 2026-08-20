@@ -88,6 +88,15 @@ attributing the hit to its shooter for the boss's aggro system. See
 
 Key public fields: `lifeTime` (default 3s), `damage` (default 1).
 
+**Planned, not yet decided** (see [boss.md](boss.md)'s "Boss combat
+dynamism"): future boss/minion attacks may want bullets that re-aim at a
+moving target over their lifetime, or curve, rather than the fixed
+straight-line direction set once at `Init()` today. Flagged specifically
+because it interacts with the Tank's planned physical-blocking behavior
+(see [boss.md](boss.md)'s "AI teammate behavior" and
+[player-roles.md](player-roles.md)) — blocking relies on bullets traveling
+in a predictable straight line.
+
 ## PlayerHealth.cs
 
 **Attached to:** `Player` GameObject (alongside `PlayerController` and
@@ -114,6 +123,13 @@ Key public fields: `maxHealth` (default 5; scaled by role — see
 the killing blow — see Game Over / Restart below), `OnDamaged` (`UnityEvent`,
 fires only on non-fatal hits — see Damage Feedback below). Key public
 methods: `TakeDamage(int)`, `Heal(int)`.
+
+**Planned, not yet implemented**: a second, shield pool (see
+[player-roles.md](player-roles.md)'s "Planned: Shield stat") that
+`TakeDamage(int)` would check first — damage deducts from shield before
+touching `currentHealth`, only overflowing once shield is at 0. Shield has
+no passive regen of its own; it's only refilled by Medic's planned proximity
+aura (see [boss.md](boss.md)'s "AI teammate behavior").
 
 ## GameOverUI.cs
 

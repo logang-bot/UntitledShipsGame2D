@@ -206,6 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 5
+  maxShield: 3
   OnDeath:
     m_PersistentCalls:
       m_Calls:
@@ -335,7 +336,7 @@ MonoBehaviour:
   buffFireRateMultiplier: 0.7
   bigShotCooldown: 3
   bigShotWidthMultiplier: 3
-  bigShotDamage: 3
+  bigShotDamage: 1.8
   recoilForce: 6
 --- !u!114 &7998309439500275572
 MonoBehaviour:
@@ -353,6 +354,9 @@ MonoBehaviour:
   weaveFrequency: 0.8
   weaveSpeed: 1
   medicHealThreshold: 0.6
+  teammates: []
+  guardBias: 0.65
+  guardDeadzone: 0.2
 --- !u!1 &6535522730374422398
 GameObject:
   m_ObjectHideFlags: 0

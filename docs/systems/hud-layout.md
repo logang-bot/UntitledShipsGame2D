@@ -86,6 +86,16 @@ Key public fields: `healthBarFill`, `avatarImage`, `roleText`, `healthText`,
 `moveSpeedText`, `fireRateText`, `abilityText`. Key public method:
 `Initialize(GameObject)`.
 
+**Planned, not yet implemented** (see [boss.md](boss.md)'s "Manual teammate
+ability triggering"): `abilityText` becomes a clickable/tappable UI element
+that calls the bound player's `PlayerAbility.TryUseAbility()` directly —
+the same public, cooldown-gated method `AIController.cs` and the human
+`Player`'s own `OnAbility(InputValue)` already use (see
+[player-roles.md](player-roles.md)). Click and tap both fire Unity UI's
+standard pointer-click event, so this needs no separate PC/mobile control
+scheme. Also planned: a second shield-bar `Image` alongside `healthBarFill`
+once the shield stat (`player-roles.md`) exists.
+
 ## PartyFrameManager.cs
 
 **Attached to:** `LeftSidebar`.
@@ -211,3 +221,7 @@ world-space/gameplay work; toggle back on for UI work. Isolation View
   [boss.md](boss.md)'s "Tuning" section (`Player`/`Teammate_*` shrunk to
   0.6x scale; the avatar slot itself is unaffected since it's UI, not the
   world-space ship sprite).
+- Click/tap-to-trigger-ability on `abilityText` and a shield bar alongside
+  `healthBarFill` are designed but not implemented — see the
+  `PartyFrameUI.cs` section above and [boss.md](boss.md)'s "Manual teammate
+  ability triggering".

@@ -99,7 +99,10 @@ human `Player`) — reused as-is, no AI-specific duplicate logic.
 
 Drives a CPU-controlled teammate every `Update()`:
 
-- **Movement**: a sine-weave strafe (`weaveFrequency`/`weaveSpeed`) via
+- **Movement**: role-dependent. **Tank** steers toward a guard point via
+  `GuardPointDirection()` (private) — see "Tank guard-point positioning /
+  physical blocking" below. Every other role still does the original
+  sine-weave strafe (`weaveFrequency`/`weaveSpeed`). Both paths go through
   `PlayerController.SetMoveDirection(Vector2)` — a non-input entry point
   added to `PlayerController.cs` alongside the existing input-driven
   `OnMove(InputValue)`, so movement can be driven directly without
@@ -117,7 +120,61 @@ Drives a CPU-controlled teammate every `Update()`:
   `TryUseAbility()`'s own cooldown gate no-ops until ready.
 
 Key public fields: `boss` (drag the `Boss` instance), `weaveFrequency` (0.8),
-`weaveSpeed` (1), `medicHealThreshold` (0.6).
+`weaveSpeed` (1), `medicHealThreshold` (0.6), `teammates[]`/`guardBias`
+(0.65)/`guardDeadzone` (0.2) — see below.
+
+### Tank guard-point positioning / physical blocking (implemented)
+
+Agreed design (2026-08-20), built the same session: Tank physically stands
+in incoming bullets' paths rather than weaving like the other roles. This
+needed **zero changes to `Bullet.cs`** — bullets don't home, they travel in
+a straight line from their spawn direction and damage whichever
+`Player`-tagged collider they hit first (see Bullet.cs above and
+[combat.md](combat.md)), so a correctly positioned Tank already "blocks" an
+ally standing behind it, for free, via the existing trigger collision. Pure
+positioning problem, not a collision problem.
+
+`AIController.Update()` branches on `role.role == PlayerRole.Tank`: Tank
+calls the private `GuardPointDirection()`, every other role keeps the exact
+original sine-weave (unchanged code path — verified via Play-mode position
+sampling that Medic/Support still only move in X while Tank's Y also
+changes). `GuardPointDirection()`:
+
+1. Averages the positions of `teammates[]` entries that aren't `null`,
+   aren't `transform` itself, and are `activeInHierarchy` (same liveness
+   filter already used in `Boss.PickTarget()`).
+2. `Vector2.Lerp`s from that ally center toward `boss.transform.position`
+   by `guardBias` (0.65 — i.e. the guard point sits 65% of the way from the
+   allies toward the boss).
+3. Returns the normalized direction from Tank's current position to that
+   guard point, or `Vector2.zero` inside `guardDeadzone` (0.2 units) to
+   avoid jitter once it arrives.
+
+**`teammates[]` deliberately only ever contains the 3 `Teammate_*`
+transforms, never `Player`** — this is how "ignore the human player's
+position" is achieved, with no runtime human-detection check needed: Tank's
+guard point is computed purely from whichever transforms are wired into
+`teammates[]`, and `Player` is simply never one of them. Tank's existing
+taunt-when-not-holding-aggro heuristic (above) is untouched and runs
+alongside this — aggro-pulling and physical blocking are both active at
+once, as designed, not alternatives.
+
+**Gotcha hit while wiring `teammates[]` in the scene**: setting the field
+via `execute_code` + `EditorUtility.SetDirty()` alone did *not* survive a
+scene save for `Teammate_Tank` specifically — it's a `Teammate.prefab`
+instance (see Scene wiring below), and instance-level overrides on
+object-reference fields need
+`PrefabUtility.RecordPrefabInstancePropertyModifications()` called on the
+component in addition to `SetDirty()`, or the override silently doesn't
+serialize. Caught by forcing a full scene reload from disk after saving and
+finding `teammates[]` empty — always verify a scene-wiring change survives
+a reload, don't trust a "success" result alone. `Teammate_Medic`/
+`Teammate_Support` (not prefab instances, see Session 10/11) didn't need
+this extra call.
+
+Values for Attacker/Medic/Support's positioning, and the still-open
+bullet-dodging/separation/targeted-bullet questions, are unchanged from
+"Future work" below — this session only built Tank.
 
 ## BossPanelUI.cs
 
@@ -282,24 +339,97 @@ position, or where the other teammates are. This was a deliberate "just
 prove the aggro/taunt mechanic" simplification for the prototype (see
 Session 10 in `../progress-log.md`), not a finished AI.
 
-Directions to design against (not a locked spec — the exact approach is a
-design decision for that session):
+**Decided design (not yet implemented)** — role-differentiated positioning
+and combat stats, agreed 2026-08-20, replacing the identical-for-every-role
+weave above. Applies only to AI-controlled `Teammate_*` ships — if a human
+plays a given role instead, none of this positioning/stat logic runs for
+that ship (there's no `AIController` on `Player`).
 
-- **Bullet-dodging** — react to nearby bullets rather than weaving blindly.
-  Candidate approach: each frame, check for `EnemyBullet`-tagged objects
-  (or bullets owned by `Boss`) within some radius/lane ahead of the
+- **Tank** — the highest shield value of the four roles (see "Planned:
+  Shield stat" in [player-roles.md](player-roles.md)), medium fire damage,
+  very low fire cadence. Positioning: steers to a guard point between the
+  boss (and, later, minions) and the rest of the **AI-controlled** party, so
+  it physically stands in incoming bullets' paths. This needs no new
+  collision code: `Bullet.cs` bullets don't home, they travel in a straight
+  line from their spawn direction (see Bullet.cs above and
+  [combat.md](combat.md)) and damage whichever `Player`-tagged collider they
+  hit first — so a correctly positioned Tank already "blocks" an ally behind
+  it for free, via the existing trigger collision. Deliberately **ignores
+  the human player's position** when computing its guard point (only guards
+  the other AI teammates) — chasing to stay in front of a human who's free
+  to roam anywhere would fight player agency rather than help. Tank AI keeps
+  its existing taunt heuristic alongside this (see `AIController.cs` above)
+  — taunt (aggro) and physical blocking are both active at once, not
+  alternatives.
+- **Attacker** — the highest fire damage and fire cadence of the four
+  roles, medium shield. Positioning: patrols to cover the available screen
+  width (maximize spread/coverage for DPS uptime) while staying clear of
+  the boss and the top edge of the screen (avoiding the most bullet-dense
+  area).
+- **Medic** — the lowest fire damage, medium fire cadence. New passive
+  behavior: every tick, regenerates both health **and** shield (see
+  "Planned: Shield stat" below) of allies within a 2.25-ship radius — this
+  is what shield's regen relies on, since shield deliberately has **no**
+  passive regen of its own (see player-roles.md). Additive to the existing
+  self-targeted `E` Heal ability, not a replacement for it — this also
+  resolves the "Medic heal only targets self" item (`../roadmap.md`), just
+  as a proximity aura rather than manual ally-targeting. Positioning: holds
+  toward the back of the party (furthest from the boss), matching a support
+  rather than frontline role.
+- **Support** — the same fire cadence as Attacker, the same fire damage as
+  Tank (fast **and** hard-hitting relative to the other two). Positioning:
+  intentionally the least constrained of the four — roams the available
+  screen freely rather than holding a zone, reflecting that Support's kit
+  is the most varied/reactive of the roles.
+- **Shield values for Medic and Support are not yet decided** — only Tank
+  (highest) and Attacker (medium) were specified; Medic/Support's shield
+  multipliers are placeholder/TBD until implementation, same status as
+  every other role-stat value in `player-roles.md`.
+
+Still open, from the original prototype-era list, and still needed
+regardless of the above:
+
+- **Bullet-dodging** — react to nearby bullets rather than moving purely by
+  role-zone. Candidate approach: each frame, check for `EnemyBullet`-tagged
+  objects (or bullets owned by `Boss`) within some radius/lane ahead of the
   teammate and bias `moveInput` away from them; exact detection method
   (`OverlapCircle`, tag+distance check, etc.) and "how close counts as a
   threat" are open.
-- **Role-appropriate positioning** — right now every teammate behaves
-  identically regardless of role. Tank could hold forward (closer to
-  `Boss`), especially while it holds aggro (`boss.CurrentTarget ==
-  gameObject`); Medic/Support could hold back, trading a bit of DPS uptime
-  for survivability.
 - **Basic separation** — teammates currently have no awareness of each
   other and can end up stacked/overlapping; a simple repulsion term (push
-  away from the nearest other `Player`-tagged ship within some radius)
-  would be enough for a prototype pass.
+  away from the nearest other `Player`-tagged ship within some radius) is
+  still needed on top of the role-zone steering above.
+
+**Open question, not yet decided**: today's bullets are all straight-line
+(direction fixed once at spawn — see Bullet.cs above), which is exactly why
+Tank's physical blocking above works "for free." If a future boss/minion
+attack fires bullets that curve or re-aim mid-flight (see "Boss combat
+dynamism" below), a bullet already past the Tank's position — or one that
+curves around it — wouldn't be stoppable through positioning alone. Not a
+blocker for building the design above (the boss's existing two patterns are
+still straight-line), but worth remembering before or while designing any
+homing/curving attack.
+
+### Manual teammate ability triggering
+
+**Decided design (not yet implemented)**, agreed 2026-08-20: the player can
+force any teammate's ability to fire right now (subject to that teammate's
+own cooldown), overriding the AI's per-role heuristic for that instant —
+e.g. timing a Tank taunt or a Support buff deliberately rather than waiting
+for the AI to decide on its own. Mechanic: each `PartyFrame_N`'s ability
+line/icon (`PartyFrameUI.abilityText`, see [hud-layout.md](hud-layout.md))
+becomes a clickable/tappable UI element that calls that teammate's
+`PlayerAbility.TryUseAbility()` directly — the exact same public,
+cooldown-gated method `AIController.cs` already calls (see above) and the
+human `Player`'s own `OnAbility(InputValue)` already wraps (see
+[player-roles.md](player-roles.md)). This needs **no new ability logic** —
+`TryUseAbility()` already exists, is already cooldown-gated, and already
+dispatches per-role — only a UI-side click/tap handler on the party frame.
+Click (PC) and tap (mobile) both fire Unity UI's standard pointer-click
+event, so this is one mechanic across both platforms with no separate
+control scheme, hotkey binding, or radial menu needed. Doesn't change
+ability *targeting* (still self-targeted per role, same as today) — only
+*when* it fires.
 
 ### Boss combat dynamism
 
@@ -326,6 +456,15 @@ Directions to design against:
   spread) should have a brief visible wind-up so it reads as fair/readable
   rather than just harder — consistent with the existing fire-cadence
   tuning goal ("Tuning" section above) of "hard but not unfair."
+- **Targeted/curved bullet trajectories** (open question, not yet decided)
+  — today's "aimed shot" only ever computes a fixed direction once at fire
+  time (straight line afterward, see Bullet.cs above); a future attack could
+  re-aim at its target's *current* position over the bullet's lifetime, or
+  curve/spiral, for more dynamic threat shapes. Flagged specifically because
+  it interacts with the Tank physical-blocking design in "AI teammate
+  behavior" above — a curving/homing bullet may not be interceptable just by
+  standing in its original path, so this needs revisiting once/if such an
+  attack is actually designed.
 
 **Explicitly out of scope for this direction**: adding a 3rd phase, an
 enrage state, or any behavior after Phase 2 beyond death. This is about

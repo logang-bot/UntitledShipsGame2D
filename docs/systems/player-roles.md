@@ -68,7 +68,11 @@ role's cooldown elapses.
 - **Medic — Heal**: calls the new `PlayerHealth.Heal(int)` (symmetric to
   `TakeDamage(int)`, clamps at `maxHealth`) on **self**. Ally-targeting
   isn't built yet, even though allies (the AI teammates — see
-  [boss.md](boss.md)) now exist to target.
+  [boss.md](boss.md)) now exist to target. **Planned** (see
+  [boss.md](boss.md)'s "AI teammate behavior"): a passive proximity aura,
+  additive to this self-heal, that regenerates health *and* shield (below)
+  of allies within a 2.25-ship radius — this is intended to be what actually
+  resolves the ally-targeting gap, as an aura rather than manual targeting.
 - **Support — Buff**: temporarily multiplies `PlayerController.moveSpeed`
   and `fireRate` (both already role-scaled once at `Start()`), via a
   coroutine that reverts by dividing back out after `buffDuration` —
@@ -106,7 +110,31 @@ a thin wrapper around a public, non-input entry point — `TryUseAbility()` —
 extracted so `AIController.cs` (see [boss.md](boss.md)) can trigger a CPU
 teammate's ability directly, going through the exact same cooldown gate and
 role-dispatch switch as the human player. The four `Trigger*` methods stay
-private/unchanged.
+private/unchanged. **Planned** (see [boss.md](boss.md)'s "Manual teammate
+ability triggering"): this same `TryUseAbility()` entry point is also meant
+to be called from a click/tap on that teammate's party frame, letting the
+human player force a specific teammate's ability to fire on demand.
+
+## Planned: Shield stat (not yet implemented)
+
+Agreed design, see [boss.md](boss.md)'s "AI teammate behavior" for the
+motivating context (Tank physically blocking bullets). A second,
+health-like pool per role, alongside `RoleStats.healthMultiplier`:
+
+- **Absorbs damage before health** — incoming damage is deducted from
+  shield first; only overflows into health once shield is at 0. Mirrors
+  `PlayerHealth.TakeDamage(int)`'s existing shape, just as a value checked
+  first.
+- **No passive regen** — shield only refills via Medic's planned proximity
+  aura (see the Medic ability entry above and [boss.md](boss.md)), never on
+  its own over time. Deliberate: keeps Tank meaningfully dependent on Medic
+  rather than being self-sufficient, matching the MMO-raid "tank and
+  healer" coupling this project is modeled on (`../overview.md`).
+- **Per-role values**: only relative ordering for two roles is decided so
+  far — Tank has the highest shield, Attacker a medium shield. Medic and
+  Support's shield values are undecided/placeholder, same status as every
+  other role-stat value in the table below until tuned during
+  implementation.
 
 ## Aggro / targeting (implemented — on `Boss`, not `Enemy`)
 
@@ -169,7 +197,14 @@ value).
   players; see [boss.md](boss.md).
 - Medic heal only targets self — mechanically complete
   (`PlayerHealth.Heal(int)`), just not extended to target an ally yet, even
-  though allies (the AI teammates) now exist to target.
+  though allies (the AI teammates) now exist to target. Planned resolution
+  (a proximity aura, not manual targeting) is designed but not implemented
+  — see the Medic ability entry above and [boss.md](boss.md).
+- Shield stat, AI teammate positioning/combat-stat differentiation per role,
+  and manual teammate-ability triggering from the party frame are all
+  designed (see "Planned: Shield stat" above and [boss.md](boss.md)'s
+  "AI teammate behavior" / "Manual teammate ability triggering") but not yet
+  implemented.
 
 Role display on the HUD (name/role text + tinted health bar) is now live
 for all 4 party members (`PartyFrame_1..4`, one per `Player`/`Teammate_*`)

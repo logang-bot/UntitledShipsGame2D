@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviour
 private string owner; // "Player" or "Enemy" - determines what it can hit
 
     public float lifeTime = 3f;
-    public int damage = 1;
+    public float damage = 1f;
 
 public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = null)
     {
@@ -38,7 +38,7 @@ void OnTriggerEnter2D(Collider2D other)
         else if (owner == "Enemy" && other.CompareTag("Player"))
         {
             PlayerHealth health = other.GetComponent<PlayerHealth>();
-            if (health != null) health.TakeDamage(damage);
+            if (health != null) health.TakeDamage(Mathf.RoundToInt(damage));
             Destroy(gameObject);
         }
     }

@@ -47,9 +47,9 @@ public class Enemy : MonoBehaviour
         b.Init(Vector2.down, bulletSpeed, "Enemy");
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
-        health -= amount;
+        health -= Mathf.RoundToInt(amount);
         if (health <= 0) Destroy(gameObject);
     }
 }

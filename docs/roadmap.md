@@ -102,8 +102,16 @@ reference docs live under `systems/`.
   `0`) with no bullet-, boss-, or teammate-awareness. Recommended **next**,
   ahead of minions below: with dumb, non-dodging teammates constantly
   eating hits, it's hard to tell whether a rough playtest result means "the
-  role-coordination mechanic isn't fun" or just "the AI can't dodge." See
-  `systems/boss.md`'s "Future work" section for concrete directions.
+  role-coordination mechanic isn't fun" or just "the AI can't dodge."
+  Role-differentiated positioning/combat stats (Tank physically blocking
+  bullets for the party while holding aggro, Attacker patrolling screen
+  width, Medic hanging back with a proximity heal/shield aura, Support
+  roaming freely) are now designed, along with a new shield stat and a
+  click/tap-to-trigger-teammate-ability mechanic on the party frame — see
+  `systems/boss.md`'s "AI teammate behavior" and "Manual teammate ability
+  triggering", and `systems/player-roles.md`'s "Planned: Shield stat".
+  Bullet-dodging and teammate separation are still undesigned. Not yet
+  implemented.
 - **Boss combat dynamism** — `Boss.cs`'s movement (a subtle, slow sine
   drift) and both attack patterns (single aimed shot / 3-bullet spread,
   both flat-timer) are static; it reads as a stationary turret rather than

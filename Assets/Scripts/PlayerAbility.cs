@@ -22,7 +22,7 @@ public class PlayerAbility : MonoBehaviour
     [Header("Attacker - Big Shot")]
     public float bigShotCooldown = 3f;
     public float bigShotWidthMultiplier = 3f;
-    public int bigShotDamage = 3;
+    public float bigShotDamage = 1.8f; // was 3 - reduced 40% across all roles' fire damage
     public float recoilForce = 6f;
 
     private PlayerRoleComponent roleComponent;
