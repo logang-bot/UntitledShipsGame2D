@@ -1,0 +1,46 @@
+# Auto-detect text files and normalize line endings to LF in the repo.
+* text=auto eol=lf
+
+# Explicit text types (source, docs, Unity YAML assets) — always LF.
+*.cs text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.unity text eol=lf
+*.prefab text eol=lf
+*.asset text eol=lf
+*.mat text eol=lf
+*.meta text eol=lf
+*.controller text eol=lf
+*.anim text eol=lf
+*.physicMaterial text eol=lf
+*.physicsMaterial2D text eol=lf
+*.inputactions text eol=lf
+*.shader text eol=lf
+*.hlsl text eol=lf
+*.cginc text eol=lf
+
+# Binary assets — never touch line endings.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.psd binary
+*.tga binary
+*.tif binary
+*.tiff binary
+*.exr binary
+*.hdr binary
+*.dll binary
+*.exe binary
+*.pdb binary
+*.wav binary
+*.mp3 binary
+*.ogg binary
+*.fbx binary
+*.obj binary
+*.ttf binary
+*.otf binary
+
+# Unity uses YAML merge markers on .unity/.prefab files; keep diffs readable
+# rather than treating them as opaque binary blobs (default behavior already
+# does this via the text rules above — this section is just documentation).
