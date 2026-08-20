@@ -68,9 +68,17 @@ public class PlayerAbility : MonoBehaviour
         playerHealth = GetComponent<PlayerHealth>();
     }
 
-    public void OnAbility(InputValue value)
+public void OnAbility(InputValue value)
     {
-        if (!value.isPressed || Time.time < nextAbilityTime) return;
+        if (!value.isPressed) return;
+        TryUseAbility();
+    }
+
+    // Non-input entry point so AIController can trigger abilities directly
+    // through the same cooldown gate.
+    public void TryUseAbility()
+    {
+        if (Time.time < nextAbilityTime) return;
         switch (roleComponent.role)
         {
             case PlayerRole.Tank: TriggerTaunt(); break;

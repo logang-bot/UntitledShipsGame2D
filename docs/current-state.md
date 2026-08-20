@@ -26,37 +26,46 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   (`Attacker`, `Tank`, `Medic`, `Support`) via the `PlayerRoleComponent` in
   the Inspector, which changes health, fire rate, move speed, and sprite
   tint color. There's no in-game role-selection UI yet — it's Inspector-only
-  for now. Press **E** to use the role's ability: Tank broadcasts a taunt
-  event (flashes the ship and shakes the camera as placeholder feedback —
-  no boss/aggro system exists yet to actually redirect, see
+  for now. Press **E** to use the role's ability: Tank taunts (redirects the
+  boss's aggro to you — see the Boss encounter bullet below and
   [systems/player-roles.md](systems/player-roles.md)'s "Aggro/targeting"
   section), Medic heals self, Support temporarily boosts move speed and
-  fire rate, Attacker fires a 3x-width,
-  3x-damage bullet with visible recoil. The party frame shows which
-  ability is boosted/by how much and its cooldown, on a legible dark panel.
-  See [systems/player-roles.md](systems/player-roles.md).
+  fire rate, Attacker fires a 3x-width, 3x-damage bullet with visible
+  recoil. The party frame shows which ability is boosted/by how much and
+  its cooldown, on a legible dark panel. See
+  [systems/player-roles.md](systems/player-roles.md).
 - **Portrait/crossplay screen layout** — the gameplay area stays locked to a
   9:16 portrait aspect ratio and adapts automatically: full-width on
   narrow/phone-like aspects, pillarboxed with HUD sidebar space on wider
   desktop aspects. See [systems/hud-layout.md](systems/hud-layout.md).
+- **Boss encounter** — a boss with 2 HP-based phases (Phase 2 at ≤50% HP
+  fires faster and in a 3-bullet spread) and a real aggro system: whoever
+  deals the most damage is the boss's target, and Tank taunt redirects it.
+  3 CPU-controlled AI teammates (`Teammate_Tank`/`Teammate_Medic`/
+  `Teammate_Support`) fight alongside the human `Player`, covering
+  whichever roles aren't human-played — move, auto-fire, and use their
+  role's ability autonomously. `BossPanel` shows the boss's live HP bar,
+  phase, and current target. See [systems/boss.md](systems/boss.md).
 
 ## What's NOT there yet
 
-- No boss encounter — Tank taunt has nothing to affect yet, and Medic heal
-  only targets self, pending a real boss/AI teammate to target.
-- No networking/multiplayer — only one player instance exists in the scene;
-  local co-op isn't wired up.
+- No networking/multiplayer — the 3 teammates are CPU-controlled, not real
+  human players; local co-op isn't wired up.
 - Only one scene exists (`Assets/Scenes/SampleScene.unity`) — no Main Menu,
   Role Select, or Lobby scenes yet (Game Over is a same-scene UI overlay, not
   a separate scene — see [systems/combat.md](systems/combat.md)). See
   `roadmap.md`'s "Networking (last)" section for where scene scaffolding
   fits into the build order.
-- Only one party frame is shown — `PartyFrame_1` is a reusable prefab now
-  (`Assets/Prefabs/PartyFrame.prefab`), but nothing spawns more copies of it
-  yet (no second player exists to spawn one for). `BossPanel` is still just
-  a "coming soon" placeholder.
-- No real art — the avatar slot and ship are placeholder colored squares, no
-  audio.
+- No local co-op / dynamic player count — the party is 4 fixed, hand-placed
+  scene objects (`Player` + 3 `Teammate_*`), not a runtime spawner that
+  reacts to however many humans are actually playing.
+- Medic heal only targets self, not allies — mechanically complete
+  (`PlayerHealth.Heal(int)`), just not extended to target a teammate yet.
+- No minions around the boss yet — the ship-shrink tuning (see
+  [systems/boss.md](systems/boss.md)) was done to leave room for them, but
+  no minion script/prefab exists.
+- No real art — the avatar slot and every ship are placeholder colored
+  squares, no audio.
 
 See [roadmap.md](roadmap.md)'s "Development priority order" for the
 authoritative build sequence: full basic mechanics first, then
@@ -68,28 +77,40 @@ real networking last, then art/audio.
 1. Open the project in Unity (`SampleScene` under `Assets/Scenes/`).
 2. *(Optional)* Select the `Player` GameObject and change the
    `PlayerRoleComponent`'s **Role** field before pressing Play, to try a
-   different role's stats/tint. Do this in Edit mode, not while playing.
-3. Press **Play**.
+   different role's stats/tint. If you do, also change the `Teammate_*`
+   that currently has that role to `Attacker` (or swap two roles) so all 4
+   roles stay covered exactly once — see [systems/boss.md](systems/boss.md)
+   for why. Do this in Edit mode, not while playing.
+3. Press **Play**. Note: `EnemySpawner`'s `Spawner` is auto-disabled by
+   `Boss.Awake()` at Play start, so the old top-down enemy waves don't spawn
+   during a boss-fight test — the boss is the only enemy on screen.
 4. Move with **WASD** (arrow keys are not currently bound). Hold **Space**
    or **left mouse button** to fire — it auto-fires while held. Press **E**
    to use the current role's ability (see step 7 for what each role does).
-5. Watch enemy waves spawn from the top and drift down; avoid or out-DPS
-   their return fire. Taking hits reduces HP, flashes the ship, and shakes
-   the camera; at 0 HP the ship disables. The left-sidebar party frame shows
-   an avatar placeholder plus live role/HP/move-speed/fire-rate/ability
-   text, all tinted to match the role, on a dark panel.
-6. At 0 HP, a "Game Over" overlay appears and the party frame's health bar
-   grays out. Click **Restart** to reload the scene from scratch (HP,
-   enemies, and party frame all reset).
+   The 3 `Teammate_*` ships fight alongside you fully autonomously — no
+   input needed for them.
+5. Watch the boss fire at whichever ship (yours or a teammate's) currently
+   holds its aggro, shown live as `BossPanel`'s "Target:" text on the right.
+   At ≤50% HP its fire rate doubles and it switches to a 3-bullet spread
+   (`BossPanel`'s "Phase" text flips to "Phase 2"). Taking hits reduces HP,
+   flashes the ship, and shakes the camera; at 0 HP a ship disables. The
+   left-sidebar shows 4 party frames (you + 3 teammates), each with a live
+   avatar, role/HP/move-speed/fire-rate/ability text, tinted to match the
+   role, on a dark panel.
+6. At 0 HP, **only the human `Player`** triggers the "Game Over" overlay and
+   ends the test — a teammate dying just grays out its own party frame and
+   it keeps fighting inactive. Click **Restart** to reload the scene from
+   scratch (HP, boss, teammates, and party frames all reset).
 7. To see the different roles side by side, stop Play, change the Role
-   field, and Play again — compare HP taken to disable, fire rate, move
-   speed, and tint color against the table in
+   field(s) per step 2, and Play again — compare HP taken to disable, fire
+   rate, move speed, and tint color against the table in
    [systems/player-roles.md](systems/player-roles.md). Press **E** as Medic
    to heal, as Support to briefly boost move speed/fire rate, or as Tank to
-   fire the taunt event (flash + camera shake — placeholder feedback, no
-   boss to actually affect yet) — watch the party frame's ability line show
-   the boost amount and cooldown countdown. As Attacker, **E** fires a
-   wider, harder-hitting shot with a visible backward recoil kick.
+   fire the taunt event — this now has a real effect: it forces the boss to
+   switch its target to you (watch `BossPanel`'s "Target:" text change) —
+   watch the party frame's ability line show the boost amount and cooldown
+   countdown. As Attacker, **E** fires a wider, harder-hitting shot with a
+   visible backward recoil kick.
 8. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`

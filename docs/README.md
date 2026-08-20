@@ -24,6 +24,8 @@ the scene is wired.
   enum/stats/component.
 - [systems/hud-layout.md](systems/hud-layout.md) — portrait/crossplay
   screen layout, HUD canvases.
+- [systems/boss.md](systems/boss.md) — boss encounter prototype: phases,
+  aggro/taunt, CPU-controlled AI teammates, boss-fight HUD, tuning.
 - [systems/input.md](systems/input.md) — New Input System setup,
   `PlayerControls` actions asset.
 

@@ -16,9 +16,12 @@ grandchildren. If a panel's own contents look unmanaged/overlapping, check
 whether *that specific panel* has its own Layout Group, not just its parent.
 
 This is why the HUD structure ends up nested two levels:
-- `LeftSidebar` — Vertical Layout Group, manages `PartyFrame_1..4` (the rows)
-- Each `PartyFrame_N` — Vertical Layout Group, manages its own name/role/health
-  bar children
+- `LeftSidebar` — Vertical Layout Group, manages the party frame rows
+  (`PartyFrame_1..4`, all instances of `PartyFrame.prefab`, not hand-
+  duplicated rows — see `systems/hud-layout.md`)
+- Each party frame — Horizontal Layout Group at the root (avatar + info
+  column side by side), with a nested Vertical Layout Group inside the info
+  column managing its own name/role/health/stat/ability text children
 
 ### Image vs Raw Image
 
@@ -116,6 +119,33 @@ A stuck broken instance (once created) can resist `DestroyImmediate` via
 `GameObjectUtility.RemoveMonoBehavioursWithMissingScript()`.
 
 ---
+
+## Duplicating a GameObject before it's a prefab instance
+
+`Duplicate` (Ctrl+D, or the equivalent MCP `manage_gameobject` duplicate
+action) makes an independent copy with matching values — it does **not**
+retroactively link the copy to a prefab created *later* from the original.
+Concretely: `Teammate_Tank` was duplicated twice (`Teammate_Medic`,
+`Teammate_Support`) before `Teammate_Tank` itself was converted into
+`Assets/Prefabs/Teammate.prefab`. The two duplicates stayed plain
+GameObjects with matching-at-the-time values, not prefab instances — a
+later edit to the prefab's defaults (e.g. tuning `fireRate`/scale, see
+`systems/boss.md`) only propagated to `Teammate_Tank`; the other two needed
+the same edit applied directly. If several near-identical objects need to
+stay in sync going forward, prefab-ize (or instantiate from an existing
+prefab) *before* duplicating, not after.
+
+## Orthographic camera visible range = ± Size
+
+An orthographic `Camera`'s visible world-space Y range is roughly
+`[-Size, +Size]` (Size 5 → visible Y ≈ `-5..5`); X range depends on aspect
+on top of that. Placing an object outside this range produces **no error
+and no warning** — every script/event/component can be wired perfectly and
+the object is simply invisible. Hit this positioning the `Boss` at `y=6`
+against a Size-5 camera (`systems/boss.md`) — every field checked out fine
+until an actual screenshot was taken. When something should be visible but
+isn't and nothing is throwing, check world position against the camera's
+actual visible bounds before suspecting the logic.
 
 ## ExecuteAlways and Editor Preview
 

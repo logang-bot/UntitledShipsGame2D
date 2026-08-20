@@ -74,7 +74,7 @@ health bar `fillAmount`, `"HP: current/max"` text, move-speed/fire-rate text
 (read live from `PlayerController` every frame — already
 role-multiplier-adjusted by then), and `abilityText` (`"{AbilityName}:
 {StatusText}"`, reading `PlayerAbility`'s public status getters — see
-[player-roles.md](player-roles.md)) up to date. `PlayerFrameUI` never
+[player-roles.md](player-roles.md)) up to date. `PartyFrameUI` never
 computes cooldown/buff math itself, only formats what `PlayerAbility`
 already exposes — same "HUD only reads, never owns game state" pattern as
 the health/movement stats. Only real, data-backed stats are shown — no
@@ -89,23 +89,31 @@ Key public fields: `healthBarFill`, `avatarImage`, `roleText`, `healthText`,
 ## PartyFrameManager.cs
 
 **Attached to:** `LeftSidebar`.
-**Requires:** `player` (drag the `Player` GameObject) and `partyFrame1`
-(drag `PartyFrame_1`'s `PartyFrameUI`) — both Inspector-dragged, matching
-this project's explicit-wiring style (no `FindObjectOfType`).
+**Requires:** `players[]` and `partyFrames[]` — parallel arrays,
+Inspector-dragged (index 0 = `Player`, 1-3 = `Teammate_Tank`/`Teammate_Medic`/
+`Teammate_Support`; matching `PartyFrame_1..4`), matching this project's
+explicit-wiring style (no `FindObjectOfType`).
 
-In `Awake()`, calls `partyFrame1.Initialize(player)`. Using `Awake()` (not
-`Start()`) matters: Unity guarantees every object's `Awake()` finishes
-before any `Start()` begins, so this runs before anything could observe a
-half-initialized frame — same ordering hazard already documented for
-`PlayerRoleComponent.Stats`, avoided the same way.
+In `Awake()`, loops `for (int i = 0; i < partyFrames.Length && i <
+players.Length; i++) partyFrames[i].Initialize(players[i]);`. Using
+`Awake()` (not `Start()`) matters: Unity guarantees every object's `Awake()`
+finishes before any `Start()` begins, so this runs before anything could
+observe a half-initialized frame — same ordering hazard already documented
+for `PlayerRoleComponent.Stats`, avoided the same way.
 
-This is deliberately **not** a real multi-player spawner — it's the minimal
-seam for the current single-player scene. The natural extension once local
-co-op exists: a version of this manager that loops over connected players
-and `Instantiate()`s `PartyFrame.prefab` per player instead of holding one
-fixed reference.
+Went from single `player`/`partyFrame1` fields to these parallel arrays
+once the boss prototype added 3 CPU-controlled teammates (see
+[boss.md](boss.md)) needing party frames too — `PartyFrameUI.cs` itself
+needed **no changes**, since `Initialize(GameObject)` already only does
+generic `GetComponent<>()` lookups that work on any player-shaped
+GameObject, human or AI-controlled. This is still **not** a real runtime
+spawner, though — the 4 slots are fixed, hand-wired Inspector references,
+not a loop that reacts to however many players/teammates actually exist.
+That "loop over connected players and `Instantiate()`s `PartyFrame.prefab`
+per player" version is still the natural extension once local co-op (a
+variable player count) exists.
 
-Key public fields: `player`, `partyFrame1`.
+Key public fields: `players[]`, `partyFrames[]`.
 
 ## Scene wiring
 
@@ -127,22 +135,20 @@ the pillarbox. Used for sidebar content visible outside the gameplay area.
 | Canvas                   | Render Mode: Screen Space - Overlay                                          |
 | Canvas Scaler            | UI Scale Mode: Scale With Screen Size (reference resolution to taste)        |
 | **HUDSidebarFitter.cs**  | aspectFitter: drag Main Camera here, leftSidebar/rightSidebar: sidebar rect transforms |
-| **PartyFrameManager.cs** | player: drag `Player`, partyFrame1: drag `PartyFrame_1`'s `PartyFrameUI` |
+| **PartyFrameManager.cs** | `players[]`: `Player`, `Teammate_Tank`, `Teammate_Medic`, `Teammate_Support`; `partyFrames[]`: `PartyFrame_1..4`'s `PartyFrameUI` (matching index order) |
 
 **Children** (direct children of `HUDCanvas`, siblings of each other — there
 is no `RightSidebar` wrapper, confirmed by reading the live scene):
 - **LeftSidebar** — Vertical Layout Group, and now also carries
-  `PartyFrameManager.cs` (table above). Contains a single **`PartyFrame_1`**
-  — an instance of `PartyFrame.prefab` (see Prefabs below). The old
-  `PartyFrame_2..4` stub GameObjects (flat layout, never wired, went stale
-  the moment `PartyFrame_1` was reworked) were deleted; more frames are
-  added later by instantiating the prefab, not by hand-duplicating scene
-  objects. See [../unity-notes.md](../unity-notes.md) for Layout Group
-  configuration details.
-- **BossPanel** — a background `Image` with one centered `TextMeshProUGUI`
-  child reading "Boss stats coming soon". No HP bar/cast bar/wave counter
-  sub-elements exist yet; that content is deferred until a boss actually
-  exists (see [../roadmap.md](../roadmap.md)'s priority order).
+  `PartyFrameManager.cs` (table above). Contains **`PartyFrame_1..4`** —
+  4 instances of `PartyFrame.prefab` (see Prefabs below), added once the
+  boss prototype's 3 AI teammates needed frames too (see
+  [boss.md](boss.md)); instantiated from the prefab, not hand-duplicated.
+  See [../unity-notes.md](../unity-notes.md) for Layout Group configuration
+  details.
+- **BossPanel** — now shows the boss's real HP bar, phase, and current
+  target, driven by `BossPanelUI.cs`; the old "Boss stats coming soon"
+  placeholder text is gone. Full reference: [boss.md](boss.md).
 - **GameOverPanel** — full-rect dark overlay + "Game Over" text + Restart
   button, `GameOverUI.cs` attached. Hidden by default (shown on
   `PlayerHealth.OnDeath`). Lives here rather than `GameplayCanvas` because it
@@ -152,10 +158,11 @@ is no `RightSidebar` wrapper, confirmed by reading the live scene):
 ### Prefabs
 
 **`Assets/Prefabs/PartyFrame.prefab`** — the party frame, avatar + role +
-live stats, `PartyFrameUI.cs` attached. Reusable: instantiate one per
-player once local co-op exists (see `PartyFrameManager.cs` above) instead
-of hand-duplicating scene objects, which is what the old `PartyFrame_2..4`
-were and why they went stale.
+live stats, `PartyFrameUI.cs` attached. Reusable: `PartyFrame_1..4` are all
+instances of it (see `PartyFrameManager.cs` above) — instantiated from the
+prefab, unlike the old hand-duplicated `PartyFrame_2..4` stub objects they
+replaced, which went stale the moment `PartyFrame_1` was reworked. Still
+not a runtime spawner, though — see "Not yet built" below.
 
 **Background contrast fix**: the root `Image`'s color was originally white
 at 39% alpha (`RGBA(1,1,1,0.392)`) — confirmed live via the Unity MCP bridge
@@ -168,7 +175,8 @@ with the project's stated cyberpunk/dark-neon aesthetic (`../overview.md`)
 — text stays white and now has genuine contrast regardless of what's behind
 the canvas. Edited on the prefab (not just the scene instance) so it's the
 default for every future party frame; confirmed via MCP that `PartyFrame_1`
-picked up the change with no stale per-instance override.
+picked up the change with no stale per-instance override (and `PartyFrame_2..4`
+inherited it correctly too, being instantiated after the fix).
 
 ### GameplayCanvas
 
@@ -191,13 +199,15 @@ world-space/gameplay work; toggle back on for UI work. Isolation View
 
 ## Not yet built
 
-- No spawner for players 2–4 yet — `PartyFrame.prefab` exists and
-  `PartyFrameManager.cs` is the seam, but the actual "loop over connected
-  players and `Instantiate()`" logic is deferred until local co-op exists.
-  Tracked under "Finish the HUD" in [../roadmap.md](../roadmap.md).
-- `BossPanel`'s real content (HP bar, cast bar, wave counter) is still just
-  the "coming soon" placeholder text — deferred until a boss exists.
-- `PlayerName` text is still static placeholder ("Player 1") — no name data
-  model exists.
+- No runtime spawner for party frames — `PartyFrameManager.players[]`/
+  `partyFrames[]` are 4 fixed, hand-wired slots (`Player` + 3 `Teammate_*`),
+  not a "loop over however many players/teammates actually exist and
+  `Instantiate()`" spawner. Deferred until the player/teammate count needs
+  to vary at runtime (local co-op, or a different minion/teammate count).
+- `PlayerName` text is still static placeholder ("Player 1", same on every
+  party frame) — no name data model exists.
 - Avatar is an untinted-sprite placeholder box (tinted to role color) — no
-  ship art exists yet.
+  ship art exists yet. Ship *size* did change, though — see
+  [boss.md](boss.md)'s "Tuning" section (`Player`/`Teammate_*` shrunk to
+  0.6x scale; the avatar slot itself is unaffected since it's UI, not the
+  world-space ship sprite).

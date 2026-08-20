@@ -36,6 +36,9 @@ This same script also handles shooting — see [combat.md](combat.md) for the
 | Collider2D (Box/Poly)    | Is Trigger: **OFF**                                       |
 | **PlayerController.cs**  | moveSpeed: 8, screenPadding: (0.5, 0.5)                   |
 | **Player Input**         | Actions: PlayerControls asset, Default Map: Player, Behavior: Send Messages |
+| Transform                | localScale: (0.6, 0.6, 1) — shrunk from (1, 1, 1) as part of boss-fight tuning; see [boss.md](boss.md) |
 
 (`Player` also carries `PlayerHealth.cs` and `PlayerRoleComponent` — see
-[combat.md](combat.md) and [player-roles.md](player-roles.md).)
+[combat.md](combat.md) and [player-roles.md](player-roles.md). The 3
+CPU-controlled `Teammate_*` ships share this same movement code via
+`AIController.cs` — see [boss.md](boss.md).)

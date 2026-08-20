@@ -59,18 +59,16 @@ shape already used by `PlayerRoleComponent.Stats`. A single
 `PlayerController`'s `nextFireTime`) blocks re-activation until the current
 role's cooldown elapses.
 
-- **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation.
-  There's no boss to redirect aggro on yet — see "Aggro/targeting" below —
-  so `OnTaunt` currently drives a **placeholder** feedback pair instead:
-  `Player/PlayerDamageFlash.Flash()` and `Main Camera/CameraShake.Shake()`
-  (the exact same effects `PlayerHealth.OnDamaged` already uses — see
-  [combat.md](combat.md)), purely so pressing `E` as Tank visibly does
-  *something* while no real target exists. The boss encounter prototype
-  (`roadmap.md`) adds a real aggro-redirect listener once a boss exists;
-  the placeholder listeners can stay alongside it or be removed then.
+- **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. Now
+  has a **real** effect — see "Aggro/targeting" below and
+  [boss.md](boss.md) — a persistent listener redirects the boss's target to
+  the taunter (`Boss.TauntedBy(GameObject)`). The Session 9 placeholder
+  feedback (`Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()`)
+  was kept alongside it, additive, not replaced.
 - **Medic — Heal**: calls the new `PlayerHealth.Heal(int)` (symmetric to
-  `TakeDamage(int)`, clamps at `maxHealth`) on **self**. Ally-targeting is
-  deferred until a second player/AI teammate exists to target.
+  `TakeDamage(int)`, clamps at `maxHealth`) on **self**. Ally-targeting
+  isn't built yet, even though allies (the AI teammates — see
+  [boss.md](boss.md)) now exist to target.
 - **Support — Buff**: temporarily multiplies `PlayerController.moveSpeed`
   and `fireRate` (both already role-scaled once at `Start()`), via a
   coroutine that reverts by dividing back out after `buffDuration` —
@@ -103,7 +101,14 @@ Also exposes read-only status for the HUD (see `PartyFrameUI.cs` in
 source of truth for ability state so the HUD never duplicates cooldown
 math.
 
-## Aggro / targeting (concept, not yet implemented)
+`OnAbility(InputValue)` (the `Player Input`-driven entry point above) is now
+a thin wrapper around a public, non-input entry point — `TryUseAbility()` —
+extracted so `AIController.cs` (see [boss.md](boss.md)) can trigger a CPU
+teammate's ability directly, going through the exact same cooldown gate and
+role-dispatch switch as the human player. The four `Trigger*` methods stay
+private/unchanged.
+
+## Aggro / targeting (implemented — on `Boss`, not `Enemy`)
 
 **Targeting** is how an enemy AI decides which player to attack when
 multiple are available. **Aggro** ("aggression"/threat) is the per-target
@@ -114,14 +119,16 @@ aggro to the top, forcing the enemy to switch targets — the classic
 MMO-raid "tank and spank" mechanic this project is explicitly modeled on
 (see `../overview.md`).
 
-`Enemy.cs` currently has **no targeting concept at all** — enemies don't
-track the player's position or any per-player value; they move in a fixed
-sine-wave and fire on a timer regardless of who or where the player is. So
-there's no aggro system for Tank taunt to hook into today. Building one is
-explicitly boss-prototype scope (`../roadmap.md`'s "Boss encounter
-prototype — ... Tank taunt forces boss aggro"), not this system — adding a
-guessed-at targeting shape to `Enemy.cs` now would risk being the wrong
-shape once the real boss AI design happens.
+`Enemy.cs` still has **no targeting concept at all** — regular wave enemies
+move in a fixed sine-wave and fire on a timer regardless of who or where any
+player is; that was a deliberate scope decision, not an oversight, since
+adding a guessed-at targeting shape to the disposable wave-enemy script
+would've risked being the wrong shape once the real boss AI design
+happened. The real threat-table aggro system was instead built directly on
+the new `Boss.cs` once the boss prototype gave it something concrete to
+target — see [boss.md](boss.md) for the full design (a plain
+`Dictionary<GameObject, float>` of damage-dealt-per-target, no decay,
+`TauntedBy(GameObject)` spiking the caster above everyone else).
 
 ## Current balancing values (placeholders, tunable)
 
@@ -137,11 +144,13 @@ shape once the real boss AI design happens.
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
 | **PlayerRoleComponent**  | role: Attacker (change in Inspector to test other roles) |
-| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` (placeholder feedback, no real target yet) |
+| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/Boss.TauntedBy(Player)` (real aggro redirect, see [boss.md](boss.md); same 3 listeners wired on each `Teammate_*`'s `PlayerAbility`, each pointing `TauntedBy` at itself) |
 
 Confirmed attached and working: verified live via the Unity MCP bridge —
 entering Play mode with the default `Attacker` role showed `maxHealth` 5→4,
-`fireRate` 0.2→0.15, and the sprite tinted red, matching the table above.
+`fireRate` 0.35→0.2625 (base fire interval as of the boss-fight tuning
+pass, [boss.md](boss.md); was 0.2→0.15 before that pass), and the sprite
+tinted red, matching the table above.
 `PlayerAbility` was verified the same way per-role: Medic heal clamps
 correctly at `maxHealth` and the cooldown gate blocks immediate re-use; Tank
 taunt's `OnTaunt` event fires and is cooldown-gated; Support's buff applies
@@ -154,12 +163,15 @@ value).
 
 ## Not yet built
 
-- Only one `Player` instance exists in the scene; local co-op (multiple
-  players/roles at once) isn't wired up yet — `PartyFrame_2..4` have no data
-  source until it is.
-- Tank taunt has no boss to affect yet, and Medic heal only targets self —
-  both are mechanically complete but await a real target (boss/AI teammate).
+- Local co-op with multiple **human** players isn't wired up — the 3 extra
+  ships fighting alongside `Player` (`Teammate_Tank`/`Teammate_Medic`/
+  `Teammate_Support`) are CPU-controlled via `AIController.cs`, not real
+  players; see [boss.md](boss.md).
+- Medic heal only targets self — mechanically complete
+  (`PlayerHealth.Heal(int)`), just not extended to target an ally yet, even
+  though allies (the AI teammates) now exist to target.
 
-Role display on the HUD (name/role text + tinted health bar on
-`PartyFrame_1`) is now live — see [hud-layout.md](hud-layout.md)'s
-`PartyFrameUI.cs` entry.
+Role display on the HUD (name/role text + tinted health bar) is now live
+for all 4 party members (`PartyFrame_1..4`, one per `Player`/`Teammate_*`)
+— see [hud-layout.md](hud-layout.md)'s `PartyFrameUI.cs`/`PartyFrameManager.cs`
+entries.

@@ -2,7 +2,9 @@
 
 Shooting, projectiles, damage, health, and enemy waves. See
 [movement.md](movement.md) for ship movement and the fixed-orientation design
-decision that firing direction depends on.
+decision that firing direction depends on, and [boss.md](boss.md) for the
+boss encounter built on top of this system (boss HP/phases, aggro, CPU
+teammates).
 
 ## PlayerController.cs — shooting
 
@@ -15,7 +17,8 @@ Fire input arrives via `OnFire(InputValue)`, called automatically by the
 interval while held. Fire direction is hardcoded to `Vector2.up` — the ship
 has a fixed orientation by design (see [movement.md](movement.md)).
 
-Key public fields: `bulletPrefab`, `firePoint`, `fireRate` (default 0.2),
+Key public fields: `bulletPrefab`, `firePoint`, `fireRate` (default `0.35`
+as of the boss-fight tuning pass — see [boss.md](boss.md); was `0.2`),
 `bulletSpeed` (default 12), `recoilDamping` (default 8, higher = faster
 decay).
 
@@ -23,16 +26,27 @@ decay).
 int damageAmount)` (Attacker's ability — see [player-roles.md](player-roles.md))
 both route through a shared private `SpawnBullet(widthMultiplier,
 damageAmount)` so there's one instantiation/`Init()` call site; `Fire()` is
-just `SpawnBullet(1f, 1)`. `AddRecoil(Vector2 impulse)` accumulates into a
-private `recoilVelocity` field that `HandleMovement()` itself decays
-(`Vector2.Lerp` toward zero, scaled by `recoilDamping`) and adds into its
-position calculation every `FixedUpdate`. **This is required, not a style
-choice**: `HandleMovement()` recomputes position from `moveInput` and calls
-`rb.MovePosition()` unconditionally every `FixedUpdate` — a plain
-`Rigidbody2D.AddForce()` impulse would be silently overwritten the very next
-step, since `MovePosition` never reads back accumulated velocity. Recoil
-respects the existing viewport-edge clamp automatically, since it's folded
-into the same position formula before clamping runs.
+just `SpawnBullet(1f, 1)`. `SpawnBullet()` passes `gameObject` into
+`Bullet.Init(..., ownerObject)` (see Bullet.cs below) so the boss can
+attribute damage back to the shooter for aggro. `AddRecoil(Vector2 impulse)`
+accumulates into a private `recoilVelocity` field that `HandleMovement()`
+itself decays (`Vector2.Lerp` toward zero, scaled by `recoilDamping`) and
+adds into its position calculation every `FixedUpdate`. **This is required,
+not a style choice**: `HandleMovement()` recomputes position from
+`moveInput` and calls `rb.MovePosition()` unconditionally every
+`FixedUpdate` — a plain `Rigidbody2D.AddForce()` impulse would be silently
+overwritten the very next step, since `MovePosition` never reads back
+accumulated velocity. Recoil respects the existing viewport-edge clamp
+automatically, since it's folded into the same position formula before
+clamping runs.
+
+`OnMove(InputValue)`/`OnFire(InputValue)` (the `Player Input`-driven entry
+points above) are now thin wrappers around public, non-input entry points —
+`SetMoveDirection(Vector2)` and `SetFiring(bool)` — added so
+`AIController.cs` (see [boss.md](boss.md)) can drive a CPU-controlled
+teammate's movement/firing directly, without constructing a fake
+`InputValue` (which is only valid inside a real input callback). No
+behavior change for the human `Player`.
 
 ### Child: FirePoint
 
@@ -62,6 +76,16 @@ regular fire (`1`) and Attacker's big shot (`3`, see
 the bullet's `transform.localScale` (Unity `BoxCollider2D` behavior), so a
 wider bullet doesn't need any collider-size code.
 
+`Init()` gained a 4th, optional param: `Init(Vector2 dir, float spd, string
+ownerTag, GameObject ownerObject = null)`. The default keeps every existing
+call (e.g. `Enemy.cs`'s `Init(Vector2.down, bulletSpeed, "Enemy")`)
+compiling unchanged. Player-fired bullets now pass their shooter as
+`ownerObject` so `OnTriggerEnter2D`'s player-bullet-vs-`Enemy`-tag branch —
+in addition to its existing `Enemy.TakeDamage(damage)` call — also checks
+for a `Boss` component and calls `boss.TakeDamage(damage, ownerObject)`,
+attributing the hit to its shooter for the boss's aggro system. See
+[boss.md](boss.md).
+
 Key public fields: `lifeTime` (default 3s), `damage` (default 1).
 
 ## PlayerHealth.cs
@@ -78,12 +102,18 @@ GameObject (which would cut off an in-flight flash/shake coroutine) and
 `GameOverUI` takes the screen immediately anyway. `Die()` disables the
 GameObject, then invokes the `OnDeath` `UnityEvent` so other systems can
 react (game-over UI, HUD) without `PlayerHealth` knowing who's listening.
-`CurrentHealth` property exposes current HP for HUD hookup.
+`CurrentHealth` property exposes current HP for HUD hookup. `Heal(int)` is
+the symmetric inverse of `TakeDamage(int)` — adds HP, clamped at
+`maxHealth` — called by Medic's ability on self (see
+[player-roles.md](player-roles.md)); no event fires on heal since
+`PartyFrameUI` already polls `CurrentHealth` every frame, so a heal shows up
+live for free.
 
 Key public fields: `maxHealth` (default 5; scaled by role — see
 [player-roles.md](player-roles.md)), `OnDeath` (`UnityEvent`, fires only on
 the killing blow — see Game Over / Restart below), `OnDamaged` (`UnityEvent`,
-fires only on non-fatal hits — see Damage Feedback below).
+fires only on non-fatal hits — see Damage Feedback below). Key public
+methods: `TakeDamage(int)`, `Heal(int)`.
 
 ## GameOverUI.cs
 
@@ -109,7 +139,11 @@ Key public field: `panelRoot`. Key public methods: `Show()`, `Restart()`.
 GameObject (see [player-roles.md](player-roles.md)).
 
 Flashes the ship's sprite on a non-fatal hit. Wired as a listener on
-`PlayerHealth.OnDamaged`. `Flash()` restarts the coroutine (`StopCoroutine`
+`PlayerHealth.OnDamaged`, and also on `PlayerAbility.OnTaunt` as Tank-ability
+feedback (see [player-roles.md](player-roles.md)) — added in Session 9
+before a real aggro system existed for taunt to affect, and kept alongside
+the real `Boss.TauntedBy()` listener once one did (see [boss.md](boss.md)),
+not replaced by it. `Flash()` restarts the coroutine (`StopCoroutine`
 + `StartCoroutine`) so rapid hits re-flash at full brightness instead of
 stacking or blending. **Critical detail:** the routine reverts
 `SpriteRenderer.color` to `PlayerRoleComponent.Stats.tintColor`, not
@@ -127,7 +161,10 @@ see [hud-layout.md](hud-layout.md)).
 **Requires:** nothing external.
 
 Shakes the camera on a non-fatal player hit. Wired as a listener on
-`PlayerHealth.OnDamaged`. Caches `transform.localPosition` once in `Awake()`
+`PlayerHealth.OnDamaged`, and also on `PlayerAbility.OnTaunt` (same
+history as `PlayerDamageFlash.cs` above — added before, kept alongside,
+the real `Boss.TauntedBy()` listener). Caches `transform.localPosition`
+once in `Awake()`
 as the base to return to; `Shake()` restarts the coroutine the same way as
 `PlayerDamageFlash.Flash()`. Offsets `transform.localPosition` by a
 linearly-decaying random offset each frame, then **explicitly** resets to
@@ -169,7 +206,7 @@ Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 
 | Component            | Key inspector values                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
-| **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, fireRate: 0.2, bulletSpeed: 12, recoilDamping: 8 |
+| **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, fireRate: 0.35, bulletSpeed: 12, recoilDamping: 8 |
 | **PlayerHealth.cs**   | maxHealth: 5, OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` |
 | **PlayerDamageFlash.cs** | flashColor: white, flashDuration: 0.12 |
 

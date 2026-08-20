@@ -53,45 +53,53 @@ reference docs live under `systems/`.
   later. No HUD role display yet — that's part of "Finish the HUD" below.
 - **Role abilities beyond stat multipliers**: `PlayerAbility.cs` (on `Player`,
   new `Ability` input action bound to `E`) — Tank taunt (`OnTaunt` UnityEvent,
-  cooldown-gated; no real aggro/targeting system exists yet — see
-  `systems/player-roles.md`'s "Aggro/targeting" section — so it drives a
-  placeholder flash+camera-shake for now, added in Session 9), Medic heal
-  (`PlayerHealth.Heal(int)`, self-targeted, clamps at `maxHealth`), Support
-  buff (temporary move-speed/fire-rate multiplier, coroutine-reverted),
-  Attacker Big Shot (3x-width, 3x-damage bullet with recoil — added in a
-  follow-up pass alongside a party frame ability/cooldown display and a
-  contrast fix, see Session 8 in `progress-log.md`). Wired live via the
-  Unity MCP bridge and verified end-to-end in Play mode for all four roles.
+  cooldown-gated), Medic heal (`PlayerHealth.Heal(int)`, self-targeted, clamps
+  at `maxHealth`), Support buff (temporary move-speed/fire-rate multiplier,
+  coroutine-reverted), Attacker Big Shot (3x-width, 3x-damage bullet with
+  recoil — added in a follow-up pass alongside a party frame ability/cooldown
+  display and a contrast fix, see Session 8 in `progress-log.md`). Wired live
+  via the Unity MCP bridge and verified end-to-end in Play mode for all four
+  roles. Taunt's placeholder flash+shake feedback (Session 9) was superseded
+  by a real aggro-redirect listener once the boss existed — see below.
+
+- **Boss encounter prototype** — a single `Boss` with 2 HP-based phases
+  (Phase 2 at ≤50% HP: fire interval halves, single aimed shot becomes a
+  3-bullet spread) and a real threat-table aggro system that Tank taunt
+  (`PlayerAbility.OnTaunt` → `Boss.TauntedBy(GameObject)`) redirects, tested
+  with the human `Player` plus 3 **CPU-controlled AI teammates**
+  (`AIController.cs`) covering Tank/Medic/Support. Validates the project's
+  core design bet — MMO-raid-style role coordination — before any networking
+  exists. Full writeup: `systems/boss.md`.
+
+- **Finish the HUD** — `PartyFrame_1..4` (all instances of
+  `Assets/Prefabs/PartyFrame.prefab`) show every player's/teammate's
+  role-tinted avatar, live health/move-speed/fire-rate/ability stats, driven
+  by an array-based `PartyFrameManager.cs`. `BossPanel` now shows the boss's
+  real HP bar, phase, and current-target role, driven by `BossPanelUI.cs`.
+  See `systems/hud-layout.md` and `systems/boss.md`.
+
+- **Shrink ship sprites** — `Player`/`Teammate_*` ship scale reduced from
+  `1.0` to `0.6` (the `Boss` stays at its larger `1.6` scale so it still
+  reads as the central target) — done as part of tuning the boss fight, and
+  leaves room for minions planned around the boss. See `systems/boss.md`.
 
 ## In Progress
 
-- **Finish the HUD** — `PartyFrame_1` shows a role-tinted avatar slot, role
-  label, and live health/move-speed/fire-rate stats, all driven by the real
-  `Player`; it's now `Assets/Prefabs/PartyFrame.prefab`, reusable via
-  `PartyFrameUI.Initialize(player)` (`systems/hud-layout.md`). The old
-  unwired `PartyFrame_2..4` stub objects were deleted rather than kept in
-  sync by hand. `BossPanel` has a "coming soon" placeholder. Remaining,
-  deferred until there's real data to drive them: an actual spawner that
-  loops over connected players and `Instantiate()`s `PartyFrame.prefab`
-  once local co-op exists (`PartyFrameManager.cs` is the seam, not the
-  spawner itself yet); `BossPanel`'s real content (boss HP bar,
-  cast/telegraph bar, wave counter — needs a boss) using the
-  nested-Layout-Group + Layout-Element pattern in `unity-notes.md`.
+- **Local co-op / dynamic player count** — the party is still 4 fixed scene
+  objects (`Player` + 3 hand-placed `Teammate_*`), not a spawner that reacts
+  to however many humans/AI are actually present; `PartyFrameManager.cs`
+  is array-based now but still Inspector-wired to those 4 fixed slots, not
+  a real "loop over connected players and `Instantiate()`" spawner. Deferred
+  until local co-op (or the minion/AI-teammate count) needs to vary at
+  runtime.
 
 ## Planned (not yet started)
 
 ### Player-vs-boss dynamics (CPU AI first)
 
-- **Boss encounter prototype** — single boss, 2 HP-based phases, one role
-  mechanic (Tank taunt forces boss aggro), tested with a single human player
-  plus **CPU-controlled AI teammates** filling the other roles — not human
-  local co-op. Core design bet — must be reached quickly to validate that
-  role coordination is actually fun.
-
-- **Shrink ship sprites** — reduce player/enemy sprite sizes so all four
-  roles' ships fit comfortably on screen together; relevant once
-  CPU-controlled AI teammates (and eventually local co-op) put multiple
-  ships on screen at once.
+- **Minions around the boss** — smaller enemy ships flanking the `Boss`,
+  motivated the ship-shrink above; not yet designed or built (no minion
+  script/prefab exists).
 
 - **Enemy spawn pattern variety** — design enemy spawn/movement patterns
   beyond the current simple top-to-bottom sine-wave drift (`EnemySpawner.cs`

@@ -612,3 +612,187 @@ is unchanged from its already-verified `OnDamaged` usage.
 
 - Real aggro/targeting system and taunt's actual gameplay effect — boss
   prototype scope, not started.
+
+## Session 10 — Boss Encounter Prototype
+
+The roadmap's next item and the project's core design bet
+(`overview.md`): prove MMO-raid-style role coordination is fun with one
+human player plus CPU-controlled AI teammates, before any networking
+exists. Full reference for everything below: `systems/boss.md`.
+
+### Scope and design decisions
+
+Kept deliberately prototype-simple, matching the project's "prove fun
+before infra" style already established in Sessions 4/7:
+
+- **Boss doesn't chase** — sine-drifts near the top of the screen (same
+  pattern as `Enemy.cs`) and aims at whichever target holds highest aggro.
+  No pathfinding needed to prove the aggro mechanic.
+- **Aggro is a plain threat table** (`Dictionary<GameObject, float>`,
+  damage-dealt-per-target, no decay) rather than a fuller MMO-style threat
+  system — this is a prototype pass, not the final design.
+- **2 phases on one HP bar**, not two separate encounters: Phase 1 (100%→50%
+  HP) fires a single aimed shot; crossing 50% flips to Phase 2 (fire
+  interval halved, 3-bullet spread). Reaching 0 HP in either phase ends the
+  fight — there's no third phase after Phase 2 by design.
+- **AI teammates reuse the human `Player`'s exact component set**
+  (`PlayerController`, `PlayerHealth`, `PlayerRoleComponent`,
+  `PlayerAbility`) with `PlayerInput` swapped for a new `AIController.cs`,
+  rather than writing separate AI-specific movement/combat logic — keeps
+  the AI teammates mechanically identical to a human player in every way
+  except how their input is produced.
+- Only the human `Player`'s death shows `GameOverPanel`; a teammate dying
+  just grays its own party frame and keeps fighting inactive.
+- Role assignment is Inspector-only (matches the existing single-player
+  pattern) — no role-select UI, that's still scene-scaffolding scope,
+  deferred per the roadmap's build order.
+
+### New scripts
+
+- `Boss.cs` — health/phases/aggro/firing, `TakeDamage(int, GameObject)`,
+  `TauntedBy(GameObject)`, `OnPhase2`/`OnDefeated` events.
+- `AIController.cs` — drives a teammate's movement (sine-weave strafe),
+  firing (continuous auto-fire), and ability use (per-role heuristic: Tank
+  taunts when it doesn't hold aggro, Medic heals below a threshold,
+  Support/Attacker just retry every frame since `TryUseAbility()`'s own
+  cooldown gate makes that safe).
+- `BossPanelUI.cs` — reads `Boss`'s state into the rebuilt `BossPanel` HP
+  bar/phase/target text.
+
+### Minimal-diff changes to existing scripts
+
+Rather than duplicating movement/fire/ability logic for AI, extracted
+non-input public entry points from the existing input-driven ones:
+`PlayerController.OnMove`/`OnFire` now wrap new `SetMoveDirection(Vector2)`/
+`SetFiring(bool)`; `PlayerAbility.OnAbility` now wraps a new
+`TryUseAbility()`. No behavior change for the human `Player`. Also:
+`Bullet.Init()` gained an optional `GameObject ownerObject` param (default
+`null` keeps every existing call site compiling) so player bullets can
+attribute damage to their shooter, and `Bullet.OnTriggerEnter2D`'s
+player-bullet-vs-`Enemy`-tag branch now also checks for a `Boss` component
+and routes damage to it — previously only `Enemy.TakeDamage` was reachable.
+
+### Bug found during testing: unsafe dictionary indexer
+
+`Boss.PickTarget()` originally indexed the `aggro` dictionary directly
+(`aggro[t]`) assuming every active `targets[]` entry was always a populated
+key. Live Play-mode testing hit a `KeyNotFoundException` on `Player`
+specifically, thrown every `Update()` — since the exception aborted the
+rest of `Update()` before reaching `Fire()`, this silently stopped the boss
+from firing at all once it started. Root cause wasn't fully pinned down
+(the `targets[]`/`aggro` population from `Awake()` checked out correctly in
+isolated re-tests), but the fix is correct regardless: switched to
+`Dictionary.TryGetValue`, which can't throw and costs nothing extra. Not
+caught by compilation or an initial quick Play-mode smoke test — only
+surfaced during sustained live testing, a reminder that MonoBehaviour
+`Update()` exceptions fail silent-ish (logged, not crashing) and can hide
+inside otherwise-working systems.
+
+### Bug found during testing: boss placed outside camera view
+
+The `Boss` GameObject was initially placed at world `y=6`, but Main
+Camera is orthographic with size 5 (visible Y range roughly `[-5, 5]`) — the
+boss was completely invisible in Play mode despite every script and event
+wiring working correctly. Caught by actually looking at a screenshot, not
+by inspecting field values (which all looked fine). Moved to `y=4.2`.
+**Lesson reinforced**: numeric/logical verification isn't a substitute for
+a visual check when a bug could be purely spatial/visual.
+
+### Unity MCP bridge quirks hit this session
+
+- `manage_prefabs`'s `component_properties` and `manage_components`'s
+  `set_property` both failed to resolve the type name `"PlayerController"`
+  (ambiguous — a `VariableExamples+PlayerController` sample type also
+  exists somewhere in the loaded assemblies; `manage_components` separately
+  reported "not found" for the same name). Worked around by using
+  `execute_code` with a direct, compile-time-unambiguous
+  `GetComponent<PlayerController>()` call instead of the reflection-based
+  tools, for every edit that needed to touch this specific component type.
+- Object-reference component properties need to be passed as `{"instanceID":
+  N}` objects in an array, not bare integers — a bare-int array silently
+  produced an array of `null`s (`Boss.targets` came back `[null, null,
+  null, null]` on the first attempt, only caught by reading the value back
+  afterward).
+- `create_from_gameobject` (prefab-izing an existing scene GameObject) can
+  disconnect mid-call (likely from the asset-import domain reload it
+  triggers) — retrying the same call after checking `editor/state` for
+  `ready_for_tools` succeeded cleanly, with the scene GameObject's data
+  intact.
+- Duplicating a GameObject (`Teammate_Medic`/`Teammate_Support`, both
+  duplicated from `Teammate_Tank` *before* `Teammate_Tank` was converted
+  into `Teammate.prefab`) does **not** retroactively make the duplicates
+  prefab instances — they stayed independent GameObjects with matching
+  values, so a later edit to `Teammate.prefab`'s defaults (see Session 11)
+  only affected `Teammate_Tank`, not the other two, and had to be applied
+  to all three individually. Documented in `systems/boss.md`'s scene-wiring
+  section so this doesn't get assumed away later.
+- Reconfirmed the Session 6/8 environment quirk (this Editor instance
+  doesn't reliably tick Play-mode `Update()` while unfocused/idle, then can
+  jump substantially once refocused) — it showed up here as the boss
+  appearing to take almost no damage across several tool calls and then
+  being defeated between the next two. Not a gameplay bug; `manage_camera`
+  screenshot calls (each forces one manual frame step) remain the reliable
+  way to pump deterministic frames for testing.
+
+### Verification
+
+All done live via the Unity MCP bridge in Play mode: phase transition
+flips `IsPhase2` exactly at the 50%-HP boundary and fires `OnPhase2`
+exactly once; aggro correctly tracks the highest damage-dealer and
+`TauntedBy()` redirects `CurrentTarget`, with a second immediate taunt
+blocked by the existing cooldown gate; AI teammates were observed
+autonomously moving, firing, and triggering role abilities (Tank's taunt
+firing for real the moment it didn't hold aggro, Support's buff
+auto-activating); boss defeat fires `OnDefeated`, flips `BossPanelUI` to
+"DEFEATED", and destroys the `Boss` GameObject cleanly; all 4
+`PartyFrameUI` instances and `BossPanelUI` read live values with no drift
+from the underlying `Boss`/`PlayerHealth` state.
+
+### Still open
+
+- No minions around the boss yet (motivates Session 11's ship-shrink).
+- Local co-op / a dynamic player count — the party is 4 fixed, hand-placed
+  scene objects, not a runtime spawner.
+- Medic heal still only targets self, even though allies (the AI
+  teammates) now exist to target.
+
+## Session 11 — Boss Fight Tuning
+
+Follow-up requested after Session 10's playtest: the fight was too easy,
+and ship sprites need to be smaller to leave room for minions planned
+around the boss later.
+
+### Changes
+
+- **Fire cadence**: `PlayerController.fireRate`'s base value went from
+  `0.2` to `0.35` (script default, `Teammate.prefab`, and all 4 scene
+  ships), making the fight take more sustained effort while preserving
+  each role's relative fire-rate balance (multipliers apply on top,
+  unchanged).
+- **Ship scale**: `Player`/`Teammate_*` `Transform.localScale` went from
+  `1.0` to `0.6`. The `Boss` was deliberately left at its existing `1.6`
+  scale (user's explicit choice) so it still reads as the big, central
+  target once smaller minions are added around it later.
+
+Neither change touched `FirePoint` (a child transform, so its effective
+world offset scales automatically with the parent) or `BoxCollider2D`
+(size scales with the transform automatically too) — confirmed no
+additional edits were needed there.
+
+### Reconfirmed the prefab-instance gotcha from Session 10
+
+`Teammate_Tank` picked up the new `fireRate`/`scale` defaults automatically
+from `Teammate.prefab` once it was edited (no per-instance override
+existed to block inheritance). `Teammate_Medic`/`Teammate_Support` did
+**not** — as flagged in Session 10, they're independent GameObjects, not
+prefab instances — so they needed the same two values set directly, same
+as `Player` (which was never part of the prefab to begin with).
+
+### Verified
+
+Read the 4 ships' live `fireRate`/`localScale` values in Play mode:
+role-multiplied effective fire intervals matched expectations exactly
+(Attacker 0.2625s, Support 0.35s baseline — briefly lower mid-buff, which
+is correct, not a bug — Medic 0.35s, Tank 0.42s). A screenshot confirmed
+visually: `Boss` unchanged and clearly larger, `Player`/teammates visibly
+smaller and still firing correctly.

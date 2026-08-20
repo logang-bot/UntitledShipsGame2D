@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [Header("Shooting")]
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public float fireRate = 0.2f;
+    public float fireRate = 0.35f;
     public float bulletSpeed = 12f;
 
     [Header("Recoil")]
@@ -68,15 +68,30 @@ public class PlayerController : MonoBehaviour
 
     // Auto-called by PlayerInput ("Send Messages" behavior) whenever
     // the "Move" action changes value (WASD, arrows, or gamepad stick).
+// Auto-called by PlayerInput ("Send Messages" behavior) whenever
+    // the "Move" action changes value (WASD, arrows, or gamepad stick).
     public void OnMove(InputValue value)
     {
-        moveInput = value.Get<Vector2>();
+        SetMoveDirection(value.Get<Vector2>());
+    }
+
+    // Non-input entry point so AIController can drive movement directly.
+    public void SetMoveDirection(Vector2 direction)
+    {
+        moveInput = direction;
     }
 
     // Auto-called by PlayerInput whenever the "Fire" action is pressed/released.
+// Auto-called by PlayerInput whenever the "Fire" action is pressed/released.
     public void OnFire(InputValue value)
     {
-        isFiring = value.isPressed;
+        SetFiring(value.isPressed);
+    }
+
+    // Non-input entry point so AIController can drive firing directly.
+    public void SetFiring(bool firing)
+    {
+        isFiring = firing;
 
         // Fire immediately on press, then Update() handles repeat-fire while held
         if (isFiring && Time.time >= nextFireTime)
@@ -101,7 +116,7 @@ public class PlayerController : MonoBehaviour
         SpawnBullet(widthMultiplier, damageAmount);
     }
 
-    void SpawnBullet(float widthMultiplier, int damageAmount)
+void SpawnBullet(float widthMultiplier, int damageAmount)
     {
         GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         if (widthMultiplier != 1f)
@@ -112,7 +127,7 @@ public class PlayerController : MonoBehaviour
         }
         Bullet b = bulletObj.GetComponent<Bullet>();
         b.damage = damageAmount;
-        b.Init(Vector2.up, bulletSpeed, "Player");
+        b.Init(Vector2.up, bulletSpeed, "Player", gameObject);
     }
 
 }
