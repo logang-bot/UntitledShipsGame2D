@@ -263,13 +263,82 @@ testing, as in prior sessions.
   `BossPanelUI` read live, correct values with no drift from `Boss`'s /
   each `PlayerHealth`'s actual state.
 
+## Future work
+
+Two concrete gaps a playtest surfaced, written up here (rather than just
+listed under "Not yet built" below) so a future session can act on them
+directly without re-deriving the current limitations from scratch. Both
+are recommended **before** "Minions around the boss" (`../roadmap.md`) —
+adding more on-screen threats on top of a still-too-simple AI/boss would
+make it harder to read whether the encounter is actually fun, not easier.
+
+### AI teammate behavior
+
+Exact current limitation: `AIController.Update()` sets movement as
+`controller.SetMoveDirection(new Vector2(Mathf.Sin(Time.time *
+weaveFrequency), 0f) * weaveSpeed)` — every frame, unconditionally, X-only
+(Y is always `0`), with zero awareness of incoming bullets, the boss's
+position, or where the other teammates are. This was a deliberate "just
+prove the aggro/taunt mechanic" simplification for the prototype (see
+Session 10 in `../progress-log.md`), not a finished AI.
+
+Directions to design against (not a locked spec — the exact approach is a
+design decision for that session):
+
+- **Bullet-dodging** — react to nearby bullets rather than weaving blindly.
+  Candidate approach: each frame, check for `EnemyBullet`-tagged objects
+  (or bullets owned by `Boss`) within some radius/lane ahead of the
+  teammate and bias `moveInput` away from them; exact detection method
+  (`OverlapCircle`, tag+distance check, etc.) and "how close counts as a
+  threat" are open.
+- **Role-appropriate positioning** — right now every teammate behaves
+  identically regardless of role. Tank could hold forward (closer to
+  `Boss`), especially while it holds aggro (`boss.CurrentTarget ==
+  gameObject`); Medic/Support could hold back, trading a bit of DPS uptime
+  for survivability.
+- **Basic separation** — teammates currently have no awareness of each
+  other and can end up stacked/overlapping; a simple repulsion term (push
+  away from the nearest other `Player`-tagged ship within some radius)
+  would be enough for a prototype pass.
+
+### Boss combat dynamism
+
+Exact current limitation: `Boss.cs`'s movement is a fixed, slow sine drift
+(`sineAmplitude: 2`, `sineFrequency: 0.5`) around a static Y, and both
+attack patterns are flat-timer — Phase 1 fires one aimed shot every
+`phase1FireInterval` (1.2s), Phase 2 fires a 3-bullet spread every
+`phase2FireInterval` (0.6s) — with no variety beyond the one Phase-1→Phase-2
+switch. It reads as a stationary turret, not an opponent actively fighting
+back.
+
+Directions to design against:
+
+- **A rapid-fire burst attack** — a short telegraph (e.g. a brief color
+  flash or scale pulse, giving players a fair warning) followed by a quick
+  volley of shots at a much faster interval than the existing steady fire,
+  then a return to normal-interval firing. Distinct from — not a
+  replacement for — the existing Phase 1/2 patterns; could trigger on a
+  timer, at random, or at specific HP thresholds within a phase.
+- **More deliberate repositioning** — rather than a continuous drift,
+  periodically pick a new target X (or X/Y) and move toward it over time,
+  then hold, giving movement more shape/intent than a pure sine wave.
+- **Telegraphing** — any new heavier attack (the burst above, or a wider
+  spread) should have a brief visible wind-up so it reads as fair/readable
+  rather than just harder — consistent with the existing fire-cadence
+  tuning goal ("Tuning" section above) of "hard but not unfair."
+
+**Explicitly out of scope for this direction**: adding a 3rd phase, an
+enrage state, or any behavior after Phase 2 beyond death. This is about
+movement/attack *variety within* the existing 2-phase structure — see
+"Movement and firing" above for why 2 phases ending in death is the
+complete, intended design, not a partial one. That's a separate, bigger
+design question if it ever comes up.
+
 ## Not yet built
 
 - **Minions around the boss** — motivated the ship-shrink above; no
-  minion script or prefab exists yet.
+  minion script or prefab exists yet. Recommended after the two "Future
+  work" items above, not before.
 - **Local co-op / dynamic player count** — the party is 4 fixed, hand-
   placed scene objects, not a runtime spawner (see `../roadmap.md`'s "In
   Progress").
-- **A third/"enrage" phase, or any behavior after Phase 2 beyond death** —
-  not planned; see "Movement and firing" above for why 2 phases is the
-  complete, intended design, not a partial one.

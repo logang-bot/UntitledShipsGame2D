@@ -97,9 +97,22 @@ reference docs live under `systems/`.
 
 ### Player-vs-boss dynamics (CPU AI first)
 
+- **AI teammate behavior** — `AIController.cs` currently only weaves in X
+  (`Mathf.Sin(Time.time * weaveFrequency)`, `Vector2.up` component always
+  `0`) with no bullet-, boss-, or teammate-awareness. Recommended **next**,
+  ahead of minions below: with dumb, non-dodging teammates constantly
+  eating hits, it's hard to tell whether a rough playtest result means "the
+  role-coordination mechanic isn't fun" or just "the AI can't dodge." See
+  `systems/boss.md`'s "Future work" section for concrete directions.
+- **Boss combat dynamism** — `Boss.cs`'s movement (a subtle, slow sine
+  drift) and both attack patterns (single aimed shot / 3-bullet spread,
+  both flat-timer) are static; it reads as a stationary turret rather than
+  an active opponent. See `systems/boss.md`'s "Future work" section.
 - **Minions around the boss** — smaller enemy ships flanking the `Boss`,
   motivated the ship-shrink above; not yet designed or built (no minion
-  script/prefab exists).
+  script/prefab exists). Do this **after** the two items above — more
+  on-screen threats on top of a still-too-simple AI/boss would make the
+  encounter harder to read, not more fun.
 
 - **Enemy spawn pattern variety** — design enemy spawn/movement patterns
   beyond the current simple top-to-bottom sine-wave drift (`EnemySpawner.cs`
