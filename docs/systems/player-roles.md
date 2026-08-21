@@ -8,34 +8,20 @@
 
 `RoleStats` holds **fixed, absolute per-role values** — `maxHealth`,
 `maxShield`, `fireDamage`, `shotsPerSecond`, `moveSpeed`, `tintColor` — not
-multipliers on a shared base. This is a deliberate architecture change
-(2026-08-21, replacing the original `base × multiplier` design from
-Session 4 onward): multipliers made hand-tuning confusing (e.g. "Tank
-health is `5 × 1.6`" instead of just "Tank health is `8`"), and fire rate
-in particular was stored *inverted* (`fireRate` used to mean seconds
-between shots — lower was faster — despite reading like a rate). See
-"Fixed per-role stats" below for the full table and the source of truth
-this establishes. Temporary effects (buffs) are layered on **non-destructively**
-at the point of use instead — see `PlayerController.speedBuffMultiplier`/
+multipliers on a shared base. See "Fixed per-role stats" below for the full
+table. Temporary effects (buffs) layer on **non-destructively** at the
+point of use instead — see `PlayerController.speedBuffMultiplier`/
 `fireRateBuffMultiplier` below — never by mutating these base values.
 
 No `ScriptableObject` asset workflow — role data is a static in-code table,
-matching the project's existing plain-`MonoBehaviour`, low-infra style. Easy
-to migrate to `ScriptableObject`s later if hand-tuning in the Inspector
-becomes worth the friction.
+matching the project's plain-`MonoBehaviour`, low-infra style.
 
 ## PlayerRoleComponent.cs
 
-Deliberately its own file, separate from `PlayerRole.cs` — Unity requires a
+Its own file, separate from `PlayerRole.cs` — Unity requires a
 `MonoBehaviour`/`ScriptableObject` class to be the filename-matching class
-in its file for reliable script serialization. `PlayerRoleComponent` was
-originally bundled into `PlayerRole.cs` (whose matching class is the enum);
-that produced a broken, non-asset-backed script reference on the component
-(silently, no compile error) — Unity logged "referenced script is missing"
-only once something tried to actually use the component at runtime. See
-[../unity-notes.md](../unity-notes.md) for the general gotcha. Fixed by
-moving it to its own filename-matching file, which is also consistent with
-every other script in this project (one class per file).
+in its file for reliable script serialization. See
+[../unity-notes.md](../unity-notes.md) for the general gotcha.
 
 **Attached to:** `Player` GameObject (alongside `PlayerController` and
 `PlayerHealth` — see [combat.md](combat.md) and [movement.md](movement.md)).
@@ -48,11 +34,10 @@ so it's safe regardless of Unity's unordered `Awake`/`Start` execution
 across sibling components).
 
 - `PlayerController.Start()` assigns `moveSpeed`/`shotsPerSecond`/`fireDamage`
-  directly from `Stats.moveSpeed`/`Stats.shotsPerSecond`/`Stats.fireDamage`
-  (a straight overwrite now, not a multiplication).
+  directly from `Stats.moveSpeed`/`Stats.shotsPerSecond`/`Stats.fireDamage`.
 - `PlayerHealth.Awake()` assigns `maxHealth`/`maxShield` directly from
   `Stats.maxHealth`/`Stats.maxShield`.
-- Both do a null-check on `GetComponent<PlayerRoleComponent>()`, keeping the
+- Both null-check `GetComponent<PlayerRoleComponent>()`, keeping the
   script's own inspector-set default as a fallback when the component is
   missing.
 
@@ -66,94 +51,66 @@ the same GameObject (cached in `Awake()`).
 
 One script, not four — branches on `PlayerRoleComponent.role` in a single
 `OnAbility(InputValue)` handler (auto-called by `Player Input`'s Send
-Messages behavior on the new `Ability` action, bound to `E` — see
-[input.md](input.md)), matching the same "one component reads the role enum"
-shape already used by `PlayerRoleComponent.Stats`. A single
-`Time.time`-based cooldown gate (`nextAbilityTime`, same pattern as
-`PlayerController`'s `nextFireTime`) blocks re-activation until the current
-role's cooldown elapses.
+Messages behavior on the `Ability` action, bound to `E` — see
+[input.md](input.md)). A single `Time.time`-based cooldown gate
+(`nextAbilityTime`, same pattern as `PlayerController`'s `nextFireTime`)
+blocks re-activation until the current role's cooldown elapses.
 
-- **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. Has
-  a **real** effect — see "Aggro/targeting" below and [boss.md](boss.md) —
-  a persistent listener redirects the boss's target to the taunter
-  (`Boss.TauntedBy(GameObject)`). The Session 9 placeholder feedback
-  (`Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()`)
-  is kept alongside it, additive, not replaced.
-- **Tank — Shield Arc** (new, 2026-08-21, passive/always-on — independent
-  of Taunt, not an `E`-triggered ability): a wide, curved shield in front
-  of Tank, both visual and **functional**. Built procedurally in `Awake()`
-  only for `role == Tank` (same "only build what this role needs"
-  precedent as Medic's aura ring): a child `ShieldArc` GameObject, tagged
-  `Player`, with a local-space `EdgeCollider2D` (`isTrigger`) and matching
-  `LineRenderer`, both sampling the same shallow-parabola point set —
-  `shieldArcWidthMultiplier` (3x Tank's own `BoxCollider2D` width) wide,
-  `shieldArcHeight` (0.4) tall, offset `shieldArcYOffset` (0.3) above the
-  body. Local-space and built once, so it tracks Tank's movement and needs
-  **no per-frame `Update()`** (unlike Medic's ring, which resizes on boost
-  and therefore needs one). Relies on a one-line `Bullet.cs` fix —
-  `other.GetComponentInParent<PlayerHealth>()` instead of
-  `other.GetComponent<PlayerHealth>()` — so a hit on this child collider
-  (which has no `PlayerHealth` of its own) still routes into Tank's own
-  shield/health pool, exactly like a direct hit. This means a bullet that
-  would've missed Tank's own body but crossed the arc's wider span gets
-  blocked **and** costs Tank shield/health — not a free block. Player-owned
-  bullets pass through untouched (`Bullet.cs`'s player-bullet branch only
-  checks the `Enemy` tag, and the arc is tagged `Player`). **Known edge
-  case, not defended against**: if the arc's collider region vertically
-  overlaps Tank's own body collider, a bullet could in rare cases enter
-  both in the same physics step and double-hit — mitigated in practice by
-  `shieldArcYOffset` placing the arc above the body, consistent with this
-  project's "flag it, don't over-engineer for a rare edge case" style (see
-  the documented lack of bullet-dodging).
-- **Medic — Aura Boost** (implemented Session 13, replacing the original
-  instant self-heal entirely — see [boss.md](boss.md)'s "Medic positioning
-  + proximity aura"): Medic passively regenerates health *and* shield of
-  every ally in `allies[]` within `auraRadius` every `auraTickInterval`,
-  whether human- or AI-controlled — this is what finally resolves the old
-  "Medic heal only targets self" gap, as a proximity aura rather than
-  manual ally-targeting. The default aura is **deliberately tiny**
-  (`auraRadius` 0.5 — allies must nearly touch the Medic); pressing `E`
-  (`TriggerAuraBoost()`) temporarily swaps to a larger `auraBoostRadius`
-  and a much faster `auraBoostTickInterval` (0.25s vs. 1s) for
-  `auraBoostDuration` (4s), via the same `StopCoroutine`/`StartCoroutine`
-  restart-safety pattern used elsewhere — same "cooldown must stay ≥
-  duration" constraint applies (`auraBoostCooldown` 10s ≥
-  `auraBoostDuration` 4s). **`auraBoostRadius` was halved, 2026-08-21** (`3`
-  → `1.5`) — flagged overpowered at the original size. A `LineRenderer`
+- **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. A
+  persistent listener redirects the boss's target to the taunter
+  (`Boss.TauntedBy(GameObject)` — see [boss.md](boss.md)'s "Aggro /
+  targeting"), alongside `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
+  feedback.
+- **Tank — Shield Arc** (passive/always-on, independent of Taunt, not
+  `E`-triggered): a wide, curved shield in front of Tank, both visual and
+  **functional**. Built procedurally in `Awake()` only for `role == Tank`:
+  a child `ShieldArc` GameObject, tagged `Player`, with a local-space
+  `EdgeCollider2D` (`isTrigger`) and matching `LineRenderer`, both sampling
+  the same shallow-parabola point set — `shieldArcWidthMultiplier` (3x
+  Tank's own `BoxCollider2D` width) wide, `shieldArcHeight` (0.4) tall,
+  offset `shieldArcYOffset` (0.3) above the body. Local-space and built
+  once, so it tracks Tank's movement with no per-frame `Update()` needed.
+  Relies on `Bullet.cs`'s `other.GetComponentInParent<PlayerHealth>()` (not
+  `GetComponent`), so a hit on this child collider (which has no
+  `PlayerHealth` of its own) routes into Tank's own shield/health pool,
+  exactly like a direct hit — a bullet that would've missed Tank's own body
+  but crossed the arc's wider span gets blocked **and** costs Tank
+  shield/health, not a free block. Player-owned bullets pass through
+  untouched (`Bullet.cs`'s player-bullet branch only checks the `Enemy`
+  tag, and the arc is tagged `Player`).
+- **Medic — Aura Boost**: Medic passively regenerates health *and* shield
+  of every ally in `allies[]` within `auraRadius` every `auraTickInterval`,
+  whether human- or AI-controlled. The default aura is **deliberately
+  tiny** (`auraRadius` 0.5 — allies must nearly touch the Medic); pressing
+  `E` (`TriggerAuraBoost()`) temporarily swaps to a larger
+  `auraBoostRadius` (1.5) and a much faster `auraBoostTickInterval` (0.25s
+  vs. 1s) for `auraBoostDuration` (4s), via a `StopCoroutine`/
+  `StartCoroutine` restart-safety pattern — `auraBoostCooldown` (10s) must
+  stay ≥ `auraBoostDuration` to avoid double-applying. A `LineRenderer`
   ring around the Medic (dim/thin by default, bright/thick while boosted)
   shows the live radius, and allies actually healed by a tick get a
-  distinct green flash (`PlayerDamageFlash.Flash(Color)`, a new overload of
-  the existing damage-flash mechanism) — both purely visual, no gameplay
-  effect.
-- **Support — Speed Boost** (renamed from "Buff" and fully redesigned,
-  2026-08-21): a **party-wide**, non-destructive multiplier on both move
-  speed and fire rate, not a self-only effect. `TriggerSpeedBoost()` loops
-  over `allies[]` (all 4 ships, self-included — the same array Medic's aura
-  already uses) and sets each ally's `PlayerController.speedBuffMultiplier`/
+  distinct green flash (`PlayerDamageFlash.Flash(Color)`) — both purely
+  visual.
+- **Support — Speed Boost**: a **party-wide**, non-destructive multiplier
+  on both move speed and fire rate, not a self-only effect.
+  `TriggerSpeedBoost()` loops over `allies[]` (all 4 ships, self-included)
+  and sets each ally's `PlayerController.speedBuffMultiplier`/
   `fireRateBuffMultiplier` to `speedBoostMultiplier` (1.5) for
   `speedBoostDuration` (4s), then resets both to `1f` when it ends — plain
-  assignment on both ends, so unlike the old self-only buff (which
-  multiplied `moveSpeed`/`fireRate` in place and divided back out, needing
-  `buffCooldown ≥ buffDuration` to avoid double-applying), there's no
-  revert arithmetic and nothing to double-apply. **`speedBoostCooldown`
-  bumped 8s → 15s** — flagged overpowered once it became party-wide, round
-  placeholder, tunable. **New party-wide visual**: every ship (any role,
-  built unconditionally in `Awake()` — not role-gated like Medic's ring or
-  Tank's arc, since any of the 4 could receive the boost) has its own
-  initially-hidden `PartyBuffRing`, toggled by the caster's new
-  `SetPartyBuffVisual(bool, Color)` call on each ally — all 4 rings light
-  up in the caster's tint color (Support's gold) the instant the boost
-  starts and disappear together the instant it ends.
+  assignment on both ends, no revert arithmetic. `speedBoostCooldown` is
+  15s (round placeholder, tunable — flagged as a strong effect given it's
+  party-wide). Every ship has its own initially-hidden `PartyBuffRing`,
+  toggled by the caster's `SetPartyBuffVisual(bool, Color)` call on each
+  ally — all 4 rings light up in the caster's tint color the instant the
+  boost starts and disappear together the instant it ends.
 - **Attacker — Big Shot**: calls `PlayerController.FireBigShot(widthMultiplier,
   damageAmount)` (`3x` width) and `PlayerController.AddRecoil(Vector2.down
-  * recoilForce)`. **Damage is now a live multiplier of the caster's
-  current `fireDamage`** (`bigShotDamageMultiplier`, `2x`), computed at
-  cast time — `2.0 × 2 = 4.0` at today's values — rather than a
-  separately hand-tuned flat number, so it automatically stays proportional
-  if `fireDamage` is ever retuned again. See [combat.md](combat.md) for why
-  recoil has to be a decaying velocity blended into `HandleMovement()`
-  rather than a physics impulse (`MovePosition` overwrites plain
-  `AddForce` every `FixedUpdate`).
+  * recoilForce)`. Damage is a live multiplier of the caster's current
+  `fireDamage` (`bigShotDamageMultiplier`, `2x`), computed at cast time —
+  so it automatically stays proportional if `fireDamage` is ever retuned.
+  See [combat.md](combat.md) for why recoil has to be a decaying velocity
+  blended into `HandleMovement()` rather than a physics impulse
+  (`MovePosition` overwrites plain `AddForce` every `FixedUpdate`).
 
 Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
 (3), `shieldArcHeight` (0.4), `shieldArcYOffset` (0.3),
@@ -174,23 +131,17 @@ Also exposes read-only status for the HUD (see `PartyFrameUI.cs` in
 the single source of truth for ability state so the HUD never duplicates
 cooldown math.
 
-`OnAbility(InputValue)` (the `Player Input`-driven entry point above) is now
-a thin wrapper around a public, non-input entry point — `TryUseAbility()` —
-extracted so `AIController.cs` (see [boss.md](boss.md)) can trigger a CPU
-teammate's ability directly, going through the exact same cooldown gate and
-role-dispatch switch as the human player. The `Trigger*` methods stay
-private/unchanged. **Planned** (see [boss.md](boss.md)'s "Manual teammate
-ability triggering"): this same `TryUseAbility()` entry point is also meant
-to be called from a click/tap on that teammate's party frame, letting the
-human player force a specific teammate's ability to fire on demand.
+`OnAbility(InputValue)` is a thin wrapper around a public, non-input entry
+point — `TryUseAbility()` — so `AIController.cs` (see [boss.md](boss.md))
+can trigger a CPU teammate's ability directly, through the exact same
+cooldown gate and role-dispatch switch as the human player. The `Trigger*`
+methods stay private.
 
-## Shield stat (implemented)
+## Shield stat
 
-Agreed design, built 2026-08-20, see [boss.md](boss.md)'s "AI teammate
-behavior" for the motivating context (Tank physically blocking bullets,
-since extended by the Shield Arc above). A second, health-like pool per
-role (`PlayerHealth.maxShield`/`CurrentShield`), a fixed per-role value
-alongside `maxHealth` (see "Fixed per-role stats" below):
+A second, health-like pool per role (`PlayerHealth.maxShield`/
+`CurrentShield`), a fixed per-role value alongside `maxHealth` (see "Fixed
+per-role stats" below):
 
 - **Absorbs damage before health** — `PlayerHealth.TakeDamage(int)` deducts
   from `currentShield` first, down to 0; only the remainder subtracts from
@@ -199,15 +150,13 @@ alongside `maxHealth` (see "Fixed per-role stats" below):
   before (see [combat.md](combat.md)).
 - **No passive regen of its own** — `PlayerHealth.RestoreShield(int)`
   (symmetric to `Heal(int)`, clamps at `maxShield`) is only ever called by
-  Medic's proximity aura (see the Medic ability entry above and
-  [boss.md](boss.md)), never on its own over time. Deliberate: keeps Tank
-  meaningfully dependent on Medic rather than being self-sufficient,
-  matching the MMO-raid "tank and healer" coupling this project is modeled
-  on (`../overview.md`).
+  Medic's proximity aura, never on its own over time. Keeps Tank
+  meaningfully dependent on Medic, matching the MMO-raid "tank and healer"
+  coupling this project is modeled on (`../overview.md`).
 - **Shield bar**: a fixed shield-blue bar on the party frame, not
   role-tinted — see [hud-layout.md](hud-layout.md).
 
-## Aggro / targeting (implemented — on `Boss`, not `Enemy`)
+## Aggro / targeting
 
 **Targeting** is how an enemy AI decides which player to attack when
 multiple are available. **Aggro** ("aggression"/threat) is the per-target
@@ -218,25 +167,20 @@ aggro to the top, forcing the enemy to switch targets — the classic
 MMO-raid "tank and spank" mechanic this project is explicitly modeled on
 (see `../overview.md`).
 
-`Enemy.cs` still has **no targeting concept at all** — regular wave enemies
-move in a fixed sine-wave and fire on a timer regardless of who or where any
-player is; that was a deliberate scope decision, not an oversight, since
-adding a guessed-at targeting shape to the disposable wave-enemy script
-would've risked being the wrong shape once the real boss AI design
-happened. The real threat-table aggro system was instead built directly on
-the new `Boss.cs` once the boss prototype gave it something concrete to
-target — see [boss.md](boss.md) for the full design (a plain
+`Enemy.cs` has **no targeting concept at all** — regular wave enemies move
+in a fixed sine-wave and fire on a timer regardless of who or where any
+player is. The real threat-table aggro system lives on `Boss.cs` — see
+[boss.md](boss.md) for the full design (a plain
 `Dictionary<GameObject, float>` of damage-dealt-per-target, no decay,
 `TauntedBy(GameObject)` spiking the caster above everyone else).
 
-## Fixed per-role stats (single source of truth)
+## Fixed per-role stats
 
-**Architecture change, 2026-08-21** — replaces every `base × multiplier`
-table this doc previously had. `RoleStats` (see `PlayerRole.cs` above) now
-holds one fixed, absolute number per stat per role — no multipliers, no
-shared base, no rounding. This is the entire source of truth for a role's
-numbers; nothing else in the codebase independently defines health, shield,
-fire damage, fire rate, or move speed.
+`RoleStats` (see `PlayerRole.cs` above) holds one fixed, absolute number
+per stat per role — no multipliers, no shared base. This is the entire
+source of truth for a role's numbers; nothing else in the codebase
+independently defines health, shield, fire damage, fire rate, or move
+speed.
 
 | Role     | Health | Shield | Fire damage | Fire rate | Move speed |
 | -------- | ------ | ------ | ------------ | --------- | ---------- |
@@ -245,13 +189,10 @@ fire damage, fire rate, or move speed.
 | Medic    | 4      | 3      | 0.7          | 1.5/s     | 3.0 u/s    |
 | Support  | 5      | 3      | 1.0          | 2/s       | 4.5 u/s    |
 
-Units: **Fire rate** is shots/second (higher = faster) — `PlayerController.shotsPerSecond`,
-replacing the old, misleadingly-named `fireRate` field that actually stored
-*seconds between shots* (lower was faster). **Move speed** is world
-units/second (`PlayerController.moveSpeed`), already unambiguous, no change
-in kind. All values are placeholders, tunable until real playtesting lands
-— every role now has a deliberately-chosen number for every stat (no more
-"left at the undecided 1.0x baseline" placeholders).
+Units: **Fire rate** is shots/second (higher = faster) —
+`PlayerController.shotsPerSecond`. **Move speed** is world units/second
+(`PlayerController.moveSpeed`). All values are placeholders, tunable until
+real playtesting lands.
 
 **Buffs are layered on non-destructively, not by mutating these values.**
 `PlayerController` has two runtime-only multiplier fields —
@@ -260,138 +201,67 @@ at the point of use (`HandleMovement()`'s move vector, and a computed
 `FireInterval => 1f / (shotsPerSecond * fireRateBuffMultiplier)` for the
 fire-cooldown gate) rather than ever being multiplied into `moveSpeed`/
 `shotsPerSecond` themselves. Only `PlayerAbility` (Support's Speed Boost,
-see above) ever sets them, and only ever via plain assignment — there is no
-revert-by-dividing-back-out anywhere in this system anymore, which is what
-made the old self-only buff need `buffCooldown ≥ buffDuration` to avoid
-double-applying.
+see above) ever sets them, and only ever via plain assignment.
 
-## Role Select scene (implemented, 2026-08-21)
+## Role Select scene
 
-Replaces the old "hand-edit `PlayerRoleComponent.role` in the Inspector on
-`Player`, then swap whichever `Teammate_*` currently has that role" manual
-testing workflow (see `current-state.md`'s "How to test it" history) with an
-in-game picker. Two scenes now exist: `RoleSelect.unity` (Build Settings
-index 0, entry point) and `Gameplay.unity` (gameplay, index 1) — a real
-second scene, not a same-scene overlay panel, a deliberate choice over the
-lighter-weight alternative since Role Select was always going to become a
-real scene eventually (see `roadmap.md`'s "Scene scaffolding").
+An in-game role picker: `RoleSelect.unity` (Build Settings index 0, entry
+point) and `Gameplay.unity` (gameplay, index 1) — a real second scene, not
+a same-scene overlay.
 
 **`RoleSelect.unity` contents**: a single Screen Space - Overlay `Canvas`
 (title text, 4 role buttons, a Start button that stays non-interactable
 until a role's picked) plus an `EventSystem`
 (`InputSystemUIInputModule`, matching the project's New-Input-System-only
 setup — see `input.md`) and a plain `Main Camera` (tagged `MainCamera`,
-background color matched to the dark HUD panel tone). The camera isn't
-needed for the Overlay canvas to render, but Unity's Game view shows a "No
-cameras rendering" diagnostic if a scene has zero cameras at all — added
-after hitting that during playtesting.
+background color matched to the dark HUD panel tone — needed because
+Unity's Game view shows a "No cameras rendering" diagnostic if a scene has
+zero cameras, even though the Overlay canvas itself doesn't need one to
+render).
 
-**The core problem solved**: `PlayerRoleComponent.Awake()` (tints the
-sprite), `PlayerHealth.Awake()` (sets `maxHealth`/`maxShield`), and
-`PlayerAbility.Awake()` (builds Medic's aura ring / Tank's shield arc —
-**structural**, only happens once) each read `role`/`Stats` exactly once, at
-their own startup, and never re-apply it later. Unity doesn't guarantee
-`Awake()` order between different GameObjects' default-order scripts, so
-role has to be set *before* any of those run.
+`PlayerRoleComponent.Awake()` (tints the sprite), `PlayerHealth.Awake()`
+(sets `maxHealth`/`maxShield`), and `PlayerAbility.Awake()` (builds Medic's
+aura ring / Tank's shield arc — structural, only happens once) each read
+`role`/`Stats` exactly once, at their own startup, and never re-apply it
+later — so role has to be set *before* any of those run:
 
-- **`PartyRoleAssignment.cs`** (new, static class) — `public static
-  PlayerRole? HumanRole`. Carries the human's chosen role from `RoleSelect`
-  across the `SceneManager.LoadScene` into `Gameplay` (a plain static
-  survives a scene load within one Play session but resets to `null` on
-  domain reload, i.e. each fresh Play session). Same "static table over
-  extra infra" precedent as `PlayerRoleStats` above (Session 4).
-- **`RoleSelectUI.cs`** (new, lives only in `RoleSelect`) — 4 role buttons
-  each call `SelectRole(PlayerRole)`; a Start button stays non-interactable
+- **`PartyRoleAssignment.cs`** (static class) — `public static PlayerRole?
+  HumanRole`. Carries the human's chosen role from `RoleSelect` across the
+  `SceneManager.LoadScene` into `Gameplay` (a plain static survives a scene
+  load within one Play session but resets to `null` on domain reload).
+- **`RoleSelectUI.cs`** (lives only in `RoleSelect`) — 4 role buttons each
+  call `SelectRole(PlayerRole)`; a Start button stays non-interactable
   until one is picked. `StartGame()` sets `PartyRoleAssignment.HumanRole`
   then loads `Gameplay`.
-- **`PartySetupBootstrap.cs`** (new, `[DefaultExecutionOrder(-1000)]` — a
-  first for this project) on a new `PartySetup` GameObject in `Gameplay`.
-  Guaranteed to run its `Awake()` before every default-order script's
-  `Awake()` in the scene. If `PartyRoleAssignment.HumanRole` has a value,
+- **`PartySetupBootstrap.cs`** (`[DefaultExecutionOrder(-1000)]`, so it
+  runs before every default-order script's `Awake()`) on a `PartySetup`
+  GameObject in `Gameplay`. If `PartyRoleAssignment.HumanRole` has a value,
   assigns it to `Player`'s `PlayerRoleComponent.role`, then assigns the
   remaining 3 `PlayerRole` enum values (in declaration order, skipping the
   human's pick) to `Teammate_Tank`/`Teammate_Medic`/`Teammate_Support`'s
   `PlayerRoleComponent.role` — covers all 4 roles exactly once by
-  construction. **If `HumanRole` is null (e.g. `Gameplay` opened
-  directly, bypassing `RoleSelect`), it no-ops**, preserving the original
-  Inspector-only manual-testing workflow untouched.
-- **Cosmetic-only side effect**: `Teammate_Tank`/`Teammate_Medic`/
-  `Teammate_Support` (the GameObject *names*) frequently no longer play the
-  role their name suggests once a human picks something other than
-  Attacker — e.g. human picks Tank, `Teammate_Tank` gets reassigned
-  Attacker. Purely a Hierarchy-panel label mismatch, not a bug:
-  `AIController`/`PartyFrameManager` are already fully role-agnostic, keyed
-  by GameObject reference, never by name.
-- **`VictoryUI.cs`** (new, mirrors `GameOverUI.cs`) — a `VictoryPanel` under
-  `HUDCanvas`, shown as a **second** listener on `Boss.OnDefeated` (alongside
-  the pre-existing `BossPanelUI.ShowDefeated()` — no `Boss.cs` change
-  needed, `OnDefeated` already supported multiple listeners same as
-  `PlayerHealth.OnDamaged`). `PlayAgain()` reloads `Gameplay` (roles
-  preserved, since `PartyRoleAssignment.HumanRole` is untouched);
-  `ChangeRoles()` loads `RoleSelect`. `GameOverPanel` gained a matching
-  "Change Roles" button (`GameOverUI.ChangeRoles()`) alongside its existing
-  Restart, which — unchanged — now also doubles as "play again, same party"
-  for free.
-- **Gotcha hit and fixed**: `Boss` is a `Boss.prefab` instance (see
-  [boss.md](boss.md)). Wiring `VictoryUI.Show` onto `Boss.OnDefeated` via
-  `execute_code` outside Play mode needs
-  `PrefabUtility.RecordPrefabInstancePropertyModifications(boss)` in
-  addition to `EditorUtility.SetDirty()`, or the added listener silently
-  doesn't persist to the saved scene — caught by the same "verify with a
-  full scene reload from disk, don't trust the in-memory read" habit
-  established in Sessions 12/13, since the first attempt looked correct
-  right up until Play mode (which reloads from disk) showed only the
-  original listener firing.
-
-Verified end-to-end via the Unity MCP bridge: 2+ different human role
-picks each produced all 4 roles covered exactly once, including the
-structural checks (Medic's aura ring / Tank's shield arc exist on whichever
-ship actually landed that role); Victory panel appears on a forced boss
-kill with both its buttons working; Game Over's Change Roles button works;
-"Play Again" preserves the exact prior role assignment across a reload via
-both the Victory path and the Game Over Restart path; opening `Gameplay`
-directly with no prior `RoleSelect` visit correctly falls back to the
-scene's hand-authored Inspector defaults untouched. Zero console
-errors/warnings throughout.
+  construction. If `HumanRole` is null (e.g. `Gameplay` opened directly,
+  bypassing `RoleSelect`), it no-ops, preserving the Inspector-only manual
+  role assignment.
+- **Cosmetic note**: `Teammate_Tank`/`Teammate_Medic`/`Teammate_Support`
+  (the GameObject *names*) frequently no longer play the role their name
+  suggests once a human picks something other than Attacker. Purely a
+  Hierarchy-panel label mismatch — `AIController`/`PartyFrameManager` are
+  fully role-agnostic, keyed by GameObject reference, never by name.
+- **`VictoryUI.cs`** (mirrors `GameOverUI.cs`) — a `VictoryPanel` under
+  `HUDCanvas`, shown as a listener on `Boss.OnDefeated` (alongside
+  `BossPanelUI.ShowDefeated()`). `PlayAgain()` reloads `Gameplay` (roles
+  preserved via `PartyRoleAssignment.HumanRole`); `ChangeRoles()` loads
+  `RoleSelect`. `GameOverPanel` has a matching "Change Roles" button
+  (`GameOverUI.ChangeRoles()`) alongside its Restart, which also doubles
+  as "play again, same party."
 
 ## Scene wiring — Player
 
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
-| **PlayerRoleComponent**  | role: Attacker (Inspector default — now overwritten at runtime by the Role Select flow, see "Role Select scene" above; still used as-is when `Gameplay` is opened directly) |
+| **PlayerRoleComponent**  | role: Attacker (Inspector default — overwritten at runtime by the Role Select flow, see "Role Select scene" above; used as-is when `Gameplay` is opened directly) |
 | **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/Boss.TauntedBy(Player)` (real aggro redirect, see [boss.md](boss.md); same 3 listeners wired on each `Teammate_*`'s `PlayerAbility`, each pointing `TauntedBy` at itself) |
-
-Confirmed attached and working: verified live via the Unity MCP bridge —
-entering Play mode with the default `Attacker` role showed `maxHealth = 6`,
-`maxShield = 5`, `fireDamage = 2.0`, `shotsPerSecond = 2.5`, `moveSpeed =
-3.0`, matching the table above exactly, and the sprite tinted red.
-`PlayerAbility` was verified the same way per-role: Medic's aura heals/
-shields allies within its (tiny, default) radius and not outside it, and
-`TryUseAbility()`'s boost expands the radius/tick rate for its duration
-before reverting automatically; Tank taunt's `OnTaunt` event fires and is
-cooldown-gated; **Tank's Shield Arc** was verified functionally, not just
-visually — a fake enemy bullet placed within the arc's width but outside
-Tank's own body collider was destroyed and Tank's `CurrentShield` dropped
-by the bullet's exact damage (confirming the `Bullet.cs`
-`GetComponentInParent` fix correctly routes the hit into Tank's own health
-pool, not a silent no-op), while a same-position player-owned bullet passed
-through untouched; **Support's Speed Boost** was confirmed to set all 4
-ships' buff multipliers and activate all 4 party-buff rings together, then
-clear both together when the boost ended; Attacker's big shot spawns a
-bullet with `localScale.x` 3x normal and `damage` equal to the caster's
-live `fireDamage × bigShotDamageMultiplier` (`4.0` at today's values), and
-the recoil impulse visibly moves the ship and decays back to a stable,
-non-drifting stop.
-
-**Known gotcha hit again this pass**: same class of issue as every prior
-tuning session — changing a field's *script* default (`auraBoostRadius`,
-`Boss.maxHealth`) does not retroactively update an already-serialized
-value on an existing scene GameObject or prefab. Both had to be set
-explicitly on all 4 live scene instances (and `Teammate.prefab`'s/
-`Boss.prefab`'s defaults), verified by a full scene reload from disk. Newly
-*added* fields (e.g. `speedBuffMultiplier`, the Shield Arc's fields) don't
-have this problem — they pick up the script default automatically since
-there's no prior serialized value to conflict with.
 
 ## Not yet built
 
@@ -399,15 +269,6 @@ there's no prior serialized value to conflict with.
   ships fighting alongside `Player` (`Teammate_Tank`/`Teammate_Medic`/
   `Teammate_Support`) are CPU-controlled via `AIController.cs`, not real
   players; see [boss.md](boss.md).
-- All four AI teammate roles now have real positioning (see
-  [boss.md](boss.md)'s "Tank guard-point positioning" / "Medic positioning
-  + proximity aura" / "Support roaming positioning" / "Attacker patrol +
-  boss-tracking positioning"). Bullet-dodging, teammate separation, and
-  manual teammate-ability triggering from the party frame are all designed
-  (see [boss.md](boss.md)'s "AI teammate behavior" / "Manual teammate
-  ability triggering") but not yet implemented.
-
-Role display on the HUD (name/role text + tinted health bar) is now live
-for all 4 party members (`PartyFrame_1..4`, one per `Player`/`Teammate_*`)
-— see [hud-layout.md](hud-layout.md)'s `PartyFrameUI.cs`/`PartyFrameManager.cs`
-entries.
+- Bullet-dodging, teammate separation, and manual teammate-ability
+  triggering from the party frame — see [boss.md](boss.md)'s "Not yet
+  built".

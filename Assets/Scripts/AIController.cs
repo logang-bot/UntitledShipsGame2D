@@ -44,6 +44,16 @@ public class AIController : MonoBehaviour
     public float attackerPatrolAmplitude = 1.5f;
     public float attackerDeadzone = 0.2f;
 
+    [Header("Boss avoidance")]
+    // Applied to every role's computed target point (including Support's
+    // wander) so default positioning never sits inside the boss's body
+    // contact / shockwave range. Set just outside Boss.shockwaveRadius so
+    // normal positioning doesn't self-trigger the shockwave. Tank's guardBias
+    // still leans hard toward the boss for physical blocking - blocking only
+    // requires standing between the boss and the ally it's shooting at, not
+    // touching the boss's body, so this floor doesn't defeat that design.
+    public float minDistanceFromBoss = 1.9f;
+
     private PlayerController controller;
     private PlayerAbility ability;
     private PlayerRoleComponent role;
@@ -163,9 +173,25 @@ public class AIController : MonoBehaviour
         Vector3 min = cam.ViewportToWorldPoint(new Vector3(0, 0, 0));
         Vector3 max = cam.ViewportToWorldPoint(new Vector3(1, 1, 0));
         Vector2 padding = controller.screenPadding;
-        return new Vector2(
+        Vector2 point = new Vector2(
             Random.Range(min.x + padding.x, max.x - padding.x),
             Random.Range(min.y + padding.y, max.y - padding.y));
+        return EnforceBossDistance(point);
+    }
+
+    // Pushes a candidate target point out to at least minDistanceFromBoss
+    // from the boss's position, if it's currently closer. Falls back to
+    // Vector2.up if the point lands exactly on the boss (degenerate case,
+    // avoids a zero-length normalize).
+    private Vector2 EnforceBossDistance(Vector2 point)
+    {
+        if (boss == null) return point;
+
+        Vector2 fromBoss = point - (Vector2)boss.transform.position;
+        if (fromBoss.magnitude >= minDistanceFromBoss) return point;
+
+        Vector2 pushDir = fromBoss.sqrMagnitude > 0.0001f ? fromBoss.normalized : Vector2.up;
+        return (Vector2)boss.transform.position + pushDir * minDistanceFromBoss;
     }
 
     private Vector2 ApproachDirection(Transform target)
@@ -208,6 +234,7 @@ public class AIController : MonoBehaviour
         // LerpUnclamped (not Lerp, which clamps t to [0,1]) so a negative
         // bias (Medic) can extrapolate past allyCenter, away from the boss.
         Vector2 targetPoint = Vector2.LerpUnclamped(GetAllyCenter(), boss.transform.position, bias);
+        targetPoint = EnforceBossDistance(targetPoint);
 
         Vector2 toTarget = targetPoint - (Vector2)transform.position;
         return toTarget.magnitude < deadzone ? Vector2.zero : toTarget.normalized;
@@ -230,7 +257,7 @@ public class AIController : MonoBehaviour
 
         float targetY = Mathf.LerpUnclamped(GetAllyCenter().y, boss.transform.position.y, attackerBias);
         float targetX = boss.transform.position.x + Mathf.Sin(Time.time * weaveFrequency) * attackerPatrolAmplitude;
-        Vector2 targetPoint = new Vector2(targetX, targetY);
+        Vector2 targetPoint = EnforceBossDistance(new Vector2(targetX, targetY));
 
         Vector2 toTarget = targetPoint - (Vector2)transform.position;
         return toTarget.magnitude < attackerDeadzone ? Vector2.zero : toTarget.normalized;

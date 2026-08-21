@@ -42,7 +42,7 @@ This same script also handles shooting — see [combat.md](combat.md) for the
 | Collider2D (Box/Poly)    | Is Trigger: **OFF**                                       |
 | **PlayerController.cs**  | moveSpeed: overwritten by role at `Start()` (see [player-roles.md](player-roles.md)), screenPadding: (0.5, 0.5) |
 | **Player Input**         | Actions: PlayerControls asset, Default Map: Player, Behavior: Send Messages |
-| Transform                | localScale: (0.6, 0.6, 1) — shrunk from (1, 1, 1) as part of boss-fight tuning; see [boss.md](boss.md) |
+| Transform                | localScale: (0.6, 0.6, 1) |
 
 (`Player` also carries `PlayerHealth.cs` and `PlayerRoleComponent` — see
 [combat.md](combat.md) and [player-roles.md](player-roles.md). The 3

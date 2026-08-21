@@ -1,10 +1,10 @@
 # Combat
 
 Shooting, projectiles, damage, health, and enemy waves. See
-[movement.md](movement.md) for ship movement and the fixed-orientation design
-decision that firing direction depends on, and [boss.md](boss.md) for the
-boss encounter built on top of this system (boss HP/phases, aggro, CPU
-teammates).
+[movement.md](movement.md) for ship movement and the fixed-orientation
+design decision that firing direction depends on, and [boss.md](boss.md)
+for the boss encounter built on top of this system (boss HP/phases, aggro,
+CPU teammates).
 
 ## PlayerController.cs — shooting
 
@@ -17,19 +17,18 @@ Fire input arrives via `OnFire(InputValue)`, called automatically by the
 interval while held. Fire direction is hardcoded to `Vector2.up` — the ship
 has a fixed orientation by design (see [movement.md](movement.md)).
 
-Key public fields: `bulletPrefab`, `firePoint`, `shotsPerSecond` — shots per
-second, higher = faster (renamed from the old, misleadingly-inverted
-`fireRate`, which stored *seconds between shots*; both `shotsPerSecond` and
-`fireDamage` below are fixed per-role values, overwritten at `Start()` — see
-[player-roles.md](player-roles.md)'s "Fixed per-role stats") — `bulletSpeed`
-(default 12), `fireDamage` (a fixed per-role value, base script default
-`0.6`), `recoilDamping` (default 8, higher = faster decay). Two
-non-destructive runtime-only buff multipliers, both default `1`, never
-serialized-meaningful: `speedBuffMultiplier` (see [movement.md](movement.md))
-and `fireRateBuffMultiplier` — set only by Support's party-wide Speed Boost
+Key public fields: `bulletPrefab`, `firePoint`, `shotsPerSecond` — shots
+per second, higher = faster (both `shotsPerSecond` and `fireDamage` below
+are fixed per-role values, overwritten at `Start()` — see
+[player-roles.md](player-roles.md)'s "Fixed per-role stats") —
+`bulletSpeed` (default 12), `fireDamage` (a fixed per-role value, base
+script default `0.6`), `recoilDamping` (default 8, higher = faster decay).
+Two non-destructive runtime-only buff multipliers, both default `1`:
+`speedBuffMultiplier` (see [movement.md](movement.md)) and
+`fireRateBuffMultiplier` — set only by Support's party-wide Speed Boost
 (see [player-roles.md](player-roles.md)), read via a computed `FireInterval
-=> 1f / (shotsPerSecond * fireRateBuffMultiplier)` wherever the fire-cooldown
-gate needs seconds-until-next-shot, rather than ever mutating
+=> 1f / (shotsPerSecond * fireRateBuffMultiplier)` wherever the
+fire-cooldown gate needs seconds-until-next-shot, rather than ever mutating
 `shotsPerSecond` itself.
 
 `Fire()` (regular Space/click fire) and `FireBigShot(float widthMultiplier,
@@ -43,22 +42,19 @@ damage value, e.g. `2.0` for Attacker, `0.7` for Medic (see
 the boss can attribute damage back to the shooter for aggro. `AddRecoil(Vector2 impulse)`
 accumulates into a private `recoilVelocity` field that `HandleMovement()`
 itself decays (`Vector2.Lerp` toward zero, scaled by `recoilDamping`) and
-adds into its position calculation every `FixedUpdate`. **This is required,
-not a style choice**: `HandleMovement()` recomputes position from
-`moveInput` and calls `rb.MovePosition()` unconditionally every
-`FixedUpdate` — a plain `Rigidbody2D.AddForce()` impulse would be silently
-overwritten the very next step, since `MovePosition` never reads back
-accumulated velocity. Recoil respects the existing viewport-edge clamp
-automatically, since it's folded into the same position formula before
-clamping runs.
+adds into its position calculation every `FixedUpdate`. This has to work
+this way: `HandleMovement()` recomputes position from `moveInput` and calls
+`rb.MovePosition()` unconditionally every `FixedUpdate` — a plain
+`Rigidbody2D.AddForce()` impulse would be silently overwritten the very
+next step, since `MovePosition` never reads back accumulated velocity.
+Recoil respects the existing viewport-edge clamp automatically, since it's
+folded into the same position formula before clamping runs.
 
-`OnMove(InputValue)`/`OnFire(InputValue)` (the `Player Input`-driven entry
-points above) are now thin wrappers around public, non-input entry points —
-`SetMoveDirection(Vector2)` and `SetFiring(bool)` — added so
-`AIController.cs` (see [boss.md](boss.md)) can drive a CPU-controlled
+`OnMove(InputValue)`/`OnFire(InputValue)` are thin wrappers around public,
+non-input entry points — `SetMoveDirection(Vector2)` and `SetFiring(bool)`
+— so `AIController.cs` (see [boss.md](boss.md)) can drive a CPU-controlled
 teammate's movement/firing directly, without constructing a fake
-`InputValue` (which is only valid inside a real input callback). No
-behavior change for the human `Player`.
+`InputValue` (which is only valid inside a real input callback).
 
 ### Child: FirePoint
 
@@ -80,52 +76,47 @@ anything.
 
 `damage` is a plain public field (not passed through `Init()`, which only
 covers direction/speed/owner) — set directly on the instantiated bullet
-right after `Instantiate()`, before `Init()` runs. **`float`, not `int`**
-(changed in the boss HP/damage tuning pass — see [boss.md](boss.md)'s
-"Tuning" — since player fire damage is no longer a whole number); defaults
-to `1`, so anything that doesn't set it (enemy/boss bullets) is unaffected.
-`PlayerController.SpawnBullet()` sets it explicitly for both regular fire
-(the caster's fixed-per-role `fireDamage`, e.g. `2.0` for Attacker) and
-Attacker's big shot (`fireDamage × bigShotDamageMultiplier`, a live `2x` —
-see [player-roles.md](player-roles.md)); the collider scales automatically
-with the bullet's `transform.localScale` (Unity `BoxCollider2D` behavior),
-so a wider bullet doesn't need any collider-size code.
+right after `Instantiate()`, before `Init()` runs. `float`, default `1`, so
+anything that doesn't set it (enemy/boss bullets that don't need a specific
+value) is unaffected. `PlayerController.SpawnBullet()` sets it explicitly
+for both regular fire (the caster's fixed-per-role `fireDamage`, e.g. `2.0`
+for Attacker) and Attacker's big shot (`fireDamage × bigShotDamageMultiplier`,
+a live `2x` — see [player-roles.md](player-roles.md)); the collider scales
+automatically with the bullet's `transform.localScale` (Unity
+`BoxCollider2D` behavior), so a wider bullet doesn't need any collider-size
+code.
+
+`InitHoming(Transform target, float turnRate, float spd, string ownerTag,
+GameObject ownerObj = null)` is an alternate init path used by the boss's
+guided missile (see [boss.md](boss.md)): it re-aims `direction` toward the
+target's current position every frame via `Vector3.RotateTowards`, capped
+by `turnRate` (degrees/second), instead of the fixed-at-spawn direction
+`Init()` uses. If the target dies/deactivates mid-flight, the bullet just
+stops re-aiming and continues straight on its last heading.
 
 `OnTriggerEnter2D`'s enemy-bullet-vs-`Player`-tag branch resolves the hit
-target via `other.GetComponentInParent<PlayerHealth>()`, **not**
-`other.GetComponent<PlayerHealth>()` (changed 2026-08-21) — lets a *child*
-collider without its own `PlayerHealth` (e.g. Tank's Shield Arc, a wider
-blocking trigger on a child GameObject — see [player-roles.md](player-roles.md))
-still route the hit into its parent ship's own health/shield pool, exactly
-like a direct hit on the ship's own body collider. Backward-compatible: a
-ship's own collider still resolves to its own `PlayerHealth` first, since
+target via `other.GetComponentInParent<PlayerHealth>()`, not
+`other.GetComponent<PlayerHealth>()` — lets a *child* collider without its
+own `PlayerHealth` (e.g. Tank's Shield Arc — see
+[player-roles.md](player-roles.md)) still route the hit into its parent
+ship's own health/shield pool, exactly like a direct hit. A ship's own
+collider still resolves to its own `PlayerHealth` first, since
 `GetComponentInParent` checks the object itself before ascending.
 
-`Init()` gained a 4th, optional param: `Init(Vector2 dir, float spd, string
-ownerTag, GameObject ownerObject = null)`. The default keeps every existing
-call (e.g. `Enemy.cs`'s `Init(Vector2.down, bulletSpeed, "Enemy")`)
-compiling unchanged. Player-fired bullets now pass their shooter as
-`ownerObject` so `OnTriggerEnter2D`'s player-bullet-vs-`Enemy`-tag branch —
-in addition to its existing `Enemy.TakeDamage(damage)` call — also checks
-for a `Boss` component and calls `boss.TakeDamage(damage, ownerObject)`,
-attributing the hit to its shooter for the boss's aggro system. See
-[boss.md](boss.md). Both `Enemy.TakeDamage`/`Boss.TakeDamage` now take a
-`float amount` for the same reason as `damage` above — each rounds
+`Init()`'s 4th, optional param — `Init(Vector2 dir, float spd, string
+ownerTag, GameObject ownerObject = null)` — lets player-fired bullets pass
+their shooter as `ownerObject`, so `OnTriggerEnter2D`'s
+player-bullet-vs-`Enemy`-tag branch — in addition to its
+`Enemy.TakeDamage(damage)` call — also checks for a `Boss` component and
+calls `boss.TakeDamage(damage, ownerObject)`, attributing the hit to its
+shooter for the boss's aggro system. See [boss.md](boss.md). Both
+`Enemy.TakeDamage`/`Boss.TakeDamage` take a `float amount` — each rounds
 (`Mathf.RoundToInt`) only at the point it subtracts from its own `int`
 health pool, so no fractional HP appears anywhere. The enemy-bullet-vs-
 `PlayerHealth` branch does the same rounding at its call site, since
-`PlayerHealth.TakeDamage(int)` stays `int` (see below).
+`PlayerHealth.TakeDamage(int)` stays `int`.
 
 Key public fields: `lifeTime` (default 3s), `damage` (default `1f`).
-
-**Planned, not yet decided** (see [boss.md](boss.md)'s "Boss combat
-dynamism"): future boss/minion attacks may want bullets that re-aim at a
-moving target over their lifetime, or curve, rather than the fixed
-straight-line direction set once at `Init()` today. Flagged specifically
-because it interacts with the Tank's physical-blocking behavior (see
-[boss.md](boss.md)'s "Tank guard-point positioning" and
-[player-roles.md](player-roles.md)) — blocking relies on bullets traveling
-in a predictable straight line.
 
 ## PlayerHealth.cs
 
@@ -151,13 +142,12 @@ is the symmetric inverse of `TakeDamage(int)` — adds HP, clamped at
 `maxHealth`; `RestoreShield(int)` is the shield equivalent (clamps at
 `maxShield`). Both are called every tick, on any ally within range, by
 Medic's passive proximity aura (`PlayerAbility.TickAura()` — see
-[player-roles.md](player-roles.md) and [boss.md](boss.md)'s "Medic
-positioning + proximity aura"), not on self — Medic's old self-targeted
-instant heal was replaced by the aura entirely. No event fires on either
-call since `PartyFrameUI` already polls `CurrentHealth`/`CurrentShield`
-every frame, so a heal/shield-restore shows up live for free. **No passive
-shield regen anywhere** — shield only ever goes up via `RestoreShield(int)`,
-deliberately, to keep Tank dependent on Medic.
+[player-roles.md](player-roles.md) and [boss.md](boss.md)), not on self. No
+event fires on either call since `PartyFrameUI` already polls
+`CurrentHealth`/`CurrentShield` every frame, so a heal/shield-restore shows
+up live for free. **No passive shield regen anywhere** — shield only ever
+goes up via `RestoreShield(int)`, deliberately, to keep Tank dependent on
+Medic.
 
 Key public fields: `maxHealth`/`maxShield` — both fixed per-role values
 (script defaults `5`/`3`, overwritten by the role's own number at `Awake()`
@@ -180,9 +170,12 @@ panel's Restart `Button.OnClick()` — calls
 `SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex)`, reloading
 `Gameplay` from scratch so every stateful script (`PlayerHealth`,
 `EnemySpawner`, `PartyFrameManager`, ...) resets itself via its own
-`Awake`/`Start`, with no hand-written reset logic needed.
+`Awake`/`Start`, with no hand-written reset logic needed. `ChangeRoles()`
+loads `RoleSelect` instead (see [player-roles.md](player-roles.md)'s "Role
+Select scene").
 
-Key public field: `panelRoot`. Key public methods: `Show()`, `Restart()`.
+Key public field: `panelRoot`. Key public methods: `Show()`, `Restart()`,
+`ChangeRoles()`.
 
 ## PlayerDamageFlash.cs
 
@@ -192,19 +185,19 @@ GameObject (see [player-roles.md](player-roles.md)).
 
 Flashes the ship's sprite on a non-fatal hit. Wired as a listener on
 `PlayerHealth.OnDamaged`, and also on `PlayerAbility.OnTaunt` as Tank-ability
-feedback (see [player-roles.md](player-roles.md)) — added in Session 9
-before a real aggro system existed for taunt to affect, and kept alongside
-the real `Boss.TauntedBy()` listener once one did (see [boss.md](boss.md)),
-not replaced by it. `Flash()` restarts the coroutine (`StopCoroutine`
-+ `StartCoroutine`) so rapid hits re-flash at full brightness instead of
-stacking or blending. **Critical detail:** the routine reverts
-`SpriteRenderer.color` to `PlayerRoleComponent.Stats.tintColor`, not
-`Color.white` — `PlayerRoleComponent.Awake()` only tints the sprite once and
-never re-applies it, so reverting to white would permanently erase the role
-tint on the very first hit.
+feedback (see [player-roles.md](player-roles.md)), alongside the real
+`Boss.TauntedBy()` aggro-redirect listener (see [boss.md](boss.md)).
+`Flash()` restarts the coroutine (`StopCoroutine` + `StartCoroutine`) so
+rapid hits re-flash at full brightness instead of stacking or blending. A
+`Flash(Color)` overload lets other systems (Medic's heal) use a distinct
+flash color. **Critical detail:** the routine reverts `SpriteRenderer.color`
+to `PlayerRoleComponent.Stats.tintColor`, not `Color.white` —
+`PlayerRoleComponent.Awake()` only tints the sprite once and never
+re-applies it, so reverting to white would permanently erase the role tint
+on the very first hit.
 
 Key public fields: `flashColor` (default white), `flashDuration` (default
-0.12s). Key public method: `Flash()`.
+0.12s). Key public methods: `Flash()`, `Flash(Color)`.
 
 ## CameraShake.cs
 
@@ -214,16 +207,14 @@ see [hud-layout.md](hud-layout.md)).
 
 Shakes the camera on a non-fatal player hit. Wired as a listener on
 `PlayerHealth.OnDamaged`, and also on `PlayerAbility.OnTaunt` (same
-history as `PlayerDamageFlash.cs` above — added before, kept alongside,
-the real `Boss.TauntedBy()` listener). Caches `transform.localPosition`
-once in `Awake()`
-as the base to return to; `Shake()` restarts the coroutine the same way as
-`PlayerDamageFlash.Flash()`. Offsets `transform.localPosition` by a
-linearly-decaying random offset each frame, then **explicitly** resets to
-the cached base position when done rather than relying on the decay to land
-at exactly zero — confirmed safe alongside `AspectRatioFitter`, which only
-ever touches `camera.rect` (the pillarbox viewport), never `transform`, so
-the two cannot conflict.
+pattern as `PlayerDamageFlash.cs` above). Caches `transform.localPosition`
+once in `Awake()` as the base to return to; `Shake()` restarts the
+coroutine the same way as `PlayerDamageFlash.Flash()`. Offsets
+`transform.localPosition` by a linearly-decaying random offset each frame,
+then **explicitly** resets to the cached base position when done rather
+than relying on the decay to land at exactly zero. Safe alongside
+`AspectRatioFitter`, which only ever touches `camera.rect` (the pillarbox
+viewport), never `transform`.
 
 Key public fields: `shakeDuration` (default 0.2s), `shakeMagnitude` (default
 0.15). Key public method: `Shake()`.
@@ -235,8 +226,8 @@ Key public fields: `shakeDuration` (default 0.2s), `shakeMagnitude` (default
 `EnemyBullet` prefab reference.
 
 Sine-wave downward movement, periodic downward fire (staggered per-instance
-via random initial delay), takes damage via `TakeDamage(float)` (was `int`
-— see Bullet.cs above), self-destructs at 0 HP or when off-screen.
+via random initial delay), takes damage via `TakeDamage(float)`,
+self-destructs at 0 HP or when off-screen.
 
 Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`, `health`,
 `bulletPrefab`, `fireInterval`, `bulletSpeed`.
@@ -247,7 +238,9 @@ Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`, `health`,
 **Requires:** an `Enemy` prefab reference.
 
 Spawns waves of enemies at a randomized X position within a configurable
-width, staggered within each wave, repeating on an interval.
+width, staggered within each wave, repeating on an interval. Auto-disabled
+by `Boss.Awake()` at Play start so wave enemies don't confound a boss-fight
+test (see [boss.md](boss.md)).
 
 Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 `waveInterval`, `spawnWidth`.
@@ -262,16 +255,6 @@ Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 | **PlayerHealth.cs**   | OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` (maxHealth/maxShield overwritten by role at `Awake()`) |
 | **PlayerDamageFlash.cs** | flashColor: white, flashDuration: 0.12 |
 
-Both `PlayerHealth.cs` and `PlayerRoleComponent` are confirmed attached and
-verified working via the Unity MCP bridge (component values checked live in
-Play mode, tint/health/fire-rate all applied correctly). The `OnDeath` and
-`OnDamaged` event listeners were both wired live via the MCP bridge and
-verified end-to-end in Play mode: forcing 0 HP shows `GameOverPanel` and
-grays the party frame with Restart cleanly reloading the scene; a non-fatal
-hit flashes the sprite and shakes the camera, both reverting exactly to
-their pre-hit state (role tint color, base camera position) with no drift,
-and rapid repeated hits re-trigger cleanly with no stacking.
-
 ### Main Camera (combat-relevant components)
 
 | Component          | Key inspector values                  |
@@ -282,9 +265,9 @@ and rapid repeated hits re-trigger cleanly with no stacking.
 
 Child of `HUDCanvas` (see [hud-layout.md](hud-layout.md) for why it lives
 there instead of `GameplayCanvas`). Full-rect dark overlay (`Image`, ~75%
-alpha black), a centered "Game Over" `TextMeshProUGUI`, and a centered
-Restart `Button` (+ `TextMeshProUGUI` label). Starts active in the saved
-scene; `GameOverUI.Awake()` force-hides it at Play-mode start.
+alpha black), a centered "Game Over" `TextMeshProUGUI`, and Restart +
+Change Roles `Button`s. Starts active in the saved scene; `GameOverUI.Awake()`
+force-hides it at Play-mode start.
 
 ### Spawner
 

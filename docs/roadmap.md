@@ -124,7 +124,7 @@ reference docs live under `systems/`.
   Medic's *own* HP threshold) turned out to almost never trigger, since
   hanging back means Medic rarely takes damage itself; flagged in code and
   docs for a smarter, need-aware rework. Full writeup: `systems/boss.md`'s
-  "Medic positioning + proximity aura", `systems/player-roles.md`'s
+  "Medic positioning + aura", `systems/player-roles.md`'s
   "PlayerAbility.cs".
 
 - **Support AI positioning** — Support
@@ -176,7 +176,7 @@ reference docs live under `systems/`.
   firing ("retry the instant it's off cooldown") needed no change — it
   already worked this way. Completes Tank/Medic/Support/Attacker positioning;
   Tank, Medic, and Support were done in Sessions 12/13/15. See
-  `systems/boss.md`'s "Attacker patrol + boss-tracking positioning".
+  `systems/boss.md`'s "Attacker patrol positioning".
 
 - **Role Select scene + Victory screen** — a new `RoleSelect.unity` scene
   (Build Settings index 0, entry point) lets the human pick one of the 4
@@ -196,6 +196,37 @@ reference docs live under `systems/`.
   still not built. See `systems/player-roles.md`'s "Role Select scene" for
   the full mechanics writeup.
 
+- **Boss combat dynamism** — replaced the boss's continuous, predictable
+  sine drift with an erratic dash-or-hold movement decision (random
+  probability every ~1.5s) bounded to a limited vertical advance toward the
+  ships (roughly the top 2/5 of the playable height); added three new
+  attacks on top of the existing phase-based fire: body contact damage
+  (touching the boss directly costs 2x its bullet damage), a telegraphed
+  proximity shockwave (getting within ~1.5 ship-widths costs 3x bullet
+  damage plus a knockback via the existing recoil system), and a guided
+  missile that homes in on a locked Medic or Attacker (`Bullet.cs` gained a
+  true-homing `InitHoming()` path, capped turn rate, alongside the existing
+  straight-line `Init()`), with a `BossPanel` warning naming the targeted
+  role during lock-on. AI teammates (`AIController.minDistanceFromBoss`)
+  now keep a floor distance from the boss by default so they don't wander
+  into the new contact/shockwave range — this also fixed a previously-
+  documented degenerate case where AI positioning could collapse onto the
+  boss once allies died. Resolves this item's "Future work" design
+  questions from `systems/boss.md` (erratic repositioning, telegraphed
+  heavier attacks, curved bullet trajectories); the guided missile
+  knowingly loosens (doesn't break) Tank's straight-line-blocking guarantee,
+  a confirmed trade-off, not an oversight. A visible world-space ring at
+  `shockwaveRadius` (dim and always on, pulsing during the telegraph,
+  flashing on impact) was added right after an initial playtest found the
+  danger zone invisible. A follow-up tuning pass then raised
+  `shockwaveKnockback` (6 → 33, ~0.63 → ~3.5 units of actual push — derived
+  via the same closed-form recoil-decay formula Session 8 verified for
+  Attacker's Big Shot) after the original knockback proved barely
+  noticeable, and added live shockwave/guided-missile cooldown countdowns to
+  `BossPanel` (`"Ready"` at 0). See `systems/boss.md`'s "Movement and
+  firing", "Body contact damage", "Shockwave", "Guided missile", "Boss
+  avoidance", and "BossPanelUI.cs" sections.
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -210,20 +241,21 @@ reference docs live under `systems/`.
 
 ### Player-vs-boss dynamics (CPU AI first)
 
-- **Boss combat dynamism** — `Boss.cs`'s movement (a subtle, slow sine
-  drift) and both attack patterns (single aimed shot / 3-bullet spread,
-  both flat-timer) are static; it reads as a stationary turret rather than
-  an active opponent. Recommended **next**, ahead of minions below: with a
-  static, telegraph-free boss, it's hard to tell whether a rough playtest
-  result means "the role-coordination mechanic isn't fun" or just "the boss
-  is boring to fight." See `systems/boss.md`'s "Future work" section.
+- **Geometric bullet spread patterns** — the boss now has erratic movement,
+  body/shockwave hazards, and a role-targeted guided missile (see
+  "Implemented" above), but its phase-based fire is still a single aimed
+  shot or a fixed 3-bullet spread; more varied geometric bullet-pattern
+  shapes (fan, ring, spiral, etc.) were explicitly deferred to a later pass
+  rather than bundled into that work. Distinct from, but feeds the same
+  "bullet-pattern design language" as, "Enemy spawn pattern variety" below.
+  A rapid-fire burst attack (telegraphed volley at a much faster interval)
+  also remains a candidate if the fight still reads as too predictable.
 - **Bullet-dodging / teammate separation / manual ability triggering** —
   all four AI teammates now have role-differentiated positioning (see
   "Implemented" above), but still have zero bullet-awareness and no
   mutual-separation logic (can stack/overlap), and there's no way to
   manually fire a teammate's ability from the party frame yet — all three
-  are designed, not built. See `systems/boss.md`'s "AI teammate behavior"
-  and "Manual teammate ability triggering".
+  are designed, not built. See `systems/boss.md`'s "Not yet built".
 - **Minions around the boss** — smaller enemy ships flanking the `Boss`,
   motivated the ship-shrink above; not yet designed or built (no minion
   script/prefab exists). Do this **after** the two items above — more

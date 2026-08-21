@@ -1679,3 +1679,206 @@ via screenshot in Play mode: warning gone, no console errors.
   picker, not yet part of a Main Menu flow.
 - Bullet-dodging, teammate separation, manual teammate-ability triggering —
   unchanged, still not built.
+
+## Session 19 — Boss Combat Dynamism (Erratic Movement, Body Hazard, Guided Missile, Shockwave)
+
+The roadmap's long-recommended next item, requested directly this session
+with four concrete mechanics: erratic movement bounded to a limited advance
+toward the ships, a damaging body hitbox, homing bullets that call out a
+specific role (with a HUD warning), and a close-range shockwave. Full
+technical write-up: `systems/boss.md`.
+
+### Clarifying two genuine forks before writing any code
+
+Two requests were ambiguous in a way that would have meant rewriting core
+systems if guessed wrong, so both were confirmed with the user before
+implementation:
+
+- **"2/5 of the screen" for boss movement** — could have meant a horizontal
+  roam cap or a vertical advance-toward-the-ships limit. Confirmed:
+  vertical. The boss's erratic left/right dashing is a separate, roughly
+  full-width behavior; the 2/5 fraction only bounds how far down (toward the
+  ships) it can push from its home row.
+- **"Guided bullets aiming the medic or attacker"** — could have meant a
+  bullet aimed at the target's position at fire time (straight line
+  afterward, fully Tank-blockable, no `Bullet.cs` changes) or true homing
+  (continuously re-aims in flight). Confirmed: true homing, at a capped turn
+  rate so it stays dodgeable. This knowingly loosens (not breaks) Tank's
+  straight-line-blocking guarantee — already flagged as an open question in
+  `systems/boss.md`'s "Future work" from an earlier session, now a real,
+  confirmed trade-off rather than a hypothetical one.
+
+Also confirmed: geometric bullet-pattern variety is explicitly deferred to
+a later pass, not bundled into this one — added as its own item under
+`roadmap.md`'s "Player-vs-boss dynamics" rather than silently dropped.
+
+### World-unit research before committing to numbers
+
+Since the user was explicit that they didn't know what unit scale the
+project uses, three parallel research passes (boss code + camera/viewport
+math, AI positioning + player health/collision, bullet system + HUD panel)
+established concrete numbers before any code was written: the playable
+viewport is **5.625 × 10 units** (orthographic size 5, forced 9:16 via
+`AspectRatioFitter`), ship collider footprint is **0.6 × 0.6**, the boss is
+**1.6 × 1.6** with a non-trigger `BoxCollider2D` (ship colliders are
+triggers, so Unity fires `OnTriggerEnter2D`/`OnTriggerStay2D` on **both**
+sides on overlap — confirmed this meant body-contact damage needed no new
+collider). This turned "1.5 ships around the boss" into a concrete
+`shockwaveRadius` of 1.7 (boss half-extent 0.8 + 1.5 ship-widths 0.9) and
+"2/5 of the screen" into a concrete vertical clamp, both stated as reasoning
+in the plan rather than picked blind.
+
+### Implementation
+
+- **`Boss.cs`** — replaced the `Update()` sine-drift block with a
+  dash-or-hold decision every `dashDecisionInterval` (1.5s,
+  `dashProbability` 0.35), clamped by a new `ClampToBounds()` (X via the
+  same `ViewportToWorldPoint`/`screenPadding` idiom
+  `PlayerController.HandleMovement()` already uses; Y clamped to
+  `[homeY - maxAdvanceFraction * viewportHeight, homeY]`). Added a new
+  `bulletDamage` field (1f) making the boss's own bullet damage explicit —
+  previously an implicit default from `Bullet.damage`, since `SpawnBullet()`
+  never set it — as the single source of truth the two new damage
+  mechanics multiply against. Body contact: `OnTriggerStay2D` on `Boss.cs`
+  itself (reusing its existing solid collider), per-target cooldown-gated,
+  `2x bulletDamage`. Shockwave: `CheckShockwave()`/`ShockwaveRoutine()`,
+  telegraphed, `3x bulletDamage` plus knockback via the *existing*
+  `PlayerController.AddRecoil()` (built for Attacker's Big Shot) rather than
+  a new knockback mechanism. Guided missile:
+  `CheckGuidedMissile()`/`GuidedMissileRoutine()` picks a random active
+  Medic/Attacker, sets a new public `GuidedMissileTargetRole` property
+  immediately (during the telegraph, not just during flight, so Tank gets
+  real reaction time), fires via `Bullet.InitHoming()`, holds the property a
+  couple seconds into flight before clearing.
+- **`Bullet.cs`** — added `InitHoming(...)` as an alternate init path
+  alongside the untouched existing `Init(...)`, so every straight-line
+  bullet (player and enemy) is unaffected. Re-aims `direction` each frame
+  toward the target's live position via `Vector3.RotateTowards` (**hit a
+  real compile error here** — `Vector2.RotateTowards` doesn't exist, only
+  `Vector3`'s overload does; Unity implicitly converts between the two, so
+  the fix was a one-line type change, caught immediately by
+  `refresh_unity`'s compile step), capped by a turn rate so it's dodgeable.
+- **`AIController.cs`** — new `minDistanceFromBoss` (1.9, just outside the
+  shockwave radius) and a new `EnforceBossDistance()` helper, applied to
+  `BiasedPositionDirection()` (Tank/Medic), `AttackerPositionDirection()`,
+  and `RandomRoamPoint()` (Support) — all four roles' default positioning
+  now has a floor distance from the boss. This incidentally fixed the
+  already-documented `GetAllyCenter()` collapse-toward-boss degenerate case
+  from an earlier session, for free.
+- **`BossPanelUI.cs`** — new `warningText` field, polled the same "HUD
+  reads, never owns state" way as the existing health/phase/target text.
+
+### Scene wiring
+
+New `BossWarningText` child added under `BossPanel` via the Unity MCP
+bridge, duplicated from `BossTargetText` as a styling template (same
+approach `AbilityText` used on `PartyFrame.prefab` in Session 8), wired to
+`BossPanelUI.warningText`, verified via a full scene reload from disk. Every
+other new field is either a fresh script default (no prefab-instance gotcha
+— confirmed on all 4 ships/`Teammate_Tank`'s prefab instance) or computed at
+runtime, so none of the prior sessions' `RecordPrefabInstancePropertyModifications()`
+gotcha applied this time.
+
+### Testing notes
+
+Unlike the "Editor doesn't tick Play-mode `Update()` while unfocused" quirk
+documented in Sessions 6-10, **this session's Editor instance ticked Play
+mode in real time on its own** between tool calls — `Time.time` advanced
+freely without needing screenshot-forced frame steps. This cut both ways:
+made end-to-end coroutine testing (shockwave, guided missile) much easier
+once discovered, but also meant an unattended party (no human input driving
+`Player`) died for real to the now-harder boss partway through testing —
+not a bug, just the fight actually being harder now, confirmed via a clean
+Play-mode restart. Where a coroutine still needed a real-time wait to
+resume (`WaitForSeconds`), telegraph/linger fields were temporarily lowered
+via direct field writes for the test only (same technique as Session 7's
+temporary `buffDuration` shortening) — confirmed discarded automatically on
+Stop, restoring the real serialized defaults.
+
+Verified via the Unity MCP bridge: reflection-driven stress test of
+`HandleMovement()` (300 forced decisions, bypassing the `Time.time` gate)
+matched the configured dash probability and stayed within clamp bounds
+every time; body contact damage confirmed exact math and cooldown gating
+via both a direct `OnTriggerStay2D` call and real physics-driven overlap
+(the latter correctly killed an overexposed test ship over repeated ticks);
+shockwave confirmed exact math, telegraph, and knockback, and was observed
+combining correctly with a simultaneous body-contact hit through the shared
+shield-first `PlayerHealth.TakeDamage` path; guided missile confirmed
+correct target-role restriction, HUD warning timing, and ran to completion
+multiple times with zero console errors/warnings across the whole session.
+
+### Follow-up: shockwave had no visible danger zone
+
+Immediate playtest feedback after the above: the shockwave was a complete
+surprise — nothing on screen indicated its radius before it hit. Added a
+world-space ring at `shockwaveRadius`, built the same procedural
+`LineRenderer` way `PlayerAbility.cs`'s Medic aura ring already is (dim and
+always visible, brightens/pulses during the telegraph, flashes on impact) —
+`CreateShockwaveRing()`/`UpdateShockwaveRing()` on `Boss.cs`, re-centered on
+the boss's live position every frame since it now moves erratically.
+Confirmed visually via a Play-mode screenshot (also incidentally caught the
+guided-missile HUD warning firing live in the same shot). No new gotchas —
+straightforward reuse of an already-proven visual pattern.
+
+### Follow-up: shockwave knockback too weak, no cooldown visibility
+
+Immediate playtest feedback after the above two follow-ups: the shockwave's
+knockback (`shockwaveKnockback = 6`) was barely noticeable, and `BossPanel`
+had no way to see whether the shockwave or guided missile were about to be
+available again.
+
+**Knockback math, derived from an existing precedent, not guessed**:
+`shockwaveKnockback` is an impulse fed into `PlayerController.AddRecoil()`,
+which decays exponentially every `FixedUpdate`
+(`recoilDamping` 8, `Fixed Timestep` 0.02, confirmed by reading
+`ProjectSettings/TimeManager.asset`). Session 8 already derived and verified
+the closed-form total displacement for this exact system (Attacker's Big
+Shot recoil: impulse 6 → measured 0.63 units). Re-deriving the same formula
+here gave `displacement ≈ impulse × 0.105`, which exactly reproduces
+Session 8's number — confirming the formula still holds rather than
+assuming it does. This turned "how far should the wave push ships" into a
+concrete question answerable in world units/ship-widths: the user was asked
+to pick a target displacement with the actual math shown (playable area is
+5.625 × 10 units, a ship is 0.6 × 0.6), and chose "very strong" (~3.5 units,
+~5.8 ship-widths) — `shockwaveKnockback` raised `6 → 33`.
+
+`Boss.cs` gained two pure derived-getter properties
+(`ShockwaveCooldownRemaining`, `GuidedMissileCooldownRemaining`) off
+already-existing private timer fields, no new state; `BossPanelUI.cs`
+polls them the same way as every other boss stat. Body contact damage's
+cooldown was deliberately left off `BossPanel` — it's per-target/reactive,
+not a single global cooldown like the other two, so it doesn't fit one HUD
+line the same way.
+
+**Testing hit the "already-serialized value doesn't pick up a new script
+default" gotcha again** (same class of issue as Sessions 11/12/16): after
+compiling, the *live scene instance's* `shockwaveKnockback` still read `6`
+even though the script default was now `33`, since it had been explicitly
+serialized at `6` in an earlier session. Fixed by setting it explicitly on
+both the scene instance and `Boss.prefab`'s default, verified via a full
+scene reload from disk.
+
+**Testing hit real noise from this session's free-running Play mode**: this
+Editor instance ticked Play mode continuously in the background between
+tool calls (same as observed at the end of the original Session 19 pass),
+which repeatedly wiped the unattended AI-only party mid-test and made a
+naive before/after position comparison too noisy to trust (AI healing,
+wandering, and the boss's own erratic movement all overwrote the signal
+within a few real seconds). Switched to a deterministic, instantaneous
+check instead: read `PlayerController`'s private `recoilVelocity` field via
+reflection immediately after manually calling `AddRecoil(pushDir * 33)` —
+confirmed it lands at exactly magnitude 33, which combined with the
+already-reproduced Session 8 decay formula is sufficient confirmation
+without racing the simulation. Cooldown text was confirmed the reliable
+way instead: a live screenshot showing `BossPanel` correctly reading
+`"Shockwave: Ready"` / `"Guided Missile: 0.7s"` after real combat had
+already exercised both.
+
+### Still open
+
+- Rapid-fire burst attack and geometric bullet spread patterns — deferred,
+  see `roadmap.md`'s "Player-vs-boss dynamics" (new "Geometric bullet spread
+  patterns" item).
+- Bullet-dodging, teammate separation, manual teammate-ability triggering —
+  unchanged, still not built.
+- Main Menu / Lobby scenes — still not built.

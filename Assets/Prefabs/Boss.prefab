@@ -199,13 +199,39 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  sineAmplitude: 2
-  sineFrequency: 0.5
+  dashDecisionInterval: 1.5
+  dashProbability: 0.35
+  dashDistanceX: 1.2
+  dashDistanceY: 0.8
+  dashSpeed: 8
+  maxAdvanceFraction: 0.4
+  screenPadding: {x: 0.8, y: 0.5}
   bulletPrefab: {fileID: 2454154910025362242, guid: 948b73a827320324aa43963466632840, type: 3}
   phase1FireInterval: 1.2
   phase2FireInterval: 0.6
   bulletSpeed: 6
   spreadAngle: 15
+  bulletDamage: 1
+  bodyContactDamageMultiplier: 2
+  contactDamageCooldown: 1
+  shockwaveRadius: 1.7
+  shockwaveDamageMultiplier: 3
+  shockwaveKnockback: 33
+  shockwaveCooldown: 3
+  shockwaveTelegraphTime: 0.3
+  shockwaveRingColor: {r: 1, g: 0.4, b: 0.1, a: 0.25}
+  shockwaveRingTelegraphColor: {r: 1, g: 0.15, b: 0.1, a: 0.85}
+  shockwaveRingImpactColor: {r: 1, g: 0.9, b: 0.3, a: 1}
+  shockwaveRingWidth: 0.06
+  shockwaveRingTelegraphWidth: 0.14
+  shockwaveTelegraphPulseSpeed: 12
+  shockwaveImpactFlashDuration: 0.15
+  guidedMissileTargetRoles: 0200000000000000
+  guidedMissileInterval: 5
+  guidedMissileTelegraphTime: 0.8
+  guidedMissileTurnRate: 90
+  guidedMissileSpeed: 5
+  guidedMissileWarningLingerTime: 2
   targets:
   - {fileID: 0}
   - {fileID: 0}

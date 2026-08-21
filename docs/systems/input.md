@@ -15,7 +15,7 @@ methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
 
 - Action map: `Player`
   - `Move` — Value / Vector2, 2D Vector composite (WASD only — arrow keys
-    are **not** currently bound, despite early notes saying otherwise)
+    are **not** currently bound)
   - `Fire` — Button (Space and left mouse button)
   - `Ability` — Button (`E`)
 

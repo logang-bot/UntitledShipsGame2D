@@ -8,6 +8,9 @@ public class Bullet : MonoBehaviour
     private GameObject ownerObject; // shooter reference, for boss aggro attribution
 private string owner; // "Player" or "Enemy" - determines what it can hit
 
+    private Transform homingTarget;
+    private float turnRateDegPerSec;
+
     public float lifeTime = 3f;
     public float damage = 1f;
 
@@ -20,8 +23,28 @@ public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = 
         Destroy(gameObject, lifeTime); // safety cleanup if it never hits anything
     }
 
+    // Re-aims toward target's current position every frame, at a capped turn
+    // rate, instead of the fixed-at-spawn direction Init() uses - dodgeable,
+    // not inescapable. If target dies/deactivates mid-flight, Update() simply
+    // stops re-aiming and the bullet keeps its last heading; no cleanup needed.
+    public void InitHoming(Transform target, float turnRate, float spd, string ownerTag, GameObject ownerObj = null)
+    {
+        homingTarget = target;
+        turnRateDegPerSec = turnRate;
+        speed = spd;
+        owner = ownerTag;
+        ownerObject = ownerObj;
+        direction = target != null ? ((Vector2)target.position - (Vector2)transform.position).normalized : Vector2.down;
+        Destroy(gameObject, lifeTime);
+    }
+
     void Update()
     {
+        if (homingTarget != null && homingTarget.gameObject.activeInHierarchy)
+        {
+            Vector2 desiredDir = ((Vector2)homingTarget.position - (Vector2)transform.position).normalized;
+            direction = ((Vector2)Vector3.RotateTowards(direction, desiredDir, turnRateDegPerSec * Mathf.Deg2Rad * Time.deltaTime, 0f)).normalized;
+        }
         transform.Translate(direction * speed * Time.deltaTime, Space.World);
     }
 
