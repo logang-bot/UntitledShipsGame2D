@@ -53,21 +53,25 @@ Key public fields: `aspectFitter`, `leftSidebar`, `rightSidebar`. Note:
 
 **Attached to:** `PartyFrame.prefab` (see Prefabs below) — reusable, not
 scene-specific.
-**Requires:** `public void Initialize(GameObject player)` to be called
-before it does anything useful — see `PartyFrameManager.cs` below. Also
-holds Inspector-dragged references to the frame's own children: avatar
-`Image`, health bar `Image`, shield bar `Image` (`ShieldBar`), and five
-`TextMeshProUGUI` children (role, health, move speed, fire rate, ability)
-— these bake into the prefab fine since they're internal to it.
+**Requires:** `public void Initialize(GameObject player, string
+displayName)` to be called before it does anything useful — see
+`PartyFrameManager.cs` below. Also holds Inspector-dragged references to
+the frame's own children: avatar `Image`, health bar `Image`, shield bar
+`Image` (`ShieldBar`), and six `TextMeshProUGUI` children (name, role,
+health, move speed, fire rate, ability) — these bake into the prefab fine
+since they're internal to it.
 
 `playerHealth`/`playerRole`/`playerController`/`playerAbility` are
 **private**, set only by `Initialize()` — not Inspector fields. A prefab
 asset can't hold a serialized reference to a specific scene's `Player`
-object, so `Initialize(GameObject player)` does the four `GetComponent<>()`
-lookups, then runs one-time setup (role text set to `"Role: " + PlayerRole`,
-tints avatar/health-bar/role-text to `Stats.tintColor`, matching the ship
+object, so `Initialize(GameObject player, string displayName)` does the
+four `GetComponent<>()` lookups, then runs one-time setup: `nameText`'s
+text is set to the passed-in `displayName` (`PartyFrameManager.cs` decides
+what that string is — see below, `PartyFrameUI` itself has no concept of
+human-vs-AI), role text set to `"Role: " + PlayerRole`, and tints
+avatar/health-bar/role-text to `Stats.tintColor`, matching the ship
 sprite's tint — `shieldBarFill` is deliberately **not** tinted, always
-shield-blue).
+shield-blue.
 `Update()` early-returns until `Initialize()` has run, then keeps health
 bar `fillAmount`, `"HP: current/max"` text, `shieldBarFill.fillAmount`
 (`CurrentShield`/`maxShield`, see [player-roles.md](player-roles.md)'s
@@ -84,12 +88,11 @@ computes cooldown/buff/shield math itself, only formats what
 `PlayerHealth`/`PlayerAbility` already expose — same "HUD only reads, never
 owns game state" pattern throughout. Only real, data-backed stats are
 shown — no "Attack"/"Defense" labels, since those aren't mechanics that
-exist yet. `PlayerName` text is static placeholder text ("Player 1") —
-there's no name data anywhere in the codebase to bind it to.
+exist yet.
 
 Key public fields: `healthBarFill`, `shieldBarFill`, `avatarImage`,
-`roleText`, `healthText`, `moveSpeedText`, `fireRateText`, `abilityText`.
-Key public method: `Initialize(GameObject)`.
+`nameText`, `roleText`, `healthText`, `moveSpeedText`, `fireRateText`,
+`abilityText`. Key public method: `Initialize(GameObject, string)`.
 
 **Planned, not yet implemented** (see [boss.md](boss.md)'s "Not yet
 built"): `abilityText` becomes a clickable/tappable UI element that calls
@@ -108,20 +111,29 @@ Inspector-dragged (index 0 = `Player`, 1-3 = `Teammate_Tank`/`Teammate_Medic`/
 `Teammate_Support`; matching `PartyFrame_1..4`), matching this project's
 explicit-wiring style (no `FindObjectOfType`).
 
-In `Awake()`, loops `for (int i = 0; i < partyFrames.Length && i <
-players.Length; i++) partyFrames[i].Initialize(players[i]);`. Using
-`Awake()` (not `Start()`) matters: Unity guarantees every object's `Awake()`
-finishes before any `Start()` begins, so this runs before anything could
-observe a half-initialized frame.
+In `Awake()`, loops over both arrays, computing a display name per slot
+before calling `Initialize`: whichever ship has no `AIController` component
+(present on all 3 `Teammate_*`, absent from `Player` — the same signal
+[boss.md](boss.md) uses for this distinction) is the human and shows
+`"Player 1"`; every other slot shows `"CPU " + n`, numbered in array order
+(so `"CPU 1"`/`"CPU 2"`/`"CPU 3"` for whichever 3 GameObjects aren't the
+human, independent of their current role). Using `AIController` presence
+rather than a raw index (`i == 0`) keeps this correct even if `players[]`'s
+wiring order ever changed. Using `Awake()` (not `Start()`) matters: Unity
+guarantees every object's `Awake()` finishes before any `Start()` begins,
+so this runs before anything could observe a half-initialized frame.
 
 Not a real runtime spawner — the 4 slots are fixed, hand-wired Inspector
 references, not a loop that reacts to however many players/teammates
 actually exist. `PartyFrameUI.cs` itself needs no changes to support a
-different player count, since `Initialize(GameObject)` only does generic
-`GetComponent<>()` lookups that work on any player-shaped GameObject, human
-or AI-controlled — a "loop over connected players and `Instantiate()`s
-`PartyFrame.prefab` per player" version is the natural extension once local
-co-op (a variable player count) exists.
+different player count, since `Initialize(GameObject, string)` only does
+generic `GetComponent<>()` lookups (plus setting the passed-in display
+name) that work on any player-shaped GameObject, human or AI-controlled —
+a "loop over connected players and `Instantiate()`s `PartyFrame.prefab`
+per player" version is the natural extension once local co-op (a variable
+player count) exists; that version would need its own human-vs-AI naming
+scheme too, since the current `AIController`-presence check is unaffected
+by player count.
 
 Key public fields: `players[]`, `partyFrames[]`.
 
@@ -166,6 +178,17 @@ is no `RightSidebar` wrapper):
   via `VictoryUI.cs`. See [player-roles.md](player-roles.md)'s "Role Select
   scene".
 
+`GameOverUI.victoryPanelRoot` is dragged to `VictoryPanel` and
+`VictoryUI.gameOverPanelRoot` is dragged to `GameOverPanel` — a
+mutual-exclusion guard so the 3 CPU teammates defeating the boss after the
+human `Player` has already died (they keep fighting; only the human's death
+ends the test, see [boss.md](boss.md)'s "Death handling") can't pop
+`VictoryPanel` on top of an already-showing `GameOverPanel`, or vice versa.
+Each `Show()` early-returns before activating its own panel if the other's
+is already active — a true no-op, not a flash-then-hide. Boss combat itself
+is unaffected; it still resolves and the `Boss` GameObject still gets
+destroyed normally either way, only the end-screen popup is guarded.
+
 ### Prefabs
 
 **`Assets/Prefabs/PartyFrame.prefab`** — the party frame, avatar + role +
@@ -199,8 +222,6 @@ one-off focus.
   not a "loop over however many players/teammates actually exist and
   `Instantiate()`" spawner. Deferred until the player/teammate count needs
   to vary at runtime (local co-op, or a different minion/teammate count).
-- `PlayerName` text is still static placeholder ("Player 1", same on every
-  party frame) — no name data model exists.
 - Avatar is an untinted-sprite placeholder box (tinted to role color) — no
   ship art exists yet.
 - Click/tap-to-trigger-ability on `abilityText` is designed but not

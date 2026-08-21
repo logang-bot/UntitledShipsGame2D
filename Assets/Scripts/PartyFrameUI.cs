@@ -12,6 +12,7 @@ public class PartyFrameUI : MonoBehaviour
     public TextMeshProUGUI moveSpeedText;
     public TextMeshProUGUI fireRateText;
     public TextMeshProUGUI abilityText;
+    public TextMeshProUGUI nameText;
 
     private PlayerHealth playerHealth;
     private PlayerRoleComponent playerRole;
@@ -19,13 +20,14 @@ public class PartyFrameUI : MonoBehaviour
     private PlayerAbility playerAbility;
     private bool isDead;
 
-    public void Initialize(GameObject player)
+public void Initialize(GameObject player, string displayName)
     {
         playerHealth = player.GetComponent<PlayerHealth>();
         playerRole = player.GetComponent<PlayerRoleComponent>();
         playerController = player.GetComponent<PlayerController>();
         playerAbility = player.GetComponent<PlayerAbility>();
 
+        if (nameText != null) nameText.text = displayName;
         roleText.text = "Role: " + playerRole.role;
 
         Color tint = playerRole.Stats.tintColor;

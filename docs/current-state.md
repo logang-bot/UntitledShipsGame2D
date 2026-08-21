@@ -193,11 +193,16 @@ real networking last, then art/audio.
    side-to-side but stay roughly under wherever the boss currently is
    horizontally, at a distance between Tank's and Medic's, rather than
    patrolling a fixed lane independent of the boss. The left-sidebar shows
-   4 party frames (you + 3 teammates), each with a live avatar, role/HP/
-   shield-bar/move-speed/fire-rate/ability text, tinted to match the role.
+   4 party frames (you + 3 teammates), each with a live avatar, name
+   ("Player 1" for you, "CPU 1"/"CPU 2"/"CPU 3" for the teammates),
+   role/HP/shield-bar/move-speed/fire-rate/ability text, tinted to match
+   the role.
 6. At 0 HP, **only the human `Player`** triggers the "Game Over" overlay and
    ends the test — a teammate dying just grays out its own party frame and
-   it keeps fighting inactive. Click **Restart** to retry with the exact
+   it keeps fighting inactive (if the remaining teammates go on to defeat
+   the boss after that, the Victory panel is suppressed rather than popping
+   on top of Game Over — whichever end screen shows first wins). Click
+   **Restart** to retry with the exact
    same party/roles, or **Change Roles** to go back to the Role Select
    screen and pick again. Defeating the boss instead shows a **Victory**
    overlay with the same two options ("Play Again" / "Change Roles").

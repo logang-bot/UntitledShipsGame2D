@@ -2036,3 +2036,89 @@ organic boss defeat from sustained ambient fire mid-test — confirming
 - Bullet-dodging, manual teammate-ability triggering — unchanged, still not
   built (see `roadmap.md`).
 - Main Menu / Lobby scenes — still not built.
+
+## Session 21 — Game Over/Victory Race Fix + CPU Party Frame Names
+
+Two independent playtest-reported bugs, fixed in one session since both
+were small and unrelated: the Victory panel could pop on top of an
+already-showing Game Over panel, and every party frame displayed the
+identical hardcoded name `"Player 1"` regardless of which ship it
+represented.
+
+### Game Over vs. Victory: mutual exclusion, not boss immortality
+
+The 3 CPU teammates keep fighting after the human `Player` dies (only the
+human's own death shows `GameOverPanel`, by existing design — see
+`systems/boss.md`'s "Death handling"), so if they go on to defeat the boss,
+`Boss.Die()`'s unconditional `OnDefeated` pops `VictoryPanel` on top of the
+already-showing `GameOverPanel`.
+
+**Design conversation before writing anything**: the user's first instinct
+was to make the boss invulnerable once Game Over fires, so it could never
+reach 0 HP afterward. Talked through and rejected in favor of a
+mutual-exclusion guard between the two panels instead — an invulnerable
+boss would never die or get cleaned up (nothing else destroys it), so the
+fight would run forever in the background for zero visible benefit, since
+`GameOverPanel` already covers the full screen either way. The user then
+added one more requirement while confirming this direction: the guard must
+be a genuine no-op, not a "show then immediately hide" — a boss defeat that
+happens while Game Over is already up must never register as a victory at
+all, even momentarily. Both `GameOverUI.Show()` and `VictoryUI.Show()` were
+already bare `panelRoot.SetActive(true)` calls with no existing check of
+any kind (confirmed by reading both scripts in full), so the guard is a
+plain early-return *before* that line, not a state that gets set and later
+unset.
+
+Added `GameOverUI.victoryPanelRoot`/`VictoryUI.gameOverPanelRoot` (each
+pointing at the other's panel), and each `Show()` now returns immediately
+if the other's panel `activeSelf` — implemented symmetrically (not just
+the reported Game-Over-then-Victory direction) to also cover the mirror
+race, where an enemy bullet already in flight when the boss dies could
+still land on the Player a moment after Victory has already shown. No
+changes to `Boss.cs`/`PlayerHealth.cs`/`BossPanelUI.cs` at all — the boss
+still dies and gets destroyed normally regardless of which panel already
+won; `BossPanelUI.ShowDefeated()` (the other `OnDefeated` listener) is left
+unguarded since it's just HUD text sitting behind whichever full-screen
+panel is up, harmless either order.
+
+### CPU party frame names
+
+`PartyFrameUI.cs` had no name field at all — the identical `"Player 1"`
+every frame showed was a static default baked into
+`Assets/Prefabs/PartyFrame.prefab`'s `PlayerName` text child, never bound
+to any script (already flagged as a known gap in `systems/hud-layout.md`).
+Added `PartyFrameUI.nameText`, changed `Initialize(GameObject)` to
+`Initialize(GameObject, string displayName)`. `PartyFrameManager.Awake()`
+computes the name per slot before calling it: whichever ship has no
+`AIController` (attached to all 3 `Teammate_*`, absent from `Player` — the
+same signal already used elsewhere to distinguish human from AI, see
+`systems/boss.md`) is `"Player 1"`; every other slot is `"CPU " + n`,
+numbered in `players[]`'s array order. Checked component presence rather
+than a raw index (`i == 0`) so this stays correct even if the array's
+wiring order ever changed — matches the codebase's existing convention.
+
+Wired the prefab's pre-existing `PlayerName` `TextMeshProUGUI` child into
+the new `nameText` field once, at the prefab level
+(`PrefabUtility.LoadPrefabContents`/`SaveAsPrefabAsset`, same technique as
+Session 8's party-frame contrast fix) — confirmed all 4 `PartyFrame_1..4`
+are genuine prefab instances (unlike the `Teammate_*` split-prefab
+situation), so the one edit propagated to all 4 automatically with no
+per-instance wiring needed.
+
+### Verification
+
+All via the Unity MCP bridge in Play mode. Confirmed the primary reported
+case: forcing the human `Player` to 0 HP shows `GameOverPanel`; forcing the
+boss to 0 HP afterward leaves `VictoryPanel.activeSelf == false`. Reset and
+confirmed the mirror case: defeating the boss first shows `VictoryPanel`;
+forcing the Player to 0 HP afterward leaves `GameOverPanel.activeSelf ==
+false`. Read all 4 party frames' live `nameText.text` in Play mode:
+`"Player 1"` on the human's frame, `"CPU 1"`/`"CPU 2"`/`"CPU 3"` on the
+three teammates', matching `players[]`'s wired order. Zero console
+errors/warnings throughout.
+
+### Still open
+
+- Bullet-dodging, manual teammate-ability triggering — unchanged, still not
+  built (see `roadmap.md`).
+- Main Menu / Lobby scenes — still not built.

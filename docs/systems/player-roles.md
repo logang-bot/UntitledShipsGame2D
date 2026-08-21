@@ -250,9 +250,13 @@ later — so role has to be set *before* any of those run:
   fully role-agnostic, keyed by GameObject reference, never by name.
 - **`VictoryUI.cs`** (mirrors `GameOverUI.cs`) — a `VictoryPanel` under
   `HUDCanvas`, shown as a listener on `Boss.OnDefeated` (alongside
-  `BossPanelUI.ShowDefeated()`). `PlayAgain()` reloads `Gameplay` (roles
-  preserved via `PartyRoleAssignment.HumanRole`); `ChangeRoles()` loads
-  `RoleSelect`. `GameOverPanel` has a matching "Change Roles" button
+  `BossPanelUI.ShowDefeated()`) unless `GameOverPanel` is already showing
+  (`gameOverPanelRoot` guard — the 3 CPU teammates can still defeat the
+  boss after the human `Player` has already died, since only the human's
+  own death ends the test; see [boss.md](boss.md)'s "Death handling").
+  `PlayAgain()` reloads `Gameplay` (roles preserved via
+  `PartyRoleAssignment.HumanRole`); `ChangeRoles()` loads `RoleSelect`.
+  `GameOverPanel` has a matching "Change Roles" button
   (`GameOverUI.ChangeRoles()`) alongside its Restart, which also doubles
   as "play again, same party."
 

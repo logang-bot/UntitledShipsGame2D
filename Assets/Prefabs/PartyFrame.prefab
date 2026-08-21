@@ -1152,6 +1152,7 @@ MonoBehaviour:
   moveSpeedText: {fileID: 6223965784059818440}
   fireRateText: {fileID: 7917942528581525589}
   abilityText: {fileID: 4744704728229260213}
+  nameText: {fileID: 7245626557954904588}
 --- !u!114 &1457268547243059677
 MonoBehaviour:
   m_ObjectHideFlags: 0

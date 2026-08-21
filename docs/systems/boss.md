@@ -520,7 +520,18 @@ to that same GameObject (each player's taunt targets itself).
 Only the human `Player`'s `PlayerHealth.OnDeath` shows `GameOverPanel`
 (`GameOverPanel/GameOverUI.Show()`). Each `Teammate_*`'s `OnDeath` is wired
 only to its own party frame (`PartyFrame_N/PartyFrameUI.OnPlayerDied()`) —
-a teammate dying just grays its frame, it doesn't end the whole fight.
+a teammate dying just grays its frame, it doesn't end the whole fight, so
+the 3 CPU teammates keep fighting (and can still defeat the boss) after the
+human is already gone.
+
+`GameOverUI.cs` and `VictoryUI.cs` guard each other (`victoryPanelRoot`/
+`gameOverPanelRoot`, one dragged to the other's panel) so this can't pop
+`VictoryPanel` on top of an already-showing `GameOverPanel` — whichever
+fires first is a true no-op for the other, not a flash-then-hide. Boss
+combat itself is unaffected; `Boss.Die()` still resolves and destroys the
+`Boss` GameObject normally regardless of which panel is already up, only
+the end-screen popup is guarded. See
+[hud-layout.md](hud-layout.md)'s Scene wiring for the field-level detail.
 
 ## Not yet built
 

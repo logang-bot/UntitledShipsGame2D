@@ -165,7 +165,10 @@ public methods: `TakeDamage(int)`, `Heal(int)`, `RestoreShield(int)`.
 
 Purely event-driven, no `Update()`. `Awake()` hides `panelRoot` so it's
 invisible during normal play. `Show()` is wired as a listener on `Player`'s
-`PlayerHealth.OnDeath` — reveals the panel. `Restart()` is wired to the
+`PlayerHealth.OnDeath` — reveals the panel, unless `VictoryPanel` is already
+showing (`victoryPanelRoot` guard — the 3 CPU teammates can still defeat the
+boss after the human dies, see [boss.md](boss.md)'s "Death handling" for the
+mutual-exclusion guard with `VictoryUI.cs`). `Restart()` is wired to the
 panel's Restart `Button.OnClick()` — calls
 `SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex)`, reloading
 `Gameplay` from scratch so every stateful script (`PlayerHealth`,
@@ -174,8 +177,8 @@ panel's Restart `Button.OnClick()` — calls
 loads `RoleSelect` instead (see [player-roles.md](player-roles.md)'s "Role
 Select scene").
 
-Key public field: `panelRoot`. Key public methods: `Show()`, `Restart()`,
-`ChangeRoles()`.
+Key public fields: `panelRoot`, `victoryPanelRoot`. Key public methods:
+`Show()`, `Restart()`, `ChangeRoles()`.
 
 ## PlayerDamageFlash.cs
 
