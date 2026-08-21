@@ -323,6 +323,27 @@ public class Boss : MonoBehaviour
         StartCoroutine(GuidedMissileRoutine(chosen));
     }
 
+// Called by each ship's own PlayerController.ResolveShipCollisions() the
+    // moment its overlap-resolution math detects it overlapping the boss -
+    // replaces the old OnTriggerStay2D handler, which stopped being reachable
+    // once ship/boss overlap is actively prevented before Unity's physics
+    // engine ever sees a genuine overlap. Same cooldown-gated damage as
+    // before. `ship` is always a ship's own root GameObject (the resolver
+    // only ever checks each ship's own body collider, never a child collider
+    // like Tank's Shield Arc), so GetComponent is correct here.
+    public void ApplyContactDamage(GameObject ship)
+    {
+        if (ship == null) return;
+        PlayerHealth health = ship.GetComponent<PlayerHealth>();
+        if (health == null) return;
+
+        if (lastContactDamageTime.TryGetValue(ship, out float t) && Time.time - t < contactDamageCooldown) return;
+
+        lastContactDamageTime[ship] = Time.time;
+        health.TakeDamage(Mathf.RoundToInt(bulletDamage * bodyContactDamageMultiplier));
+    }
+
+
     IEnumerator GuidedMissileRoutine(GameObject target)
     {
         PlayerRoleComponent targetRole = target != null ? target.GetComponent<PlayerRoleComponent>() : null;
@@ -342,19 +363,7 @@ public class Boss : MonoBehaviour
         GuidedMissileTargetRole = null;
     }
 
-    void OnTriggerStay2D(Collider2D other)
-    {
-        if (!other.CompareTag("Player")) return;
 
-        PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
-        if (health == null) return;
-
-        GameObject go = health.gameObject;
-        if (lastContactDamageTime.TryGetValue(go, out float t) && Time.time - t < contactDamageCooldown) return;
-
-        lastContactDamageTime[go] = Time.time;
-        health.TakeDamage(Mathf.RoundToInt(bulletDamage * bodyContactDamageMultiplier));
-    }
 
     public void TakeDamage(float amount, GameObject source)
     {

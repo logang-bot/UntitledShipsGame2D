@@ -103,22 +103,65 @@ Key public fields: `maxHealth` (90), `dashDecisionInterval`/
 `enemySpawner` (drag `Spawner` — auto-disabled in `Awake()` so wave enemies
 from `EnemySpawner.cs` don't confound a boss-fight test).
 
+### Solid-body collision (ships + boss)
+
+Ships (`Player` + 3 `Teammate_*`) and the boss all have a solid body — no
+two ships can occupy the same space, and neither can any ship occupy the
+boss's. This is a manual position-correction step
+(`Assets/Scripts/ShipCollisionUtil.cs`), not a physics-engine collision
+response — none of the trigger/collider setup described elsewhere in this
+doc changed.
+
+Every ship's `PlayerController.HandleMovement()` (both the human `Player`
+and every AI-driven `Teammate_*`, since `AIController` drives movement
+through the same `SetMoveDirection`/`HandleMovement` path) resolves its
+candidate position each `FixedUpdate` against every other ship
+(`PlayerAbility.allies`, already wired on all 4 ships) and against the boss
+(a new `PlayerController.boss` field, wired on all 4 ships) before the
+existing viewport clamp. `ShipCollisionUtil.ResolveBoxOverlap()` does an
+exact axis-aligned box-vs-box push-out along whichever axis has the
+shallower penetration — ships and the boss never rotate, so this is exact,
+not a circle approximation.
+
+Because ships/the boss move in small discrete steps every frame rather than
+teleporting, a momentary overlap is exactly the signal a real collision
+happened — so the same overlap check that computes the push-back also
+drives Body contact damage below, instead of relying on Unity's trigger
+callbacks (which would stop firing once real overlap is actively
+prevented). Ship-vs-ship overlap only ever gets pushed apart, no damage.
+
+The boss's own `HandleMovement()`/dash logic is untouched — it doesn't need
+to know about collision at all. Since its dash is already incremental
+(`Vector3.MoveTowards` each `Update()`, not a teleport), a ship's own next
+`FixedUpdate` naturally pushes itself back out the moment the boss dashes
+into it, the same as it would for another ship. In practice the boss reads
+as "shoving" ships out of its path rather than being blocked by them.
+
 ### Body contact damage
 
-The boss's own `BoxCollider2D` is non-trigger/solid; ship colliders are
-triggers (see Scene wiring below), so Unity fires
-`OnTriggerEnter2D`/`OnTriggerStay2D` on **both** GameObjects when they
-overlap — no dedicated hit collider needed. `Boss.cs`'s
-`OnTriggerStay2D(Collider2D other)`: on a `Player`-tagged collider, resolves
-`GetComponentInParent<PlayerHealth>()` (so a child collider like Tank's
-Shield Arc still routes to the ship's own health), gated per-target by
-`contactDamageCooldown` (1s, a private `Dictionary<GameObject, float>` of
-last-hit times) so standing inside the boss doesn't tick every physics
-frame, then deals
+Reworked alongside the solid-body collision above. Previously fired off
+Unity's `OnTriggerStay2D` (the boss's `BoxCollider2D` is non-trigger, ship
+colliders are triggers, so Unity fired the callback on genuine overlap);
+now fires from `PlayerController.ResolveShipCollisions()`'s own box-overlap
+check the moment it detects a ship overlapping the boss, calling a new
+`public Boss.ApplyContactDamage(GameObject ship)`. Same math as before:
+gated per-target by `contactDamageCooldown` (1s, a private
+`Dictionary<GameObject, float>` of last-hit times) so standing against the
+boss doesn't tick every frame, then deals
 `Mathf.RoundToInt(bulletDamage * bodyContactDamageMultiplier)` — 1 × 2 = 2
 by default, twice a regular boss bullet's damage. `bulletDamage` is the
 single source of truth this mechanic and the shockwave below both multiply
 against.
+
+`ApplyContactDamage` resolves the ship's `PlayerHealth` via `GetComponent`,
+not the old handler's `GetComponentInParent` — the resolver only ever
+checks each ship's own body `BoxCollider2D`, never a child collider like
+Tank's Shield Arc, so a parent lookup is no longer needed. One narrow
+behavior change from this: Shield-Arc-only contact (touching the arc
+without the ship's own body box overlapping) no longer independently
+triggers contact damage — in practice both paths always led to the same
+cooldown-gated hit on the same ship, so this is a low-impact
+simplification, not a balance change.
 
 ### Shockwave
 
@@ -462,6 +505,7 @@ copies).
 | --------------------- | ----------------------------------------------------------------------------- |
 | Transform              | scale (0.6, 0.6, 1)                          |
 | **AIController.cs**   | `boss`: the `Boss` instance                                                   |
+| **PlayerController.cs** | `boss`: the `Boss` instance (solid-body collision, see "Solid-body collision" above — also set on `Player`, which has no `AIController`) |
 | **PlayerRoleComponent** | role: Tank / Medic / Support respectively                                    |
 
 ### Tank taunt → boss aggro
@@ -484,10 +528,6 @@ a teammate dying just grays its frame, it doesn't end the whole fight.
   their role-zone positioning. Candidate approach: each frame, check for
   `EnemyBullet`-tagged objects (or bullets owned by `Boss`) within some
   radius/lane ahead of the teammate and bias `moveInput` away from them.
-- **Basic separation** — teammates have no awareness of each other and can
-  end up stacked/overlapping; a simple repulsion term (push away from the
-  nearest other `Player`-tagged ship within some radius) is needed on top
-  of the role-zone steering above.
 - **Manual teammate ability triggering** — the player should be able to
   force any teammate's ability to fire right now (subject to that
   teammate's own cooldown), overriding the AI's per-role heuristic for that

@@ -157,3 +157,20 @@ Important boundary: `camera.rect` (used by `AspectRatioFitter`) only affects the
 camera it's set on. Scene view always uses its own independent editor camera — the
 pillarbox effect will **never** preview in Scene view, only in Game view. This is a
 hard technical boundary, not a bug.
+
+## `GameObject.Find` skips inactive objects
+
+`GameObject.Find`/`GameObject.Find("Name")` only searches **active** GameObjects —
+once something calls `SetActive(false)` (e.g. `PlayerHealth.Die()` on a ship), it
+silently stops being findable this way, and code that assumed it would still be
+there throws a `NullReferenceException` one line later with no indication *why* the
+reference was null. Hit repeatedly during MCP-driven Play-mode combat testing
+(`docs/progress-log.md` Session 20) when ambient boss fire killed a test ship
+between tool calls.
+
+Fix: search all objects regardless of active state via
+`Resources.FindObjectsOfTypeAll<Transform>()` (filter by `.name` and
+`.gameObject.scene.IsValid()` to exclude prefab-asset transforms, which this method
+also returns), then `SetActive(true)` to revive it for further testing. Only needed
+for *finding* an inactive object — once you already hold a reference, calling
+methods on it works normally regardless of active state.

@@ -23,22 +23,50 @@ public class PlayerController : MonoBehaviour
     [Header("Recoil")]
     public float recoilDamping = 8f;
 
+    [Header("Collision")]
+    public Boss boss;
+
     private Rigidbody2D rb;
     private Camera cam;
     private Vector2 moveInput;
     private bool isFiring;
     private float nextFireTime;
     private Vector2 recoilVelocity;
+    private BoxCollider2D selfCollider;
+    private Vector2 selfHalfExtents;
+    private PlayerAbility ability;
+    private BoxCollider2D bossCollider;
+    private Vector2 bossHalfExtents;
+    private BoxCollider2D[] allyColliders;
 
     // Seconds until the next shot, derived from the live (possibly buffed)
     // shots/second - computed at point of use rather than stored, so
     // buffs never need to mutate a cached interval.
     private float FireInterval => 1f / (shotsPerSecond * fireRateBuffMultiplier);
 
-    void Start()
+void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
+        selfCollider = GetComponent<BoxCollider2D>();
+        selfHalfExtents = selfCollider.bounds.extents;
+        ability = GetComponent<PlayerAbility>();
+
+        if (boss != null)
+        {
+            bossCollider = boss.GetComponent<BoxCollider2D>();
+            if (bossCollider != null) bossHalfExtents = bossCollider.bounds.extents;
+        }
+
+        if (ability != null && ability.allies != null)
+        {
+            allyColliders = new BoxCollider2D[ability.allies.Length];
+            for (int i = 0; i < ability.allies.Length; i++)
+            {
+                if (ability.allies[i] != null)
+                    allyColliders[i] = ability.allies[i].GetComponent<BoxCollider2D>();
+            }
+        }
 
         PlayerRoleComponent roleComponent = GetComponent<PlayerRoleComponent>();
         if (roleComponent != null)
@@ -64,12 +92,14 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
     }
 
-    void HandleMovement()
+void HandleMovement()
     {
         recoilVelocity = Vector2.Lerp(recoilVelocity, Vector2.zero, recoilDamping * Time.fixedDeltaTime);
 
         Vector2 move = moveInput.normalized * (moveSpeed * speedBuffMultiplier) + recoilVelocity;
         Vector2 newPos = rb.position + move * Time.fixedDeltaTime;
+
+        newPos = ResolveShipCollisions(newPos);
 
         Vector3 min = cam.ViewportToWorldPoint(new Vector3(0, 0, 0));
         Vector3 max = cam.ViewportToWorldPoint(new Vector3(1, 1, 0));
@@ -78,6 +108,44 @@ public class PlayerController : MonoBehaviour
 
         rb.MovePosition(newPos);
     }
+
+// Resolves newPos against every other living ship (push-apart only - no
+    // damage) and against the boss (push-apart AND contact damage), using the
+    // same AABB math for both - ships/boss move in small discrete steps each
+    // frame rather than teleporting, so a momentary overlap here is exactly
+    // the signal a physical collision actually happened.
+    Vector2 ResolveShipCollisions(Vector2 candidatePos)
+    {
+        if (selfCollider == null) return candidatePos;
+
+        if (ability != null && ability.allies != null)
+        {
+            for (int i = 0; i < ability.allies.Length; i++)
+            {
+                Transform ally = ability.allies[i];
+                if (ally == null || ally == transform || !ally.gameObject.activeInHierarchy) continue;
+                BoxCollider2D allyCollider = allyColliders != null && i < allyColliders.Length ? allyColliders[i] : null;
+                if (allyCollider == null) continue;
+
+                candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
+                    candidatePos, selfHalfExtents,
+                    ally.position, allyCollider.bounds.extents,
+                    out _);
+            }
+        }
+
+        if (boss != null && bossCollider != null)
+        {
+            candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
+                candidatePos, selfHalfExtents,
+                boss.transform.position, bossHalfExtents,
+                out bool overlappingBoss);
+            if (overlappingBoss) boss.ApplyContactDamage(gameObject);
+        }
+
+        return candidatePos;
+    }
+
 
     // Auto-called by PlayerInput ("Send Messages" behavior) whenever
     // the "Move" action changes value (WASD, arrows, or gamepad stick).

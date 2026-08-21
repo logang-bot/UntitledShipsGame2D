@@ -227,6 +227,23 @@ reference docs live under `systems/`.
   firing", "Body contact damage", "Shockwave", "Guided missile", "Boss
   avoidance", and "BossPanelUI.cs" sections.
 
+- **Solid-body ship/boss collision** — no two ships (human or AI) can
+  overlap each other, and no ship can overlap the boss's body, via a new
+  `ShipCollisionUtil.cs` (exact axis-aligned box-vs-box push-out, not a
+  physics-engine collision response — ships/the boss never rotate, so this
+  is exact). Every ship's `PlayerController.HandleMovement()` resolves its
+  candidate position against every other ship and the boss each
+  `FixedUpdate`, before the existing viewport clamp; the boss's own dash
+  movement needed no changes, since a ship's next `FixedUpdate` naturally
+  pushes itself back out if the boss dashes into it. Supersedes the
+  originally-planned "repulsion term" steering-nudge approach with real
+  solid-body resolution, and also extends it to cover ship-vs-boss, which
+  that original plan didn't. The boss's "touching its body deals contact
+  damage" hazard was reworked to detect off this same overlap check instead
+  of a Unity trigger callback (which stopped being reachable once overlap
+  is actively prevented) — same cooldown-gated damage as before. See
+  `systems/boss.md`'s "Solid-body collision (ships + boss)".
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -250,12 +267,11 @@ reference docs live under `systems/`.
   "bullet-pattern design language" as, "Enemy spawn pattern variety" below.
   A rapid-fire burst attack (telegraphed volley at a much faster interval)
   also remains a candidate if the fight still reads as too predictable.
-- **Bullet-dodging / teammate separation / manual ability triggering** —
-  all four AI teammates now have role-differentiated positioning (see
-  "Implemented" above), but still have zero bullet-awareness and no
-  mutual-separation logic (can stack/overlap), and there's no way to
-  manually fire a teammate's ability from the party frame yet — all three
-  are designed, not built. See `systems/boss.md`'s "Not yet built".
+- **Bullet-dodging / manual ability triggering** — all four AI teammates
+  now have role-differentiated positioning (see "Implemented" above), but
+  still have zero bullet-awareness, and there's no way to manually fire a
+  teammate's ability from the party frame yet — both are designed, not
+  built. See `systems/boss.md`'s "Not yet built".
 - **Minions around the boss** — smaller enemy ships flanking the `Boss`,
   motivated the ship-shrink above; not yet designed or built (no minion
   script/prefab exists). Do this **after** the two items above — more

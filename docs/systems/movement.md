@@ -17,9 +17,13 @@ continue to spawn from the top (see `EnemySpawner.cs` in
 **Requires:** `Rigidbody2D`, a `Player Input` component (Actions =
 `PlayerControls`, Behavior = Send Messages — see [input.md](input.md)).
 
-Handles ship movement, clamped to stay within the camera viewport. Move input
-arrives via `OnMove(InputValue)`, called automatically by the `Player Input`
-component — not polled manually.
+Handles ship movement, clamped to stay within the camera viewport. Before
+that clamp, `HandleMovement()` also resolves the candidate position against
+every other ship and the boss so none of them can physically overlap — see
+[boss.md](boss.md)'s "Solid-body collision (ships + boss)" for the full
+mechanics (`ShipCollisionUtil.cs`). Move input arrives via
+`OnMove(InputValue)`, called automatically by the `Player Input` component —
+not polled manually.
 
 Key public fields: `moveSpeed` (a fixed per-role value, see
 [player-roles.md](player-roles.md)'s "Fixed per-role stats" — not a
@@ -39,8 +43,8 @@ This same script also handles shooting — see [combat.md](combat.md) for the
 
 | Component                | Key inspector values                                   |
 | ------------------------ | -------------------------------------------------------- |
-| Collider2D (Box/Poly)    | Is Trigger: **OFF**                                       |
-| **PlayerController.cs**  | moveSpeed: overwritten by role at `Start()` (see [player-roles.md](player-roles.md)), screenPadding: (0.5, 0.5) |
+| Collider2D (Box/Poly)    | Is Trigger: **ON**                                       |
+| **PlayerController.cs**  | moveSpeed: overwritten by role at `Start()` (see [player-roles.md](player-roles.md)), screenPadding: (0.5, 0.5), boss: the `Boss` instance (solid-body ship/boss collision — see [boss.md](boss.md)'s "Solid-body collision") |
 | **Player Input**         | Actions: PlayerControls asset, Default Map: Player, Behavior: Send Messages |
 | Transform                | localScale: (0.6, 0.6, 1) |
 

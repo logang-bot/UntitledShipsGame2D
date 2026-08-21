@@ -1928,6 +1928,7 @@ MonoBehaviour:
   fireDamage: 0.6
   fireRateBuffMultiplier: 1
   recoilDamping: 8
+  boss: {fileID: 1636344750194998057}
 --- !u!61 &729504114
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -4166,6 +4167,7 @@ MonoBehaviour:
   fireDamage: 0.6
   fireRateBuffMultiplier: 1
   recoilDamping: 8
+  boss: {fileID: 1636344750194998057}
 --- !u!61 &1429170697
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -5601,6 +5603,7 @@ MonoBehaviour:
   fireDamage: 0.6
   fireRateBuffMultiplier: 1
   recoilDamping: 8
+  boss: {fileID: 1636344750194998057}
 --- !u!61 &1787777323
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -6859,6 +6862,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5063399561984404213, guid: 8e6d13d1f268a4a46bb70ddf8d132e37, type: 3}
+      propertyPath: boss
+      value: 
+      objectReference: {fileID: 1636344750194998057}
     - target: {fileID: 5457261672654467984, guid: 8e6d13d1f268a4a46bb70ddf8d132e37, type: 3}
       propertyPath: bigShotDamage
       value: 1.8

@@ -269,6 +269,5 @@ later — so role has to be set *before* any of those run:
   ships fighting alongside `Player` (`Teammate_Tank`/`Teammate_Medic`/
   `Teammate_Support`) are CPU-controlled via `AIController.cs`, not real
   players; see [boss.md](boss.md).
-- Bullet-dodging, teammate separation, and manual teammate-ability
-  triggering from the party frame — see [boss.md](boss.md)'s "Not yet
-  built".
+- Bullet-dodging and manual teammate-ability triggering from the party
+  frame — see [boss.md](boss.md)'s "Not yet built".

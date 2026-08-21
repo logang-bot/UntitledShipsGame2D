@@ -1882,3 +1882,157 @@ already exercised both.
 - Bullet-dodging, teammate separation, manual teammate-ability triggering —
   unchanged, still not built.
 - Main Menu / Lobby scenes — still not built.
+
+## Session 20 — Solid-Body Ship/Boss Collision
+
+Requested directly: ships (human and AI) should have a solid shape that no
+other ship can overlap, and the boss's body should be equally solid against
+every ship — `AIController.minDistanceFromBoss` only biases AI teammates'
+*chosen target point* away from the boss, and nothing at all prevented
+ship-vs-ship stacking or a ship physically passing through the boss. Full
+technical write-up: `systems/boss.md`'s "Solid-body collision (ships +
+boss)".
+
+### Design conversation before any code
+
+Two genuine forks were talked through with the user before writing
+anything, since guessing wrong on either would have meant a rewrite:
+
+- **How to reconcile "prevent overlap" with the boss's existing "touching
+  its body deals contact damage" hazard** — hard-preventing overlap means
+  Unity's physics engine never actually sees two colliders intersect, so
+  the existing `Boss.OnTriggerStay2D` (which relies on genuine overlap)
+  would stop firing. The user's own proposed resolution, confirmed as the
+  design: since ships/the boss move in small discrete steps every frame
+  rather than teleporting, a momentary overlap is unavoidable for a step
+  before it's corrected — so the same box-overlap math that computes the
+  push-back doubles as the contact-damage detector, replacing reliance on
+  Unity's trigger callback with one unified per-ship step.
+- **Who gives way when the boss's erratic dash would move it into a ship's
+  spot** — considered "boss gets blocked like a wall" (symmetric, but adds
+  resolution code to `Boss.cs`'s movement and risks it stalling against a
+  parked ship) versus "boss shoves the ship aside" (asymmetric, but needs
+  zero changes to `Boss.cs`). The same discrete-step reasoning above
+  resolved this for free: since the boss's dash is already incremental
+  (`Vector3.MoveTowards` each `Update()`, not a teleport), each ship's own
+  next `FixedUpdate` naturally catches and corrects "the boss moved into
+  me" the same way it catches any other ship — no boss-side code needed at
+  all. Confirmed via the actual `TimeManager.asset` Fixed Timestep (0.02s)
+  and the boss's `dashSpeed`/collider sizes that this means at most one
+  rendered frame of transient overlap, never a persistent one.
+
+CPU cost of the added per-frame box checks was also raised directly — confirmed negligible (at most ~20 simple AABB comparisons across 4 ships +
+the boss per physics tick, the same order of magnitude as the per-frame
+distance loops `Boss.cs` already runs for aggro/shockwave/guided-missile
+targeting).
+
+### Research and validation before implementation
+
+Two parallel research passes (current physics/collider setup for
+ships/boss; docs + progress-log history on AI positioning and boss
+hazards) established that **no physics-engine collision response exists
+today at all** — every ship moves via `Rigidbody2D.MovePosition()` and the
+boss via raw `transform.position` writes, both fully imperative, so
+Unity's solver never resolves overlap between any of them regardless of
+trigger flags. A Plan agent then validated the concrete implementation
+live against the actual scene (not just static file reads): confirmed
+exact collider `bounds`/`isTrigger` values, confirmed `PlayerAbility.allies`
+(already wired on all 4 ships) and `Boss.targets` (already wired) were
+reusable with zero new arrays needed, corrected a stale claim in
+`systems/movement.md` (`Player`'s `Collider2D` was documented as `Is
+Trigger: OFF`, live value is `ON`), and flagged a rare accepted edge case:
+the boss's `screenPadding.x` (0.8) equals its own half-extent, so a ship
+pinned in the same corner the boss dashes into could see the viewport
+clamp momentarily fight the collision resolution — self-corrects the
+instant either body moves, not worth solving given nothing in the game
+deliberately drives a ship into that corner (`minDistanceFromBoss` already
+keeps default AI positioning well clear of the boss).
+
+### Implementation
+
+- **New `Assets/Scripts/ShipCollisionUtil.cs`** — a plain static class (no
+  `MonoBehaviour`, no Inspector wiring), one function:
+  `ResolveBoxOverlap(candidateSelfPos, selfHalfExtents, otherPos,
+  otherHalfExtents, out wasOverlapping)`. Exact axis-aligned box-vs-box
+  minimum-translation-vector push-out along whichever axis has the
+  shallower penetration — ships and the boss never rotate (the project's
+  established fixed-orientation design), so this is exact, not a circle
+  approximation. The `out bool` lets the one ship-vs-boss call site reuse
+  the same math as the contact-damage trigger, while ship-vs-ship call
+  sites just discard it (`out _`).
+- **`PlayerController.cs`** — new `public Boss boss` field (mirrors
+  `AIController.boss`, but needed here directly since this script also
+  drives the human `Player`, which has no `AIController`). Caches its own
+  `BoxCollider2D`/half-extents, `PlayerAbility` (for `.allies`), and the
+  boss's collider/half-extents once in `Start()`. New
+  `ResolveShipCollisions(Vector2)`, called from `HandleMovement()` between
+  computing the raw candidate position and the existing viewport clamp
+  (resolve-then-clamp, so a corrected position can never end up pushed
+  outside the play area by the correction itself) — resolves against every
+  other ship in `ability.allies` (push-apart only), then against `boss` if
+  present (push-apart **and**, on overlap, calls the new
+  `Boss.ApplyContactDamage(gameObject)`).
+- **`Boss.cs`** — removed `OnTriggerStay2D` (no longer reachable once
+  overlap is actively prevented) and replaced it with `public void
+  ApplyContactDamage(GameObject ship)`, the exact same cooldown-gated math
+  (`lastContactDamageTime`/`contactDamageCooldown`/`bulletDamage`/
+  `bodyContactDamageMultiplier`) just invoked from `PlayerController`'s
+  resolution step instead of a trigger callback. Uses `GetComponent`
+  instead of the old `GetComponentInParent`, since the caller always passes
+  a ship's own root GameObject now, never a child collider — this is a
+  narrow, accepted behavior change: Tank's Shield Arc (a separate child
+  trigger collider) could previously trigger contact damage on its own,
+  independent of Tank's body box; now only the body box is checked. In
+  practice both paths always led to the same cooldown-gated hit on the same
+  ship, so this wasn't treated as a balance change worth re-litigating.
+  `HandleMovement()`/dash logic needed no changes at all, per the design
+  conversation above.
+
+### Scene wiring
+
+Set the new `boss` field on all 4 ships' `PlayerController` in
+`Gameplay.unity` via the Unity MCP bridge. Hit the now-familiar
+prefab-instance gotcha once more on `Teammate_Tank` (the only one of the 4
+ships that's an actual `Teammate.prefab` instance) — needed
+`PrefabUtility.RecordPrefabInstancePropertyModifications()` on top of
+`SetDirty()`, same as every prior session that touched a field on this
+GameObject. Verified by reloading the scene fresh from disk afterward and
+re-reading the field on all 4 ships rather than trusting the in-memory
+value.
+
+### Verification
+
+All done live via the Unity MCP bridge in Play mode. Hit real friction from
+this session's free-running Play mode (same class of issue as Session 19's
+tail): an unattended party with ambient boss fire kept killing ships
+mid-test between tool-call round trips, including the human `Player`
+itself twice — recovered each time by reactivating the GameObject
+(`SetActive(true)`, inactive objects aren't found by `GameObject.Find`, so
+this needed `Resources.FindObjectsOfTypeAll<Transform>()` instead) and
+topping health/shield back up via the existing `Heal`/`RestoreShield`
+methods, rather than restarting the whole session and losing test state.
+Isolated the push-back-distance test cleanly by temporarily setting
+`boss.enabled = false` (stops the boss's `Update()` — movement, firing,
+shockwave — without affecting `ApplyContactDamage`, which is a directly
+callable public method unrelated to the component's enabled state) so
+ambient combat noise didn't contaminate the measurement.
+
+Confirmed: two overlapping ships separate correctly; a ship forced onto the
+boss (boss paused, health topped up first) gets pushed back to *exactly*
+the combined half-extent distance (measured `1.1`, matching
+`playerHalfExtent + bossHalfExtent` to the decimal) and takes contact
+damage exactly once; calling `ApplyContactDamage` twice back-to-back in one
+`execute_code` call (bypassing physics/frame-pump timing entirely) confirms
+the cooldown gate blocks the second hit deterministically; forcing the
+boss's position onto a stationary teammate (simulating a dash-into-ship)
+resolves with the ship pushed well clear, no persistent overlap. Tank's
+Shield Arc (`EdgeCollider2D` child) confirmed still intact and unaffected.
+Zero console errors/warnings across the entire session, including an
+organic boss defeat from sustained ambient fire mid-test — confirming
+`Bullet.cs`'s damage path is completely unaffected by this change.
+
+### Still open
+
+- Bullet-dodging, manual teammate-ability triggering — unchanged, still not
+  built (see `roadmap.md`).
+- Main Menu / Lobby scenes — still not built.

@@ -111,6 +111,13 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   the boss's live HP bar, phase, current target, guided-missile warning,
   and shockwave/guided-missile cooldowns. See
   [systems/boss.md](systems/boss.md).
+- **Solid-body collision** — no two ships (human or AI) can occupy the same
+  space, and no ship can occupy the boss's body either; each ship resolves
+  its own position against every other ship and the boss every frame
+  (`ShipCollisionUtil.cs`, an exact box-vs-box push-out, not a physics
+  simulation). Touching the boss still deals contact damage — detection now
+  comes from this same overlap check instead of a physics trigger callback.
+  See [systems/boss.md](systems/boss.md)'s "Solid-body collision".
 
 ## What's NOT there yet
 
@@ -125,9 +132,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - No local co-op / dynamic player count — the party is 4 fixed, hand-placed
   scene objects (`Player` + 3 `Teammate_*`), not a runtime spawner that
   reacts to however many humans are actually playing.
-- No bullet-dodging or teammate separation for AI teammates. Manually
-  triggering a teammate's ability from the party frame is also designed but
-  not built. See [systems/boss.md](systems/boss.md)'s "Not yet built".
+- No bullet-dodging for AI teammates. Manually triggering a teammate's
+  ability from the party frame is also designed but not built. See
+  [systems/boss.md](systems/boss.md)'s "Not yet built".
 - No minions around the boss yet — no minion script/prefab exists.
 - No geometric/varied bullet spread patterns beyond the guided missile and
   the boss's two phase-based shot patterns.
