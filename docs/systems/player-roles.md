@@ -3,9 +3,21 @@
 ## PlayerRole.cs
 
 **Defines:** `PlayerRole` enum (`Attacker`, `Tank`, `Medic`, `Support`),
-`RoleStats` struct (health/fire-rate/move-speed multipliers + sprite tint
-`Color`), and the static `PlayerRoleStats` lookup table (one `RoleStats` per
-role, placeholder balancing values).
+`RoleStats` struct, and the static `PlayerRoleStats` lookup table (one
+`RoleStats` per role).
+
+`RoleStats` holds **fixed, absolute per-role values** — `maxHealth`,
+`maxShield`, `fireDamage`, `shotsPerSecond`, `moveSpeed`, `tintColor` — not
+multipliers on a shared base. This is a deliberate architecture change
+(2026-08-21, replacing the original `base × multiplier` design from
+Session 4 onward): multipliers made hand-tuning confusing (e.g. "Tank
+health is `5 × 1.6`" instead of just "Tank health is `8`"), and fire rate
+in particular was stored *inverted* (`fireRate` used to mean seconds
+between shots — lower was faster — despite reading like a rate). See
+"Fixed per-role stats" below for the full table and the source of truth
+this establishes. Temporary effects (buffs) are layered on **non-destructively**
+at the point of use instead — see `PlayerController.speedBuffMultiplier`/
+`fireRateBuffMultiplier` below — never by mutating these base values.
 
 No `ScriptableObject` asset workflow — role data is a static in-code table,
 matching the project's existing plain-`MonoBehaviour`, low-infra style. Easy
@@ -35,12 +47,14 @@ Holds the `role` field for this player instance and exposes `Stats`
 so it's safe regardless of Unity's unordered `Awake`/`Start` execution
 across sibling components).
 
-- `PlayerController.Start()` multiplies `moveSpeed`/`fireRate` by
-  `Stats.moveSpeedMultiplier`/`Stats.fireRateMultiplier`.
-- `PlayerHealth.Awake()` multiplies `maxHealth` by
-  `Stats.healthMultiplier`.
-- Both do a null-check on `GetComponent<PlayerRoleComponent>()` so behavior
-  is unchanged if the component is missing.
+- `PlayerController.Start()` assigns `moveSpeed`/`shotsPerSecond`/`fireDamage`
+  directly from `Stats.moveSpeed`/`Stats.shotsPerSecond`/`Stats.fireDamage`
+  (a straight overwrite now, not a multiplication).
+- `PlayerHealth.Awake()` assigns `maxHealth`/`maxShield` directly from
+  `Stats.maxHealth`/`Stats.maxShield`.
+- Both do a null-check on `GetComponent<PlayerRoleComponent>()`, keeping the
+  script's own inspector-set default as a fallback when the component is
+  missing.
 
 Key public fields: `role` (default `Attacker`).
 
@@ -59,75 +73,112 @@ shape already used by `PlayerRoleComponent.Stats`. A single
 `PlayerController`'s `nextFireTime`) blocks re-activation until the current
 role's cooldown elapses.
 
-- **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. Now
-  has a **real** effect — see "Aggro/targeting" below and
-  [boss.md](boss.md) — a persistent listener redirects the boss's target to
-  the taunter (`Boss.TauntedBy(GameObject)`). The Session 9 placeholder
-  feedback (`Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()`)
-  was kept alongside it, additive, not replaced.
+- **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. Has
+  a **real** effect — see "Aggro/targeting" below and [boss.md](boss.md) —
+  a persistent listener redirects the boss's target to the taunter
+  (`Boss.TauntedBy(GameObject)`). The Session 9 placeholder feedback
+  (`Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()`)
+  is kept alongside it, additive, not replaced.
+- **Tank — Shield Arc** (new, 2026-08-21, passive/always-on — independent
+  of Taunt, not an `E`-triggered ability): a wide, curved shield in front
+  of Tank, both visual and **functional**. Built procedurally in `Awake()`
+  only for `role == Tank` (same "only build what this role needs"
+  precedent as Medic's aura ring): a child `ShieldArc` GameObject, tagged
+  `Player`, with a local-space `EdgeCollider2D` (`isTrigger`) and matching
+  `LineRenderer`, both sampling the same shallow-parabola point set —
+  `shieldArcWidthMultiplier` (3x Tank's own `BoxCollider2D` width) wide,
+  `shieldArcHeight` (0.4) tall, offset `shieldArcYOffset` (0.3) above the
+  body. Local-space and built once, so it tracks Tank's movement and needs
+  **no per-frame `Update()`** (unlike Medic's ring, which resizes on boost
+  and therefore needs one). Relies on a one-line `Bullet.cs` fix —
+  `other.GetComponentInParent<PlayerHealth>()` instead of
+  `other.GetComponent<PlayerHealth>()` — so a hit on this child collider
+  (which has no `PlayerHealth` of its own) still routes into Tank's own
+  shield/health pool, exactly like a direct hit. This means a bullet that
+  would've missed Tank's own body but crossed the arc's wider span gets
+  blocked **and** costs Tank shield/health — not a free block. Player-owned
+  bullets pass through untouched (`Bullet.cs`'s player-bullet branch only
+  checks the `Enemy` tag, and the arc is tagged `Player`). **Known edge
+  case, not defended against**: if the arc's collider region vertically
+  overlaps Tank's own body collider, a bullet could in rare cases enter
+  both in the same physics step and double-hit — mitigated in practice by
+  `shieldArcYOffset` placing the arc above the body, consistent with this
+  project's "flag it, don't over-engineer for a rare edge case" style (see
+  the documented lack of bullet-dodging).
 - **Medic — Aura Boost** (implemented Session 13, replacing the original
   instant self-heal entirely — see [boss.md](boss.md)'s "Medic positioning
-  + proximity aura"): Medic passively regenerates health *and* shield (see
-  "Shield stat" below) of every ally in `allies[]` within `auraRadius`
-  every `auraTickInterval`, whether human- or AI-controlled — this is what
-  finally resolves the old "Medic heal only targets self" gap, as a
-  proximity aura rather than manual ally-targeting. The default aura is
-  **deliberately tiny** (`auraRadius` 0.5 — allies must nearly touch the
-  Medic); pressing `E` (`TriggerAuraBoost()`) temporarily swaps to a much
-  larger `auraBoostRadius` (3) and a much faster `auraBoostTickInterval`
-  (0.25s vs. 1s) for `auraBoostDuration` (4s), via the same
-  `StopCoroutine`/`StartCoroutine` restart-safety pattern Support's buff
-  uses below — same "cooldown must stay ≥ duration" constraint applies
-  (`auraBoostCooldown` 10s ≥ `auraBoostDuration` 4s). A `LineRenderer` ring
-  around the Medic (dim/thin by default, bright/thick while boosted) shows
-  the live radius, and allies actually healed by a tick get a distinct
-  green flash (`PlayerDamageFlash.Flash(Color)`, a new overload of the
-  existing damage-flash mechanism) — both purely visual, no gameplay effect.
-- **Support — Buff**: temporarily multiplies `PlayerController.moveSpeed`
-  and `fireRate` (both already role-scaled once at `Start()`), via a
-  coroutine that reverts by dividing back out after `buffDuration` —
-  identical restart-on-repeat pattern to `PlayerDamageFlash.cs`/
-  `CameraShake.cs` (see [combat.md](combat.md)). **Constraint**:
-  `buffCooldown` must stay ≥ `buffDuration` (defaults: 8s ≥ 4s) — the
-  revert divides out a fixed multiplier, so re-triggering before the
-  previous buff has reverted would double-apply it. The cooldown gate
-  already prevents this under the shipped defaults; don't lower
-  `buffCooldown` below `buffDuration` without changing the revert logic
-  too.
+  + proximity aura"): Medic passively regenerates health *and* shield of
+  every ally in `allies[]` within `auraRadius` every `auraTickInterval`,
+  whether human- or AI-controlled — this is what finally resolves the old
+  "Medic heal only targets self" gap, as a proximity aura rather than
+  manual ally-targeting. The default aura is **deliberately tiny**
+  (`auraRadius` 0.5 — allies must nearly touch the Medic); pressing `E`
+  (`TriggerAuraBoost()`) temporarily swaps to a larger `auraBoostRadius`
+  and a much faster `auraBoostTickInterval` (0.25s vs. 1s) for
+  `auraBoostDuration` (4s), via the same `StopCoroutine`/`StartCoroutine`
+  restart-safety pattern used elsewhere — same "cooldown must stay ≥
+  duration" constraint applies (`auraBoostCooldown` 10s ≥
+  `auraBoostDuration` 4s). **`auraBoostRadius` was halved, 2026-08-21** (`3`
+  → `1.5`) — flagged overpowered at the original size. A `LineRenderer`
+  ring around the Medic (dim/thin by default, bright/thick while boosted)
+  shows the live radius, and allies actually healed by a tick get a
+  distinct green flash (`PlayerDamageFlash.Flash(Color)`, a new overload of
+  the existing damage-flash mechanism) — both purely visual, no gameplay
+  effect.
+- **Support — Speed Boost** (renamed from "Buff" and fully redesigned,
+  2026-08-21): a **party-wide**, non-destructive multiplier on both move
+  speed and fire rate, not a self-only effect. `TriggerSpeedBoost()` loops
+  over `allies[]` (all 4 ships, self-included — the same array Medic's aura
+  already uses) and sets each ally's `PlayerController.speedBuffMultiplier`/
+  `fireRateBuffMultiplier` to `speedBoostMultiplier` (1.5) for
+  `speedBoostDuration` (4s), then resets both to `1f` when it ends — plain
+  assignment on both ends, so unlike the old self-only buff (which
+  multiplied `moveSpeed`/`fireRate` in place and divided back out, needing
+  `buffCooldown ≥ buffDuration` to avoid double-applying), there's no
+  revert arithmetic and nothing to double-apply. **`speedBoostCooldown`
+  bumped 8s → 15s** — flagged overpowered once it became party-wide, round
+  placeholder, tunable. **New party-wide visual**: every ship (any role,
+  built unconditionally in `Awake()` — not role-gated like Medic's ring or
+  Tank's arc, since any of the 4 could receive the boost) has its own
+  initially-hidden `PartyBuffRing`, toggled by the caster's new
+  `SetPartyBuffVisual(bool, Color)` call on each ally — all 4 rings light
+  up in the caster's tint color (Support's gold) the instant the boost
+  starts and disappear together the instant it ends.
 - **Attacker — Big Shot**: calls `PlayerController.FireBigShot(widthMultiplier,
-  damageAmount)` (`3x` width, `1.8` damage vs. a regular bullet's `0.6` —
-  both cut 40% from their original `3`/`1` in the boss HP/damage tuning
-  pass, see [boss.md](boss.md)'s "Tuning") and
-  `PlayerController.AddRecoil(Vector2.down * recoilForce)` — see
-  [combat.md](combat.md) for `Bullet.damage` (now `float`, not `int`, to
-  allow that fractional value) and why recoil has to be a decaying velocity
-  blended into `HandleMovement()` rather than a physics impulse
-  (`MovePosition` overwrites plain `AddForce` every `FixedUpdate`).
+  damageAmount)` (`3x` width) and `PlayerController.AddRecoil(Vector2.down
+  * recoilForce)`. **Damage is now a live multiplier of the caster's
+  current `fireDamage`** (`bigShotDamageMultiplier`, `2x`), computed at
+  cast time — `2.0 × 2 = 4.0` at today's values — rather than a
+  separately hand-tuned flat number, so it automatically stays proportional
+  if `fireDamage` is ever retuned again. See [combat.md](combat.md) for why
+  recoil has to be a decaying velocity blended into `HandleMovement()`
+  rather than a physics impulse (`MovePosition` overwrites plain
+  `AddForce` every `FixedUpdate`).
 
-Key public fields: `tauntCooldown` (5s), `OnTaunt`; `allies[]`,
-`auraRadius` (0.5), `auraTickInterval` (1s), `auraHealPerTick`/
-`auraShieldPerTick` (1 each), `auraBoostRadius` (3), `auraBoostTickInterval`
-(0.25s), `auraBoostDuration` (4s), `auraBoostCooldown` (10s),
-`auraRingColor`/`auraRingBoostedColor`/`auraRingWidth`/
-`auraRingBoostedWidth`, `healFlashColor`; `buffCooldown` (8s),
-`buffDuration` (4s), `buffMoveSpeedMultiplier` (1.3),
-`buffFireRateMultiplier` (0.7, lower = faster); `bigShotCooldown` (3s),
-`bigShotWidthMultiplier` (3), `bigShotDamage` (**1.8**, down from `3` —
-`float` now, not `int`), `recoilForce` (6). Key public method:
-`OnAbility(InputValue)`.
+Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
+(3), `shieldArcHeight` (0.4), `shieldArcYOffset` (0.3),
+`shieldArcColor`/`shieldArcLineWidth`; `allies[]`, `auraRadius` (0.5),
+`auraTickInterval` (1s), `auraHealPerTick`/`auraShieldPerTick` (1 each),
+`auraBoostRadius` (1.5), `auraBoostTickInterval` (0.25s), `auraBoostDuration`
+(4s), `auraBoostCooldown` (10s), `auraRingColor`/`auraRingBoostedColor`/
+`auraRingWidth`/`auraRingBoostedWidth`, `healFlashColor`; `speedBoostCooldown`
+(15s), `speedBoostDuration` (4s), `speedBoostMultiplier` (1.5),
+`partyBuffRingRadius`/`partyBuffRingWidth`; `bigShotCooldown` (3s),
+`bigShotWidthMultiplier` (3), `bigShotDamageMultiplier` (2), `recoilForce`
+(6). Key public method: `OnAbility(InputValue)`.
 
 Also exposes read-only status for the HUD (see `PartyFrameUI.cs` in
-[hud-layout.md](hud-layout.md)): `CooldownRemaining`, `IsBuffActive`,
-`BuffRemaining`, `AbilityName` (per-role display name), and `StatusText`
-(formatted cooldown/`Ready`/active-buff string) — these are the single
-source of truth for ability state so the HUD never duplicates cooldown
-math.
+[hud-layout.md](hud-layout.md)): `CooldownRemaining`, `IsSpeedBoostActive`,
+`SpeedBoostRemaining`, `AbilityName` (per-role display name), and
+`StatusText` (formatted cooldown/`Ready`/active-boost string) — these are
+the single source of truth for ability state so the HUD never duplicates
+cooldown math.
 
 `OnAbility(InputValue)` (the `Player Input`-driven entry point above) is now
 a thin wrapper around a public, non-input entry point — `TryUseAbility()` —
 extracted so `AIController.cs` (see [boss.md](boss.md)) can trigger a CPU
 teammate's ability directly, going through the exact same cooldown gate and
-role-dispatch switch as the human player. The four `Trigger*` methods stay
+role-dispatch switch as the human player. The `Trigger*` methods stay
 private/unchanged. **Planned** (see [boss.md](boss.md)'s "Manual teammate
 ability triggering"): this same `TryUseAbility()` entry point is also meant
 to be called from a click/tap on that teammate's party frame, letting the
@@ -136,10 +187,10 @@ human player force a specific teammate's ability to fire on demand.
 ## Shield stat (implemented)
 
 Agreed design, built 2026-08-20, see [boss.md](boss.md)'s "AI teammate
-behavior" for the motivating context (Tank physically blocking bullets). A
-second, health-like pool per role (`PlayerHealth.maxShield`/`CurrentShield`),
-alongside `RoleStats.healthMultiplier`'s new sibling
-`RoleStats.shieldMultiplier`:
+behavior" for the motivating context (Tank physically blocking bullets,
+since extended by the Shield Arc above). A second, health-like pool per
+role (`PlayerHealth.maxShield`/`CurrentShield`), a fixed per-role value
+alongside `maxHealth` (see "Fixed per-role stats" below):
 
 - **Absorbs damage before health** — `PlayerHealth.TakeDamage(int)` deducts
   from `currentShield` first, down to 0; only the remainder subtracts from
@@ -153,11 +204,6 @@ alongside `RoleStats.healthMultiplier`'s new sibling
   meaningfully dependent on Medic rather than being self-sufficient,
   matching the MMO-raid "tank and healer" coupling this project is modeled
   on (`../overview.md`).
-- **Per-role values**: `maxShield` base is `3` (placeholder, smaller than
-  `maxHealth`'s `5` since it's a secondary layer). Only Tank (`2.0×`,
-  highest) and Attacker (`1.0×`, medium) were specified by design; Medic and
-  Support are left at the `1.0×` baseline, undecided/placeholder like every
-  other not-yet-tuned role-stat value — see the table below.
 - **Shield bar**: a fixed shield-blue bar on the party frame, not
   role-tinted — see [hud-layout.md](hud-layout.md).
 
@@ -183,19 +229,41 @@ target — see [boss.md](boss.md) for the full design (a plain
 `Dictionary<GameObject, float>` of damage-dealt-per-target, no decay,
 `TauntedBy(GameObject)` spiking the caster above everyone else).
 
-## Current balancing values (placeholders, tunable)
+## Fixed per-role stats (single source of truth)
 
-| Role     | Health ×   | Shield ×            | Fire rate ×          | Move speed × | Tint            |
-| -------- | ---------- | -------------------- | --------------------- | ------------- | ---------------- |
-| Attacker | 0.8 (lower) | 1.0 (medium)         | 0.75 (faster)          | 1.0            | red/orange        |
-| Tank     | 1.6 (higher)| 2.0 (highest)        | 1.2 (slower)           | 0.8 (slower)   | blue               |
-| Medic    | 1.0         | 1.0 (placeholder)    | 1.0                    | 1.0            | green              |
-| Support  | 1.0         | 1.0 (placeholder)    | 1.0                    | 1.15 (faster)  | yellow/gold        |
+**Architecture change, 2026-08-21** — replaces every `base × multiplier`
+table this doc previously had. `RoleStats` (see `PlayerRole.cs` above) now
+holds one fixed, absolute number per stat per role — no multipliers, no
+shared base, no rounding. This is the entire source of truth for a role's
+numbers; nothing else in the codebase independently defines health, shield,
+fire damage, fire rate, or move speed.
 
-Fire damage isn't role-differentiated (every role deals the same regular
-fire damage, `0.6`, down from `1` in the boss HP/damage tuning pass — see
-[boss.md](boss.md)'s "Tuning"), so it isn't in this table; only Attacker's
-Big Shot ability damage differs, per its entry above.
+| Role     | Health | Shield | Fire damage | Fire rate | Move speed |
+| -------- | ------ | ------ | ------------ | --------- | ---------- |
+| Attacker | 6      | 5      | 2.0          | 2.5/s     | 3.0 u/s    |
+| Tank     | 8      | 20     | 1.0          | 1/s       | 1.5 u/s    |
+| Medic    | 4      | 3      | 0.7          | 1.5/s     | 3.0 u/s    |
+| Support  | 5      | 3      | 1.0          | 2/s       | 4.5 u/s    |
+
+Units: **Fire rate** is shots/second (higher = faster) — `PlayerController.shotsPerSecond`,
+replacing the old, misleadingly-named `fireRate` field that actually stored
+*seconds between shots* (lower was faster). **Move speed** is world
+units/second (`PlayerController.moveSpeed`), already unambiguous, no change
+in kind. All values are placeholders, tunable until real playtesting lands
+— every role now has a deliberately-chosen number for every stat (no more
+"left at the undecided 1.0x baseline" placeholders).
+
+**Buffs are layered on non-destructively, not by mutating these values.**
+`PlayerController` has two runtime-only multiplier fields —
+`speedBuffMultiplier`, `fireRateBuffMultiplier` (both default `1f`) — read
+at the point of use (`HandleMovement()`'s move vector, and a computed
+`FireInterval => 1f / (shotsPerSecond * fireRateBuffMultiplier)` for the
+fire-cooldown gate) rather than ever being multiplied into `moveSpeed`/
+`shotsPerSecond` themselves. Only `PlayerAbility` (Support's Speed Boost,
+see above) ever sets them, and only ever via plain assignment — there is no
+revert-by-dividing-back-out anywhere in this system anymore, which is what
+made the old self-only buff need `buffCooldown ≥ buffDuration` to avoid
+double-applying.
 
 ## Scene wiring — Player
 
@@ -205,21 +273,36 @@ Big Shot ability damage differs, per its entry above.
 | **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/Boss.TauntedBy(Player)` (real aggro redirect, see [boss.md](boss.md); same 3 listeners wired on each `Teammate_*`'s `PlayerAbility`, each pointing `TauntedBy` at itself) |
 
 Confirmed attached and working: verified live via the Unity MCP bridge —
-entering Play mode with the default `Attacker` role showed `maxHealth` 5→4,
-`fireRate` 0.35→0.2625 (base fire interval as of the boss-fight tuning
-pass, [boss.md](boss.md); was 0.2→0.15 before that pass), and the sprite
-tinted red, matching the table above.
+entering Play mode with the default `Attacker` role showed `maxHealth = 6`,
+`maxShield = 5`, `fireDamage = 2.0`, `shotsPerSecond = 2.5`, `moveSpeed =
+3.0`, matching the table above exactly, and the sprite tinted red.
 `PlayerAbility` was verified the same way per-role: Medic's aura heals/
 shields allies within its (tiny, default) radius and not outside it, and
 `TryUseAbility()`'s boost expands the radius/tick rate for its duration
-before reverting automatically (see [boss.md](boss.md)'s "Medic positioning
-+ proximity aura"); Tank taunt's `OnTaunt` event fires and is
-cooldown-gated; Support's buff applies and reverts to the exact pre-buff
-baseline with no drift; Attacker's big shot spawns a bullet with
-`localScale.x` and `damage` both 3x a regular bullet's, and the recoil
-impulse visibly moves the ship and decays back to a stable, non-drifting
-stop (confirmed the total displacement matches the closed-form sum of the
-decaying-velocity series, not a runaway/broken value).
+before reverting automatically; Tank taunt's `OnTaunt` event fires and is
+cooldown-gated; **Tank's Shield Arc** was verified functionally, not just
+visually — a fake enemy bullet placed within the arc's width but outside
+Tank's own body collider was destroyed and Tank's `CurrentShield` dropped
+by the bullet's exact damage (confirming the `Bullet.cs`
+`GetComponentInParent` fix correctly routes the hit into Tank's own health
+pool, not a silent no-op), while a same-position player-owned bullet passed
+through untouched; **Support's Speed Boost** was confirmed to set all 4
+ships' buff multipliers and activate all 4 party-buff rings together, then
+clear both together when the boost ended; Attacker's big shot spawns a
+bullet with `localScale.x` 3x normal and `damage` equal to the caster's
+live `fireDamage × bigShotDamageMultiplier` (`4.0` at today's values), and
+the recoil impulse visibly moves the ship and decays back to a stable,
+non-drifting stop.
+
+**Known gotcha hit again this pass**: same class of issue as every prior
+tuning session — changing a field's *script* default (`auraBoostRadius`,
+`Boss.maxHealth`) does not retroactively update an already-serialized
+value on an existing scene GameObject or prefab. Both had to be set
+explicitly on all 4 live scene instances (and `Teammate.prefab`'s/
+`Boss.prefab`'s defaults), verified by a full scene reload from disk. Newly
+*added* fields (e.g. `speedBuffMultiplier`, the Shield Arc's fields) don't
+have this problem — they pick up the script default automatically since
+there's no prior serialized value to conflict with.
 
 ## Not yet built
 
@@ -227,13 +310,13 @@ decaying-velocity series, not a runaway/broken value).
   ships fighting alongside `Player` (`Teammate_Tank`/`Teammate_Medic`/
   `Teammate_Support`) are CPU-controlled via `AIController.cs`, not real
   players; see [boss.md](boss.md).
-- Attacker/Support's AI positioning (Tank's and Medic's are implemented —
-  see "Shield stat" above and [boss.md](boss.md)'s "Tank guard-point
-  positioning" / "Medic positioning + proximity aura"), bullet-dodging,
-  teammate separation, and manual teammate-ability triggering from the
-  party frame are all designed (see [boss.md](boss.md)'s "AI teammate
-  behavior" / "Manual teammate ability triggering") but not yet
-  implemented.
+- Attacker's AI positioning (Tank's, Medic's, and Support's are all
+  implemented — see [boss.md](boss.md)'s "Tank guard-point positioning" /
+  "Medic positioning + proximity aura" / "Support roaming positioning"),
+  bullet-dodging, teammate separation, and manual teammate-ability
+  triggering from the party frame are all designed (see [boss.md](boss.md)'s
+  "AI teammate behavior" / "Manual teammate ability triggering") but not
+  yet implemented.
 
 Role display on the HUD (name/role text + tinted health bar) is now live
 for all 4 party members (`PartyFrame_1..4`, one per `Player`/`Teammate_*`)

@@ -4,14 +4,21 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed = 8f;
+    public float moveSpeed = 8f; // fixed per-role base, see PlayerRoleStats
     public Vector2 screenPadding = new Vector2(0.5f, 0.5f);
+    // Non-destructive buff multiplier - set/cleared by PlayerAbility's
+    // party-wide speed boost, never mutated into moveSpeed itself, so
+    // there's nothing to divide back out (and nothing to double-apply).
+    public float speedBuffMultiplier = 1f;
 
     [Header("Shooting")]
     public GameObject bulletPrefab;
     public Transform firePoint;
-    public float fireRate = 0.35f;
+    public float shotsPerSecond = 2.857f; // fixed per-role base (higher = faster), see PlayerRoleStats
     public float bulletSpeed = 12f;
+    public float fireDamage = 0.6f; // fixed per-role base, see PlayerRoleStats
+    // Same non-destructive buff pattern as speedBuffMultiplier above.
+    public float fireRateBuffMultiplier = 1f;
 
     [Header("Recoil")]
     public float recoilDamping = 8f;
@@ -23,6 +30,11 @@ public class PlayerController : MonoBehaviour
     private float nextFireTime;
     private Vector2 recoilVelocity;
 
+    // Seconds until the next shot, derived from the live (possibly buffed)
+    // shots/second - computed at point of use rather than stored, so
+    // buffs never need to mutate a cached interval.
+    private float FireInterval => 1f / (shotsPerSecond * fireRateBuffMultiplier);
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -31,8 +43,9 @@ public class PlayerController : MonoBehaviour
         PlayerRoleComponent roleComponent = GetComponent<PlayerRoleComponent>();
         if (roleComponent != null)
         {
-            moveSpeed *= roleComponent.Stats.moveSpeedMultiplier;
-            fireRate *= roleComponent.Stats.fireRateMultiplier;
+            moveSpeed = roleComponent.Stats.moveSpeed;
+            shotsPerSecond = roleComponent.Stats.shotsPerSecond;
+            fireDamage = roleComponent.Stats.fireDamage;
         }
     }
 
@@ -41,7 +54,7 @@ public class PlayerController : MonoBehaviour
         // Handles held-down fire (auto-fire while button is held)
         if (isFiring && Time.time >= nextFireTime)
         {
-            nextFireTime = Time.time + fireRate;
+            nextFireTime = Time.time + FireInterval;
             Fire();
         }
     }
@@ -55,7 +68,7 @@ public class PlayerController : MonoBehaviour
     {
         recoilVelocity = Vector2.Lerp(recoilVelocity, Vector2.zero, recoilDamping * Time.fixedDeltaTime);
 
-        Vector2 move = moveInput.normalized * moveSpeed + recoilVelocity;
+        Vector2 move = moveInput.normalized * (moveSpeed * speedBuffMultiplier) + recoilVelocity;
         Vector2 newPos = rb.position + move * Time.fixedDeltaTime;
 
         Vector3 min = cam.ViewportToWorldPoint(new Vector3(0, 0, 0));
@@ -96,7 +109,7 @@ public class PlayerController : MonoBehaviour
         // Fire immediately on press, then Update() handles repeat-fire while held
         if (isFiring && Time.time >= nextFireTime)
         {
-            nextFireTime = Time.time + fireRate;
+            nextFireTime = Time.time + FireInterval;
             Fire();
         }
     }
@@ -108,7 +121,7 @@ public class PlayerController : MonoBehaviour
 
     void Fire()
     {
-        SpawnBullet(1f, 0.6f); // was 1 - reduced 40% across all roles' fire damage
+        SpawnBullet(1f, fireDamage);
     }
 
     public void FireBigShot(float widthMultiplier, float damageAmount)

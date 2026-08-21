@@ -49,8 +49,8 @@ public class PartyFrameUI : MonoBehaviour
         healthBarFill.fillAmount = (float)playerHealth.CurrentHealth / playerHealth.maxHealth;
         healthText.text = $"HP: {playerHealth.CurrentHealth}/{playerHealth.maxHealth}";
         shieldBarFill.fillAmount = (float)playerHealth.CurrentShield / playerHealth.maxShield;
-        moveSpeedText.text = $"Move Speed: {playerController.moveSpeed:0.0}";
-        fireRateText.text = $"Fire Rate: {playerController.fireRate:0.00}s";
+        moveSpeedText.text = $"Move Speed: {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
+        fireRateText.text = $"Fire Rate: {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
         abilityText.text = $"{playerAbility.AbilityName}: {playerAbility.StatusText}";
     }
 }

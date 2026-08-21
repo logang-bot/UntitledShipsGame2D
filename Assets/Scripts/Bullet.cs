@@ -37,7 +37,10 @@ void OnTriggerEnter2D(Collider2D other)
         }
         else if (owner == "Enemy" && other.CompareTag("Player"))
         {
-            PlayerHealth health = other.GetComponent<PlayerHealth>();
+            // GetComponentInParent (not GetComponent) so a child collider -
+            // e.g. Tank's wide shield-arc trigger - can route the hit to
+            // its ship's own PlayerHealth, not just a ship's own body collider.
+            PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
             if (health != null) health.TakeDamage(Mathf.RoundToInt(damage));
             Destroy(gameObject);
         }

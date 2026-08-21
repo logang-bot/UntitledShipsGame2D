@@ -24,9 +24,12 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   from scratch. See [systems/combat.md](systems/combat.md).
 - **Player roles & abilities** — the ship can be assigned a role
   (`Attacker`, `Tank`, `Medic`, `Support`) via the `PlayerRoleComponent` in
-  the Inspector, which changes health, **shield**, fire rate, move speed,
-  and sprite tint color. Shield absorbs damage before health and only ever
-  refills via Medic's proximity aura (see below) — see
+  the Inspector, which sets its health, **shield**, fire damage, fire rate,
+  move speed, and sprite tint color to fixed, role-specific values (see
+  [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role
+  stats" for the full table — no more hidden multipliers, each role's
+  numbers are the single source of truth). Shield absorbs damage before
+  health and only ever refills via Medic's proximity aura (see below) — see
   [systems/player-roles.md](systems/player-roles.md)'s "Shield stat". The
   party frame now shows a shield bar alongside the health bar. There's no
   in-game role-selection UI yet — it's Inspector-only for now. Press **E**
@@ -34,12 +37,18 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   you — see the Boss encounter bullet below and
   [systems/player-roles.md](systems/player-roles.md)'s "Aggro/targeting"
   section), Medic temporarily expands its passive heal/shield aura into a
-  much larger, faster one for a few seconds, Support temporarily boosts
-  move speed and fire rate, Attacker fires a 3x-width, harder-hitting
-  bullet with visible recoil. Medic's aura is always on — a thin ring
-  around it shows the current radius, tiny by default until boosted — and
-  heals/shields any ally (including the human player) who gets close
-  enough, flashing them green when it actually helps. The party frame
+  much larger, faster one for a few seconds, Support triggers a **party-wide**
+  Speed Boost (move speed **and** fire rate, all 4 ships, not just itself)
+  with a shared gold ring showing on every ship while it's active, Attacker
+  fires a wider, harder-hitting bullet (damage scales live off its own
+  current fire damage) with visible recoil. Medic's aura is always on — a
+  thin ring around it shows the current radius, tiny by default until
+  boosted — and heals/shields any ally (including the human player) who
+  gets close enough, flashing them green when it actually helps. Tank also
+  always shows a wide curved shield arc above it — this one isn't tied to
+  `E` at all, it's a passive, always-on part of being Tank, and it
+  physically blocks incoming fire (draining Tank's own shield/health, not a
+  free block) across a width wider than Tank's own body. The party frame
   shows which ability is boosted/by how much and its cooldown, on a
   legible dark panel. See
   [systems/player-roles.md](systems/player-roles.md).
@@ -47,7 +56,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   9:16 portrait aspect ratio and adapts automatically: full-width on
   narrow/phone-like aspects, pillarboxed with HUD sidebar space on wider
   desktop aspects. See [systems/hud-layout.md](systems/hud-layout.md).
-- **Boss encounter** — a boss with 60 HP (recently doubled, see "Tuning" in
+- **Boss encounter** — a boss with 90 HP (×1.5'd again to give the
+  Session 16 stat/ability rework enough runway to observe — see "Tuning" in
   [systems/boss.md](systems/boss.md)) across 2 HP-based phases (Phase 2 at
   ≤50% HP fires faster and in a 3-bullet spread) and a real aggro system:
   whoever deals the most damage is the boss's target, and Tank taunt
@@ -56,19 +66,24 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   covering whichever roles aren't human-played — move, auto-fire, and use
   their role's ability autonomously. Whichever teammate is currently
   playing **Tank** steers to a guard point between the boss and the other
-  AI teammates and physically blocks bullets aimed at them, in addition to
+  AI teammates and physically blocks bullets aimed at them (now backed by
+  its wide shield arc too — see the roles bullet above), in addition to
   taunting for aggro; whichever teammate is playing **Medic** hangs back
   toward the rear of the party by default, away from the boss, but breaks
   off to approach whichever ally has dropped to 55% health or shield or
   below (whoever's worst off, re-evaluated every frame — reacts to the
-  human player being hurt too, not just the other AI teammates);
-  Attacker/Support still just weave side-to-side (see
-  [systems/boss.md](systems/boss.md)'s "AI teammate behavior" for what's
-  still planned there). Medic's AI currently presses its ability the
+  human player being hurt too, not just the other AI teammates); whichever
+  teammate is playing **Support** roams the playable area freely (random
+  waypoint wander, no fixed zone). **Attacker** still just weaves
+  side-to-side (see [systems/boss.md](systems/boss.md)'s "AI teammate
+  behavior" for what's still planned there — it's now the only role
+  without real positioning). Medic's AI currently presses its ability the
   instant it's off cooldown regardless of need — a known, flagged-temporary
-  placeholder, not a finished heuristic. All player-dealt fire damage was
-  cut 40% in the
-  same tuning pass as the boss HP increase. `BossPanel` shows the boss's
+  placeholder, not a finished heuristic. Every role now has fixed,
+  role-specific health/shield/fire-damage/fire-rate/move-speed values (see
+  [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role
+  stats") — Attacker now hits hardest on regular fire (2.0, vs. Tank/
+  Support's 1.0 and Medic's 0.7), on top of its Big Shot ability. `BossPanel` shows the boss's
   live HP bar, phase, and current target. See
   [systems/boss.md](systems/boss.md).
 
@@ -84,9 +99,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - No local co-op / dynamic player count — the party is 4 fixed, hand-placed
   scene objects (`Player` + 3 `Teammate_*`), not a runtime spawner that
   reacts to however many humans are actually playing.
-- Attacker/Support AI teammates don't have role-specific positioning yet
-  (Tank and Medic both do) — see [systems/boss.md](systems/boss.md)'s "AI
-  teammate behavior". No bullet-dodging or teammate separation either.
+- The Attacker AI teammate doesn't have role-specific positioning yet
+  (Tank, Medic, and Support all do) — see [systems/boss.md](systems/boss.md)'s
+  "AI teammate behavior". No bullet-dodging or teammate separation either.
   Manually triggering a teammate's ability from the party frame is also
   designed but not built.
 - No minions around the boss yet — the ship-shrink tuning (see
@@ -124,9 +139,13 @@ real networking last, then art/audio.
    shield first, then HP (a hit fully absorbed by shield still flashes the
    ship and shakes the camera); at 0 HP a ship disables. Whichever teammate
    is playing Tank will visibly hold position between the boss and the
-   other 2 AI teammates rather than weaving, and whichever is playing Medic
-   will hang back near the rear of the party instead — you'll also see a
-   thin ring around it showing its aura's reach. The left-sidebar shows 4 party
+   other 2 AI teammates rather than weaving — you'll also see a wide curved
+   shield arc above it, always on, which physically blocks bullets crossing
+   its width, not just ones hitting the ship itself — whichever is playing
+   Medic will hang back near the rear of the party instead — you'll also
+   see a thin ring around it showing its aura's reach — and whichever is
+   playing Support will wander freely around the whole play area rather
+   than holding a spot. The left-sidebar shows 4 party
    frames (you + 3 teammates), each with a live avatar, role/HP/shield-bar/
    move-speed/fire-rate/ability text, tinted to match the role, on a dark
    panel.
@@ -135,19 +154,24 @@ real networking last, then art/audio.
    it keeps fighting inactive. Click **Restart** to reload the scene from
    scratch (HP, boss, teammates, and party frames all reset).
 7. To see the different roles side by side, stop Play, change the Role
-   field(s) per step 2, and Play again — compare HP taken to disable, fire
-   rate, move speed, and tint color against the table in
-   [systems/player-roles.md](systems/player-roles.md). As Medic, notice the
-   dim ring around your ship even without pressing anything — that's the
-   passive aura, tiny by default, healing/shielding any ally that gets
-   close enough (they flash green when it actually helps); press **E** to
-   drastically expand the ring and speed up the healing for a few seconds.
-   Press **E** as Support to briefly boost move speed/fire rate, or as Tank
-   to fire the taunt event — this now has a real effect: it forces the boss
-   to switch its target to you (watch `BossPanel`'s "Target:" text change)
-   — watch the party frame's ability line show the boost amount and
-   cooldown countdown. As Attacker, **E** fires a wider, harder-hitting
-   shot with a visible backward recoil kick.
+   field(s) per step 2, and Play again — compare HP/shield taken to
+   disable, fire damage, fire rate, and move speed against the table in
+   [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role
+   stats". As Medic, notice the dim ring around your ship even without
+   pressing anything — that's the passive aura, tiny by default,
+   healing/shielding any ally that gets close enough (they flash green when
+   it actually helps); press **E** to drastically expand the ring and speed
+   up the healing for a few seconds. Press **E** as Support to trigger a
+   **party-wide** Speed Boost — watch every ship (including AI teammates)
+   light up with a shared gold ring and visibly speed up/fire faster
+   together, not just your own ship. As Tank, notice the wide curved shield
+   arc above your ship even without pressing anything — that's always on;
+   press **E** to fire the taunt event instead, which has a real effect: it
+   forces the boss to switch its target to you (watch `BossPanel`'s
+   "Target:" text change) — watch the party frame's ability line show the
+   boost amount and cooldown countdown. As Attacker, **E** fires a wider,
+   harder-hitting shot (damage scales with your own current fire damage)
+   with a visible backward recoil kick.
 8. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`

@@ -46,20 +46,22 @@ reference docs live under `systems/`.
   spawning is no longer planned since it was only motivated by twin-stick
   rotation.
 - **Role architecture** — `PlayerRole.cs`: enum (`Attacker`, `Tank`, `Medic`,
-  `Support`), static `PlayerRoleStats` lookup table (health/fire-rate/move-speed
-  multipliers + sprite tint color per role), and `PlayerRoleComponent` attached
-  to the `Player` GameObject. `PlayerController.cs` and `PlayerHealth.cs` apply
-  the multipliers on `Start`/`Awake`. Values are placeholder balancing, tunable
-  later. No HUD role display yet — that's part of "Finish the HUD" below.
-- **Role abilities beyond stat multipliers**: `PlayerAbility.cs` (on `Player`,
+  `Support`), static `PlayerRoleStats` lookup table, and `PlayerRoleComponent`
+  attached to the `Player` GameObject. Originally health/fire-rate/move-speed
+  multipliers on a shared base; **replaced by fixed, absolute per-role values**
+  in a later architecture change — see "Fixed per-role stats overhaul" below.
+  `PlayerController.cs` and `PlayerHealth.cs` assign these directly on
+  `Start`/`Awake`. Values are placeholder balancing, tunable later. No HUD
+  role display yet — that's part of "Finish the HUD" below.
+- **Role abilities beyond stats**: `PlayerAbility.cs` (on `Player`,
   new `Ability` input action bound to `E`) — Tank taunt (`OnTaunt` UnityEvent,
-  cooldown-gated), Medic aura boost (temporarily expands the passive
-  heal/shield aura's radius/tick rate — originally an instant self-heal,
-  replaced entirely once the aura shipped, see below), Support buff
-  (temporary move-speed/fire-rate multiplier,
-  coroutine-reverted), Attacker Big Shot (3x-width, 3x-damage bullet with
-  recoil — added in a follow-up pass alongside a party frame ability/cooldown
-  display and a contrast fix, see Session 8 in `progress-log.md`). Wired live
+  cooldown-gated) plus a passive Shield Arc (see below), Medic aura boost
+  (temporarily expands the passive heal/shield aura's radius/tick rate —
+  originally an instant self-heal, replaced entirely once the aura shipped,
+  see below), Support Speed Boost (a party-wide, non-destructive move-speed
+  + fire-rate multiplier — originally self-only, redesigned, see below),
+  Attacker Big Shot (wider, harder-hitting bullet with recoil — damage now a
+  live multiplier of the caster's own fire damage, see below). Wired live
   via the Unity MCP bridge and verified end-to-end in Play mode for all four
   roles. Taunt's placeholder flash+shake feedback (Session 9) was superseded
   by a real aggro-redirect listener once the boss existed — see below.
@@ -91,8 +93,9 @@ reference docs live under `systems/`.
   "Shield stat"), and Tank teammates now steer to a guard point between the
   boss and the rest of the AI-controlled party (`AIController.BiasedPositionDirection()`),
   physically standing in bullets' paths for free (`Bullet.cs` bullets don't
-  home). A shield bar was added to the party frame. Attacker/Support
-  positioning is still planned, see below. Full writeup:
+  home). A shield bar was added to the party frame. (Tank later also got a
+  Shield Arc — a wider, functional blocking mechanic — see "Fixed per-role
+  stats overhaul + ability rework" below.) Full writeup:
   `systems/boss.md`'s "Tank guard-point positioning / physical blocking".
 
 - **Boss HP / player damage tuning** — `Boss.maxHealth` doubled (30 → 60)
@@ -124,6 +127,42 @@ reference docs live under `systems/`.
   "Medic positioning + proximity aura", `systems/player-roles.md`'s
   "PlayerAbility.cs".
 
+- **Support AI positioning** — Support
+  teammates now roam the playable viewport freely (random-waypoint wander,
+  `AIController.WanderDirection()`/`RandomRoamPoint()`) instead of the
+  shared X-only sine weave, matching Tank/Medic's already-implemented
+  role-differentiated positioning. (This item originally also covered
+  Support's fire-rate/damage catch-up via a `fireRateMultiplier`/
+  `damageMultiplier` stat pair — that mechanism was fully replaced by the
+  fixed-stats overhaul immediately below; Support's cadence/damage are now
+  just direct numbers in the table there.) See `systems/boss.md`'s "Support
+  roaming positioning".
+
+- **Fixed per-role stats overhaul + ability rework** — replaced the entire
+  `base × multiplier` stat system with fixed, absolute per-role values
+  (health/shield/fire damage/fire rate/move speed — see
+  `systems/player-roles.md`'s "Fixed per-role stats" for the full table),
+  the single source of truth for a role's numbers, no multipliers left
+  anywhere in the base stats. Fire rate is now expressed as shots/second
+  (higher = faster), replacing the old, misleadingly-inverted `fireRate`
+  field. Temporary effects layer on **non-destructively** instead —
+  `PlayerController.speedBuffMultiplier`/`fireRateBuffMultiplier`, read at
+  the point of use, never mutated into the base stats. Four ability
+  changes shipped alongside this: Attacker's Big Shot damage is now a live
+  `2x` multiplier of the caster's current fire damage; Support's ability
+  became a **party-wide** Speed Boost (all 4 allies, not self-only) with a
+  shared gold ring visual on every ship while active, and its cooldown
+  went up (8s → 15s, flagged overpowered); Medic's boosted aura radius was
+  halved (3 → 1.5); Tank got a new passive Shield Arc — a wide, curved
+  visual **and** a real trigger collider that blocks bullets across a
+  width wider than Tank's own body, absorbing them into Tank's own
+  shield/health (needed a one-line `Bullet.cs` fix,
+  `GetComponentInParent<PlayerHealth>()`, so a hit on this child collider
+  still routes to the ship's own health pool). `Boss.maxHealth` also went
+  ×1.5 (60 → 90) to give this larger rework enough playtest runway. See
+  `systems/player-roles.md` (full mechanics) and `systems/boss.md` (boss
+  HP tuning, cross-references).
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -138,15 +177,15 @@ reference docs live under `systems/`.
 
 ### Player-vs-boss dynamics (CPU AI first)
 
-- **AI teammate behavior (Attacker/Support)** — Tank's and Medic's
-  positioning are both implemented (see "Implemented" above);
-  `AIController.cs`'s remaining 2 roles still just weave in X
+- **AI teammate behavior (Attacker)** — Tank's, Medic's, and now Support's
+  positioning are all implemented (see "Implemented" above);
+  `AIController.cs`'s last remaining role still just weaves in X
   (`Mathf.Sin(Time.time * weaveFrequency)`) with no bullet-, boss-, or
-  teammate-awareness. Recommended **next**, ahead of minions below: with
-  dumb, non-dodging teammates constantly eating hits, it's hard to tell
+  teammate-awareness. Recommended **next**, ahead of minions below: with a
+  dumb, non-dodging Attacker constantly eating hits, it's hard to tell
   whether a rough playtest result means "the role-coordination mechanic
   isn't fun" or just "the AI can't dodge." Role-differentiated positioning
-  (Attacker patrolling screen width, Support roaming freely) and a
+  (patrolling screen width, staying clear of the boss and top edge) and a
   click/tap-to-trigger-teammate-ability mechanic on the party frame are
   designed — see `systems/boss.md`'s "AI teammate behavior" and "Manual
   teammate ability triggering". Bullet-dodging and teammate separation are

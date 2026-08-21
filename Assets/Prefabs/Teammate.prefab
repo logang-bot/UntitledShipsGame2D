@@ -188,10 +188,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 8
   screenPadding: {x: 0.5, y: 0.5}
+  speedBuffMultiplier: 1
   bulletPrefab: {fileID: 229699745721229377, guid: c026c6169059d5645a02f38dedd8d3b6, type: 3}
   firePoint: {fileID: 9095539630377812806}
-  fireRate: 0.35
+  shotsPerSecond: 2.857
   bulletSpeed: 12
+  fireDamage: 0.6
+  fireRateBuffMultiplier: 1
   recoilDamping: 8
 --- !u!114 &4065885798416288575
 MonoBehaviour:
@@ -328,16 +331,34 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  healCooldown: 6
-  healAmount: 2
-  buffCooldown: 8
-  buffDuration: 4
-  buffMoveSpeedMultiplier: 1.3
-  buffFireRateMultiplier: 0.7
+  allies: []
+  auraRadius: 0.5
+  auraTickInterval: 1
+  auraHealPerTick: 1
+  auraShieldPerTick: 1
+  auraBoostRadius: 1.5
+  auraBoostTickInterval: 0.25
+  auraBoostDuration: 4
+  auraBoostCooldown: 10
+  auraRingColor: {r: 0.3, g: 1, b: 0.4, a: 0.35}
+  auraRingBoostedColor: {r: 0.3, g: 1, b: 0.4, a: 0.7}
+  auraRingWidth: 0.05
+  auraRingBoostedWidth: 0.12
+  healFlashColor: {r: 0.5, g: 1, b: 0.6, a: 1}
+  speedBoostCooldown: 15
+  speedBoostDuration: 4
+  speedBoostMultiplier: 1.5
   bigShotCooldown: 3
   bigShotWidthMultiplier: 3
-  bigShotDamage: 1.8
+  bigShotDamageMultiplier: 2
   recoilForce: 6
+  shieldArcWidthMultiplier: 3
+  shieldArcHeight: 0.4
+  shieldArcYOffset: 0.3
+  shieldArcColor: {r: 0.3, g: 0.5, b: 1, a: 0.5}
+  shieldArcLineWidth: 0.08
+  partyBuffRingRadius: 0.6
+  partyBuffRingWidth: 0.08
 --- !u!114 &7998309439500275572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -353,10 +374,13 @@ MonoBehaviour:
   boss: {fileID: 0}
   weaveFrequency: 0.8
   weaveSpeed: 1
-  medicHealThreshold: 0.6
   teammates: []
   guardBias: 0.65
   guardDeadzone: 0.2
+  medicBias: -0.3
+  medicApproachThreshold: 0.55
+  roamDeadzone: 0.3
+  roamInterval: 3
 --- !u!1 &6535522730374422398
 GameObject:
   m_ObjectHideFlags: 0

@@ -27,15 +27,26 @@ public class AIController : MonoBehaviour
     // since the Medic should react to the human Player being hurt too.
     public float medicApproachThreshold = 0.55f;
 
+    [Header("Support positioning")]
+    public float roamDeadzone = 0.3f;
+    // Max seconds before picking a new roam point even if the current one
+    // hasn't been reached - keeps it moving instead of stalling if it's
+    // ever unable to close the last stretch of distance.
+    public float roamInterval = 3f;
+
     private PlayerController controller;
     private PlayerAbility ability;
     private PlayerRoleComponent role;
+    private Camera cam;
+    private Vector2 roamTarget;
+    private float nextRoamPickTime;
 
     void Awake()
     {
         controller = GetComponent<PlayerController>();
         ability = GetComponent<PlayerAbility>();
         role = GetComponent<PlayerRoleComponent>();
+        cam = Camera.main;
     }
 
     void Update()
@@ -54,7 +65,13 @@ public class AIController : MonoBehaviour
                         : BiasedPositionDirection(medicBias, guardDeadzone);
                 }
                 break;
+            case PlayerRole.Support:
+                moveDirection = WanderDirection();
+                break;
             default:
+                // Attacker: still the original X-only sine weave - its own
+                // role-differentiated positioning is still planned, see
+                // docs/systems/boss.md's "AI teammate behavior".
                 moveDirection = new Vector2(Mathf.Sin(Time.time * weaveFrequency), 0f) * weaveSpeed;
                 break;
         }
@@ -110,6 +127,34 @@ public class AIController : MonoBehaviour
             }
         }
         return hurtAlly;
+    }
+
+    // Roams the playable viewport freely rather than holding a zone -
+    // steers toward a random point, picking a new one on arrival (or after
+    // roamInterval, in case the current one is never quite reached) so
+    // Support keeps moving continuously instead of settling like Tank/
+    // Medic's biased positions do.
+    private Vector2 WanderDirection()
+    {
+        if (Time.time >= nextRoamPickTime || Vector2.Distance(transform.position, roamTarget) < roamDeadzone)
+        {
+            roamTarget = RandomRoamPoint();
+            nextRoamPickTime = Time.time + roamInterval;
+        }
+        return (roamTarget - (Vector2)transform.position).normalized;
+    }
+
+    // Same viewport bounds PlayerController.HandleMovement() clamps
+    // movement to, reusing its screenPadding as the single source of truth
+    // for the inset so this can't drift out of sync with the actual clamp.
+    private Vector2 RandomRoamPoint()
+    {
+        Vector3 min = cam.ViewportToWorldPoint(new Vector3(0, 0, 0));
+        Vector3 max = cam.ViewportToWorldPoint(new Vector3(1, 1, 0));
+        Vector2 padding = controller.screenPadding;
+        return new Vector2(
+            Random.Range(min.x + padding.x, max.x - padding.x),
+            Random.Range(min.y + padding.y, max.y - padding.y));
     }
 
     private Vector2 ApproachDirection(Transform target)

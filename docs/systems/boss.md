@@ -75,7 +75,7 @@ below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
 - `OnPhase2`, `OnDefeated` — `UnityEvent`s for other systems to react to
   (currently only `OnDefeated` has a listener: `BossPanelUI.ShowDefeated()`).
 
-Key public fields: `maxHealth` (**60**, up from 30 — see "Tuning" below),
+Key public fields: `maxHealth` (**90**, up from 60 — see "Tuning" below),
 `sineAmplitude`/`sineFrequency` (2 / 0.5), `bulletPrefab`,
 `phase1FireInterval`/`phase2FireInterval` (1.2 / 0.6), `bulletSpeed` (6),
 `spreadAngle` (15°), `targets[]`, `tauntBonus` (100), `enemySpawner` (drag
@@ -108,15 +108,16 @@ Drives a CPU-controlled teammate every `Update()`:
 - **Movement**: role-dependent. **Tank** steers toward a point biased
   toward the boss; **Medic** either does the same biased away from the boss
   (its default "hang back" position) or, if an ally is hurt, breaks off to
-  approach that ally instead — see "Tank guard-point positioning" and
-  "Medic positioning + proximity aura" below. **Attacker**/**Support** still
-  do the original sine-weave strafe (`weaveFrequency`/`weaveSpeed`) — still
-  planned, see "Future work" below. All paths go through
-  `PlayerController.SetMoveDirection(Vector2)` — a non-input entry point
-  added to `PlayerController.cs` alongside the existing input-driven
-  `OnMove(InputValue)`, so movement can be driven directly without
-  constructing a fake `InputValue` (which isn't valid outside a real input
-  callback).
+  approach that ally instead; **Support** roams the playable viewport freely
+  via a random-waypoint wander — see "Tank guard-point positioning", "Medic
+  positioning + proximity aura", and "Support roaming positioning" below.
+  **Attacker** is the only role still on the original sine-weave strafe
+  (`weaveFrequency`/`weaveSpeed`) — still planned, see "Future work" below.
+  All paths go through `PlayerController.SetMoveDirection(Vector2)` — a
+  non-input entry point added to `PlayerController.cs` alongside the
+  existing input-driven `OnMove(InputValue)`, so movement can be driven
+  directly without constructing a fake `InputValue` (which isn't valid
+  outside a real input callback).
 - **Firing**: continuous auto-fire via `PlayerController.SetFiring(bool)`,
   the equivalent non-input entry point for `OnFire(InputValue)`.
 - **Abilities**: `PlayerAbility.TryUseAbility()` — a public method extracted
@@ -132,7 +133,8 @@ Drives a CPU-controlled teammate every `Update()`:
 
 Key public fields: `boss` (drag the `Boss` instance), `weaveFrequency` (0.8),
 `weaveSpeed` (1), `teammates[]`/`guardBias` (0.65)/`guardDeadzone` (0.2),
-`medicBias` (-0.3), `medicApproachThreshold` (0.55) — see below.
+`medicBias` (-0.3), `medicApproachThreshold` (0.55), `roamDeadzone` (0.3)/
+`roamInterval` (3) — see below.
 
 ### Tank guard-point positioning / physical blocking (implemented)
 
@@ -147,10 +149,13 @@ positioning problem, not a collision problem.
 
 `AIController.Update()`'s movement switch calls the private
 `BiasedPositionDirection(bias, deadzone)` for both Tank and Medic (see
-"Medic positioning + proximity aura" below); Attacker/Support keep the
-exact original sine-weave (unchanged code path — verified via Play-mode
-position sampling that they still only move in X while Tank's/Medic's Y
-also changes). Originally written Tank-only as `GuardPointDirection()`,
+"Medic positioning + proximity aura" below); at the time this was built,
+Attacker/Support both kept the exact original sine-weave (unchanged code
+path — verified via Play-mode position sampling that they still only moved
+in X while Tank's/Medic's Y also changed). Support has since gotten its own
+positioning too, see "Support roaming positioning" below — only Attacker
+still shares the original weave. Originally written Tank-only as
+`GuardPointDirection()`,
 generalized in Session 13 once Medic needed the same shape with a
 different bias, rather than duplicating the Lerp/deadzone logic a second
 time. `BiasedPositionDirection(bias, deadzone)`:
@@ -193,9 +198,18 @@ a reload, don't trust a "success" result alone. `Teammate_Medic`/
 `Teammate_Support` (not prefab instances, see Session 10/11) didn't need
 this extra call.
 
-Values for Attacker/Support's positioning, and the still-open
-bullet-dodging/separation/targeted-bullet questions, are unchanged from
-"Future work" below — Session 12 built Tank, Session 13 built Medic (below).
+Values for Attacker's positioning, and the still-open bullet-dodging/
+separation/targeted-bullet questions, are unchanged from "Future work"
+below — Session 12 built Tank, Session 13 built Medic (below), Session 15
+built Support (below).
+
+**Tank also got a second, unrelated new mechanic in Session 16**: a wide,
+curved Shield Arc that functionally blocks bullets beyond the guard-point
+positioning here — passive, always-on, independent of Taunt. It lives on
+`PlayerAbility.cs`, not here (same "must work for a human Tank too"
+reasoning as Medic's aura), so it's not a positioning change — see
+[player-roles.md](player-roles.md)'s "PlayerAbility.cs" for the full
+mechanics and the `Bullet.cs` fix it depends on.
 
 ### Medic positioning + proximity aura (implemented)
 
@@ -274,6 +288,65 @@ flash via a new `PlayerDamageFlash.Flash(Color)` overload (the existing
 parameterless `Flash()` is unchanged, now just a thin wrapper), separate
 from the white damage flash so the two read as different events.
 
+### Support roaming positioning (implemented)
+
+Completes the "decided design" (2026-08-20) for Support: "intentionally the
+least constrained of the four — roams the available screen freely rather
+than holding a zone." Unlike Tank/Medic's `BiasedPositionDirection()` (which
+steers toward a point derived from allies/the boss and holds there),
+Support has no reference point at all — it's a random-waypoint wander:
+
+`AIController.WanderDirection()` steers toward a private `roamTarget`
+(`Vector2`), picking a new random one (`RandomRoamPoint()`) whenever the
+current one is reached (within `roamDeadzone`, 0.3) **or** after
+`roamInterval` (3s) elapses, whichever comes first — the timer exists so
+Support can't get stuck endlessly closing the last stretch of distance.
+`RandomRoamPoint()` picks a uniformly random point within the same
+viewport bounds `PlayerController.HandleMovement()` already clamps
+movement to (`Camera.main.ViewportToWorldPoint`, inset by
+`PlayerController.screenPadding` — reused directly as the single source of
+truth for the inset, not duplicated as a separate constant).
+
+**Deliberately does not return `Vector2.zero` inside the deadzone** — unlike
+`ApproachDirection()`/`BiasedPositionDirection()`, which hold position once
+arrived (correct for Tank's guard point or Medic hanging back), arriving at
+a roam point immediately triggers picking the next one, so Support keeps
+moving continuously rather than pausing. This is the one place Support's
+positioning code deliberately diverges from the existing steer-and-deadzone
+pattern, not an oversight.
+
+No boss-avoidance or top-edge exclusion — that's part of Attacker's
+still-unbuilt design (staying clear of the boss and the top edge), not
+Support's; Support is explicitly the least constrained of the four roles.
+
+New fields are brand-new, not changes to already-serialized existing ones,
+so — unlike most of this project's prior scene-wiring passes — no
+prefab-instance/scene-value gotcha applied here; every `Teammate_*`
+instance picks up the script defaults (`roamDeadzone`/`roamInterval`)
+automatically.
+
+Verified via the Unity MCP bridge in Play mode: reflection-called
+`WanderDirection()` on `Teammate_Support` directly, confirming it returns a
+normalized direction with a non-trivial Y component (unlike the old X-only
+weave) and that `roamTarget` lands within viewport bounds; sampled its
+transform position over several pumped frames and confirmed both X and Y
+changed over time (cross-checked against `Teammate_Tank`/`Teammate_Medic`,
+whose existing positioning was unaffected). No console errors/warnings.
+
+### Support fire-cadence/damage catch-up (implemented, then superseded by Session 16's fixed-stats overhaul)
+
+The other half of Support's decided design — "the same fire cadence as
+Attacker, the same fire damage as Tank" — was originally implemented
+(Session 15) as a `fireRateMultiplier`/`damageMultiplier` on top of a
+shared base. **Session 16 replaced the entire base×multiplier stat
+architecture with fixed, absolute per-role values** (see
+[player-roles.md](player-roles.md)'s "Fixed per-role stats") — Support's
+fire rate/damage are no longer derived from a multiplier at all, just a
+direct number in the `RoleStats` table. The *design intent* this section
+originally captured (Support fast + hard-hitting, matching Attacker's
+cadence and Tank's damage) carried forward into the new fixed values
+unchanged; only the underlying mechanism changed.
+
 ## BossPanelUI.cs
 
 **Attached to:** `BossPanel` (child of `HUDCanvas`, replacing its old
@@ -302,9 +375,12 @@ going through `PlayerInput`'s input-callback path:
   `Player`.
 - `PlayerAbility.TryUseAbility()` — extracted from the private dispatch
   previously inline in `OnAbility(InputValue)`. The four `Trigger*` methods
-  (`TriggerTaunt`, `TriggerAuraBoost`, `TriggerBuff`, `TriggerBigShot` —
-  `TriggerHeal` originally, renamed when Medic's ability changed, see
-  "Medic positioning + proximity aura" above) stay private/unchanged.
+  (`TriggerTaunt`, `TriggerAuraBoost`, `TriggerSpeedBoost`, `TriggerBigShot`
+  — `TriggerHeal` originally, renamed when Medic's ability changed;
+  `TriggerBuff` originally, renamed to `TriggerSpeedBoost` when Support's
+  ability was redesigned party-wide — see "Medic positioning + proximity
+  aura" above and [player-roles.md](player-roles.md) respectively) stay
+  private/unchanged.
 
 Also: `PlayerController.SpawnBullet()` now passes `gameObject` into
 `Bullet.Init(..., ownerObject)` so aggro attribution works for player fire
@@ -325,7 +401,7 @@ via a screenshot during testing, not by inspecting numbers alone).
 | Component      | Key inspector values                                                    |
 | --------------- | ----------------------------------------------------------------------- |
 | Transform       | position (0, 4.2, 0), scale (1.6, 1.6, 1) — **not** shrunk with the ships below |
-| **Boss.cs**     | `maxHealth`: 60 (see "Tuning" below); `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `enemySpawner`: `Spawner`; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` |
+| **Boss.cs**     | `maxHealth`: 90 (see "Tuning" below); `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `enemySpawner`: `Spawner`; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` |
 
 ### Teammate_Tank / Teammate_Medic / Teammate_Support
 
@@ -378,8 +454,9 @@ Two follow-up balance passes on the base prototype:
   `0.2` to `0.35` (script default, `Teammate.prefab`, and all 4 scene
   ships), making the fight take more sustained effort. Role multipliers
   still apply on top unchanged, so relative balance between roles is
-  preserved: Attacker `0.35 × 0.75 = 0.2625s`, Support `0.35 × 1.0 =
-  0.35s`, Medic `0.35 × 1.0 = 0.35s`, Tank `0.35 × 1.2 = 0.42s`.
+  preserved: Attacker `0.35 × 0.75 = 0.2625s`, Medic `0.35 × 1.0 = 0.35s`,
+  Tank `0.35 × 1.2 = 0.42s` (Support's multiplier changed in a later pass
+  below — now also `0.2625s`, matching Attacker).
 - **Ship scale** — `Player`/`Teammate_*` `Transform.localScale` went from
   `1.0` to `0.6` (40% smaller). The `Boss` was deliberately **not** shrunk
   (stays `1.6`) so it still reads as the big, central target — this leaves
@@ -402,6 +479,24 @@ Two follow-up balance passes on the base prototype:
   damage values, and the gotcha below about re-hitting the same
   already-serialized-scene-value issue from the fire-cadence pass above.
 
+- **Support fire cadence/damage** (a fourth follow-up pass, alongside the
+  Support roaming positioning above) — completes `boss.md`'s "decided
+  design" for Support. `PlayerRoleStats`'s `Support` entry: `fireRateMultiplier`
+  `1.0` → `0.75` (matches Attacker's cadence). A new `RoleStats.damageMultiplier`
+  stat (didn't exist before — every role dealt the same flat regular-fire
+  damage) was added and applied in `PlayerController.Start()`/`Fire()` via
+  a new `fireDamage` field (base `0.6`, scaled by the multiplier, replacing
+  the old hardcoded `SpawnBullet(1f, 0.6f)` literal). Tank and Support both
+  get `1.5x` ("hard-hitting"); Attacker/Medic stay at the `1.0x` baseline —
+  Attacker's high damage output already comes from Big Shot, which this
+  stat doesn't touch. **Necessary side effect**: since no role had elevated
+  fire damage before this pass, giving Support "the same fire damage as
+  Tank" required deciding Tank's own multiplier too (`1.5x`, round
+  placeholder, tunable) — Tank's regular-fire damage output changes from
+  this pass as well, not just Support's. See
+  [player-roles.md](player-roles.md)'s balancing table for the full
+  before/after.
+
 **Gotcha, hit twice in this pass**: same class of issue as the fire-cadence
 tuning above — changing a public field's *script* default (`Boss.maxHealth`,
 `PlayerAbility.bigShotDamage`) does **not** retroactively update a value
@@ -412,6 +507,26 @@ had to be set explicitly on the live scene instances (all 4 ships for
 `PrefabUtility.RecordPrefabInstancePropertyModifications()` (same as the
 `teammates[]` gotcha above) — verified each time by forcing a full scene
 reload from disk rather than trusting the in-memory value.
+
+- **Fixed per-role stats overhaul + boss HP bump** (Session 16) — replaced
+  the entire `base × multiplier` stat architecture with fixed absolute
+  values (see [player-roles.md](player-roles.md)'s "Fixed per-role stats"
+  for the full table and reasoning); also added Tank's Shield Arc, redesigned
+  Support's ability into a party-wide Speed Boost, and halved Medic's
+  boosted aura radius (all `PlayerAbility.cs`, see
+  [player-roles.md](player-roles.md)). Alongside this, `Boss.maxHealth`
+  went ×1.5 (`60` → `90`), purely to give the reworked stats/abilities
+  enough runway in a full playthrough to actually be observed rather than
+  the fight ending before their effects are visible. **Same
+  already-serialized-value gotcha hit again**: `Boss.maxHealth` and
+  `PlayerAbility.auraBoostRadius` both had to be set explicitly on the live
+  scene instances (all 4 ships for `auraBoostRadius`) and on
+  `Boss.prefab`/`Teammate.prefab`'s defaults, verified by a full scene
+  reload from disk. Every genuinely *new* field this pass (`fireDamage`
+  becoming role-scaled directly, `speedBuffMultiplier`/
+  `fireRateBuffMultiplier`, the Shield Arc's fields, the party-buff ring's
+  fields) did **not** need this treatment — only edits to fields that
+  already existed and were already serialized hit the gotcha.
 
 ## Known environment quirk hit during testing
 
@@ -435,7 +550,7 @@ testing, as in prior sessions.
   blocked by `PlayerAbility.CooldownRemaining`.
 - AI teammates autonomously move, auto-fire, and trigger their role's
   ability over time (observed Tank's taunt firing for real the moment it
-  didn't hold aggro, and Support's buff auto-activating).
+  didn't hold aggro, and Support's Speed Boost auto-activating).
 - Boss defeat (`TakeDamage` to 0) fires `OnDefeated`, `BossPanelUI` shows
   `"DEFEATED"`, and the `Boss` GameObject is destroyed with no console
   errors.
@@ -454,41 +569,35 @@ make it harder to read whether the encounter is actually fun, not easier.
 
 ### AI teammate behavior
 
-Exact current limitation: `AIController.Update()` sets movement as
-`controller.SetMoveDirection(new Vector2(Mathf.Sin(Time.time *
-weaveFrequency), 0f) * weaveSpeed)` — every frame, unconditionally, X-only
-(Y is always `0`), with zero awareness of incoming bullets, the boss's
-position, or where the other teammates are. This was a deliberate "just
-prove the aggro/taunt mechanic" simplification for the prototype (see
-Session 10 in `../progress-log.md`), not a finished AI.
+Exact original limitation (Tank/Medic/Support have since been built, see
+below): `AIController.Update()` set movement as `controller.SetMoveDirection(
+new Vector2(Mathf.Sin(Time.time * weaveFrequency), 0f) * weaveSpeed)` —
+every frame, unconditionally, X-only (Y always `0`), with zero awareness of
+incoming bullets, the boss's position, or where the other teammates are.
+This was a deliberate "just prove the aggro/taunt mechanic" simplification
+for the prototype (see Session 10 in `../progress-log.md`), not a finished
+AI. **Attacker is still exactly on this original path today.**
 
 **Decided design**, agreed 2026-08-20 — role-differentiated positioning and
 combat stats, replacing the identical-for-every-role weave above. Applies
 only to AI-controlled `Teammate_*` ships — if a human plays a given role
 instead, none of this positioning logic runs for that ship (there's no
-`AIController` on `Player`) — though Medic's aura itself still works for a
-human, since it lives on `PlayerAbility.cs`, not here (see "Medic
-positioning + proximity aura" above). **Tank and Medic are implemented** —
-see "Tank guard-point positioning / physical blocking" and "Medic
-positioning + proximity aura" above. Attacker/Support below are still
-planned, not yet built:
+`AIController` on `Player`) — though Medic's aura and Support/Tank's fire
+stats still work for a human, since they live on `PlayerAbility.cs`/
+`PlayerRoleStats` rather than `AIController.cs` (see "Medic positioning +
+proximity aura" / "Support roaming positioning" above). **Tank, Medic, and
+Support are implemented** — see "Tank guard-point positioning / physical
+blocking", "Medic positioning + proximity aura", and "Support roaming
+positioning" / "Support fire-cadence/damage catch-up" above. Attacker below
+is still planned, not yet built:
 
-- **Attacker** — the highest fire damage and fire cadence of the four
-  roles, medium shield. Positioning: patrols to cover the available screen
-  width (maximize spread/coverage for DPS uptime) while staying clear of
-  the boss and the top edge of the screen (avoiding the most bullet-dense
-  area).
-- **Support** — the same fire cadence as Attacker, the same fire damage as
-  Tank (fast **and** hard-hitting relative to the other two). Positioning:
-  intentionally the least constrained of the four — roams the available
-  screen freely rather than holding a zone, reflecting that Support's kit
-  is the most varied/reactive of the roles.
-- **Shield values for Support are not yet decided** — only Tank (highest)
-  and Attacker (medium) were specified; Support's shield multiplier is
-  placeholder/TBD until implementation, same status as every other
-  not-yet-tuned role-stat value in `player-roles.md`. (Medic's is also
-  still the placeholder `1.0×` baseline — implementing the aura didn't
-  require deciding this value.)
+- **Attacker** — positioning: patrols to cover the available screen width
+  (maximize spread/coverage for DPS uptime) while staying clear of the boss
+  and the top edge of the screen (avoiding the most bullet-dense area).
+  This is the only piece of Attacker's design still unbuilt — its stats
+  (health/shield/fire damage/fire rate/move speed) are all already fixed,
+  decided values, same as every other role, per Session 16's "Fixed
+  per-role stats overhaul" (see [player-roles.md](player-roles.md)).
 
 Still open, from the original prototype-era list, and still needed
 regardless of the above:

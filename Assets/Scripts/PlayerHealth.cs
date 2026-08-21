@@ -19,8 +19,8 @@ public class PlayerHealth : MonoBehaviour
         PlayerRoleComponent roleComponent = GetComponent<PlayerRoleComponent>();
         if (roleComponent != null)
         {
-            maxHealth = Mathf.RoundToInt(maxHealth * roleComponent.Stats.healthMultiplier);
-            maxShield = Mathf.RoundToInt(maxShield * roleComponent.Stats.shieldMultiplier);
+            maxHealth = roleComponent.Stats.maxHealth;
+            maxShield = roleComponent.Stats.maxShield;
         }
 
         currentHealth = maxHealth;

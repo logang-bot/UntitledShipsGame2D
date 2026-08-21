@@ -1110,3 +1110,282 @@ errors or warnings.
   over the old (broken) behavior.
 - Attacker/Support AI positioning, bullet-dodging, teammate separation,
   manual teammate-ability triggering — unchanged, still not built.
+
+## Session 15 — Support AI Positioning + Fire-Cadence/Damage Catch-up
+
+The roadmap's "Recommended next" item: `AIController.cs`'s Support role
+still just weaved in X with no awareness of the boss, allies, or screen
+space, unlike Tank (guard-point) and Medic (hang-back + approach-hurt-ally)
+from Sessions 12-13. `docs/systems/boss.md`'s "Future work" section already
+had a decided design for Support (agreed 2026-08-20, never implemented),
+bundling two things together: AI positioning ("roams the available screen
+freely rather than holding a zone") and combat stats ("the same fire
+cadence as Attacker, the same fire damage as Tank"). Confirmed with the
+user upfront to implement both halves in this session, not positioning
+only.
+
+### Positioning: random-waypoint wander, not a biased point
+
+Tank/Medic's existing `BiasedPositionDirection()` steers toward a point
+derived from the ally center and the boss's position, then holds there —
+wrong shape for Support, which has no "zone" at all by design. Instead,
+`AIController.cs` got a new `WanderDirection()`: steers toward a private
+`roamTarget`, picking a new random point (`RandomRoamPoint()`, uniformly
+sampled within the same viewport bounds `PlayerController.HandleMovement()`
+already clamps to, reusing its public `screenPadding` field rather than
+duplicating the inset constant) whenever the current one is reached (within
+`roamDeadzone`, 0.3) or after `roamInterval` (3s) elapses, whichever comes
+first. Deliberately does **not** return `Vector2.zero` inside the deadzone
+like `ApproachDirection()`/`BiasedPositionDirection()` do — those correctly
+hold position once arrived (Tank's guard point, Medic hanging back), but
+Support should keep moving continuously, so arriving immediately triggers
+picking the next point instead.
+
+Added a `case PlayerRole.Support:` to `AIController.Update()`'s movement
+switch, previously grouped under the shared `default:` with Attacker — the
+`default:` case (and its comment) now covers Attacker only, the last role
+still on the original sine-weave.
+
+No new-field scene-wiring gotcha applied here, unlike most of this
+project's prior tuning passes: `roamDeadzone`/`roamInterval` are brand-new
+fields, not edits to already-serialized existing ones, so every
+`Teammate_*` instance picked up the script defaults automatically with no
+per-instance override needed.
+
+### Stats: a new `damageMultiplier`, and a side effect on Tank
+
+"The same fire damage as Tank" turned out to require more than a lookup
+change: **no role had ever had elevated fire damage** — `PlayerController.Fire()`
+hardcoded `SpawnBullet(1f, 0.6f)` for every role alike (the `0.6` itself was
+a flat 40% cut applied uniformly in Session 12's tuning, not a per-role
+value). Giving Support "Tank's damage" meant introducing a new
+`RoleStats.damageMultiplier` stat and deciding what Tank's own value should
+be, not just Support's — a small balance change to Tank as a side effect
+of implementing Support's design faithfully, flagged to the user rather
+than silently expanded scope. Picked `1.5x` for both (round placeholder,
+tunable like every other not-yet-playtested balance value in this
+project) — Attacker/Medic stay at the `1.0x` baseline, since Attacker's
+high damage already comes from Big Shot, untouched by this stat.
+
+Implementation followed the existing `moveSpeed`/`fireRate` pattern
+exactly: new `PlayerController.fireDamage` field (base `0.6`), multiplied
+by `Stats.damageMultiplier` once in `Start()` alongside the existing two
+multiplications, then `Fire()`'s hardcoded literal became `SpawnBullet(1f,
+fireDamage)`. Also bumped Support's `fireRateMultiplier` `1.0` → `0.75` to
+match Attacker's cadence, completing the decided design. Tank's
+`fireRateMultiplier` (1.2, slower) was deliberately left unchanged — only
+the fire-damage side of Tank's stats was part of Support's design, not its
+cadence.
+
+### Verified
+
+Unity MCP bridge, Play mode. Read all 4 ships' live `fireRate`/`fireDamage`:
+Support showed `fireDamage = 0.9` (`0.6 × 1.5`, matching Tank, which also
+read `0.9`) and a `fireRate` consistent with its buffed state at the moment
+of sampling (Support's own buff ability multiplies `fireRate` further while
+active — confirmed this was the AI's buff having already auto-fired, not a
+bug, by cross-checking the math); Attacker/Medic stayed at `fireDamage =
+0.6`, unchanged. `FindObjectsByType<Bullet>` confirmed live bullets in
+flight carried `damage == 0.9` for Support/Tank and `0.6` for
+Attacker/Medic (boss/enemy bullets, out of scope, stayed at their own
+unrelated value). Reflection-called `WanderDirection()` on `Teammate_Support`
+directly: returned a normalized direction with a non-trivial Y component,
+and `roamTarget` landed within viewport bounds. Sampled its transform
+position over several pumped frames (screenshot-forced frame-stepping, same
+technique as every prior session) and confirmed both X and Y changed
+over time, cross-checked against `Teammate_Tank`/`Teammate_Medic` (both
+still moved in both axes as before, confirming their code paths were
+unaffected by the new `case PlayerRole.Support` branch). No console errors
+or warnings throughout.
+
+### Still open
+
+- Attacker AI positioning, bullet-dodging, teammate separation, manual
+  teammate-ability triggering — unchanged, still not built. Attacker is now
+  the only role without real AI positioning.
+- Support's shield multiplier is still the placeholder `1.0x` baseline —
+  only its fire-rate/damage were part of the decided design implemented
+  this session; shield was never specified for it.
+
+## Session 16 — Fixed Per-Role Stats + Ability Rework
+
+User feedback after reviewing Session 15's multiplier-based stats: managing
+health/shield/fire-rate/damage as `base × role multiplier` (e.g. Tank
+health `5 × 1.6`) was confusing to reason about and hand-tune, especially
+with fire rate stored *inverted* (`fireRate` meant seconds between shots —
+lower was faster — despite reading like a rate). Requested a clear
+single source of truth instead: fixed, absolute values per role, with
+multipliers reserved strictly for temporary buffs/abilities, applied
+non-destructively rather than mutated into a field and divided back out
+later (the exact mechanism that made the old Support buff need
+`buffCooldown ≥ buffDuration` to avoid double-applying).
+
+### Architecture: `RoleStats` becomes fixed values
+
+`PlayerRole.cs`'s `RoleStats` struct dropped every multiplier field
+(`healthMultiplier`, `shieldMultiplier`, `fireRateMultiplier`,
+`damageMultiplier`, `moveSpeedMultiplier`) in favor of direct values
+(`maxHealth`, `maxShield`, `fireDamage`, `shotsPerSecond`, `moveSpeed`).
+`PlayerHealth.Awake()`/`PlayerController.Start()` now just assign these
+straight from `Stats`, no multiplication, no `Mathf.RoundToInt` needed
+(the user's given numbers were already whole where it mattered).
+`PlayerController.fireRate` was renamed `shotsPerSecond` and its meaning
+flipped to match — higher is now faster, matching how the user specified
+the design ("2.5 bullets/second") rather than the old inverted-interval
+field. Final table (all user-specified, not derived):
+
+| Role     | Health | Shield | Fire damage | Fire rate | Move speed |
+| -------- | ------ | ------ | ------------ | --------- | ---------- |
+| Attacker | 6      | 5      | 2.0          | 2.5/s     | 3.0 u/s    |
+| Tank     | 8      | 20     | 1.0          | 1/s       | 1.5 u/s    |
+| Medic    | 4      | 3      | 0.7          | 1.5/s     | 3.0 u/s    |
+| Support  | 5      | 3      | 1.0          | 2/s       | 4.5 u/s    |
+
+**Sanity-checked the numbers before implementing**: flagged that Attacker
+ends up with both the highest DPS (damage × rate = 5.0/s, 2.5–5x every
+other role) *and* the second-best survivability (health + shield = 11,
+ahead of Support's 8 and Medic's 7) — a real shift from the role's
+original "glass cannon" framing (health used to be Attacker's *lowest*
+stat). Noted as worth confirming deliberate, not blocking — user's numbers
+were used as given.
+
+### Non-destructive buff layer
+
+`PlayerController` gained two runtime-only fields, `speedBuffMultiplier`/
+`fireRateBuffMultiplier` (both default `1f`), read at the point of use —
+`HandleMovement()`'s move vector, and a computed `FireInterval => 1f /
+(shotsPerSecond * fireRateBuffMultiplier)` for the fire-cooldown gate —
+rather than ever being multiplied into `moveSpeed`/`shotsPerSecond`
+themselves. Only `PlayerAbility` sets them (Support's redesigned ability,
+below), always via plain assignment. This eliminates the old buff's
+revert-by-dividing-back-out entirely — there's no arithmetic to get wrong,
+so the "cooldown must stay ≥ duration" constraint that applied to every
+prior buff/boost in this project (Support's old buff, Medic's aura boost)
+no longer applies to Support's ability at all.
+
+### Bullet.cs — one-line fix enabling Tank's new mechanic
+
+`Bullet.cs`'s enemy-bullet-vs-`Player` branch changed
+`other.GetComponent<PlayerHealth>()` → `other.GetComponentInParent<PlayerHealth>()`
+— a one-line, backward-compatible change (a ship's own collider still
+resolves to its own `PlayerHealth` exactly as before) that lets a *child*
+collider without its own `PlayerHealth` route a hit to its parent ship's
+health pool. Existed specifically to make Tank's Shield Arc (below)
+possible; without it, a bullet touching the arc would have been destroyed
+but dealt no damage — a "free" block, not what shield-draining absorption
+should feel like.
+
+### Four ability changes, requested alongside the stats overhaul
+
+- **Attacker — Big Shot**: damage changed from a separately hand-tuned
+  flat number (`1.8`) to a live `2x` multiplier of the caster's *current*
+  `fireDamage` (`bigShotDamageMultiplier`), computed at cast time — `2.0 ×
+  2 = 4.0` at today's values. Stays proportional automatically if
+  `fireDamage` is ever retuned again, rather than needing a second manual
+  update.
+- **Support — Speed Boost** (renamed from "Buff", fully redesigned):
+  became **party-wide** instead of self-only — `TriggerSpeedBoost()` loops
+  over `allies[]` (all 4 ships, the same array Medic's aura already uses)
+  setting each ally's `speedBuffMultiplier`/`fireRateBuffMultiplier` to
+  `speedBoostMultiplier` (1.5, one shared value for both stats now,
+  replacing the old two separate move-speed/fire-rate multipliers) for
+  `speedBoostDuration` (4s). Cooldown bumped `8s → 15s` — flagged
+  overpowered once it started affecting the whole party, round
+  placeholder. New party-wide visual: every ship (any role, not just
+  Support — built unconditionally, since any of the 4 could receive the
+  boost) got an initially-hidden `PartyBuffRing`, toggled via a new
+  `SetPartyBuffVisual(bool, Color)` call in the same `allies[]` loop — all
+  4 rings light up in the caster's tint (Support's gold) together and
+  disappear together, giving the buff a clear, readable tell instead of
+  just feeling arbitrarily strong.
+- **Medic — Aura Boost radius**: halved, `3 → 1.5` — flagged overpowered
+  at the original size. Nothing else about the aura changed.
+- **Tank — Shield Arc** (new mechanic, not an `E`-triggered ability —
+  passive and always-on, independent of Taunt): a wide, curved shield in
+  front of Tank, both visual and **functionally blocking**. Built
+  procedurally in `PlayerAbility.Awake()` only for `role == Tank` (same
+  "only build what this role needs" precedent as Medic's ring): a child
+  `ShieldArc` GameObject, tagged `Player`, with a local-space
+  `EdgeCollider2D` (`isTrigger`) and matching `LineRenderer` sampling a
+  shallow parabola, `shieldArcWidthMultiplier` (3x Tank's own collider
+  width, read live from `BoxCollider2D.bounds.size.x`) wide. Local-space
+  and built once — unlike Medic's ring (which resizes on boost and needs
+  per-frame updates), the arc never changes shape, so it needs **no
+  `Update()` at all**; being a child of Tank's transform, it tracks
+  Tank's movement automatically. Relies on the `Bullet.cs` fix above to
+  route absorbed hits into Tank's own shield/health, not a free block.
+  **Known edge case, flagged not solved**: if the arc's collider region
+  vertically overlaps Tank's own body collider, a bullet could in rare
+  cases enter both in one physics step and double-hit — mitigated by the
+  arc's Y-offset placing it above the body, not defended against with
+  extra code, matching this project's established "flag it, don't
+  over-engineer for a rare edge case" style.
+
+### Boss HP tuning
+
+`Boss.maxHealth` ×1.5'd (`60 → 90`), purely to give this larger rework
+enough runway in a full playthrough to actually be observed, rather than
+the fight ending before the new stats/abilities' effects are visible.
+
+### Gotcha, hit twice (same class as every prior tuning pass)
+
+Changing a script *default* doesn't retroactively update an
+already-serialized value. `Boss.maxHealth` (60 on the live scene instance
+and `Boss.prefab`) and `PlayerAbility.auraBoostRadius` (3 on all 4 ships
+except, unexplainedly, `Teammate_Tank` which already read `1.5` — never
+fully root-caused, possibly a quirk of the field having been added to
+`PlayerAbility.cs` after `Teammate.prefab`'s initial save, but the fix
+(explicitly setting all 4 instances plus `Teammate.prefab`'s and
+`Boss.prefab`'s defaults, verified via a full scene reload) is correct
+regardless of the exact cause) both needed the same explicit-set-on-every-instance
+treatment as every prior HP/damage tuning session. Every genuinely *new*
+field this pass (`speedBuffMultiplier`/`fireRateBuffMultiplier`, the
+Shield Arc's fields, the party-buff ring's fields) did **not** hit this —
+new fields just pick up the script default, since there's no prior
+serialized value to conflict with.
+
+### Verified
+
+Unity MCP bridge, Play mode. Read all 4 ships' live `maxHealth`/
+`maxShield`/`fireDamage`/`shotsPerSecond`/`moveSpeed` right after
+`Awake()`/`Start()`: matched the table above exactly for every role, no
+rounding drift. Triggered Big Shot via reflection: spawned bullet carried
+`damage == 4.0`, bullet width 3x normal. Confirmed Support's Speed Boost
+(already auto-fired by the AI within the first frames of Play, expected
+behavior) set all 4 ships' `speedBuffMultiplier`/`fireRateBuffMultiplier`
+to `1.5` and activated all 4 party-buff rings in Support's gold tint.
+**Tank's Shield Arc verified functionally, not just structurally**:
+inspected the arc's `EdgeCollider2D` points (spanned ±0.9 local, matching
+Tank's `0.6`-wide body × the `3x` multiplier, with the correct parabola
+shape); spawned a fake enemy bullet positioned within the arc's width but
+outside Tank's own body collider, pumped physics frames, and confirmed the
+bullet was destroyed **and** Tank's `CurrentShield` dropped by the
+bullet's exact damage (`20 → 18` for a 2-damage bullet) — the critical
+check that the `Bullet.cs` fix actually routes the hit to Tank's own
+health pool rather than silently no-oping. A same-position player-owned
+bullet was confirmed to pass through untouched, Tank's health/shield
+unchanged — no friendly-fire interaction. `Boss.maxHealth`/`CurrentHealth`
+confirmed `90/90` after a full scene reload from disk. No console errors
+or warnings throughout.
+
+**Testing note**: hit the well-documented Editor-idle `Time.time` jump
+quirk again mid-session (a gap between tool calls let real time jump to
+`Time.time = 62s`, during which the human `Player` died from ongoing boss
+fire and a test bullet's `lifeTime` naturally expired, initially looking
+like a collision bug before the cause was traced) — resolved by keeping
+the friendly-fire re-test's calls tight together and giving the test
+bullet a long `lifeTime` override, consistent with every prior session's
+handling of this same quirk.
+
+### Still open
+
+- Attacker AI positioning, bullet-dodging, teammate separation, manual
+  teammate-ability triggering — unchanged, still not built.
+- The Attacker survivability/DPS balance question flagged during design
+  (highest damage *and* second-best survivability) wasn't revisited after
+  the user confirmed the given numbers — worth another look once real
+  playtesting happens.
+- Every role's shield value is now a deliberately-chosen fixed number
+  (no more "undecided 1.0x placeholder" framing), but all values across
+  the board remain placeholder/tunable pending real playtesting, same as
+  every prior balance pass in this project.

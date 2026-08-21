@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class Boss : MonoBehaviour
 {
     [Header("Health / Phases")]
-    public int maxHealth = 60; // was 30 - doubled alongside the -40% player damage tuning pass
+    public int maxHealth = 90; // was 60 - x1.5'd to give the fixed-stats/ability rework enough runway to observe
     public UnityEvent OnPhase2;
     public UnityEvent OnDefeated;
 

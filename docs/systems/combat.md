@@ -17,20 +17,30 @@ Fire input arrives via `OnFire(InputValue)`, called automatically by the
 interval while held. Fire direction is hardcoded to `Vector2.up` — the ship
 has a fixed orientation by design (see [movement.md](movement.md)).
 
-Key public fields: `bulletPrefab`, `firePoint`, `fireRate` (default `0.35`
-as of the boss-fight tuning pass — see [boss.md](boss.md); was `0.2`),
-`bulletSpeed` (default 12), `recoilDamping` (default 8, higher = faster
-decay).
+Key public fields: `bulletPrefab`, `firePoint`, `shotsPerSecond` — shots per
+second, higher = faster (renamed from the old, misleadingly-inverted
+`fireRate`, which stored *seconds between shots*; both `shotsPerSecond` and
+`fireDamage` below are fixed per-role values, overwritten at `Start()` — see
+[player-roles.md](player-roles.md)'s "Fixed per-role stats") — `bulletSpeed`
+(default 12), `fireDamage` (a fixed per-role value, base script default
+`0.6`), `recoilDamping` (default 8, higher = faster decay). Two
+non-destructive runtime-only buff multipliers, both default `1`, never
+serialized-meaningful: `speedBuffMultiplier` (see [movement.md](movement.md))
+and `fireRateBuffMultiplier` — set only by Support's party-wide Speed Boost
+(see [player-roles.md](player-roles.md)), read via a computed `FireInterval
+=> 1f / (shotsPerSecond * fireRateBuffMultiplier)` wherever the fire-cooldown
+gate needs seconds-until-next-shot, rather than ever mutating
+`shotsPerSecond` itself.
 
 `Fire()` (regular Space/click fire) and `FireBigShot(float widthMultiplier,
 float damageAmount)` (Attacker's ability — see [player-roles.md](player-roles.md))
 both route through a shared private `SpawnBullet(widthMultiplier,
 damageAmount)` so there's one instantiation/`Init()` call site; `Fire()` is
-just `SpawnBullet(1f, 0.6f)` (`damageAmount` is `float`, not `int`, as of
-the boss HP/damage tuning pass — see [boss.md](boss.md)'s "Tuning"; was
-`SpawnBullet(1f, 1)`). `SpawnBullet()` passes `gameObject` into
-`Bullet.Init(..., ownerObject)` (see Bullet.cs below) so the boss can
-attribute damage back to the shooter for aggro. `AddRecoil(Vector2 impulse)`
+just `SpawnBullet(1f, fireDamage)` — the caster's own live, role-fixed
+damage value, e.g. `2.0` for Attacker, `0.7` for Medic (see
+[player-roles.md](player-roles.md)'s table). `SpawnBullet()` passes
+`gameObject` into `Bullet.Init(..., ownerObject)` (see Bullet.cs below) so
+the boss can attribute damage back to the shooter for aggro. `AddRecoil(Vector2 impulse)`
 accumulates into a private `recoilVelocity` field that `HandleMovement()`
 itself decays (`Vector2.Lerp` toward zero, scaled by `recoilDamping`) and
 adds into its position calculation every `FixedUpdate`. **This is required,
@@ -75,10 +85,21 @@ right after `Instantiate()`, before `Init()` runs. **`float`, not `int`**
 "Tuning" — since player fire damage is no longer a whole number); defaults
 to `1`, so anything that doesn't set it (enemy/boss bullets) is unaffected.
 `PlayerController.SpawnBullet()` sets it explicitly for both regular fire
-(`0.6`, down from `1`) and Attacker's big shot (`1.8`, down from `3` — see
-[player-roles.md](player-roles.md)); the collider scales automatically with
-the bullet's `transform.localScale` (Unity `BoxCollider2D` behavior), so a
-wider bullet doesn't need any collider-size code.
+(the caster's fixed-per-role `fireDamage`, e.g. `2.0` for Attacker) and
+Attacker's big shot (`fireDamage × bigShotDamageMultiplier`, a live `2x` —
+see [player-roles.md](player-roles.md)); the collider scales automatically
+with the bullet's `transform.localScale` (Unity `BoxCollider2D` behavior),
+so a wider bullet doesn't need any collider-size code.
+
+`OnTriggerEnter2D`'s enemy-bullet-vs-`Player`-tag branch resolves the hit
+target via `other.GetComponentInParent<PlayerHealth>()`, **not**
+`other.GetComponent<PlayerHealth>()` (changed 2026-08-21) — lets a *child*
+collider without its own `PlayerHealth` (e.g. Tank's Shield Arc, a wider
+blocking trigger on a child GameObject — see [player-roles.md](player-roles.md))
+still route the hit into its parent ship's own health/shield pool, exactly
+like a direct hit on the ship's own body collider. Backward-compatible: a
+ship's own collider still resolves to its own `PlayerHealth` first, since
+`GetComponentInParent` checks the object itself before ascending.
 
 `Init()` gained a 4th, optional param: `Init(Vector2 dir, float spd, string
 ownerTag, GameObject ownerObject = null)`. The default keeps every existing
@@ -138,9 +159,10 @@ every frame, so a heal/shield-restore shows up live for free. **No passive
 shield regen anywhere** — shield only ever goes up via `RestoreShield(int)`,
 deliberately, to keep Tank dependent on Medic.
 
-Key public fields: `maxHealth` (default 5; scaled by role — see
-[player-roles.md](player-roles.md)), `maxShield` (default 3, likewise
-scaled by role), `OnDeath` (`UnityEvent`, fires only on the killing blow —
+Key public fields: `maxHealth`/`maxShield` — both fixed per-role values
+(script defaults `5`/`3`, overwritten by the role's own number at `Awake()`
+— see [player-roles.md](player-roles.md)'s "Fixed per-role stats"),
+`OnDeath` (`UnityEvent`, fires only on the killing blow —
 see Game Over / Restart below), `OnDamaged` (`UnityEvent`, fires on any
 non-fatal hit, shield-absorbed or not — see Damage Feedback below). Key
 public methods: `TakeDamage(int)`, `Heal(int)`, `RestoreShield(int)`.
@@ -236,8 +258,8 @@ Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 
 | Component            | Key inspector values                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
-| **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, fireRate: 0.35, bulletSpeed: 12, recoilDamping: 8 |
-| **PlayerHealth.cs**   | maxHealth: 5, maxShield: 3, OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` |
+| **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, bulletSpeed: 12, recoilDamping: 8 (shotsPerSecond/fireDamage/moveSpeed all overwritten by role at `Start()` — see [player-roles.md](player-roles.md)) |
+| **PlayerHealth.cs**   | OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` (maxHealth/maxShield overwritten by role at `Awake()`) |
 | **PlayerDamageFlash.cs** | flashColor: white, flashDuration: 0.12 |
 
 Both `PlayerHealth.cs` and `PlayerRoleComponent` are confirmed attached and

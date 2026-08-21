@@ -21,10 +21,16 @@ Handles ship movement, clamped to stay within the camera viewport. Move input
 arrives via `OnMove(InputValue)`, called automatically by the `Player Input`
 component — not polled manually.
 
-Key public fields: `moveSpeed` (default 8), `screenPadding` (default 0.5, 0.5).
+Key public fields: `moveSpeed` (a fixed per-role value, see
+[player-roles.md](player-roles.md)'s "Fixed per-role stats" — not a
+hand-set default like `screenPadding`), `screenPadding` (default 0.5, 0.5),
+`speedBuffMultiplier` (default `1`, non-destructive runtime multiplier set
+by Support's party-wide Speed Boost — see [player-roles.md](player-roles.md);
+`HandleMovement()` reads `moveSpeed * speedBuffMultiplier` rather than ever
+mutating `moveSpeed` itself).
 
 This same script also handles shooting — see [combat.md](combat.md) for the
-`bulletPrefab`/`firePoint`/`fireRate`/`bulletSpeed` fields and `Fire()`.
+`bulletPrefab`/`firePoint`/`shotsPerSecond`/`bulletSpeed` fields and `Fire()`.
 
 ## Scene wiring — Player
 
@@ -34,7 +40,7 @@ This same script also handles shooting — see [combat.md](combat.md) for the
 | Component                | Key inspector values                                   |
 | ------------------------ | -------------------------------------------------------- |
 | Collider2D (Box/Poly)    | Is Trigger: **OFF**                                       |
-| **PlayerController.cs**  | moveSpeed: 8, screenPadding: (0.5, 0.5)                   |
+| **PlayerController.cs**  | moveSpeed: overwritten by role at `Start()` (see [player-roles.md](player-roles.md)), screenPadding: (0.5, 0.5) |
 | **Player Input**         | Actions: PlayerControls asset, Default Map: Player, Behavior: Send Messages |
 | Transform                | localScale: (0.6, 0.6, 1) — shrunk from (1, 1, 1) as part of boss-fight tuning; see [boss.md](boss.md) |
 

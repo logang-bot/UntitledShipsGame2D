@@ -9,36 +9,41 @@ public enum PlayerRole
     Support
 }
 
+// Fixed, absolute per-role stats - the single source of truth for a role's
+// base numbers. No multipliers here: temporary effects (buffs/abilities)
+// are applied non-destructively at the point of use (see
+// PlayerController.speedBuffMultiplier/fireRateBuffMultiplier), never by
+// scaling these base values.
 public struct RoleStats
 {
-    public float healthMultiplier;
-    public float shieldMultiplier;
-    public float fireRateMultiplier;
-    public float moveSpeedMultiplier;
+    public int maxHealth;
+    public int maxShield;
+    public float fireDamage;
+    public float shotsPerSecond; // higher = faster, unlike the old inverted "seconds between shots" field
+    public float moveSpeed; // world units/second
     public Color tintColor;
 
-    public RoleStats(float healthMultiplier, float shieldMultiplier, float fireRateMultiplier, float moveSpeedMultiplier, Color tintColor)
+    public RoleStats(int maxHealth, int maxShield, float fireDamage, float shotsPerSecond, float moveSpeed, Color tintColor)
     {
-        this.healthMultiplier = healthMultiplier;
-        this.shieldMultiplier = shieldMultiplier;
-        this.fireRateMultiplier = fireRateMultiplier;
-        this.moveSpeedMultiplier = moveSpeedMultiplier;
+        this.maxHealth = maxHealth;
+        this.maxShield = maxShield;
+        this.fireDamage = fireDamage;
+        this.shotsPerSecond = shotsPerSecond;
+        this.moveSpeed = moveSpeed;
         this.tintColor = tintColor;
     }
 }
 
 public static class PlayerRoleStats
 {
-    // Placeholder balancing values, tunable until real playtesting/art lands.
-    // shieldMultiplier: only Tank (highest) and Attacker (medium) are decided
-    // per the AI-teammate design (docs/systems/player-roles.md); Medic/Support
-    // are left at the 1x baseline until that's tuned.
+    // Placeholder balancing values, tunable until real playtesting lands.
+    // See docs/systems/player-roles.md for the full table/reasoning.
     private static readonly Dictionary<PlayerRole, RoleStats> stats = new Dictionary<PlayerRole, RoleStats>
     {
-        { PlayerRole.Attacker, new RoleStats(healthMultiplier: 0.8f, shieldMultiplier: 1f, fireRateMultiplier: 0.75f, moveSpeedMultiplier: 1f, tintColor: new Color(1f, 0.3f, 0.3f)) },
-        { PlayerRole.Tank, new RoleStats(healthMultiplier: 1.6f, shieldMultiplier: 2f, fireRateMultiplier: 1.2f, moveSpeedMultiplier: 0.8f, tintColor: new Color(0.3f, 0.5f, 1f)) },
-        { PlayerRole.Medic, new RoleStats(healthMultiplier: 1f, shieldMultiplier: 1f, fireRateMultiplier: 1f, moveSpeedMultiplier: 1f, tintColor: new Color(0.3f, 1f, 0.4f)) },
-        { PlayerRole.Support, new RoleStats(healthMultiplier: 1f, shieldMultiplier: 1f, fireRateMultiplier: 1f, moveSpeedMultiplier: 1.15f, tintColor: new Color(1f, 0.85f, 0.3f)) },
+        { PlayerRole.Attacker, new RoleStats(maxHealth: 6, maxShield: 5, fireDamage: 2.0f, shotsPerSecond: 2.5f, moveSpeed: 3.0f, tintColor: new Color(1f, 0.3f, 0.3f)) },
+        { PlayerRole.Tank, new RoleStats(maxHealth: 8, maxShield: 20, fireDamage: 1.0f, shotsPerSecond: 1f, moveSpeed: 1.5f, tintColor: new Color(0.3f, 0.5f, 1f)) },
+        { PlayerRole.Medic, new RoleStats(maxHealth: 4, maxShield: 3, fireDamage: 0.7f, shotsPerSecond: 1.5f, moveSpeed: 3.0f, tintColor: new Color(0.3f, 1f, 0.4f)) },
+        { PlayerRole.Support, new RoleStats(maxHealth: 5, maxShield: 3, fireDamage: 1.0f, shotsPerSecond: 2f, moveSpeed: 4.5f, tintColor: new Color(1f, 0.85f, 0.3f)) },
     };
 
     public static RoleStats Get(PlayerRole role) => stats[role];

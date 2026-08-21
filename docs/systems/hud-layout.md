@@ -75,9 +75,12 @@ tint — `shieldBarFill` is deliberately **not** tinted, see below).
 bar `fillAmount`, `"HP: current/max"` text, `shieldBarFill.fillAmount`
 (`CurrentShield`/`maxShield`, see [player-roles.md](player-roles.md)'s
 "Shield stat"), move-speed/fire-rate text (read live from
-`PlayerController` every frame — already role-multiplier-adjusted by then),
-and `abilityText` (`"{AbilityName}: {StatusText}"`, reading
-`PlayerAbility`'s public status getters — see
+`PlayerController` every frame — each ship's fixed per-role base times its
+current buff multiplier, e.g. `"Fire Rate: {shotsPerSecond *
+fireRateBuffMultiplier:0.0}/s"`, so the display updates live during
+Support's party-wide Speed Boost — see [player-roles.md](player-roles.md)'s
+"Fixed per-role stats"), and `abilityText` (`"{AbilityName}: {StatusText}"`,
+reading `PlayerAbility`'s public status getters — see
 [player-roles.md](player-roles.md)) up to date. `OnPlayerDied()` grays out
 `shieldBarFill` too, alongside `healthBarFill`. `PartyFrameUI` never
 computes cooldown/buff/shield math itself, only formats what
