@@ -26,7 +26,7 @@ reference docs live under `systems/`.
   hit, player disables at 0 HP.
 - **Game-over / respawn flow**: `PlayerHealth.OnDeath` (`UnityEvent`) fires on death;
   `GameOverUI.cs` shows a full-screen Game Over overlay (`GameOverPanel` on
-  `HUDCanvas`) and its Restart button reloads `SampleScene` via
+  `HUDCanvas`) and its Restart button reloads `Gameplay` via
   `SceneManager.LoadScene`, resetting all state for free. Party frame grays out
   and stops polling stale values on death (`PartyFrameUI.OnPlayerDied()`).
 - **Damage feedback**: `PlayerHealth.OnDamaged` (`UnityEvent`, fires only on
@@ -178,6 +178,24 @@ reference docs live under `systems/`.
   Tank, Medic, and Support were done in Sessions 12/13/15. See
   `systems/boss.md`'s "Attacker patrol + boss-tracking positioning".
 
+- **Role Select scene + Victory screen** — a new `RoleSelect.unity` scene
+  (Build Settings index 0, entry point) lets the human pick one of the 4
+  roles and Start; the 3 AI teammates automatically take the remaining 3
+  roles (`RoleSelectUI.cs`, `PartySetupBootstrap.cs`, `PartyRoleAssignment.cs`
+  static carrier). Replaces the old manual "hand-edit `PlayerRoleComponent.role`
+  in the Inspector and swap a teammate to match" testing workflow. A new
+  `VictoryPanel`/`VictoryUI.cs` (mirrors `GameOverUI.cs`) shows on
+  `Boss.OnDefeated` (a second listener alongside the existing
+  `BossPanelUI.ShowDefeated()`), and `GameOverPanel` gained a matching
+  "Change Roles" button. Both end screens offer "play again with the
+  current party" (reloads `Gameplay`, roles preserved via the static
+  carrier) or "change roles" (clears back to `RoleSelect`). Built ahead of
+  the originally-deferred "Scene scaffolding" item below because fast
+  role-switching was needed now for testing the 4-role AI behavior, not
+  because the full scaffolding timeline moved up — Main Menu and Lobby are
+  still not built. See `systems/player-roles.md`'s "Role Select scene" for
+  the full mechanics writeup.
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -219,11 +237,14 @@ reference docs live under `systems/`.
 
 ### Networking (last)
 
-- **Scene scaffolding** — Main Menu, Role Select, and Lobby scenes; the
-  project currently has only `SampleScene`. Deferred until role abilities
-  and the boss prototype exist to inform what these screens actually need
-  to show (e.g. which role abilities to preview on the select screen).
-  Prerequisite for wiring up Nakama matchmaking below, since a lobby needs
+- **Scene scaffolding** — Main Menu and Lobby scenes still don't exist.
+  Role Select shipped early (see "Implemented" above, built ahead of this
+  item's original timeline for testing purposes) — `RoleSelect.unity`
+  exists and is Build Settings index 0, but it's a standalone role-picker,
+  not part of a Main Menu flow yet. Main Menu/Lobby remain deferred until
+  the boss prototype (specifically boss combat dynamism) is further along
+  to inform what those screens actually need to show. Prerequisite for
+  wiring up Nakama matchmaking below, since a lobby needs
   somewhere to live before players can be matched into it.
 - **Nakama networking** — self-hosted on Fly.io, authoritative combat/boss
   state, matchmaking for 1–4 players. Offline/host mode using the same

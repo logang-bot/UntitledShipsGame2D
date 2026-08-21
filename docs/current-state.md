@@ -56,6 +56,14 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   9:16 portrait aspect ratio and adapts automatically: full-width on
   narrow/phone-like aspects, pillarboxed with HUD sidebar space on wider
   desktop aspects. See [systems/hud-layout.md](systems/hud-layout.md).
+- **Role Select + Victory screens** — the game now boots into `RoleSelect.unity`:
+  pick one of the 4 roles for the human `Player` and press Start; the 3 AI
+  teammates automatically take the remaining 3 roles (no more hand-editing
+  `PlayerRoleComponent.role` in the Inspector). Defeating the boss shows a
+  `VictoryPanel` (mirrors Game Over) offering "Play Again" (same party, same
+  roles) or "Change Roles" (back to Role Select); Game Over now has a
+  matching "Change Roles" button alongside its existing Restart. See
+  [systems/player-roles.md](systems/player-roles.md)'s "Role Select scene".
 - **Boss encounter** — a boss with 90 HP (×1.5'd again to give the
   Session 16 stat/ability rework enough runway to observe — see "Tuning" in
   [systems/boss.md](systems/boss.md)) across 2 HP-based phases (Phase 2 at
@@ -96,11 +104,12 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 - No networking/multiplayer — the 3 teammates are CPU-controlled, not real
   human players; local co-op isn't wired up.
-- Only one scene exists (`Assets/Scenes/SampleScene.unity`) — no Main Menu,
-  Role Select, or Lobby scenes yet (Game Over is a same-scene UI overlay, not
-  a separate scene — see [systems/combat.md](systems/combat.md)). See
-  `roadmap.md`'s "Networking (last)" section for where scene scaffolding
-  fits into the build order.
+- Two scenes exist: `RoleSelect.unity` (entry point, Build Settings index 0)
+  and `Gameplay.unity` (gameplay, index 1) — no Main Menu or Lobby scene
+  yet (Game Over/Victory are same-scene UI overlays within `Gameplay`,
+  not separate scenes — see [systems/combat.md](systems/combat.md)). See
+  `roadmap.md`'s "Networking (last)" section for where the rest of scene
+  scaffolding fits into the build order.
 - No local co-op / dynamic player count — the party is 4 fixed, hand-placed
   scene objects (`Player` + 3 `Teammate_*`), not a runtime spawner that
   reacts to however many humans are actually playing.
@@ -122,14 +131,18 @@ real networking last, then art/audio.
 
 ## How to test it
 
-1. Open the project in Unity (`SampleScene` under `Assets/Scenes/`).
-2. *(Optional)* Select the `Player` GameObject and change the
-   `PlayerRoleComponent`'s **Role** field before pressing Play, to try a
-   different role's stats/tint. If you do, also change the `Teammate_*`
-   that currently has that role to `Attacker` (or swap two roles) so all 4
-   roles stay covered exactly once — see [systems/boss.md](systems/boss.md)
-   for why. Do this in Edit mode, not while playing.
-3. Press **Play**. Note: `EnemySpawner`'s `Spawner` is auto-disabled by
+1. Open the project in Unity, with `RoleSelect` (under `Assets/Scenes/`) as
+   the open scene — it's Build Settings index 0, so this is also what a real
+   build boots into.
+2. Press **Play**, click one of the 4 role buttons (Attacker/Tank/Medic/
+   Support — this is the role the human `Player` will use), then click
+   **Start** once it's enabled. This loads `Gameplay` and auto-assigns
+   the 3 remaining roles to the 3 `Teammate_*` AI ships (any of the 4 you
+   didn't pick, exactly once each). *(Opening `Gameplay` directly instead
+   and pressing Play still works too, and falls back to whatever roles are
+   currently hand-set on `Player`/`Teammate_*` in the Inspector — useful for
+   quick iteration without going through Role Select each time.)*
+3. Note: `EnemySpawner`'s `Spawner` is auto-disabled by
    `Boss.Awake()` at Play start, so the old top-down enemy waves don't spawn
    during a boss-fight test — the boss is the only enemy on screen.
 4. Move with **WASD** (arrow keys are not currently bound). Hold **Space**
@@ -160,13 +173,16 @@ real networking last, then art/audio.
    panel.
 6. At 0 HP, **only the human `Player`** triggers the "Game Over" overlay and
    ends the test — a teammate dying just grays out its own party frame and
-   it keeps fighting inactive. Click **Restart** to reload the scene from
-   scratch (HP, boss, teammates, and party frames all reset).
-7. To see the different roles side by side, stop Play, change the Role
-   field(s) per step 2, and Play again — compare HP/shield taken to
-   disable, fire damage, fire rate, and move speed against the table in
-   [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role
-   stats". As Medic, notice the dim ring around your ship even without
+   it keeps fighting inactive. Click **Restart** to retry with the exact
+   same party/roles, or **Change Roles** to go back to the Role Select
+   screen and pick again. Defeating the boss instead shows a **Victory**
+   overlay with the same two options ("Play Again" / "Change Roles").
+7. To see the different roles side by side, use **Change Roles** (from
+   either end screen, or just stop Play and press Play again from
+   `RoleSelect`) and pick a different role each time — compare HP/shield
+   taken to disable, fire damage, fire rate, and move speed against the
+   table in [systems/player-roles.md](systems/player-roles.md)'s "Fixed
+   per-role stats". As Medic, notice the dim ring around your ship even without
    pressing anything — that's the passive aura, tiny by default,
    healing/shielding any ally that gets close enough (they flash green when
    it actually helps); press **E** to drastically expand the ring and speed

@@ -10,7 +10,7 @@ priority order.
 ## Boss.cs
 
 **Attached to:** `Boss` GameObject (`Assets/Prefabs/Boss.prefab`, one
-instance placed directly in `SampleScene` — not spawned; a boss is a
+instance placed directly in `Gameplay` — not spawned; a boss is a
 one-off, not a wave, so it doesn't go through `EnemySpawner.cs`).
 **Requires:** tag `Enemy` (so `Bullet.cs`'s existing player-bullet-vs-`Enemy`
 branch collides with it), a `bulletPrefab` (reuses `EnemyBullet.prefab`), a
@@ -486,7 +486,7 @@ too (see Bullet.cs above).
 
 **Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/Boss.prefab` (SpriteRenderer,
 Rigidbody2D at Gravity Scale 0, non-trigger BoxCollider2D — same physical
-setup as `Enemy.prefab`). One instance in `SampleScene`, positioned at
+setup as `Enemy.prefab`). One instance in `Gameplay`, positioned at
 `(0, 4.2, 0)` — **must stay within the camera's visible range**: the Main
 Camera is orthographic with size 5, so world Y outside roughly `[-5, 5]` is
 off-screen (an earlier placement at `y=6` was invisible in Play mode; caught

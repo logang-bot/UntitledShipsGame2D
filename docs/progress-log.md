@@ -1515,3 +1515,167 @@ new behavior), `player-roles.md` (Attacker positioning removed from the
   explicitly recommended next item, see `roadmap.md`.
 - The Y-convergence-onto-boss degenerate case (above) when few AI allies
   remain alive — not fixed, just documented.
+
+## Session 18 — Role Select Scene + Victory Screen
+
+Testing the 4-role AI behavior (Sessions 12-17) required hand-editing
+`PlayerRoleComponent.role` in the Inspector on `Player`, plus swapping
+whichever `Teammate_*` currently held that role — slow and error-prone, and
+a blocker on iterating the boss-dynamism work recommended next. Requested
+out of band from the roadmap's stated build order (which had "Scene
+scaffolding" deferred until right before Nakama networking), because fast
+role-switching was needed now for testing, not because the full scaffolding
+timeline moved up.
+
+### Design: a real second scene, not a same-scene overlay
+
+Considered both a same-scene overlay panel (matching the existing
+`GameOverPanel` pattern, avoiding a second scene per Session 5's precedent)
+and a real separate `RoleSelect.unity` scene. **User explicitly chose the
+real scene** — Role Select was always going to become a real scene per the
+roadmap's deferred "Scene scaffolding" item; this just builds it earlier
+than that item's original timeline, for testing purposes specifically (Main
+Menu and Lobby remain unbuilt).
+
+### The core technical problem: role has to be set before Awake()
+
+`PlayerRoleComponent.Awake()` (tints the sprite), `PlayerHealth.Awake()`
+(sets `maxHealth`/`maxShield`), and `PlayerAbility.Awake()` (builds Medic's
+aura ring / Tank's shield arc — **structural**, only happens once) each
+read `role`/`Stats` exactly once, at their own startup, and never re-react
+to a later change. Unity doesn't guarantee `Awake()` order between
+different GameObjects' default-order scripts. Fixed with
+`[DefaultExecutionOrder(-1000)]` on a new bootstrap script — a first for
+this project — guaranteed to run before every default-order script's
+`Awake()`.
+
+### New scripts
+
+- `PartyRoleAssignment.cs` — static class, `PlayerRole? HumanRole`, carries
+  the human's pick from `RoleSelect` into `Gameplay` across
+  `SceneManager.LoadScene` (survives within a Play session, resets to
+  `null` on domain reload). Same "static table over extra infra" precedent
+  as `PlayerRoleStats` (Session 4).
+- `RoleSelectUI.cs` — 4 role buttons, non-interactable Start button until a
+  role's picked, `StartGame()` sets the static and loads `Gameplay`.
+- `PartySetupBootstrap.cs` — the `DefaultExecutionOrder(-1000)` script, on a
+  new `PartySetup` GameObject in `Gameplay`. Assigns the human's role to
+  `Player`, then the 3 remaining `PlayerRole` values (enum declaration
+  order, skipping the human's pick) to `Teammate_Tank`/`Teammate_Medic`/
+  `Teammate_Support` — covers all 4 roles exactly once by construction. If
+  `PartyRoleAssignment.HumanRole` is null (scene opened directly), no-ops,
+  preserving the original Inspector-testing workflow.
+- `VictoryUI.cs` — mirrors `GameOverUI.cs` exactly. `Show()` wired as a
+  **second** listener on `Boss.OnDefeated` (`OnDefeated` already supported
+  multiple listeners, same as `OnDamaged` — no `Boss.cs` change needed).
+  `PlayAgain()` reloads `Gameplay` (roles preserved); `ChangeRoles()`
+  loads `RoleSelect`.
+- `GameOverUI.cs` — added `ChangeRoles()` + a new button; existing
+  `Restart()` needed no change, since it now doubles as "play again, same
+  party" for free (it just reloads the scene, and `PartyRoleAssignment` is
+  never cleared by that path).
+
+### Bug caught during verification: prefab-instance listener didn't persist
+
+Wired `VictoryUI.Show` onto `Boss.OnDefeated` via `execute_code` +
+`EditorUtility.SetDirty()`, same technique as every prior UnityEvent wiring
+in this project. `GetPersistentEventCount()` read back `2` immediately, and
+the scene saved successfully — but in Play mode, only `BossPanelUI.ShowDefeated()`
+fired; `VictoryPanel` never appeared. Root cause: `Boss` is a `Boss.prefab`
+instance (confirmed via `PrefabUtility.GetPrefabInstanceStatus`) — exactly
+the Session 12/13 gotcha (an instance-level override on an existing
+component needs `PrefabUtility.RecordPrefabInstancePropertyModifications()`
+in addition to `SetDirty()`, or it silently doesn't serialize), just hit
+against a UnityEvent listener list instead of a plain field this time.
+Caught only because verification followed this project's established habit
+of forcing a full scene reload from disk rather than trusting the
+in-memory `GetPersistentEventCount()` read — which had reported the
+correct count the whole time, since the in-memory mutation was real, just
+not persisted. Fixed by calling `RecordPrefabInstancePropertyModifications(boss)`
+after re-adding the listener; re-verified via a full disk reload before
+moving on. `GameOverPanel`'s own new "Change Roles" button needed no such
+fix, since `GameOverPanel` is a plain scene object, not a prefab instance.
+
+### Editor-idle quirk reconfirmed, this time on Play-mode transition itself
+
+Immediately after entering Play mode (Editor unfocused), one specific
+teammate's `PlayerRoleComponent.Awake()` sprite tint read as white
+(default) instead of its correct role color, even though the *same*
+GameObject's `PlayerHealth.Awake()` had already read the correct
+post-bootstrap stats. `editor/state` showed `play_mode.is_changing: true`
+and a stalled `playmode_transition` phase (not advancing across repeated
+reads while unfocused). Not a bug in the new code — a `manage_camera`
+screenshot (forces one manual frame step, the project's established
+technique since Session 6) let the transition complete, after which all 4
+ships' tints read correctly and reproducibly. Reconfirms the Session 6/8/9/
+10/12 finding generalizes to the Play-mode transition itself, not just
+in-Play `Update()`/coroutines.
+
+### Verification
+
+All via the Unity MCP bridge, mirroring this project's established
+technique (forced `Boss.TakeDamage(9999f, null)`/`PlayerHealth.TakeDamage(999)`
+instead of waiting out real combat, screenshot-forced frame steps,
+full-disk-reload checks for anything prefab/serialization-adjacent): role
+assignment verified correct for 3 different human picks (Medic, Tank,
+Support) across separate Play sessions, including the structural checks
+(aura ring / shield arc present on whichever ship actually landed that
+role); Victory panel appears on a forced boss kill with both buttons
+working; Game Over's Change Roles button works; "Play Again" preserves the
+exact prior role assignment across a reload via both the Victory path and
+the Game Over Restart path; opening `Gameplay` directly with no prior
+`RoleSelect` visit correctly falls back to the scene's hand-authored
+Inspector defaults, confirming `PartyRoleAssignment.HumanRole` resets to
+null on domain reload as designed. Zero console errors/warnings across
+every phase.
+
+### Docs updated
+
+`roadmap.md` (new "Role Select scene + Victory screen" Implemented item;
+"Scene scaffolding" note updated — Role Select shipped early, Main
+Menu/Lobby still deferred), `current-state.md` ("What's playable" bullet,
+"What's NOT there yet" scene count, "How to test it" steps 1-2 and 6-7
+rewritten for the new boot flow), `player-roles.md` (new "Role Select
+scene" section, `PlayerRoleComponent`'s scene-wiring table note updated).
+
+### Addendum: gameplay scene renamed `SampleScene` → `Gameplay`
+
+Immediate same-session follow-up: `SampleScene` was a leftover Unity
+template name from Session 1, and now that a second scene (`RoleSelect`)
+exists alongside it, the generic name read as unfinished rather than
+intentional. Renamed via `manage_asset(action:"rename"/"move")` (preserves
+the `.meta`/GUID, so Build Settings and all GUID-based references updated
+automatically with no broken links) to `Assets/Scenes/Gameplay.unity`. Two
+string-literal `SceneManager.LoadScene("SampleScene")` call sites
+(`VictoryUI.PlayAgain()`, `RoleSelectUI.StartGame()`) needed a matching
+code fix, plus a full docs sweep. **Historical session entries above
+(1-17) keep saying `SampleScene`, deliberately** — they're an accurate
+record of what the scene was actually called at the time; only this
+session's own references and the forward-looking docs (`roadmap.md`,
+`current-state.md`, `systems/*.md`) were updated to `Gameplay`. Re-verified
+the full Role Select → Gameplay → Victory → Play Again loop end-to-end
+post-rename via the Unity MCP bridge; zero console errors.
+
+### Addendum: `RoleSelect` was missing a Camera
+
+Playtesting surfaced Unity's "Display 1 No cameras rendering" diagnostic
+text over the role-picker screen. Root cause: `RoleSelect` was built as a
+UI-only scene (Canvas + EventSystem only) on the reasoning that a Screen
+Space - Overlay canvas doesn't need a camera reference to render its UI —
+true, but Unity's Game view still shows that warning whenever a scene has
+**zero** `Camera` components at all, independent of whether any UI actually
+needs one. Fixed by adding a plain `Main Camera` (tagged `MainCamera`,
+matching this project's stated convention that `Camera.main` requires that
+tag — see `progress-log.md` Session 1's troubleshooting notes), background
+color set to match the dark HUD panel tone (`RGBA(0.05, 0.05, 0.08, 1)`) so
+it's consistent even where the UI doesn't fully cover the screen. Verified
+via screenshot in Play mode: warning gone, no console errors.
+
+### Still open
+
+- Boss combat dynamism — still the recommended next item, unchanged by this
+  session.
+- Main Menu / Lobby scenes — still not built; `RoleSelect` is a standalone
+  picker, not yet part of a Main Menu flow.
+- Bullet-dodging, teammate separation, manual teammate-ability triggering —
+  unchanged, still not built.

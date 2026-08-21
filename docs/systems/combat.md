@@ -178,7 +178,7 @@ invisible during normal play. `Show()` is wired as a listener on `Player`'s
 `PlayerHealth.OnDeath` — reveals the panel. `Restart()` is wired to the
 panel's Restart `Button.OnClick()` — calls
 `SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex)`, reloading
-`SampleScene` from scratch so every stateful script (`PlayerHealth`,
+`Gameplay` from scratch so every stateful script (`PlayerHealth`,
 `EnemySpawner`, `PartyFrameManager`, ...) resets itself via its own
 `Awake`/`Start`, with no hand-written reset logic needed.
 

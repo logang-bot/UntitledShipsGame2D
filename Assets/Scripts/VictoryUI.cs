@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameOverUI : MonoBehaviour
+public class VictoryUI : MonoBehaviour
 {
     public GameObject panelRoot;
 
@@ -15,9 +15,9 @@ public class GameOverUI : MonoBehaviour
         panelRoot.SetActive(true);
     }
 
-    public void Restart()
+    public void PlayAgain()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene("Gameplay");
     }
 
     public void ChangeRoles()

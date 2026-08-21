@@ -265,11 +265,100 @@ revert-by-dividing-back-out anywhere in this system anymore, which is what
 made the old self-only buff need `buffCooldown ≥ buffDuration` to avoid
 double-applying.
 
+## Role Select scene (implemented, 2026-08-21)
+
+Replaces the old "hand-edit `PlayerRoleComponent.role` in the Inspector on
+`Player`, then swap whichever `Teammate_*` currently has that role" manual
+testing workflow (see `current-state.md`'s "How to test it" history) with an
+in-game picker. Two scenes now exist: `RoleSelect.unity` (Build Settings
+index 0, entry point) and `Gameplay.unity` (gameplay, index 1) — a real
+second scene, not a same-scene overlay panel, a deliberate choice over the
+lighter-weight alternative since Role Select was always going to become a
+real scene eventually (see `roadmap.md`'s "Scene scaffolding").
+
+**`RoleSelect.unity` contents**: a single Screen Space - Overlay `Canvas`
+(title text, 4 role buttons, a Start button that stays non-interactable
+until a role's picked) plus an `EventSystem`
+(`InputSystemUIInputModule`, matching the project's New-Input-System-only
+setup — see `input.md`) and a plain `Main Camera` (tagged `MainCamera`,
+background color matched to the dark HUD panel tone). The camera isn't
+needed for the Overlay canvas to render, but Unity's Game view shows a "No
+cameras rendering" diagnostic if a scene has zero cameras at all — added
+after hitting that during playtesting.
+
+**The core problem solved**: `PlayerRoleComponent.Awake()` (tints the
+sprite), `PlayerHealth.Awake()` (sets `maxHealth`/`maxShield`), and
+`PlayerAbility.Awake()` (builds Medic's aura ring / Tank's shield arc —
+**structural**, only happens once) each read `role`/`Stats` exactly once, at
+their own startup, and never re-apply it later. Unity doesn't guarantee
+`Awake()` order between different GameObjects' default-order scripts, so
+role has to be set *before* any of those run.
+
+- **`PartyRoleAssignment.cs`** (new, static class) — `public static
+  PlayerRole? HumanRole`. Carries the human's chosen role from `RoleSelect`
+  across the `SceneManager.LoadScene` into `Gameplay` (a plain static
+  survives a scene load within one Play session but resets to `null` on
+  domain reload, i.e. each fresh Play session). Same "static table over
+  extra infra" precedent as `PlayerRoleStats` above (Session 4).
+- **`RoleSelectUI.cs`** (new, lives only in `RoleSelect`) — 4 role buttons
+  each call `SelectRole(PlayerRole)`; a Start button stays non-interactable
+  until one is picked. `StartGame()` sets `PartyRoleAssignment.HumanRole`
+  then loads `Gameplay`.
+- **`PartySetupBootstrap.cs`** (new, `[DefaultExecutionOrder(-1000)]` — a
+  first for this project) on a new `PartySetup` GameObject in `Gameplay`.
+  Guaranteed to run its `Awake()` before every default-order script's
+  `Awake()` in the scene. If `PartyRoleAssignment.HumanRole` has a value,
+  assigns it to `Player`'s `PlayerRoleComponent.role`, then assigns the
+  remaining 3 `PlayerRole` enum values (in declaration order, skipping the
+  human's pick) to `Teammate_Tank`/`Teammate_Medic`/`Teammate_Support`'s
+  `PlayerRoleComponent.role` — covers all 4 roles exactly once by
+  construction. **If `HumanRole` is null (e.g. `Gameplay` opened
+  directly, bypassing `RoleSelect`), it no-ops**, preserving the original
+  Inspector-only manual-testing workflow untouched.
+- **Cosmetic-only side effect**: `Teammate_Tank`/`Teammate_Medic`/
+  `Teammate_Support` (the GameObject *names*) frequently no longer play the
+  role their name suggests once a human picks something other than
+  Attacker — e.g. human picks Tank, `Teammate_Tank` gets reassigned
+  Attacker. Purely a Hierarchy-panel label mismatch, not a bug:
+  `AIController`/`PartyFrameManager` are already fully role-agnostic, keyed
+  by GameObject reference, never by name.
+- **`VictoryUI.cs`** (new, mirrors `GameOverUI.cs`) — a `VictoryPanel` under
+  `HUDCanvas`, shown as a **second** listener on `Boss.OnDefeated` (alongside
+  the pre-existing `BossPanelUI.ShowDefeated()` — no `Boss.cs` change
+  needed, `OnDefeated` already supported multiple listeners same as
+  `PlayerHealth.OnDamaged`). `PlayAgain()` reloads `Gameplay` (roles
+  preserved, since `PartyRoleAssignment.HumanRole` is untouched);
+  `ChangeRoles()` loads `RoleSelect`. `GameOverPanel` gained a matching
+  "Change Roles" button (`GameOverUI.ChangeRoles()`) alongside its existing
+  Restart, which — unchanged — now also doubles as "play again, same party"
+  for free.
+- **Gotcha hit and fixed**: `Boss` is a `Boss.prefab` instance (see
+  [boss.md](boss.md)). Wiring `VictoryUI.Show` onto `Boss.OnDefeated` via
+  `execute_code` outside Play mode needs
+  `PrefabUtility.RecordPrefabInstancePropertyModifications(boss)` in
+  addition to `EditorUtility.SetDirty()`, or the added listener silently
+  doesn't persist to the saved scene — caught by the same "verify with a
+  full scene reload from disk, don't trust the in-memory read" habit
+  established in Sessions 12/13, since the first attempt looked correct
+  right up until Play mode (which reloads from disk) showed only the
+  original listener firing.
+
+Verified end-to-end via the Unity MCP bridge: 2+ different human role
+picks each produced all 4 roles covered exactly once, including the
+structural checks (Medic's aura ring / Tank's shield arc exist on whichever
+ship actually landed that role); Victory panel appears on a forced boss
+kill with both its buttons working; Game Over's Change Roles button works;
+"Play Again" preserves the exact prior role assignment across a reload via
+both the Victory path and the Game Over Restart path; opening `Gameplay`
+directly with no prior `RoleSelect` visit correctly falls back to the
+scene's hand-authored Inspector defaults untouched. Zero console
+errors/warnings throughout.
+
 ## Scene wiring — Player
 
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
-| **PlayerRoleComponent**  | role: Attacker (change in Inspector to test other roles) |
+| **PlayerRoleComponent**  | role: Attacker (Inspector default — now overwritten at runtime by the Role Select flow, see "Role Select scene" above; still used as-is when `Gameplay` is opened directly) |
 | **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/Boss.TauntedBy(Player)` (real aggro redirect, see [boss.md](boss.md); same 3 listeners wired on each `Teammate_*`'s `PlayerAbility`, each pointing `TauntedBy` at itself) |
 
 Confirmed attached and working: verified live via the Unity MCP bridge —
