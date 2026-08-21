@@ -74,10 +74,15 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   below (whoever's worst off, re-evaluated every frame — reacts to the
   human player being hurt too, not just the other AI teammates); whichever
   teammate is playing **Support** roams the playable area freely (random
-  waypoint wander, no fixed zone). **Attacker** still just weaves
-  side-to-side (see [systems/boss.md](systems/boss.md)'s "AI teammate
-  behavior" for what's still planned there — it's now the only role
-  without real positioning). Medic's AI currently presses its ability the
+  waypoint wander, no fixed zone); whichever teammate is playing
+  **Attacker** patrols side-to-side around the boss's own current X
+  position rather than a fixed, boss-independent lane, holding a balanced
+  mid-distance (not as close as Tank, not as far back as Medic) — since
+  ships never rotate and shots only ever fire straight up, tracking the
+  boss's X is what keeps its shots actually landing as the boss drifts (see
+  [systems/boss.md](systems/boss.md)'s "Attacker patrol + boss-tracking
+  positioning" — all four roles now have real positioning). Medic's AI
+  currently presses its ability the
   instant it's off cooldown regardless of need — a known, flagged-temporary
   placeholder, not a finished heuristic. Every role now has fixed,
   role-specific health/shield/fire-damage/fire-rate/move-speed values (see
@@ -143,9 +148,13 @@ real networking last, then art/audio.
    shield arc above it, always on, which physically blocks bullets crossing
    its width, not just ones hitting the ship itself — whichever is playing
    Medic will hang back near the rear of the party instead — you'll also
-   see a thin ring around it showing its aura's reach — and whichever is
+   see a thin ring around it showing its aura's reach — whichever is
    playing Support will wander freely around the whole play area rather
-   than holding a spot. The left-sidebar shows 4 party
+   than holding a spot — and whichever is playing Attacker will patrol
+   side-to-side but stay roughly under wherever the boss currently is
+   horizontally, at a distance between Tank's and Medic's, rather than
+   patrolling a fixed lane independent of the boss. The left-sidebar shows
+   4 party
    frames (you + 3 teammates), each with a live avatar, role/HP/shield-bar/
    move-speed/fire-rate/ability text, tinted to match the role, on a dark
    panel.

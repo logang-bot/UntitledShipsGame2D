@@ -163,6 +163,21 @@ reference docs live under `systems/`.
   `systems/player-roles.md` (full mechanics) and `systems/boss.md` (boss
   HP tuning, cross-references).
 
+- **AI teammate behavior (Attacker)** — `AIController.AttackerPositionDirection()`:
+  patrols side-to-side around the boss's own live X position (rather than
+  an independent, boss-unaware center) at a balanced mid-distance between
+  Tank's and Medic's, so its shots — which never home and only ever fire
+  straight up — keep landing as the boss sine-drifts. Supersedes the
+  original "patrol screen width, avoid the boss" decided design (agreed
+  2026-08-20) with a hybrid worked out in conversation once the mismatch
+  between "patrol independently" and "ships can't rotate to aim" was
+  pointed out: keeps the independent patrol motion for spread/coverage, but
+  anchors its center to the boss's X instead of a fixed point. Ability
+  firing ("retry the instant it's off cooldown") needed no change — it
+  already worked this way. Completes Tank/Medic/Support/Attacker positioning;
+  Tank, Medic, and Support were done in Sessions 12/13/15. See
+  `systems/boss.md`'s "Attacker patrol + boss-tracking positioning".
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -177,23 +192,20 @@ reference docs live under `systems/`.
 
 ### Player-vs-boss dynamics (CPU AI first)
 
-- **AI teammate behavior (Attacker)** — Tank's, Medic's, and now Support's
-  positioning are all implemented (see "Implemented" above);
-  `AIController.cs`'s last remaining role still just weaves in X
-  (`Mathf.Sin(Time.time * weaveFrequency)`) with no bullet-, boss-, or
-  teammate-awareness. Recommended **next**, ahead of minions below: with a
-  dumb, non-dodging Attacker constantly eating hits, it's hard to tell
-  whether a rough playtest result means "the role-coordination mechanic
-  isn't fun" or just "the AI can't dodge." Role-differentiated positioning
-  (patrolling screen width, staying clear of the boss and top edge) and a
-  click/tap-to-trigger-teammate-ability mechanic on the party frame are
-  designed — see `systems/boss.md`'s "AI teammate behavior" and "Manual
-  teammate ability triggering". Bullet-dodging and teammate separation are
-  still undesigned. Not yet implemented.
 - **Boss combat dynamism** — `Boss.cs`'s movement (a subtle, slow sine
   drift) and both attack patterns (single aimed shot / 3-bullet spread,
   both flat-timer) are static; it reads as a stationary turret rather than
-  an active opponent. See `systems/boss.md`'s "Future work" section.
+  an active opponent. Recommended **next**, ahead of minions below: with a
+  static, telegraph-free boss, it's hard to tell whether a rough playtest
+  result means "the role-coordination mechanic isn't fun" or just "the boss
+  is boring to fight." See `systems/boss.md`'s "Future work" section.
+- **Bullet-dodging / teammate separation / manual ability triggering** —
+  all four AI teammates now have role-differentiated positioning (see
+  "Implemented" above), but still have zero bullet-awareness and no
+  mutual-separation logic (can stack/overlap), and there's no way to
+  manually fire a teammate's ability from the party frame yet — all three
+  are designed, not built. See `systems/boss.md`'s "AI teammate behavior"
+  and "Manual teammate ability triggering".
 - **Minions around the boss** — smaller enemy ships flanking the `Boss`,
   motivated the ship-shrink above; not yet designed or built (no minion
   script/prefab exists). Do this **after** the two items above — more

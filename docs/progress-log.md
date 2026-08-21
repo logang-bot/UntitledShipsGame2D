@@ -1389,3 +1389,129 @@ handling of this same quirk.
   (no more "undecided 1.0x placeholder" framing), but all values across
   the board remain placeholder/tunable pending real playtesting, same as
   every prior balance pass in this project.
+
+## Session 17 — Attacker AI Positioning (hybrid patrol + boss-tracking)
+
+The roadmap's explicitly recommended next item: finish AI teammate
+positioning by giving Attacker its own behavior — Tank, Medic, and Support
+all already had it (Sessions 12/13/15); Attacker was still on the original
+prototype-era placeholder, a pure X-only sine weave with zero boss/ally
+awareness.
+
+### Design revision, mid-conversation
+
+`docs/systems/boss.md` already had a "decided design" for this dated
+2026-08-20 (the previous session): patrol to cover the available screen
+width for spread/DPS coverage, staying clear of the boss and the top edge.
+Discussing the actual implementation surfaced a mechanical problem with
+that plan before any code was written: ships never rotate and bullets only
+ever fire straight up (`Vector2.up`, no homing, see `Bullet.cs`) — an
+Attacker patrolling a fixed, boss-independent center would frequently drift
+out of the boss's current lane as it sine-drifts, and just miss regardless
+of how good its coverage looked. The user proposed tracking the boss's X
+directly instead, holding a balanced mid-distance (not Tank-close, not
+Medic-far). Resolved as a **hybrid**, the user's choice among three
+options offered: keep the independent side-to-side patrol motion for
+spread/coverage/visual variety, but anchor its *center* to the boss's live
+X instead of a fixed point. This supersedes the prior session's decided
+design outright — `boss.md` was updated to match, not left describing the
+old plan alongside the new code.
+
+The other half of the original ask — "fire the ability the instant it's
+ready" — turned out to already be exactly how Attacker's
+`TryUseAbility()` heuristic worked (`AIController`'s ability-triggering
+switch already retries every frame for Attacker, relying on
+`PlayerAbility`'s own cooldown gate). No code change was needed there —
+confirmed by reading the existing switch before writing anything new,
+avoiding a redundant "fix" for something that wasn't broken.
+
+### New code: `AIController.AttackerPositionDirection()`
+
+Same "compute a target point, seek it, zero inside a deadzone" shape
+already used by `BiasedPositionDirection()`/`ApproachDirection()`, so it
+reads as one more case in the same family rather than a bespoke one-off:
+
+- `targetY`: `Mathf.LerpUnclamped(GetAllyCenter().y, boss.transform.position.y, attackerBias)`
+  — the same ally-center/boss blend Tank and Medic use, applied to Y only.
+  New field `attackerBias` (0.45) sits between Medic's `-0.3` and Tank's
+  `0.65`. Since the boss sits near the top of the screen (world Y fixed at
+  `4.2`) and ally center is naturally lower/mid-screen, this blend
+  incidentally keeps Attacker clear of the top edge too — satisfying that
+  part of the original design intent without a dedicated check.
+- `targetX`: `boss.transform.position.x + Mathf.Sin(Time.time * weaveFrequency) * attackerPatrolAmplitude`
+  — patrols around the boss's *current* X rather than an independent
+  center, reusing the existing `weaveFrequency` field instead of adding a
+  second oscillation-speed constant. New field `attackerPatrolAmplitude`
+  (1.5) controls the swing width.
+- Returns the normalized direction to `(targetX, targetY)`, or
+  `Vector2.zero` inside new field `attackerDeadzone` (0.2, matching
+  `guardDeadzone`'s default).
+
+`Update()`'s movement switch gained an explicit `case PlayerRole.Attacker:`
+(previously Attacker fell through to `default`); `default` now stays only
+as a dead safety fallback for any future unhandled role, with the original
+weave code left there unused.
+
+**Small refactor alongside**: the ally-center averaging loop, previously
+inlined only inside `BiasedPositionDirection()`, was extracted into a
+shared private `GetAllyCenter()` so `AttackerPositionDirection()` doesn't
+duplicate the same liveness-filtered average a second time —
+`BiasedPositionDirection()` now calls it too, no behavior change. Same
+"extract instead of duplicate" precedent as Session 13 generalizing
+`GuardPointDirection()` into `BiasedPositionDirection()` itself.
+
+### Verification
+
+Reimported/compiled via the Unity MCP bridge — no console errors. New
+fields, being brand-new rather than edits to already-serialized ones,
+picked up their script defaults automatically on all three `Teammate_*`
+instances (including the `Teammate_Tank` prefab instance) with no
+prefab-instance-override gotcha, confirmed by reading them back live.
+
+Since the default scene has the human `Player` on Attacker (per
+`current-state.md`'s testing instructions, no AI teammate normally plays
+it), temporarily reassigned `Player` → Support and `Teammate_Support` →
+Attacker in Edit mode so an AI teammate actually exercised the new code
+path, entered Play mode, and sampled `Teammate_Support`'s position against
+`Boss.transform.position.x` over several pumped frames (same
+screenshot-forces-a-frame-step technique as every prior session). X stayed
+within `attackerPatrolAmplitude` of the boss's live X throughout rather
+than drifting to an independent center; Y climbed from near the back of
+the party toward the mid-distance blend as expected. The boss was actually
+defeated mid-test (~18s of continuous 4-ship fire, Attacker contributing
+real DPS the whole time), with zero console errors/warnings across the
+whole fight. Reverted the temporary role reassignment afterward and
+confirmed via a full scene reload from disk (the established habit for
+this class of change) that `Player` = Attacker was restored correctly.
+
+**Degenerate case observed, not a new bug**: once Tank and Medic had both
+died mid-test, `GetAllyCenter()`'s existing "fall back to the caller's own
+position when no allies are alive" behavior (shared by Tank/Medic already)
+meant Attacker's Y target kept re-lerping from its own just-updated
+position toward the boss's Y each frame, asymptotically converging onto
+the boss's height rather than holding a mid-distance stand-off. Only
+matters in the "down to one or two teammates" endgame, not normal play;
+documented in `boss.md` rather than treated as something to fix this
+session, since it's inherited from a pattern already accepted for Tank and
+Medic.
+
+### Docs updated
+
+`boss.md` (new "Attacker patrol + boss-tracking positioning" subsection,
+replacing the superseded "patrol screen width" design note; "Future work"
+trimmed since Attacker positioning is no longer open), `roadmap.md`
+(Attacker item moved from "Planned" to "Implemented"; "Boss combat
+dynamism" now explicitly the recommended-next item), `current-state.md`
+(boss-encounter bullet and "How to test it" step 5 updated to describe the
+new behavior), `player-roles.md` (Attacker positioning removed from the
+"not yet implemented" list).
+
+### Still open
+
+- Bullet-dodging, teammate separation, manual teammate-ability triggering
+  — unchanged, still not built (see `boss.md`'s "Future work" and "Manual
+  teammate ability triggering").
+- Boss combat dynamism (static movement, flat-timer attacks) — now the
+  explicitly recommended next item, see `roadmap.md`.
+- The Y-convergence-onto-boss degenerate case (above) when few AI allies
+  remain alive — not fixed, just documented.

@@ -2731,6 +2731,9 @@ MonoBehaviour:
   medicApproachThreshold: 0.55
   roamDeadzone: 0.3
   roamInterval: 3
+  attackerBias: 0.45
+  attackerPatrolAmplitude: 1.5
+  attackerDeadzone: 0.2
 --- !u!114 &1429170692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3949,6 +3952,9 @@ MonoBehaviour:
   medicApproachThreshold: 0.55
   roamDeadzone: 0.3
   roamInterval: 3
+  attackerBias: 0.45
+  attackerPatrolAmplitude: 1.5
+  attackerDeadzone: 0.2
 --- !u!114 &1787777318
 MonoBehaviour:
   m_ObjectHideFlags: 0

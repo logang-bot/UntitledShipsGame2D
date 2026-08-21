@@ -109,10 +109,11 @@ Drives a CPU-controlled teammate every `Update()`:
   toward the boss; **Medic** either does the same biased away from the boss
   (its default "hang back" position) or, if an ally is hurt, breaks off to
   approach that ally instead; **Support** roams the playable viewport freely
-  via a random-waypoint wander — see "Tank guard-point positioning", "Medic
-  positioning + proximity aura", and "Support roaming positioning" below.
-  **Attacker** is the only role still on the original sine-weave strafe
-  (`weaveFrequency`/`weaveSpeed`) — still planned, see "Future work" below.
+  via a random-waypoint wander; **Attacker** patrols side-to-side around the
+  boss's own live X position, at a balanced mid-distance between Tank's and
+  Medic's — see "Tank guard-point positioning", "Medic positioning +
+  proximity aura", "Support roaming positioning", and "Attacker patrol +
+  boss-tracking positioning" below.
   All paths go through `PlayerController.SetMoveDirection(Vector2)` — a
   non-input entry point added to `PlayerController.cs` alongside the
   existing input-driven `OnMove(InputValue)`, so movement can be driven
@@ -134,7 +135,8 @@ Drives a CPU-controlled teammate every `Update()`:
 Key public fields: `boss` (drag the `Boss` instance), `weaveFrequency` (0.8),
 `weaveSpeed` (1), `teammates[]`/`guardBias` (0.65)/`guardDeadzone` (0.2),
 `medicBias` (-0.3), `medicApproachThreshold` (0.55), `roamDeadzone` (0.3)/
-`roamInterval` (3) — see below.
+`roamInterval` (3), `attackerBias` (0.45)/`attackerPatrolAmplitude` (1.5)/
+`attackerDeadzone` (0.2) — see below.
 
 ### Tank guard-point positioning / physical blocking (implemented)
 
@@ -152,13 +154,17 @@ positioning problem, not a collision problem.
 "Medic positioning + proximity aura" below); at the time this was built,
 Attacker/Support both kept the exact original sine-weave (unchanged code
 path — verified via Play-mode position sampling that they still only moved
-in X while Tank's/Medic's Y also changed). Support has since gotten its own
-positioning too, see "Support roaming positioning" below — only Attacker
-still shares the original weave. Originally written Tank-only as
+in X while Tank's/Medic's Y also changed). Support and Attacker have since
+gotten their own positioning too — see "Support roaming positioning" and
+"Attacker patrol + boss-tracking positioning" below; no role is left on the
+original weave anymore except the `default` safety fallback for any future
+unhandled role. Originally written Tank-only as
 `GuardPointDirection()`,
 generalized in Session 13 once Medic needed the same shape with a
 different bias, rather than duplicating the Lerp/deadzone logic a second
-time. `BiasedPositionDirection(bias, deadzone)`:
+time; the ally-averaging step itself was further extracted into
+`GetAllyCenter()` in Session 17 once Attacker's positioning needed the same
+average without the boss-biased-lerp part. `BiasedPositionDirection(bias, deadzone)`:
 
 1. Averages the positions of `teammates[]` entries that aren't `null`,
    aren't `transform` itself, and are `activeInHierarchy` (same liveness
@@ -198,10 +204,10 @@ a reload, don't trust a "success" result alone. `Teammate_Medic`/
 `Teammate_Support` (not prefab instances, see Session 10/11) didn't need
 this extra call.
 
-Values for Attacker's positioning, and the still-open bullet-dodging/
-separation/targeted-bullet questions, are unchanged from "Future work"
-below — Session 12 built Tank, Session 13 built Medic (below), Session 15
-built Support (below).
+The still-open bullet-dodging/separation/targeted-bullet questions are
+unchanged from "Future work" below — Session 12 built Tank, Session 13
+built Medic (below), Session 15 built Support (below), Session 17 built
+Attacker (below).
 
 **Tank also got a second, unrelated new mechanic in Session 16**: a wide,
 curved Shield Arc that functionally blocks bullets beyond the guard-point
@@ -315,9 +321,9 @@ moving continuously rather than pausing. This is the one place Support's
 positioning code deliberately diverges from the existing steer-and-deadzone
 pattern, not an oversight.
 
-No boss-avoidance or top-edge exclusion — that's part of Attacker's
-still-unbuilt design (staying clear of the boss and the top edge), not
-Support's; Support is explicitly the least constrained of the four roles.
+No boss-avoidance or top-edge exclusion — Support is explicitly the least
+constrained of the four roles; that concern belongs to Attacker's design
+instead, see "Attacker patrol + boss-tracking positioning" below.
 
 New fields are brand-new, not changes to already-serialized existing ones,
 so — unlike most of this project's prior scene-wiring passes — no
@@ -332,6 +338,94 @@ weave) and that `roamTarget` lands within viewport bounds; sampled its
 transform position over several pumped frames and confirmed both X and Y
 changed over time (cross-checked against `Teammate_Tank`/`Teammate_Medic`,
 whose existing positioning was unaffected). No console errors/warnings.
+
+### Attacker patrol + boss-tracking positioning (implemented)
+
+Session 17. Superseded the original 2026-08-20 "decided design" for
+Attacker (*"patrols to cover the available screen width... while staying
+clear of the boss and the top edge"*) with a hybrid design worked out live
+in conversation, not implemented as originally written.
+
+**Why the original design got revised**: ships never rotate and bullets
+only ever fire straight up (`Vector2.up`, no homing — see Bullet.cs above)
+— an Attacker patrolling a fixed, boss-independent center would frequently
+drift out of the boss's current lane as it sine-drifts, and just miss.
+Pointed out mid-conversation, before any code was written. The user
+proposed tracking the boss's X directly instead, at a balanced mid-distance
+(not Tank-close, not Medic-far); resolved as a **hybrid** — keep
+independent side-to-side patrol motion for spread/coverage and visual
+variety, but anchor the patrol's *center* to the boss's live X rather than
+a fixed point, so it's never far out of the boss's lane while it still
+moves around within it.
+
+`AIController.AttackerPositionDirection()`, same "compute a target point,
+seek it, zero inside a deadzone" shape as `BiasedPositionDirection()`/
+`ApproachDirection()`:
+
+1. `targetY = Mathf.LerpUnclamped(GetAllyCenter().y, boss.transform.position.y, attackerBias)`
+   — the same ally-center/boss blend Tank and Medic use, applied to Y only.
+   `attackerBias` (0.45) sits between Medic's `-0.3` (hangs back) and Tank's
+   `0.65` (leans hard toward the boss), giving the balanced stand-off
+   distance the design calls for. Because the boss sits near the top of the
+   screen (world Y fixed at `4.2`, see Scene wiring below) and ally center
+   is naturally lower/mid-screen, this also keeps Attacker clear of the top
+   edge for free — no separate top-edge check was needed for that part of
+   the original design intent to still hold.
+2. `targetX = boss.transform.position.x + Mathf.Sin(Time.time * weaveFrequency) * attackerPatrolAmplitude`
+   — patrols around the boss's *current* X (reusing the existing
+   `weaveFrequency` field rather than adding a second oscillation-speed
+   constant) instead of an independent center. This is the actual fix for
+   the "shots miss" problem: the patrol always stays anchored under
+   wherever the boss currently is. `attackerPatrolAmplitude` (1.5) controls
+   how wide the swing is.
+3. Returns the normalized direction to `(targetX, targetY)`, or
+   `Vector2.zero` inside `attackerDeadzone` (0.2, matching
+   `guardDeadzone`'s default).
+
+The ally-center averaging loop (previously inlined only in
+`BiasedPositionDirection()`) was extracted into a shared private
+`GetAllyCenter()` so this doesn't duplicate it a second time — same
+"extract instead of duplicate" precedent as Session 13 generalizing
+`GuardPointDirection()` into `BiasedPositionDirection()` itself.
+
+**No changes needed to the ability-triggering switch, `Bullet.cs`,
+`PlayerController.cs`, or `PlayerAbility.cs`.** The other half of the
+original ask — "fire the ability the instant it's ready" — was already
+exactly how Attacker's `TryUseAbility()` heuristic worked (see above); this
+session was positioning-only.
+
+New fields are brand-new, so — same as Support's `roamDeadzone`/
+`roamInterval` above — no prefab-instance/scene-value gotcha applied;
+every `Teammate_*` instance (including the `Teammate_Tank` prefab
+instance) picked up the script defaults (`attackerBias`/
+`attackerPatrolAmplitude`/`attackerDeadzone`) automatically, confirmed by
+reading them back live in Play mode.
+
+**Known degenerate case, not unique to Attacker**: if every other AI
+teammate is dead, `GetAllyCenter()` falls back to the caller's own current
+position (its documented behavior, shared by Tank/Medic already), which
+means `targetY`'s per-frame lerp keeps nudging toward `boss.transform.position.y`
+using the ship's own just-updated position as the new "ally center" each
+frame — over enough frames this asymptotically converges Attacker's Y onto
+the boss's, rather than holding a mid-distance stand-off. Observed live
+during verification (see below) once Tank and Medic had both died mid-test.
+Not a new bug introduced here — the same fallback already governs Tank's
+and Medic's positioning when allies die — and only matters in the
+"down to one or two teammates" endgame, not normal play.
+
+Verified via the Unity MCP bridge in Play mode: temporarily reassigned
+`Player` to Support and `Teammate_Support` to Attacker (so an AI teammate
+actually played Attacker for the test, since the default scene has the
+human `Player` on Attacker), entered Play mode, and sampled
+`Teammate_Support`'s position against `Boss.transform.position.x` over
+several pumped frames — X stayed within `attackerPatrolAmplitude` of the
+boss's current X throughout (never drifted to an independent center), and Y
+climbed from near the back of the party toward the mid-distance blend as
+expected. The boss was defeated in-test (~18s of continuous 4-ship fire,
+Attacker contributing real DPS the whole time) with no console
+errors/warnings throughout. Reverted the temporary role reassignment
+afterward and confirmed via a full scene reload from disk that the
+original assignment (`Player` = Attacker) was restored.
 
 ### Support fire-cadence/damage catch-up (implemented, then superseded by Session 16's fixed-stats overhaul)
 
@@ -569,35 +663,30 @@ make it harder to read whether the encounter is actually fun, not easier.
 
 ### AI teammate behavior
 
-Exact original limitation (Tank/Medic/Support have since been built, see
-below): `AIController.Update()` set movement as `controller.SetMoveDirection(
-new Vector2(Mathf.Sin(Time.time * weaveFrequency), 0f) * weaveSpeed)` —
+Exact original limitation (Tank/Medic/Support/Attacker have since all been
+built, see below): `AIController.Update()` set movement as
+`controller.SetMoveDirection(new Vector2(Mathf.Sin(Time.time * weaveFrequency), 0f) * weaveSpeed)` —
 every frame, unconditionally, X-only (Y always `0`), with zero awareness of
 incoming bullets, the boss's position, or where the other teammates are.
 This was a deliberate "just prove the aggro/taunt mechanic" simplification
 for the prototype (see Session 10 in `../progress-log.md`), not a finished
-AI. **Attacker is still exactly on this original path today.**
+AI. It now only survives as the `default` safety fallback for any future
+unhandled role — no actual role uses it anymore.
 
-**Decided design**, agreed 2026-08-20 — role-differentiated positioning and
-combat stats, replacing the identical-for-every-role weave above. Applies
+**All four roles now have real, role-differentiated positioning.** Applies
 only to AI-controlled `Teammate_*` ships — if a human plays a given role
 instead, none of this positioning logic runs for that ship (there's no
 `AIController` on `Player`) — though Medic's aura and Support/Tank's fire
 stats still work for a human, since they live on `PlayerAbility.cs`/
 `PlayerRoleStats` rather than `AIController.cs` (see "Medic positioning +
-proximity aura" / "Support roaming positioning" above). **Tank, Medic, and
-Support are implemented** — see "Tank guard-point positioning / physical
-blocking", "Medic positioning + proximity aura", and "Support roaming
-positioning" / "Support fire-cadence/damage catch-up" above. Attacker below
-is still planned, not yet built:
-
-- **Attacker** — positioning: patrols to cover the available screen width
-  (maximize spread/coverage for DPS uptime) while staying clear of the boss
-  and the top edge of the screen (avoiding the most bullet-dense area).
-  This is the only piece of Attacker's design still unbuilt — its stats
-  (health/shield/fire damage/fire rate/move speed) are all already fixed,
-  decided values, same as every other role, per Session 16's "Fixed
-  per-role stats overhaul" (see [player-roles.md](player-roles.md)).
+proximity aura" / "Support roaming positioning" above). See "Tank
+guard-point positioning / physical blocking", "Medic positioning +
+proximity aura", "Support roaming positioning" / "Support fire-cadence/
+damage catch-up", and "Attacker patrol + boss-tracking positioning" above
+for each role's full writeup — Attacker's supersedes the original
+"patrol screen width, avoid the boss" decided design (2026-08-20) with a
+hybrid patrol-plus-boss-tracking design worked out in Session 17, see that
+section for why.
 
 Still open, from the original prototype-era list, and still needed
 regardless of the above:

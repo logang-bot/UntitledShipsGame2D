@@ -34,6 +34,16 @@ public class AIController : MonoBehaviour
     // ever unable to close the last stretch of distance.
     public float roamInterval = 3f;
 
+    [Header("Attacker positioning")]
+    // Vertical balance between the allies and the boss - between Medic's
+    // -0.3 (hangs back) and Tank's 0.65 (leans hard toward the boss), giving
+    // Attacker a mid-distance stand-off rather than front- or back-line.
+    public float attackerBias = 0.45f;
+    // How far the patrol swings from the boss's live X, not a fixed center -
+    // see AttackerPositionDirection() for why.
+    public float attackerPatrolAmplitude = 1.5f;
+    public float attackerDeadzone = 0.2f;
+
     private PlayerController controller;
     private PlayerAbility ability;
     private PlayerRoleComponent role;
@@ -68,10 +78,11 @@ public class AIController : MonoBehaviour
             case PlayerRole.Support:
                 moveDirection = WanderDirection();
                 break;
+            case PlayerRole.Attacker:
+                moveDirection = AttackerPositionDirection();
+                break;
             default:
-                // Attacker: still the original X-only sine weave - its own
-                // role-differentiated positioning is still planned, see
-                // docs/systems/boss.md's "AI teammate behavior".
+                // Dead fallback for any future unhandled role.
                 moveDirection = new Vector2(Mathf.Sin(Time.time * weaveFrequency), 0f) * weaveSpeed;
                 break;
         }
@@ -163,17 +174,12 @@ public class AIController : MonoBehaviour
         return toTarget.magnitude < guardDeadzone ? Vector2.zero : toTarget.normalized;
     }
 
-    // Steers toward a point between the AI-controlled allies and the boss,
-    // biased by `bias` (0 = at ally center, 1 = at the boss, negative =
-    // extrapolates past ally center away from the boss). Tank uses a
-    // positive bias to physically stand in incoming bullets' paths
-    // (Bullet.cs doesn't home - it just hits whichever Player-tagged
-    // collider is in its straight-line path first, so standing in the way
-    // is enough); Medic uses a negative bias to hang back from the boss.
-    private Vector2 BiasedPositionDirection(float bias, float deadzone)
+    // Average position of the AI-controlled allies (teammates[], self
+    // excluded) - shared by BiasedPositionDirection() and
+    // AttackerPositionDirection() so this liveness-filtered average isn't
+    // computed twice.
+    private Vector2 GetAllyCenter()
     {
-        if (boss == null) return Vector2.zero;
-
         Vector2 allySum = Vector2.zero;
         int allyCount = 0;
         if (teammates != null)
@@ -185,13 +191,48 @@ public class AIController : MonoBehaviour
                 allyCount++;
             }
         }
+        return allyCount > 0 ? allySum / allyCount : (Vector2)transform.position;
+    }
 
-        Vector2 allyCenter = allyCount > 0 ? allySum / allyCount : (Vector2)transform.position;
+    // Steers toward a point between the AI-controlled allies and the boss,
+    // biased by `bias` (0 = at ally center, 1 = at the boss, negative =
+    // extrapolates past ally center away from the boss). Tank uses a
+    // positive bias to physically stand in incoming bullets' paths
+    // (Bullet.cs doesn't home - it just hits whichever Player-tagged
+    // collider is in its straight-line path first, so standing in the way
+    // is enough); Medic uses a negative bias to hang back from the boss.
+    private Vector2 BiasedPositionDirection(float bias, float deadzone)
+    {
+        if (boss == null) return Vector2.zero;
+
         // LerpUnclamped (not Lerp, which clamps t to [0,1]) so a negative
         // bias (Medic) can extrapolate past allyCenter, away from the boss.
-        Vector2 targetPoint = Vector2.LerpUnclamped(allyCenter, boss.transform.position, bias);
+        Vector2 targetPoint = Vector2.LerpUnclamped(GetAllyCenter(), boss.transform.position, bias);
 
         Vector2 toTarget = targetPoint - (Vector2)transform.position;
         return toTarget.magnitude < deadzone ? Vector2.zero : toTarget.normalized;
+    }
+
+    // Hybrid patrol + boss-tracking. Ships never rotate and bullets only
+    // ever fire straight up (Vector2.up, no homing - see Bullet.cs), so an
+    // Attacker patrolling around a fixed, boss-independent center would
+    // frequently drift out of the boss's lane and just miss. Instead the
+    // patrol's center follows the boss's live X, keeping shots landing,
+    // while still swinging side-to-side by attackerPatrolAmplitude for
+    // DPS coverage/visual variety rather than sitting dead still under it.
+    // Y uses the same ally-center/boss blend as BiasedPositionDirection()
+    // (attackerBias, between Medic's and Tank's) for a mid-distance
+    // stand-off - this also keeps it clear of the top edge for free, since
+    // the boss sits near the top of the screen and ally center is lower.
+    private Vector2 AttackerPositionDirection()
+    {
+        if (boss == null) return Vector2.zero;
+
+        float targetY = Mathf.LerpUnclamped(GetAllyCenter().y, boss.transform.position.y, attackerBias);
+        float targetX = boss.transform.position.x + Mathf.Sin(Time.time * weaveFrequency) * attackerPatrolAmplitude;
+        Vector2 targetPoint = new Vector2(targetX, targetY);
+
+        Vector2 toTarget = targetPoint - (Vector2)transform.position;
+        return toTarget.magnitude < attackerDeadzone ? Vector2.zero : toTarget.normalized;
     }
 }

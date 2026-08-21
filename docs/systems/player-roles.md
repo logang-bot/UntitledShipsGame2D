@@ -310,13 +310,13 @@ there's no prior serialized value to conflict with.
   ships fighting alongside `Player` (`Teammate_Tank`/`Teammate_Medic`/
   `Teammate_Support`) are CPU-controlled via `AIController.cs`, not real
   players; see [boss.md](boss.md).
-- Attacker's AI positioning (Tank's, Medic's, and Support's are all
-  implemented — see [boss.md](boss.md)'s "Tank guard-point positioning" /
-  "Medic positioning + proximity aura" / "Support roaming positioning"),
-  bullet-dodging, teammate separation, and manual teammate-ability
-  triggering from the party frame are all designed (see [boss.md](boss.md)'s
-  "AI teammate behavior" / "Manual teammate ability triggering") but not
-  yet implemented.
+- All four AI teammate roles now have real positioning (see
+  [boss.md](boss.md)'s "Tank guard-point positioning" / "Medic positioning
+  + proximity aura" / "Support roaming positioning" / "Attacker patrol +
+  boss-tracking positioning"). Bullet-dodging, teammate separation, and
+  manual teammate-ability triggering from the party frame are all designed
+  (see [boss.md](boss.md)'s "AI teammate behavior" / "Manual teammate
+  ability triggering") but not yet implemented.
 
 Role display on the HUD (name/role text + tinted health bar) is now live
 for all 4 party members (`PartyFrame_1..4`, one per `Player`/`Teammate_*`)
