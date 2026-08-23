@@ -77,9 +77,12 @@ below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
 - `GuidedMissileTargetRole` (`PlayerRole?`, read-only) — set the instant a
   guided missile locks on, cleared a few seconds after it fires; drives
   `BossPanelUI`'s warning text.
-- `ShockwaveCooldownRemaining`, `GuidedMissileCooldownRemaining` — pure
-  derived getters off internal timers, drive `BossPanelUI`'s cooldown text
-  (see "BossPanelUI.cs" below).
+- `ShockwaveCooldownRemaining`, `GuidedMissileCooldownRemaining`,
+  `PatternBarrageCooldownRemaining` — pure derived getters off internal
+  timers, drive `BossPanelUI`'s cooldown text (see "BossPanelUI.cs" below).
+- `PatternBarrageActivePattern` (`BulletPattern?`, read-only) — set the
+  instant a Pattern Barrage begins telegraphing, cleared once it finishes
+  firing; drives `BossPanelUI`'s warning text (see "Pattern Barrage" above).
 - `TakeDamage(float amount, GameObject source)` — called by `Bullet.cs` on a
   player-bullet hit; `source` is the shooter, used for aggro attribution.
   `CurrentHealth` is `int`; `Mathf.RoundToInt(amount)` is subtracted from
@@ -99,7 +102,10 @@ Key public fields: `maxHealth` (90), `dashDecisionInterval`/
 `shockwaveDamageMultiplier`/`shockwaveKnockback`/`shockwaveCooldown`/
 `shockwaveTelegraphTime`, `guidedMissileTargetRoles`/`guidedMissileInterval`/
 `guidedMissileTelegraphTime`/`guidedMissileTurnRate`/`guidedMissileSpeed`/
-`guidedMissileWarningLingerTime`, `targets[]`, `tauntBonus` (100),
+`guidedMissileWarningLingerTime`, `patternBarrageCooldown` (7)/
+`patternBarrageTelegraphTime` (0.7)/`fanBulletCount` (5)/`fanSpreadAngle`
+(50°)/`ringBulletCount` (12)/`spiralBulletCount` (20)/`spiralAngleStep`
+(25°)/`spiralShotInterval` (0.05), `targets[]`, `tauntBonus` (100),
 `enemySpawner` (drag `Spawner` — auto-disabled in `Awake()` so wave enemies
 from `EnemySpawner.cs` don't confound a boss-fight test).
 
@@ -228,6 +234,62 @@ curve *around* a Tank that isn't actively intercepting its current path —
 Tank can still block it, but only by genuinely cutting across the bullet's
 path, not by the same reliable "stand between the boss and the target"
 guarantee it has against every other bullet in the game.
+
+### Pattern Barrage
+
+A standalone geometric bullet-spread attack, layered on top of the phase-based
+fire above (Phase 1/2 are unchanged) rather than replacing it — one system with
+three possible shapes, not three separate attacks, following the same "build
+eligible options, `Random.Range` pick one" idiom `CheckGuidedMissile()` already
+uses for target selection.
+
+Every `Update()`, `CheckPatternBarrage()` (its own `patternBarrageCooldown`, 7s,
+time-gated only — no proximity requirement, unlike Shockwave) requires
+`CurrentTarget != null` (Fan needs an aim direction) and starts
+`PatternBarrageRoutine()`:
+
+1. `PickPattern()` randomly picks one of `{ Fan, Ring, Spiral }`, **excluding
+   whichever shape fired last time** (`lastPatternBarragePattern`) — so the
+   same shape can never fire twice in a row while still keeping the surprise of
+   not knowing which of the other two is coming. Sets
+   `PatternBarrageActivePattern` immediately (drives `BossPanelUI`'s warning
+   text during the wind-up).
+2. Waits `patternBarrageTelegraphTime` (0.7s).
+3. Re-aims at `CurrentTarget` *after* the wait (same re-check-after-telegraph
+   idiom `ShockwaveRoutine()` uses — the target may have moved or died during
+   the wind-up), falling back to `Vector2.down` if the target is gone.
+4. Fires the picked shape, then clears `PatternBarrageActivePattern`.
+
+All three shapes reuse the existing private `SpawnBullet(Vector2 dir)` helper
+(already used by `Fire()`) — no bullet pooling or new damage/speed fields, they
+spend `bulletDamage`/`bulletSpeed` like every other shot:
+
+- **Fan** — `fanBulletCount` (5) bullets spread evenly across `fanSpreadAngle`
+  (50°, so ±25°) centered on the aim direction — same
+  `Quaternion.Euler(0,0,angle) * dir` math as the existing Phase 2 spread,
+  generalized to N bullets instead of a fixed 3.
+- **Ring** — omnidirectional by definition (the boss never rotates, so there's
+  no "facing" to aim relative to): `ringBulletCount` (12) bullets evenly spaced
+  around a full 360°, with a randomized per-burst start-angle offset so the
+  gaps between bullets don't always land in the same screen position (would
+  otherwise create a permanent memorized safe lane).
+- **Spiral** — `FireSpiralRoutine()`, a coroutine: starts aimed at the target
+  like Fan (first shot reads as "aimed at you"), then sweeps by
+  `spiralAngleStep` (25°) per shot, firing one bullet every
+  `spiralShotInterval` (0.05s) for `spiralBulletCount` (20) shots — the one
+  shape that actually delivers "rapid-fire," since Fan/Ring resolve in a
+  single frame. 20 × 25° = 500°, so it sweeps past a full revolution rather
+  than stopping exactly at 360°.
+
+Verified live via the Unity MCP bridge: `FireFan`/`FireRing` produce exactly
+`fanBulletCount`/`ringBulletCount` bullets at the expected angles (Fan:
+evenly spaced across ±25° centered on the aim direction; Ring: exact 30°
+gaps between all 12); manually draining `FireSpiralRoutine()`'s `IEnumerator`
+produced exactly `spiralBulletCount` bullets; `PickPattern()`'s no-repeat rule
+held over 30 consecutive draws (all 3 shapes seen, zero immediate repeats);
+`CheckPatternBarrage()` correctly no-ops (no exception, cooldown untouched)
+when `CurrentTarget` is `null`; `BossPanelUI`'s new warning/cooldown text
+updated live during a real triggered barrage.
 
 ## Bullet.cs — boss damage dispatch
 
@@ -435,9 +497,12 @@ Every `Update()`, reads `Boss.CurrentHealth/maxHealth` into a health-bar
 `Image.fillAmount` + `"HP: x/y"` text, `Boss.IsPhase2` into a `"Phase
 1"`/`"Phase 2"` text, `Boss.CurrentTarget`'s `PlayerRoleComponent.role` into
 a `"Target: {role}"` text, `Boss.GuidedMissileTargetRole` into a `"Guided
-missile: {role}"` warning text (empty string when `null`), and
-`Boss.ShockwaveCooldownRemaining`/`Boss.GuidedMissileCooldownRemaining` into
-`"Shockwave: {n}s"`/`"Guided Missile: {n}s"` cooldown texts (`"Ready"` at
+missile: {role}"` warning text (empty string when `null`),
+`Boss.PatternBarrageActivePattern` into an `"Incoming: {shape} Barrage"`
+warning text (empty string when `null`), and
+`Boss.ShockwaveCooldownRemaining`/`Boss.GuidedMissileCooldownRemaining`/
+`Boss.PatternBarrageCooldownRemaining` into `"Shockwave: {n}s"`/`"Guided
+Missile: {n}s"`/`"Pattern Barrage: {n}s"` cooldown texts (`"Ready"` at
 0) — same "HUD only reads, never owns game state" pattern as
 `PartyFrameUI.cs`. `ShowDefeated()` (wired to `Boss.OnDefeated`) overwrites
 the phase text with `"DEFEATED"`.
@@ -449,9 +514,26 @@ fire imminently" aren't the same thing. Body contact damage's per-target
 cooldown deliberately has no `BossPanel` line — it's reactive/per-ship, not
 a single global cooldown like the other two.
 
+**Telegraph feedback, per attack** — every telegraphed attack gets its own
+cooldown countdown, but only two of the three get a *named* text warning
+during the wind-up; Shockwave deliberately uses a visual cue instead, since
+it's about *where* a ship is standing rather than *who's* targeted:
+
+| Attack | Warning during telegraph | Cooldown text |
+| --- | --- | --- |
+| Guided Missile | `warningText`: `"Guided missile: {role}"` (names whichever Medic/Attacker locked on) | `"Guided Missile: {n}s"` / `"...: Ready"` |
+| Pattern Barrage | `patternBarrageWarningText`: `"Incoming: {Shape} Barrage"` (Fan/Ring/Spiral) | `"Pattern Barrage: {n}s"` / `"...: Ready"` |
+| Shockwave | none (text) — the world-space danger ring around the boss itself pulses brighter during the wind-up and flashes on impact, see "Shockwave" above | `"Shockwave: {n}s"` / `"...: Ready"` |
+
+Guided Missile and Pattern Barrage use **separate** text fields
+(`warningText` vs. `patternBarrageWarningText`), so if both happen to
+telegraph at once, both lines show simultaneously rather than one
+overwriting the other.
+
 Key public fields: `boss`, `healthBarFill`, `healthText`, `phaseText`,
 `targetText`, `warningText`, `shockwaveCooldownText`,
-`guidedMissileCooldownText`. Key public method: `ShowDefeated()`.
+`guidedMissileCooldownText`, `patternBarrageWarningText`,
+`patternBarrageCooldownText`. Key public method: `ShowDefeated()`.
 
 ## PlayerAbility.cs / PlayerController.cs — non-input entry points
 
@@ -549,10 +631,6 @@ the end-screen popup is guarded. See
   cooldown-gated method `AIController.cs` already calls and the human
   `Player`'s own `OnAbility(InputValue)` already wraps. Needs no new
   ability logic, only a UI-side click/tap handler.
-- **Geometric/varied bullet spread patterns** — beyond the guided missile
-  and the existing Phase 1/2 shapes (single aimed shot / 3-bullet spread).
-  A rapid-fire burst attack is also a candidate if the fight reads as too
-  predictable.
 - **Minions around the boss** — smaller enemy ships flanking the `Boss`; no
   minion script or prefab exists yet.
 - **Local co-op / dynamic player count** — the party is 4 fixed,

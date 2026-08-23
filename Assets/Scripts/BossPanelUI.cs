@@ -12,6 +12,8 @@ public class BossPanelUI : MonoBehaviour
     public TextMeshProUGUI warningText;
     public TextMeshProUGUI shockwaveCooldownText;
     public TextMeshProUGUI guidedMissileCooldownText;
+    public TextMeshProUGUI patternBarrageWarningText;
+    public TextMeshProUGUI patternBarrageCooldownText;
 
     void Update()
     {
@@ -50,6 +52,20 @@ public class BossPanelUI : MonoBehaviour
             guidedMissileCooldownText.text = boss.GuidedMissileCooldownRemaining > 0f
                 ? $"Guided Missile: {boss.GuidedMissileCooldownRemaining:0.0}s"
                 : "Guided Missile: Ready";
+        }
+
+        if (patternBarrageWarningText != null)
+        {
+            patternBarrageWarningText.text = boss.PatternBarrageActivePattern.HasValue
+                ? $"Incoming: {boss.PatternBarrageActivePattern.Value} Barrage"
+                : "";
+        }
+
+        if (patternBarrageCooldownText != null)
+        {
+            patternBarrageCooldownText.text = boss.PatternBarrageCooldownRemaining > 0f
+                ? $"Pattern Barrage: {boss.PatternBarrageCooldownRemaining:0.0}s"
+                : "Pattern Barrage: Ready";
         }
     }
 

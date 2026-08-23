@@ -244,6 +244,30 @@ reference docs live under `systems/`.
   is actively prevented) — same cooldown-gated damage as before. See
   `systems/boss.md`'s "Solid-body collision (ships + boss)".
 
+- **Pattern Barrage (geometric bullet spread patterns)** — a new standalone
+  boss attack, layered on top of the existing Phase 1/2 fire (unchanged) the
+  same way Shockwave and Guided Missile are: its own cooldown
+  (`patternBarrageCooldown`, 7s) and telegraph (`patternBarrageTelegraphTime`,
+  0.7s). Rather than three separate cooldown/telegraph/HUD stacks (one per
+  shape), it's one system that randomly picks a shape each activation —
+  `Fan`, `Ring`, or `Spiral` — reusing the same "build eligible options,
+  `Random.Range` pick one" idiom `CheckGuidedMissile()` already uses for
+  target selection, plus a no-immediate-repeat rule
+  (`lastPatternBarragePattern`) so the same shape never fires twice in a row.
+  Fan generalizes the existing Phase 2 3-bullet spread math to N bullets
+  (`fanBulletCount` 5, `fanSpreadAngle` 50°) aimed at the current target;
+  Ring is omnidirectional (`ringBulletCount` 12 bullets evenly spaced around
+  360°, randomized start offset so the gaps don't always land in the same
+  spot); Spiral is the one that actually delivers "rapid-fire" — a coroutine
+  firing `spiralBulletCount` (20) bullets one at a time, sweeping
+  `spiralAngleStep` (25°) between shots. All three reuse the existing private
+  `Boss.SpawnBullet(Vector2 dir)` helper, no new damage/speed fields or
+  bullet pooling. Verified live via the Unity MCP bridge: exact bullet counts
+  and angle math confirmed for all three shapes, the no-repeat rule held over
+  30 consecutive draws, `CheckPatternBarrage()` correctly no-ops with no
+  target, and `BossPanelUI`'s new warning/cooldown text tracks live state.
+  See `systems/boss.md`'s "Pattern Barrage".
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -258,15 +282,6 @@ reference docs live under `systems/`.
 
 ### Player-vs-boss dynamics (CPU AI first)
 
-- **Geometric bullet spread patterns** — the boss now has erratic movement,
-  body/shockwave hazards, and a role-targeted guided missile (see
-  "Implemented" above), but its phase-based fire is still a single aimed
-  shot or a fixed 3-bullet spread; more varied geometric bullet-pattern
-  shapes (fan, ring, spiral, etc.) were explicitly deferred to a later pass
-  rather than bundled into that work. Distinct from, but feeds the same
-  "bullet-pattern design language" as, "Enemy spawn pattern variety" below.
-  A rapid-fire burst attack (telegraphed volley at a much faster interval)
-  also remains a candidate if the fight still reads as too predictable.
 - **Bullet-dodging / manual ability triggering** — all four AI teammates
   now have role-differentiated positioning (see "Implemented" above), but
   still have zero bullet-awareness, and there's no way to manually fire a
@@ -274,9 +289,10 @@ reference docs live under `systems/`.
   built. See `systems/boss.md`'s "Not yet built".
 - **Minions around the boss** — smaller enemy ships flanking the `Boss`,
   motivated the ship-shrink above; not yet designed or built (no minion
-  script/prefab exists). Do this **after** the two items above — more
-  on-screen threats on top of a still-too-simple AI/boss would make the
-  encounter harder to read, not more fun.
+  script/prefab exists). Do this **after** the item above (and after Pattern
+  Barrage, now implemented — see "Implemented" above) — more on-screen
+  threats on top of a still-too-simple AI/boss would make the encounter
+  harder to read, not more fun.
 
 - **Enemy spawn pattern variety** — design enemy spawn/movement patterns
   beyond the current simple top-to-bottom sine-wave drift (`EnemySpawner.cs`

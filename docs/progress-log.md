@@ -2122,3 +2122,140 @@ errors/warnings throughout.
 - Bullet-dodging, manual teammate-ability triggering — unchanged, still not
   built (see `roadmap.md`).
 - Main Menu / Lobby scenes — still not built.
+
+## Session 22 — Pattern Barrage (Geometric Bullet Spread Patterns)
+
+The roadmap's next "Player-vs-boss dynamics" item: more varied geometric
+bullet-pattern shapes (fan/ring/spiral) beyond the boss's existing single
+aimed shot / fixed 3-bullet spread. Planned in a dedicated planning pass
+before any code was touched (a Plan agent validated the design against
+existing precedent — see below), then implemented and verified live via the
+Unity MCP bridge in one session.
+
+### Design decision: one attack, randomized shape, no-immediate-repeat
+
+Explored two alternatives before settling: three fully separate standalone
+attacks (one cooldown/telegraph/HUD stack per shape), or a fixed rotation
+through shapes. Rejected both. Went with one new standalone attack, **Pattern
+Barrage** — its own cooldown (`patternBarrageCooldown`, 7s) and telegraph
+(`patternBarrageTelegraphTime`, 0.7s), layered on top of the existing Phase
+1/2 fire exactly like Shockwave and Guided Missile already are, not a
+replacement of it. On each activation it randomly picks one of `{ Fan, Ring,
+Spiral }` to fire — the same "build eligible options, `Random.Range` pick
+one" idiom `CheckGuidedMissile()` already uses for target selection, just
+applied to shapes instead of targets. Justified against this project's own
+established "prototype-simple, prove it's fun before adding infra" principle
+(`overview.md`'s Architecture Principle 1, Session 10's explicit scoping) —
+three parallel systems is infrastructure the fight hasn't earned yet.
+
+Pure `Random.Range(0,3)` alone risked the same shape firing twice or three
+times in a row, which reads as a lack of content rather than surprise — a
+worse outcome than either rejected alternative. Fixed with one extra
+`private BulletPattern? lastPatternBarragePattern` field: `PickPattern()`
+excludes whichever shape fired last time from the pick pool. Cheap (one
+field, a few lines), gets both properties (surprise + guaranteed variety)
+that the pure-random and fixed-rotation options each only got one of.
+
+### Shape math
+
+All three reuse the existing private `Boss.SpawnBullet(Vector2 dir)` helper
+(already used by `Fire()`) — no `Bullet.cs` changes, no object pooling, no
+new damage/speed fields.
+
+- **Fan** — generalizes the existing Phase 2 3-bullet spread
+  (`Quaternion.Euler(0,0,angle) * dir`) to N bullets: `fanBulletCount` (5)
+  evenly spread across `fanSpreadAngle` (50°, so ±25°), centered on the
+  direction to `CurrentTarget`. Aim is recomputed *after* the telegraph wait
+  completes, not at activation time — same re-check-after-telegraph idiom
+  `ShockwaveRoutine()` already uses, since the target may have moved or died
+  during the wind-up.
+- **Ring** — deliberately not target-relative; the boss never rotates, so
+  there's no "facing" to aim relative to, and it's meant to be an
+  omnidirectional "screen-full-of-bullets" moment. `ringBulletCount` (12)
+  bullets evenly spaced around 360°, with a randomized per-burst start-angle
+  offset (a standard bullet-hell technique) so the gaps between bullets
+  don't always land in the same screen position — otherwise the same "safe
+  lane" would be memorizable every single time.
+- **Spiral** — the shape that actually delivers "rapid-fire," since Fan/Ring
+  both resolve in a single frame. `FireSpiralRoutine()` is a coroutine:
+  starts aimed at `CurrentTarget` like Fan, then fires one bullet every
+  `spiralShotInterval` (0.05s) for `spiralBulletCount` (20) shots, sweeping
+  `spiralAngleStep` (25°) between each. `PatternBarrageRoutine()` awaits it
+  via `yield return StartCoroutine(...)`, so the barrage (and
+  `PatternBarrageActivePattern`) doesn't end until the full spiral has
+  actually finished firing. 20 × 25° = 500°, intentionally past a full
+  revolution so it reads as a genuine spin rather than stopping dead at
+  360°.
+
+### HUD wiring
+
+`BossPanelUI` gained `patternBarrageWarningText` (`"Incoming: {Shape}
+Barrage"` while `Boss.PatternBarrageActivePattern.HasValue`, else empty) and
+`patternBarrageCooldownText` (`"Pattern Barrage: {n}s"` / `"...: Ready"`) —
+same exact idiom as the existing warning/cooldown text pairs. Built via the
+Unity MCP bridge by duplicating existing template text elements
+(`BossWarningText`, `BossGuidedMissileCooldownText`) rather than building
+`TextMeshProUGUI` from scratch, same technique as every prior HUD addition
+back to Session 8. Both new fields are brand-new script fields, so — unlike
+several past sessions' gotcha with *existing* serialized fields — no
+`RecordPrefabInstancePropertyModifications()` step was needed on `Boss`;
+they just took their C# defaults.
+
+Forced a full scene reload from disk after wiring (the project's standard
+verification habit since Session 12, after multiple past sessions where
+in-memory wiring success silently didn't survive a reload) — confirmed both
+new `BossPanel` children and their `BossPanelUI` field references persisted
+correctly.
+
+### Verification
+
+All live via the Unity MCP bridge, mostly via reflection since
+`FireFan`/`FireRing`/`FireSpiralRoutine`/`PickPattern`/`CheckPatternBarrage`
+are private:
+
+- **Bullet counts and angle math**: invoked `FireFan`/`FireRing` directly,
+  diffed the scene's `Bullet` instances before/after (by reference, not by
+  the now-obsolete `GetInstanceID()`) to isolate exactly the newly spawned
+  ones from bullets the boss's own concurrent regular fire was also
+  producing. Fan produced exactly 5 bullets at angles `-25, -12.5, 0, 12.5,
+  25` relative to the aim direction — exact even spacing across the
+  configured spread. Ring produced exactly 12 bullets with an exact 30° gap
+  between every consecutive pair. For Spiral, rather than relying on
+  real-time `WaitForSeconds` frame-pumping (this project's Editor has a
+  long-documented history, Sessions 6/8/9/10, of not reliably ticking
+  `Update()` while unfocused), got the coroutine's `IEnumerator` directly
+  from the reflected method call and manually drove `MoveNext()` in a tight
+  loop — deterministic and instant, since a manually-driven `WaitForSeconds`
+  yield is a no-op rather than a real wait. Produced exactly 20 bullets in
+  20 steps.
+- **No-immediate-repeat rule**: reset `lastPatternBarragePattern` to `null`,
+  called `PickPattern()` 30 times in a row (threading its own output back in
+  as `lastPatternBarragePattern` each time, matching what
+  `PatternBarrageRoutine()` does for real). All 3 shapes appeared across the
+  run; zero consecutive repeats.
+- **Cooldown/target gating**: force-set the private `nextPatternBarrageTime`
+  into the past and called `CheckPatternBarrage()` — confirmed it started
+  the coroutine for real (`PatternBarrageActivePattern` became non-null
+  immediately, `PatternBarrageCooldownRemaining` jumped to the full 7s) and
+  that `BossPanelUI`'s new warning/cooldown text reflected it live in the
+  same Play session. Separately, temporarily nulled the private
+  `CurrentTarget` backing field and called `CheckPatternBarrage()` again —
+  confirmed a clean no-op (no exception, `PatternBarrageCooldownRemaining`
+  stayed at 0, meaning it correctly didn't start a coroutine or advance the
+  cooldown) rather than throwing on a null target.
+- Also incidentally reconfirmed, unprompted, that the whole system runs
+  correctly end-to-end with zero manual intervention: real wall-clock time
+  elapsing between two separate tool calls was enough for the 7s cooldown to
+  naturally lapse, and `Boss.Update()`'s own automatic `CheckPatternBarrage()`
+  call picked a fresh shape on its own.
+- Zero console errors/warnings across the entire test pass, including
+  through a Play mode stop.
+
+### Still open
+
+- Bullet-dodging, manual teammate-ability triggering — unchanged, still not
+  built (see `roadmap.md`).
+- Minions around the boss — next in the roadmap's build order, now that both
+  bullet-dodging/manual triggering and Pattern Barrage are the only items
+  left ahead of it in "Player-vs-boss dynamics."
+- Main Menu / Lobby scenes — still not built.

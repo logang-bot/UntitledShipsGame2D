@@ -65,6 +65,23 @@ public class Boss : MonoBehaviour
     public float guidedMissileSpeed = 5f;
     public float guidedMissileWarningLingerTime = 2f; // keep the HUD warning up briefly after firing
 
+    [Header("Pattern Barrage")]
+    // One standalone attack, three possible shapes - randomly picked each
+    // activation (never the same shape twice in a row, see PickPattern()),
+    // same "build eligible options, Random.Range pick one" idiom as guided
+    // missile's target selection, rather than three separate cooldown/
+    // telegraph/HUD stacks.
+    public float patternBarrageCooldown = 7f;
+    public float patternBarrageTelegraphTime = 0.7f;
+    public int fanBulletCount = 5;
+    public float fanSpreadAngle = 50f; // total angular width, centered on the aim direction
+    public int ringBulletCount = 12;
+    public int spiralBulletCount = 20;
+    public float spiralAngleStep = 25f; // degrees added per shot
+    public float spiralShotInterval = 0.05f; // seconds between shots - this is what actually reads as "rapid-fire"
+
+    public enum BulletPattern { Fan, Ring, Spiral }
+
     [Header("Aggro / Targets")]
     public GameObject[] targets; // drag Player + 3 Teammates
     public float tauntBonus = 100f;
@@ -76,10 +93,12 @@ public class Boss : MonoBehaviour
     public bool IsPhase2 { get; private set; }
     public GameObject CurrentTarget { get; private set; }
     public PlayerRole? GuidedMissileTargetRole { get; private set; }
+    public BulletPattern? PatternBarrageActivePattern { get; private set; }
     // Proximity-triggered, not a fixed auto-cast - reads "Ready" whenever no
     // ship has gotten close enough to trigger it yet, not just after cooldown elapses.
     public float ShockwaveCooldownRemaining => Mathf.Max(0f, nextShockwaveCheckTime - Time.time);
     public float GuidedMissileCooldownRemaining => Mathf.Max(0f, nextGuidedMissileTime - Time.time);
+    public float PatternBarrageCooldownRemaining => Mathf.Max(0f, nextPatternBarrageTime - Time.time);
 
     private readonly Dictionary<GameObject, float> aggro = new Dictionary<GameObject, float>();
     private readonly Dictionary<GameObject, float> lastContactDamageTime = new Dictionary<GameObject, float>();
@@ -87,6 +106,8 @@ public class Boss : MonoBehaviour
     private float nextDashDecisionTime;
     private float nextShockwaveCheckTime;
     private float nextGuidedMissileTime;
+    private float nextPatternBarrageTime;
+    private BulletPattern? lastPatternBarragePattern;
     private Vector3 moveTarget;
     private float homeY;
     private Camera cam;
@@ -126,6 +147,7 @@ public class Boss : MonoBehaviour
 
         CheckShockwave();
         CheckGuidedMissile();
+        CheckPatternBarrage();
         UpdateShockwaveRing();
     }
 
@@ -363,7 +385,105 @@ public class Boss : MonoBehaviour
         GuidedMissileTargetRole = null;
     }
 
+    void CheckPatternBarrage()
+    {
+        if (Time.time < nextPatternBarrageTime) return;
+        if (CurrentTarget == null) return; // Fan needs an aim direction
 
+        nextPatternBarrageTime = Time.time + patternBarrageCooldown;
+        StartCoroutine(PatternBarrageRoutine());
+    }
+
+    // Random pick, excluding whichever shape fired last time, so the same
+    // shape can never fire twice in a row while still keeping the surprise
+    // of not knowing which of the other two is coming.
+    BulletPattern PickPattern()
+    {
+        BulletPattern[] all = { BulletPattern.Fan, BulletPattern.Ring, BulletPattern.Spiral };
+        BulletPattern picked = all[Random.Range(0, all.Length)];
+        if (lastPatternBarragePattern.HasValue && picked == lastPatternBarragePattern.Value)
+            picked = all[(System.Array.IndexOf(all, picked) + 1) % all.Length];
+        return picked;
+    }
+
+    IEnumerator PatternBarrageRoutine()
+    {
+        BulletPattern pattern = PickPattern();
+        lastPatternBarragePattern = pattern;
+        PatternBarrageActivePattern = pattern;
+
+        yield return new WaitForSeconds(patternBarrageTelegraphTime);
+
+        // Re-aim after the telegraph wait, not at activation time - the
+        // target may have moved (or died) during the wind-up, same
+        // re-check-after-telegraph idiom ShockwaveRoutine() already uses.
+        Vector2 aimDir = CurrentTarget != null
+            ? ((Vector2)CurrentTarget.transform.position - (Vector2)transform.position).normalized
+            : Vector2.down;
+
+        switch (pattern)
+        {
+            case BulletPattern.Fan:
+                FireFan(aimDir);
+                break;
+            case BulletPattern.Ring:
+                FireRing();
+                break;
+            case BulletPattern.Spiral:
+                yield return StartCoroutine(FireSpiralRoutine(aimDir));
+                break;
+        }
+
+        PatternBarrageActivePattern = null;
+    }
+
+    void FireFan(Vector2 aimDir)
+    {
+        if (bulletPrefab == null) return;
+        if (fanBulletCount <= 1) { SpawnBullet(aimDir); return; }
+
+        float step = fanSpreadAngle / (fanBulletCount - 1);
+        float startAngle = -fanSpreadAngle / 2f;
+        for (int i = 0; i < fanBulletCount; i++)
+        {
+            float angle = startAngle + step * i;
+            SpawnBullet((Vector2)(Quaternion.Euler(0, 0, angle) * aimDir));
+        }
+    }
+
+    // Omnidirectional by definition - the boss never rotates, so there's no
+    // "facing" to aim relative to. A randomized start-angle offset per burst
+    // keeps the gaps between bullets from always landing in the same screen
+    // position (would otherwise create a permanent memorized safe lane).
+    void FireRing()
+    {
+        if (bulletPrefab == null || ringBulletCount <= 0) return;
+
+        float step = 360f / ringBulletCount;
+        float startOffset = Random.Range(0f, step);
+        for (int i = 0; i < ringBulletCount; i++)
+        {
+            float angle = startOffset + step * i;
+            SpawnBullet((Vector2)(Quaternion.Euler(0, 0, angle) * Vector2.up));
+        }
+    }
+
+    // Starts aimed at the target like Fan (first shot reads as "aimed at
+    // you"), then sweeps by spiralAngleStep per shot fired rapidly over
+    // time - the one shape that actually delivers "rapid-fire", since
+    // Fan/Ring resolve in a single frame.
+    IEnumerator FireSpiralRoutine(Vector2 aimDir)
+    {
+        if (bulletPrefab == null) yield break;
+
+        float angle = 0f;
+        for (int i = 0; i < spiralBulletCount; i++)
+        {
+            SpawnBullet((Vector2)(Quaternion.Euler(0, 0, angle) * aimDir));
+            angle += spiralAngleStep;
+            yield return new WaitForSeconds(spiralShotInterval);
+        }
+    }
 
     public void TakeDamage(float amount, GameObject source)
     {

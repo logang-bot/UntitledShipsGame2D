@@ -78,11 +78,15 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   to protect, plus live "Shockwave"/"Guided Missile" cooldown countdowns;
   Tank can still block the missile, but only by actively cutting across its
   path, not just by standing between the boss and the target the way it
-  reliably can against every other bullet. AI teammates keep a minimum
-  distance from the boss by default so they don't wander into the
-  contact/shockwave range. See [systems/boss.md](systems/boss.md)'s
+  reliably can against every other bullet. On top of that, every ~7 seconds
+  the boss also unleashes a telegraphed **Pattern Barrage** — randomly a wide
+  aimed Fan, a full 360° Ring, or a rapid rotating Spiral of bullets (never
+  the same shape twice in a row), with `BossPanel` naming the incoming shape
+  during the wind-up and showing its own cooldown countdown. AI teammates
+  keep a minimum distance from the boss by default so they don't wander into
+  the contact/shockwave range. See [systems/boss.md](systems/boss.md)'s
   "Movement and firing", "Body contact damage", "Shockwave", "Guided
-  missile", and "BossPanelUI.cs" sections. 3 CPU-controlled AI teammates
+  missile", "Pattern Barrage", and "BossPanelUI.cs" sections. 3 CPU-controlled AI teammates
   (`Teammate_Tank`/`Teammate_Medic`/`Teammate_Support`) fight alongside the
   human `Player`, covering whichever roles aren't human-played — move,
   auto-fire, and use their role's ability autonomously. Whichever teammate
@@ -109,7 +113,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   stats") — Attacker hits hardest on regular fire (2.0, vs. Tank/Support's
   1.0 and Medic's 0.7), on top of its Big Shot ability. `BossPanel` shows
   the boss's live HP bar, phase, current target, guided-missile warning,
-  and shockwave/guided-missile cooldowns. See
+  pattern-barrage warning, and shockwave/guided-missile/pattern-barrage
+  cooldowns. See
   [systems/boss.md](systems/boss.md).
 - **Solid-body collision** — no two ships (human or AI) can occupy the same
   space, and no ship can occupy the boss's body either; each ship resolves
@@ -136,8 +141,6 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   ability from the party frame is also designed but not built. See
   [systems/boss.md](systems/boss.md)'s "Not yet built".
 - No minions around the boss yet — no minion script/prefab exists.
-- No geometric/varied bullet spread patterns beyond the guided missile and
-  the boss's two phase-based shot patterns.
 - No real art — the avatar slot and every ship are placeholder colored
   squares, no audio.
 
@@ -176,7 +179,10 @@ real networking last, then art/audio.
    "Guided missile: {role}" warning naming Medic or Attacker — a curving
    shot is inbound for that ship, so get Tank in its path if you can — and
    shows "Shockwave"/"Guided Missile" cooldown countdowns ("Ready" when
-   available). A dim ring around the boss marks its shockwave range,
+   available). Roughly every 7 seconds `BossPanel` also flashes "Incoming:
+   Fan/Ring/Spiral Barrage" — a wide aimed cone, a full radial burst, or a
+   fast rotating stream of bullets, never the same shape twice in a row —
+   plus its own "Pattern Barrage" cooldown countdown. A dim ring around the boss marks its shockwave range,
    brightening as it winds up — don't linger inside it or touch the boss
    directly, both cost real damage (2x for contact, 3x for the shockwave
    plus a strong knockback that'll send a ship flying). Taking hits reduces
