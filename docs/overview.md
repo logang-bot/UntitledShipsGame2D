@@ -66,3 +66,6 @@ Researched to confirm this isn't a re-tread of an existing game:
 3. **Offline mode = the same authoritative simulation, run locally.** The
    combat/boss-AI logic layer should not care whether it's driven by network
    messages or local input, so offline isn't a separate mode to bolt on later.
+4. For how these principles show up as concrete code conventions in the
+   current codebase (script organization, communication patterns, etc.),
+   see `architecture.md`.

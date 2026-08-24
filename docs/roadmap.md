@@ -63,8 +63,9 @@ reference docs live under `systems/`.
   Attacker Big Shot (wider, harder-hitting bullet with recoil — damage now a
   live multiplier of the caster's own fire damage, see below). Wired live
   via the Unity MCP bridge and verified end-to-end in Play mode for all four
-  roles. Taunt's placeholder flash+shake feedback (Session 9) was superseded
-  by a real aggro-redirect listener once the boss existed — see below.
+  roles. Taunt's placeholder flash+shake feedback (Session 9, see
+  progress-log-archive.md) was superseded by a real aggro-redirect listener
+  once the boss existed — see below.
 
 - **Boss encounter prototype** — a single `Boss` with 2 HP-based phases
   (Phase 2 at ≤50% HP: fire interval halves, single aimed shot becomes a
@@ -220,8 +221,9 @@ reference docs live under `systems/`.
   flashing on impact) was added right after an initial playtest found the
   danger zone invisible. A follow-up tuning pass then raised
   `shockwaveKnockback` (6 → 33, ~0.63 → ~3.5 units of actual push — derived
-  via the same closed-form recoil-decay formula Session 8 verified for
-  Attacker's Big Shot) after the original knockback proved barely
+  via the same closed-form recoil-decay formula Session 8 (see
+  progress-log-archive.md) verified for Attacker's Big Shot) after the
+  original knockback proved barely
   noticeable, and added live shockwave/guided-missile cooldown countdowns to
   `BossPanel` (`"Ready"` at 0). See `systems/boss.md`'s "Movement and
   firing", "Body contact damage", "Shockwave", "Guided missile", "Boss

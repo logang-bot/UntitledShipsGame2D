@@ -2,8 +2,9 @@
 
 Unity's New Input System is used throughout (not the legacy Input Manager) —
 see the Tech Stack Decisions table in [../overview.md](../overview.md) for
-why, and [../progress-log.md](../progress-log.md) (Session 1) for the full
-migration story and troubleshooting notes from switching over.
+why, and [../progress-log-archive.md](../progress-log-archive.md)
+(Session 1) for the full migration story and troubleshooting notes from
+switching over.
 
 ## PlayerControls (Input Actions asset)
 

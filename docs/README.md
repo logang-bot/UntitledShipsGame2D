@@ -9,7 +9,11 @@
 - [roadmap.md](roadmap.md) — current build status: implemented / in
   progress / planned.
 - [progress-log.md](progress-log.md) — session-by-session narrative history
-  (the "why" behind decisions, troubleshooting notes).
+  (the "why" behind decisions, troubleshooting notes), Sessions 10 onward.
+- [progress-log-archive.md](progress-log-archive.md) — archived Sessions
+  1-9 (pre-boss, single-player fundamentals), moved out for length.
+- [architecture.md](architecture.md) — concrete code-level conventions:
+  script organization, communication patterns, deliberate omissions.
 
 ## Systems
 

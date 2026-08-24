@@ -174,3 +174,89 @@ Fix: search all objects regardless of active state via
 also returns), then `SetActive(true)` to revive it for further testing. Only needed
 for *finding* an inactive object — once you already hold a reference, calling
 methods on it works normally regardless of active state.
+
+## Editor doesn't tick Play-mode Update()/coroutines while unfocused (and the inverse)
+
+An unfocused, idle Unity Editor window can stop ticking Play-mode
+`Update()`/`FixedUpdate()`/coroutines entirely — `Time.time` stays frozen
+across MCP tool calls and even a real multi-second wall-clock sleep. Each
+`manage_camera` screenshot call with `include_image: true` forces exactly
+one manual frame step (~0.02s), which is the reliable way to pump enough
+deterministic frames for timer-based logic (flash/shake durations, ability
+cooldowns, coroutine sequences) to complete during testing. Calling
+`EditorApplication.QueuePlayerLoopUpdate()` manually from `execute_code` to
+force a tick produces benign "PlayerLoop called recursively" console
+warnings — harmless, but don't combine it with the screenshot-step
+technique.
+
+This is not a universal, permanent state: at least one session had an
+Editor instance instead tick Play mode continuously in real time while
+unfocused, with no forced steps needed — and a focused Editor window also
+runs Play mode in real time in the background, which has interrupted
+scripted verification more than once (enemy fire killing a test ship
+mid-check). Don't assume either behavior going in — check whether
+`Time.time` is advancing across calls before relying on the frame-step
+workaround or on background real-time progress.
+
+One sharp edge that follows from this: a single forced frame step in an
+idle/unfocused Editor can carry an oversized, real-world-clock-sized
+`Time.deltaTime` — large enough to blow straight past a short
+`lifeTime`-based `Destroy(gameObject, 3f)` safety cleanup in one tick.
+
+Hit and re-confirmed in `docs/progress-log.md`/`docs/progress-log-archive.md`
+Sessions 6, 7, 8, 9, 10, 12, 16, 18, 19, 20, 22, 23, 24.
+
+## Prefab-instance overrides need RecordPrefabInstancePropertyModifications(), not just SetDirty()
+
+Editing a field, or a `UnityEvent`'s persistent listener list, on a
+**prefab instance** (not the prefab asset itself) requires calling
+`PrefabUtility.RecordPrefabInstancePropertyModifications(component)` in
+addition to `SetDirty()`, or the change silently fails to serialize. There's
+no error and no warning — in-memory reads (including
+`GetPersistentEventCount()` on a `UnityEvent`) correctly report the new
+value for the rest of the session, but a full scene reload from disk
+reverts it. Applies identically to a plain object-reference field (a
+`teammates[]` array) and to a `UnityEvent` persistent listener entry (an
+`OnDefeated` hookup) — same fix either way.
+
+This does **not** apply to brand-new script fields that have never been
+serialized on that instance before; those simply take the compiled C#
+default with no override step needed, since there's no existing serialized
+entry to update.
+
+In this project, `Teammate_Tank` is the only one of the 4 ships that's an
+actual `Teammate.prefab` instance (`Teammate_Medic`/`Teammate_Support` are
+plain duplicated GameObjects, not prefab instances — see "Duplicating a
+GameObject before it's a prefab instance" above), so it's the one that
+repeatedly needs this treatment. Standing verification habit established
+because of this gotcha: after any prefab-instance edit, force a full scene
+reload from disk and re-read the value — never trust the in-memory value
+alone.
+
+Hit and re-confirmed in `docs/progress-log.md`/`docs/progress-log-archive.md`
+Sessions 12, 13, 16, 18, 19, 20.
+
+## Changing a script's default value doesn't retroactively update an already-serialized field
+
+Unity serializes a `MonoBehaviour` field's value once, into the scene/prefab
+YAML, the first time a component holding that field is placed with a real
+value. After that, editing the field's default in the `.cs` source has zero
+effect on values already serialized elsewhere — deserialization finds an
+explicit override on disk and uses that instead of the new compiled
+default. Symptom: the field reads the *old* value everywhere it was
+previously placed (every live scene instance and every prefab asset
+default), even though the source change looks like it should have updated
+the number project-wide.
+
+Only affects fields that were **already serialized** somewhere. A brand-new
+field added later has no prior serialized value to conflict with, and
+correctly picks up the new default automatically on every instance.
+
+No shortcut fix exists — the value has to be re-set explicitly on every
+place it was previously serialized: each live scene instance *and* each
+prefab asset default, individually. Same "force a full disk reload, don't
+trust the in-memory value" verification habit as the prefab-instance gotcha
+above applies here too.
+
+Hit and re-confirmed in `docs/progress-log.md`/`docs/progress-log-archive.md`
+Sessions 11, 12, 16, 19, 24.
