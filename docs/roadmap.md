@@ -284,6 +284,25 @@ reference docs live under `systems/`.
   `systems/boss.md`'s "Bullet-dodging" and `systems/player-roles.md`'s
   "PlayerAbility.cs" (manual triggering) for the full writeups.
 
+- **Minions around the boss** — a new `MinionSpawner.cs` (on the `Boss`
+  GameObject, destroyed automatically alongside it) keeps up to 2 `Minion`s
+  (`Minion.cs`, modeled on `Enemy.cs` rather than a scaled-down `Boss.cs`)
+  flanking the boss at all times, spawning from the start of the fight
+  rather than gated to Phase 2. Each minion tracks the boss's own erratic
+  dash movement (position = boss position + a fixed per-minion flank offset
+  + a small independent wobble) and always fires at `boss.CurrentTarget`
+  (so Tank taunt redirects minion fire too, with no minion-side aggro table
+  needed). Minions are solid — `PlayerController.ResolveShipCollisions()`
+  gained a loop over a new `Minion.Active` static registry (mirroring
+  `Bullet.Active`), pushing ships out and applying a smaller contact damage
+  than the boss's own. `Bullet.cs` gained one new check
+  (`GetComponent<Minion>()`) alongside its existing `Enemy`/`Boss` checks so
+  player fire damages them. A first-pass bug (fractional `bulletDamage`/
+  `contactDamage` defaults silently rounding to zero through
+  `PlayerHealth.TakeDamage(int)`'s round-half-to-even behavior) was caught
+  live via the Unity MCP bridge and fixed by switching both to whole
+  numbers. See `systems/boss.md`'s "Minion.cs / MinionSpawner.cs".
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -297,13 +316,6 @@ reference docs live under `systems/`.
 ## Planned (not yet started)
 
 ### Player-vs-boss dynamics (CPU AI first)
-
-- **Minions around the boss** — smaller enemy ships flanking the `Boss`,
-  motivated the ship-shrink above; not yet designed or built (no minion
-  script/prefab exists). Do this **after** the item above (and after Pattern
-  Barrage, now implemented — see "Implemented" above) — more on-screen
-  threats on top of a still-too-simple AI/boss would make the encounter
-  harder to read, not more fun.
 
 - **Enemy spawn pattern variety** — design enemy spawn/movement patterns
   beyond the current simple top-to-bottom sine-wave drift (`EnemySpawner.cs`

@@ -134,6 +134,13 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   such button, since **E** already does this for the human. See
   [systems/boss.md](systems/boss.md)'s "Bullet-dodging" and
   [systems/player-roles.md](systems/player-roles.md)'s "PlayerAbility.cs".
+- **Minions around the boss** — up to 2 smaller enemy ships flank the boss
+  at once, tracking its erratic dash movement and always firing at whoever
+  currently holds the boss's own aggro (so Tank taunt redirects them too).
+  They're solid (ships push off them and touching one costs a small amount
+  of contact damage), take damage from player fire like any other enemy,
+  and are all destroyed the instant the boss is. See
+  [systems/boss.md](systems/boss.md)'s "Minion.cs / MinionSpawner.cs".
 
 ## What's NOT there yet
 
@@ -148,7 +155,6 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - No local co-op / dynamic player count — the party is 4 fixed, hand-placed
   scene objects (`Player` + 3 `Teammate_*`), not a runtime spawner that
   reacts to however many humans are actually playing.
-- No minions around the boss yet — no minion script/prefab exists.
 - No real art — the avatar slot and every ship are placeholder colored
   squares, no audio.
 

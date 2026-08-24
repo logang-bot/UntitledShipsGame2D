@@ -69,6 +69,8 @@ void OnTriggerEnter2D(Collider2D other)
             if (enemy != null) enemy.TakeDamage(damage);
             Boss boss = other.GetComponent<Boss>();
             if (boss != null) boss.TakeDamage(damage, ownerObject);
+            Minion minion = other.GetComponent<Minion>();
+            if (minion != null) minion.TakeDamage(damage);
             Destroy(gameObject);
         }
         else if (owner == "Enemy" && other.CompareTag("Player"))

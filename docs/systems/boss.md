@@ -600,6 +600,104 @@ side of this.
 `Bullet.Init(..., ownerObject)` so aggro attribution works for player fire
 too.
 
+## Minion.cs / MinionSpawner.cs
+
+Smaller enemy ships flanking the boss — a second, distinct threat type
+(steady chip damage from a couple of adds) layered on top of the boss's own
+attacks without touching any of them, same "independent `Check*()`, own
+timer, no cross-talk" idiom as Shockwave/Guided Missile/Pattern Barrage
+above.
+
+`MinionSpawner.cs` lives as a component **on the `Boss` GameObject itself**
+(not a separately-referenced object like `EnemySpawner`) — `Awake()` gets a
+free `GetComponent<Boss>()` with no Inspector wiring, and the spawner is
+destroyed automatically the instant `Boss.Die()` destroys the GameObject.
+Every `Update()`, while `Minion.Active.Count < maxConcurrentMinions` (2) and
+its own `spawnInterval` (6s) timer allows, it instantiates `minionPrefab` at
+`boss.transform.position` offset by `spawnRadius` (2) along ±X, alternating
+sides each spawn (`spawnedLeftLast`) so two live minions read as flanking
+the boss symmetrically. `MinionSpawner.Awake()` also calls
+`boss.OnDefeated.AddListener(DestroyAllMinions)` directly in code (not an
+Inspector wire-up, since this script already holds a direct `boss`
+reference) — no stray minions survive into the Victory panel.
+
+`Minion.cs` is modeled on `Enemy.cs`'s simplicity (health/`TakeDamage`/
+self-destruct) rather than a scaled-down `Boss.cs`:
+
+- **Positioning** — no free sine-drift like wave `Enemy.cs`. Each `Update()`,
+  `transform.position = boss.transform.position + flankOffset + wobble`,
+  where `flankOffset` is the fixed per-minion offset assigned at spawn
+  (`Init(Boss, Vector2)`) and `wobble` is a small independent sine bob so it
+  still reads as alive, not glued in place. This makes a minion track the
+  boss's own erratic dash movement automatically, with zero pathfinding. If
+  its `boss` reference is ever null (shouldn't happen outside teardown
+  ordering), it self-destructs rather than sitting inert.
+- **Targeting** — minions don't have their own aggro table. `Fire()` always
+  aims at `boss.CurrentTarget` (already a public getter), exactly like
+  `Boss.Fire()` aims at it — this ties minion fire to the boss's existing
+  aggro system for free: Tank taunt redirects minion fire too, with no
+  minion-side code needed.
+- **Health/damage** — `public void TakeDamage(float amount)`, round-to-int
+  against an `int health` (2), `Destroy(gameObject)` at ≤0 — identical shape
+  to `Enemy.cs`. `Bullet.cs`'s player-bullet-vs-`Enemy`-tag branch gained a
+  third check (alongside its existing `Enemy`/`Boss` checks):
+  `other.GetComponent<Minion>()` → `TakeDamage(damage)`. Required since a
+  `Minion` isn't literally an `Enemy` component, so without this a player
+  bullet would pass through a minion with no effect.
+- **Contact damage** — `public void ApplyContactDamage(GameObject ship)`,
+  same cooldown-gated shape as `Boss.ApplyContactDamage` (its own private
+  `Dictionary<GameObject, float>` of last-hit times, `contactDamageCooldown`
+  1s), but a smaller `contactDamage` (1) than the boss's own effective
+  contact damage (2) — a lesser hazard than the boss itself.
+- **Bullets** — reuses `Bullet.cs`/`EnemyBullet.prefab` as-is: a private
+  `SpawnBullet(Vector2 dir)` instantiates `bulletPrefab`, sets `.damage`,
+  calls `.Init(dir, bulletSpeed, "Enemy")`. This alone makes minion bullets
+  damage players (existing enemy-vs-`Player` branch) and be dodge-relevant
+  to AI teammates (`Bullet.Active` + `AIController.ComputeDodgeVector()`
+  already filter on `Owner == "Enemy"`) with zero further changes.
+- **Static registry** — `public static readonly List<Minion> Active`,
+  populated in `Awake()`/depopulated in `OnDestroy()`, same pattern as
+  `Bullet.Active`. This is what lets `PlayerController` resolve collision
+  against however many minions currently exist without a fixed-size array —
+  minions are spawned/destroyed at runtime by `MinionSpawner`, unlike the
+  hand-placed `Player`/`Teammate_*`/`Boss`. Each `Minion` caches its own
+  `HalfExtents` once in `Awake()` from its own `BoxCollider2D`, since (unlike
+  the ally/boss colliders `PlayerController` caches once in `Start()`)
+  minion colliders can't be cached ahead of time.
+
+**Solid-body collision**: minions physically block ships, same as the boss
+does (see "Solid-body collision (ships + boss)" above).
+`PlayerController.ResolveShipCollisions()` gained a loop over `Minion.Active`
+after its existing ally/boss checks, calling `ShipCollisionUtil
+.ResolveBoxOverlap()` against each minion's live position/`HalfExtents` and
+`minion.ApplyContactDamage(gameObject)` on overlap — same shape as the
+existing boss block, just iterating a dynamic list instead of one field.
+
+**Found during verification, not shipped as originally written**:
+`Minion`'s first-pass defaults for `bulletDamage` (0.4) and `contactDamage`
+(0.5) both silently rounded to **zero** through
+`PlayerHealth.TakeDamage(int)`'s `Mathf.RoundToInt` — `0.4` rounds down, and
+`0.5` rounds to the nearest *even* integer (Unity's round-half-to-even),
+which is also `0`. Every other player-facing damage value in the codebase
+(`Boss.bulletDamage`, `Enemy`'s default bullet damage, contact/shockwave
+multipliers) happens to already be a whole number, so this footgun had never
+come up before. Fixed by using whole numbers (`bulletDamage`/`contactDamage`
+both `1`) — caught live via the Unity MCP bridge (`ApplyContactDamage`
+produced no shield/health change at the old defaults, produced the expected
+1-point drop after the fix), not by code review alone.
+
+Verified live via the Unity MCP bridge: minion position tracks the boss
+through a dash exactly (`boss.position + flankOffset`, wobble within
+`wobbleAmplitude`); minion fire direction matches the vector to
+`boss.CurrentTarget` exactly for two different minions/targets; `TakeDamage`
+reduces health and destroys at 0, and `MinionSpawner` immediately refills
+the freed slot on its next `Update()` (cap never exceeded 2 across repeated
+forced spawns); `ApplyContactDamage` applies once and is blocked by its own
+cooldown on an immediate second call; `ResolveShipCollisions` (invoked
+directly) correctly resolves a ship/minion overlap using `Minion.Active`;
+invoking `Boss.OnDefeated` destroys every live minion immediately
+(`Minion.Active.Count` → 0).
+
 ## Scene wiring
 
 ### Boss
@@ -615,6 +713,7 @@ off-screen).
 | --------------- | ----------------------------------------------------------------------- |
 | Transform       | position (0, 4.2, 0), scale (1.6, 1.6, 1) — not shrunk with the ships below |
 | **Boss.cs**     | `maxHealth`: 90; `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `enemySpawner`: `Spawner`; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` + `VictoryPanel/VictoryUI.Show()` |
+| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2 |
 
 ### Teammate_Tank / Teammate_Medic / Teammate_Support
 
@@ -665,8 +764,6 @@ the end-screen popup is guarded. See
 
 ## Not yet built
 
-- **Minions around the boss** — smaller enemy ships flanking the `Boss`; no
-  minion script or prefab exists yet.
 - **Local co-op / dynamic player count** — the party is 4 fixed,
   hand-placed scene objects, not a runtime spawner (see `../roadmap.md`'s
   "In Progress").

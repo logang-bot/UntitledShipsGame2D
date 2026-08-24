@@ -143,6 +143,19 @@ void HandleMovement()
             if (overlappingBoss) boss.ApplyContactDamage(gameObject);
         }
 
+        // Minions are spawned/destroyed at runtime by MinionSpawner, so
+        // (unlike allies/boss above) their colliders can't be cached once in
+        // Start() - each Minion caches its own HalfExtents instead.
+        foreach (Minion minion in Minion.Active)
+        {
+            if (minion == null) continue;
+            candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
+                candidatePos, selfHalfExtents,
+                minion.transform.position, minion.HalfExtents,
+                out bool overlappingMinion);
+            if (overlappingMinion) minion.ApplyContactDamage(gameObject);
+        }
+
         return candidatePos;
     }
 

@@ -2446,3 +2446,142 @@ clicking a teammate's ability button and watching for dodge jukes.
   paused unit-style tests already done) is still outstanding — see
   "Verified live" above.
 - Main Menu / Lobby scenes — still not built.
+
+## Session 24 — Minions Around the Boss
+
+The next item in "Player-vs-boss dynamics" per `roadmap.md`, and the last
+thing Session 23 flagged as up next: smaller enemy ships flanking the boss,
+a second distinct threat type layered on top of its own attacks.
+
+### Design decisions (asked directly, not assumed)
+
+Three real gameplay-feel questions were checked with the user before
+writing any code, rather than guessed: minions aim at `boss.CurrentTarget`
+(not straight down like wave `Enemy.cs`) so they're tied to the boss's
+existing aggro system for free; minions spawn from the very start of the
+fight at a small cap (2 concurrent), not gated to Phase 2 as an "adds"
+escalation; and minions are solid, physically blocking ships and dealing
+contact damage the same way the boss's own body already does, not just a
+bullet-only pass-through hazard like wave `Enemy.cs`.
+
+### New scripts, modeled on Enemy.cs + Boss.cs conventions
+
+`Minion.cs` and `MinionSpawner.cs` are new
+(`Assets/Scripts/Minion.cs`/`MinionSpawner.cs`). Positioning tracks the
+boss's live, erratically-dashing transform (`boss.transform.position +`
+a fixed per-minion flank offset `+` a small independent sine wobble) rather
+than free sine-drift — the closest existing precedent for "position
+relative to the boss's moving transform" was `AIController`'s
+`BiasedPositionDirection()`/`AttackerPositionDirection()`, but those steer
+*toward* a target point over time; a minion instead snaps directly onto its
+anchor every frame, since it has no viewport-clamp or ally-avoidance
+concerns a player ship does. `MinionSpawner` lives as a component **on the
+`Boss` GameObject itself** (not a separately-referenced object like
+`EnemySpawner`) specifically so it gets a free `GetComponent<Boss>()` in
+`Awake()` with no Inspector wiring, and is destroyed automatically the
+instant `Boss.Die()` destroys the GameObject — no explicit spawner cleanup
+needed. It also calls `boss.OnDefeated.AddListener(DestroyAllMinions)`
+directly in code in its own `Awake()` (not an Inspector wire-up, since it
+already holds a direct `boss` reference) so no stray minions survive into
+the Victory panel.
+
+Two small, required changes to existing scripts: `Bullet.cs`'s
+player-bullet-vs-`Enemy`-tag branch gained a third check
+(`GetComponent<Minion>()`) alongside its existing `Enemy`/`Boss` checks — a
+`Minion` isn't literally an `Enemy` component, so without this player fire
+would pass straight through a minion with no effect.
+`PlayerController.ResolveShipCollisions()` gained a loop over a new
+`Minion.Active` static registry (mirroring `Bullet.Active`'s pattern)
+after its existing ally/boss checks — minions are spawned/destroyed at
+runtime, unlike the hand-placed ships/boss `ResolveShipCollisions` already
+had cached colliders for, so each `Minion` caches its own `HalfExtents`
+once in its own `Awake()` instead.
+
+### Bug found during verification: fractional damage silently rounds to zero
+
+`Minion`'s first-pass defaults were `bulletDamage = 0.4f` (intentionally
+lower than the boss's own `bulletDamage`, for a "lesser threat" feel) and
+`contactDamage = 0.5f`. Both are dead on arrival: `PlayerHealth.TakeDamage`
+takes an `int`, and every caller rounds via `Mathf.RoundToInt` first — `0.4`
+rounds down to `0`, and `0.5` rounds to the nearest *even* integer (Unity's
+`Mathf.RoundToInt` uses round-half-to-even, not round-half-up), which is
+also `0`. So at these defaults, minions would have dealt **zero** damage to
+players on every single hit, silently, no error, no console warning. Every
+other player-facing damage value already in the codebase
+(`Boss.bulletDamage`, `Enemy`'s default bullet damage, the contact/shockwave
+multipliers) happens to already be a whole number, so this specific footgun
+had never surfaced before. Caught live, not by code review:
+`ApplyContactDamage` produced no shield/health change at all when called
+directly against the old defaults; after switching both values to whole
+numbers (`1`), the identical call correctly dropped shield by 1 and was
+correctly blocked by its own cooldown on an immediate second call. Since the
+`Minion.prefab` had already been created from the script's old defaults,
+fixing the script alone wasn't enough — same
+"script-default-doesn't-retroactively-update-an-already-serialized-value"
+gotcha documented repeatedly in earlier sessions — the prefab's serialized
+`Minion` component values needed an explicit `manage_prefabs
+modify_contents` call too.
+
+### Verification quirks hit this session
+
+Entering Play mode while the Editor window is unfocused left `editor_state`
+reporting `play_mode.is_changing: true` and a slightly-later
+`last_domain_reload_after_unix_ms` than expected for a stretch of calls,
+during which `Minion.Active.Count` briefly read `0` even though
+`GameObject.FindObjectsByType<Minion>()` found a real, correctly-initialized
+instance — a genuine static-field reset from an extra domain reload
+overlapping the play-mode transition, not a real bug in the registry (the
+instance's own serialized fields, like `health`, survived intact; only the
+non-serialized static `List<Minion>` was wiped). Exiting and re-entering
+Play mode cleanly (confirmed via `is_changing: false` before proceeding)
+made `Minion.Active` and `FindObjectsByType` agree again for the rest of
+the session. Separately, two stationary test bullets spawned exactly
+on top of a minion (`speed = 0`, to isolate the trigger check from bullet
+travel) vanished within a frame or two without ever registering a hit —
+not a collision bug, but their own `lifeTime`-based `Destroy(gameObject,
+3f)` safety cleanup firing, because a single forced "frame step" in this
+idle/unfocused Editor can carry a real-world-clock-sized `Time.deltaTime`
+(the same large-first-frame-delta quirk Session 6 first documented) large
+enough to blow past the 3-second lifetime in one tick. Worked around by
+testing `TakeDamage`/`ApplyContactDamage`/`ResolveShipCollisions` directly
+rather than fighting bullet-travel timing, and by using the boss's own
+already-proven contact-damage path as a control to confirm the *environment*
+was the variable, not the new code — the control produced a real, correct
+shield drop under the exact same conditions where a naive minion-only
+reading looked broken.
+
+### Verified
+
+All via the Unity MCP bridge, live in Play mode: minion position tracks the
+boss through a dash exactly (`boss.position + flankOffset`, wobble within
+`wobbleAmplitude`); minion fire direction matches the vector to
+`boss.CurrentTarget` exactly, checked for two different minions against the
+same target; `TakeDamage` reduces health and destroys at 0, and
+`MinionSpawner` immediately refills the freed slot on its next `Update()`
+(cap never exceeded 2 across repeated forced spawns, including through a
+kill/respawn cycle); `ApplyContactDamage` applies once and is blocked by its
+own cooldown on an immediate second call (confirmed post-fix, shield 5→4);
+`ResolveShipCollisions` (invoked directly, and confirmed via the raw
+`ShipCollisionUtil.ResolveBoxOverlap` math independently) correctly resolves
+a ship/minion overlap using `Minion.Active`; invoking `Boss.OnDefeated`
+destroys every live minion immediately (`Minion.Active.Count` → 0, no stray
+minions visible alongside the Victory panel). No console errors or warnings
+at any point.
+
+### Docs
+
+`roadmap.md`'s "Minions around the boss" moved from "Planned" to
+"Implemented"; `boss.md` lost its "Minions around the boss" line from "Not
+yet built" and gained a full "Minion.cs / MinionSpawner.cs" section plus a
+`MinionSpawner.cs` row in the Boss scene-wiring table; `current-state.md`
+gained a new "What's playable" bullet.
+
+### Still open
+
+- No `BossPanel`/HUD minion-count display — deliberately deferred, matching
+  the project's "prove fun before polish" pattern.
+- No aggro/threat-table integration for minions — they always aim at the
+  boss's own `CurrentTarget` by design, not tracked as a roadmap gap.
+- Enemy spawn pattern variety — the other item still open under
+  "Player-vs-boss dynamics", not started.
+- Main Menu / Lobby scenes — still not built.
