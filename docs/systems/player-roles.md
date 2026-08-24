@@ -137,6 +137,31 @@ can trigger a CPU teammate's ability directly, through the exact same
 cooldown gate and role-dispatch switch as the human player. The `Trigger*`
 methods stay private.
 
+**Manual teammate-ability triggering from the party frame**: each
+`PartyFrame_N`'s `AbilityText` line (see [hud-layout.md](hud-layout.md))
+doubles as a clickable button — a `Button` component added directly to the
+existing text element (reusing it as its own click surface rather than
+adding a separate button, since it already shows exactly the state a
+manual trigger needs, e.g. `"Taunt: Ready"`) — wired to call that
+teammate's `TryUseAbility()` on click. This is a third caller of the same
+method alongside `AIController`'s auto-retry and the human's own `E`
+binding, so it needed **no changes to `PlayerAbility.cs` itself**. The
+click deliberately bypasses `AIController`'s extra Tank-specific condition
+(`if (boss.CurrentTarget != gameObject)`) — a manual click can force a
+Tank to re-taunt even while it already holds aggro, since the player may
+want to refresh threat deliberately. `PartyFrameUI.Initialize()` hides/
+disables this button on the human's own frame (`isHuman`, threaded in from
+`PartyFrameManager`'s existing `AIController`-presence check) since the
+human already has their own ability input, and drives its `interactable`
+state every `Update()` off the same `CooldownRemaining` the status text
+already reads. Wiring the click listener in code
+(`abilityButton.onClick.AddListener(...)` inside `Initialize()`) is a
+deliberate, narrow exception to this codebase's usual "Inspector
+persistent listeners only" convention (see `GameOverUI.cs`/
+`RoleSelectUI.cs`) — each `PartyFrame` prefab instance only learns which
+ship's `PlayerAbility` it owns at runtime, so there's no concrete target
+to drag into an Inspector slot at prefab-authoring time.
+
 ## Shield stat
 
 A second, health-like pool per role (`PlayerHealth.maxShield`/
@@ -273,5 +298,3 @@ later — so role has to be set *before* any of those run:
   ships fighting alongside `Player` (`Teammate_Tank`/`Teammate_Medic`/
   `Teammate_Support`) are CPU-controlled via `AIController.cs`, not real
   players; see [boss.md](boss.md).
-- Bullet-dodging and manual teammate-ability triggering from the party
-  frame — see [boss.md](boss.md)'s "Not yet built".

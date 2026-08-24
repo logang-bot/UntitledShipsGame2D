@@ -486,6 +486,47 @@ converges Attacker's Y onto the boss's, rather than holding a mid-distance
 stand-off. Shared by Tank's and Medic's positioning too; only matters in
 the "down to one or two teammates" endgame.
 
+### Bullet-dodging
+
+All four AI roles now also react to nearby incoming fire, layered on top of
+(not replacing) their positioning above, via a new private
+`AIController.ComputeDodgeVector()` called once per `Update()` right after
+the role switch computes its positioning direction and before that
+direction is handed to `PlayerController.SetMoveDirection()` — a single
+choke point all four roles already pass through, so this needed no
+per-role changes.
+
+Enumerating live bullets uses a new static `Bullet.Active` registry
+(`List<Bullet>`, populated/depopulated in `Bullet.Awake()`/`OnDestroy()`)
+rather than a per-frame `FindObjectsByType<Bullet>()` scan or a new
+Unity tag — cheaper, and needed no changes to any bullet prefab. `Bullet`
+also gained three public read-only accessors (`Direction`, `Speed`,
+`Owner`) so `AIController` can read a bullet's current straight-line
+heading without new coupling; the underlying fields stay private.
+
+For each bullet in `Bullet.Active` with `Owner == "Enemy"`, within
+`dodgeDetectionRadius` (3): projects the teammate's position onto the
+bullet's current velocity (`Direction * Speed`) to find the time and point
+of closest approach, clamped to `dodgeLookaheadTime` (0.6s) — this is
+re-evaluated fresh every frame, so a homing guided missile's *current*
+heading is still handled reasonably without full intercept prediction. If
+the resulting miss distance is within `dodgeMissDistance` (0.6), the
+bullet is "imminent": the teammate steers perpendicular to the bullet's
+travel direction (a sideways step out of its lane, not a radial push away
+from the bullet's position), on whichever side increases its own distance
+from it. Multiple imminent bullets' escape vectors sum and normalize.
+
+The result is blended **additively** into the role's own positioning
+direction (`moveDirection + dodge * dodgeWeight`, both normalized), not an
+override — this was a deliberate choice, including for Tank: an outright
+override would occasionally yank Tank out of its guard point at exactly
+the moment it should be standing still and blocking. `dodgeWeight` (1)
+and the three detection numbers above are first-pass placeholders, tuned
+after playtesting like every other stat in this project. The boss's
+proximity shockwave is explicitly out of scope here (it's not a `Bullet`
+instance, so it never enters `Bullet.Active`) — already handled by the
+existing `minDistanceFromBoss` floor.
+
 ## BossPanelUI.cs
 
 **Attached to:** `BossPanel` (child of `HUDCanvas` — see
@@ -547,6 +588,13 @@ going through `PlayerInput`'s input-callback path:
   dispatch inside `OnAbility(InputValue)`. The four `Trigger*` methods
   (`TriggerTaunt`, `TriggerAuraBoost`, `TriggerSpeedBoost`, `TriggerBigShot`)
   stay private.
+
+`TryUseAbility()`'s public, self-cooldown-gated design is also what makes
+manual teammate-ability triggering possible with zero changes to this
+file: a party-frame click just calls the same method a third way,
+alongside `AIController`'s auto-retry and the human's own `E` binding —
+see [player-roles.md](player-roles.md)'s "PlayerAbility.cs" for the UI
+side of this.
 
 `PlayerController.SpawnBullet()` passes `gameObject` into
 `Bullet.Init(..., ownerObject)` so aggro attribution works for player fire
@@ -617,20 +665,6 @@ the end-screen popup is guarded. See
 
 ## Not yet built
 
-- **Bullet-dodging** — AI teammates don't react to nearby bullets, only to
-  their role-zone positioning. Candidate approach: each frame, check for
-  `EnemyBullet`-tagged objects (or bullets owned by `Boss`) within some
-  radius/lane ahead of the teammate and bias `moveInput` away from them.
-- **Manual teammate ability triggering** — the player should be able to
-  force any teammate's ability to fire right now (subject to that
-  teammate's own cooldown), overriding the AI's per-role heuristic for that
-  instant. Mechanic: each `PartyFrame_N`'s ability line/icon
-  (`PartyFrameUI.abilityText`, see [hud-layout.md](hud-layout.md)) becomes
-  a clickable/tappable UI element that calls that teammate's
-  `PlayerAbility.TryUseAbility()` directly — the same public,
-  cooldown-gated method `AIController.cs` already calls and the human
-  `Player`'s own `OnAbility(InputValue)` already wraps. Needs no new
-  ability logic, only a UI-side click/tap handler.
 - **Minions around the boss** — smaller enemy ships flanking the `Boss`; no
   minion script or prefab exists yet.
 - **Local co-op / dynamic player count** — the party is 4 fixed,

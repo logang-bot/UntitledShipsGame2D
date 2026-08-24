@@ -2259,3 +2259,190 @@ are private:
   bullet-dodging/manual triggering and Pattern Barrage are the only items
   left ahead of it in "Player-vs-boss dynamics."
 - Main Menu / Lobby scenes — still not built.
+
+## Session 23 — Bullet-Dodging + Manual Ability Triggering
+
+The roadmap's next "Player-vs-boss dynamics" item, and the last one ahead
+of minions (see Session 22's "Still open"). Two independent features
+scoped together since the roadmap listed them as one item. Planned in a
+dedicated research + design pass (three parallel Explore agents covering
+the movement/bullet code, the ability/UI code, and the project's own
+existing design notes; one Plan agent to turn that into a concrete
+implementation plan) before any code was touched, then implemented and
+verified live via the Unity MCP bridge.
+
+### Manual ability triggering
+
+Implemented first (smaller surface, validated MCP prefab-editing early).
+The project's own design notes (`boss.md`'s old "Not yet built") were
+fairly prescriptive here — a party-frame ability element calling the
+already-public, already-cooldown-gated `PlayerAbility.TryUseAbility()` —
+so this needed no new ability logic at all, only UI wiring.
+
+Rather than adding a separate button element to `PartyFrame.prefab`, a
+`Button` component was added directly to the existing `AbilityText`
+`TextMeshProUGUI` child — it already displays exactly the state a manual
+trigger needs (`"Taunt: Ready"` / `"Taunt: 3.2s"`), and `TextMeshProUGUI`
+implements `Graphic`, so `Button` could use it as its own `targetGraphic`
+with no wrapping `Image`. Done via `manage_prefabs`'s `open_prefab_stage`/
+`save_prefab_stage` (interactive prefab-stage editing, not
+`modify_contents`), since this needed both a component add and an
+object-reference field wire-up (`PartyFrameUI.abilityButton`) on the
+prefab's root — confirmed via `get_hierarchy` and a component-resource
+read that the wiring landed correctly before saving.
+
+`PartyFrameUI.Initialize()`'s signature grew a third parameter
+(`bool isHumanPlayer`) — `PartyFrameManager.Awake()` already computed
+`isHuman` via the existing `GetComponent<AIController>() == null` check
+for the CPU display-name logic, so this was just threading an
+already-computed value through, not new detection logic. The human's own
+frame gets its button `SetActive(false)`; teammate frames get
+`onClick.AddListener(() => playerAbility.TryUseAbility())` — a deliberate,
+narrow exception to this codebase's otherwise-universal "Inspector
+persistent listeners only" convention (confirmed by checking
+`GameOverUI.cs`/`RoleSelectUI.cs`, both wired purely via the Inspector),
+justified because each `PartyFrame` prefab instance only learns which
+ship's `PlayerAbility` it owns at runtime inside `Initialize()` — there's
+no concrete target to drag into an Inspector slot at prefab-authoring
+time. `Update()` gained one line driving `abilityButton.interactable` off
+the same `CooldownRemaining` the status text already reads, so the button
+visibly greys out during cooldown instead of silently no-oping.
+
+The manual click deliberately does **not** replicate `AIController`'s
+extra Tank-specific gate (`if (boss.CurrentTarget != gameObject)`) — it
+calls `TryUseAbility()` directly, so a player can force a Tank to
+re-taunt even while it already holds aggro, on the reasoning that
+refreshing threat deliberately is a legitimate player choice the AI
+heuristic (which only cares about *not* holding aggro) has no way to
+express.
+
+**Verified live**: read back all 4 party frames' `abilityButton` active/
+interactable state and each ship's live `CooldownRemaining` — confirmed
+the human's frame has an inactive button while all 3 CPU frames have
+active ones whose `interactable` tracks cooldown exactly. Invoked a
+ready Tank frame's `onClick` directly and confirmed `PlayerAbility`'s
+cooldown jumped from 0 to the full `tauntCooldown` (5s), proving the
+click really drives `TryUseAbility()` and not just a UI-only state
+change. Reloaded the scene from disk afterward and re-confirmed the
+`abilityButton` wiring persisted (this project's standard prefab-edit
+verification habit since Session 12's `RecordPrefabInstanceProperty
+Modifications()` gotcha).
+
+### Bullet-dodging
+
+`Bullet.cs` gained a static `Active` registry (`List<Bullet>`, populated/
+depopulated in new `Awake()`/`OnDestroy()` methods) and three public
+read-only accessors (`Direction`, `Speed`, `Owner`) over its existing
+private fields — chosen over a per-frame `FindObjectsByType<Bullet>()`
+scan (needless cost across 3 AI teammates × every frame) or adding a new
+Unity tag/layer for `Physics2D.OverlapCircleAll` (more moving parts for
+no real win at this bullet count, ~20 concurrent max during a Spiral
+barrage). No existing bullet-registry or tag mechanism existed anywhere in
+the codebase before this (confirmed via grep before assuming otherwise).
+
+**A first `script_apply_edits` attempt on `Bullet.cs` misplaced the new
+members outside the class** — an `anchor_insert` anchored on the class
+declaration line inserted its text *before* the anchor rather than after,
+landing the new registry/accessors above `public class Bullet :
+MonoBehaviour` entirely, which wouldn't compile. Caught immediately by
+reading the file back rather than trusting the tool's success response;
+fixed with a direct `Edit` (reordering the class declaration back above
+the new members) followed by an explicit `refresh_unity` (`scope:
+scripts`, `compile: request`) — the documented gotcha from Sessions 5/6
+that editing a script file outside the MCP script tools leaves Unity's
+asset database unaware of the change. Confirmed zero compile errors
+afterward. Lesson: `anchor_insert` inserts *before* its anchor match, not
+after — for "insert right after this line" edits, anchor on the
+*following* line instead, or use `insert_method`'s explicit
+`position`/`afterMethodName` for method-level insertions (which needed
+its own fallback — see below).
+
+`AIController.cs` gained a new `[Header("Bullet dodging")]` tunable block
+(`dodgeDetectionRadius` 3, `dodgeLookaheadTime` 0.6s, `dodgeMissDistance`
+0.6, `dodgeWeight` 1 — first-pass placeholders, explicitly confirmed with
+the user to ship as-is and tune after playtesting, same as every other
+stat in this project) and a new private `ComputeDodgeVector()`, called
+once per `Update()` right after the existing per-role switch computes its
+positioning direction and before that direction reaches
+`controller.SetMoveDirection()` — a single choke point all four roles
+already pass through, so no per-role code needed changing.
+`insert_method`'s `position: "after"`/`afterMethodName` failed to locate
+`AttackerPositionDirection` as an anchor (a tool-side brace-matching
+issue, cause not fully diagnosed); switched to `position: "end"` instead,
+which appended the method inside the class cleanly.
+
+**Algorithm** (confirmed with the user in advance: applies to all 4
+roles, including Tank, as an additive blend rather than an override or a
+Tank-specific exemption): for each bullet in `Bullet.Active` with `Owner
+== "Enemy"` within `dodgeDetectionRadius`, projects the teammate's
+position onto the bullet's current velocity (`Direction * Speed`) to find
+the time and point of closest approach (clamped to
+`dodgeLookaheadTime`) — re-evaluated fresh every frame, so a guided
+missile's currently-re-aimed heading is handled reasonably without full
+intercept prediction. If the resulting miss distance is within
+`dodgeMissDistance`, the bullet counts as imminent and the teammate steers
+**perpendicular** to the bullet's travel direction (a sideways step out of
+its lane, not a radial push away from the bullet's current position) —
+this reads as an actual dodge for a fast-moving projectile in a way a
+naive "move directly away from it" wouldn't. Multiple imminent bullets'
+escape vectors sum and normalize. The result blends additively into the
+role's own positioning (`moveDirection + dodge * dodgeWeight`, then
+renormalized) rather than overriding it — deliberately, so Tank doesn't
+abandon its guard point outright the moment a bullet approaches, since
+standing in the way is Tank's entire job. The boss's proximity shockwave
+is out of scope (not a `Bullet` instance, so it never enters
+`Bullet.Active`) — already floored by the existing `minDistanceFromBoss`.
+
+**Verified live**, with `Time.timeScale` forced to `0` during the actual
+test calls to sidestep this project's long-documented "Play mode keeps
+running in real time between tool calls while the Editor window is
+focused" hazard (Sessions 6/7/8/9/10 all hit this; it wiped this
+session's own first live-encounter attempt too — the whole CPU party died
+mid-test before a screenshot could be taken, confirmed by reading back
+`activeSelf`/`CurrentHealth` on all 4 ships, not assumed): called the
+private `ComputeDodgeVector()` on a live Tank teammate via reflection
+across three constructed scenarios — a bullet 1.2 units away heading
+straight at it (returned a nonzero perpendicular vector), a bullet 10
+units away on the same heading (returned `Vector2.zero`, correctly
+rejected by the detection-radius check), and a bullet 2.5 units away
+(inside the radius) but traveling parallel to a line that misses the
+teammate by 2.5 units (also returned `Vector2.zero`, correctly rejected
+by the miss-distance/lane check, not just the radius check) — confirming
+this is a genuine closing-lane dodge, not "flee anything nearby."
+Separately confirmed `Bullet.Active.Count` increments for both
+boss-fired and player-fired bullets (filtering to enemy-owned ones is
+`ComputeDodgeVector()`'s job, not the registry's). A live full-encounter
+screenshot (taken during one of the deliberately-brief unpaused windows)
+showed the fight rendering normally with no visual regressions; a longer
+live qualitative "does it look like dodging, not jitter" observation
+wasn't completed after the real-time hazard repeatedly ended the test
+party — left for the user to eyeball interactively, since this
+environment's idle-tick behavior makes unattended live observation
+unreliable.
+
+### Docs
+
+Both features moved from `roadmap.md`'s "Planned" to "Implemented" as one
+combined entry (they shipped together); `boss.md`'s "Not yet built" lost
+both bullet-dodging and manual-ability-triggering entries and gained a new
+"Bullet-dodging" subsection alongside the existing positioning
+subsections; `player-roles.md`'s "PlayerAbility.cs" section gained a
+"Manual teammate-ability triggering from the party frame" paragraph;
+`hud-layout.md`'s `PartyFrameUI.cs` section's old "planned, not yet
+implemented" note was replaced with the real mechanics; `current-state.md`
+gained a new "What's playable" bullet and a "How to test it" callout for
+clicking a teammate's ability button and watching for dodge jukes.
+
+### Still open
+
+- Minions around the boss — the last remaining item ahead of it in
+  "Player-vs-boss dynamics" is now done; this is next in the roadmap's
+  build order.
+- Dodge tuning numbers (`dodgeDetectionRadius`/`dodgeLookaheadTime`/
+  `dodgeMissDistance`/`dodgeWeight`) are unplaytested placeholders,
+  flagged for a follow-up pass once minions/further encounters give more
+  material to tune against.
+- A full live-encounter visual check of dodging (vs. the controlled,
+  paused unit-style tests already done) is still outstanding — see
+  "Verified live" above.
+- Main Menu / Lobby scenes — still not built.

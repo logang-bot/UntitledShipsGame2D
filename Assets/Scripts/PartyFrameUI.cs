@@ -12,20 +12,25 @@ public class PartyFrameUI : MonoBehaviour
     public TextMeshProUGUI moveSpeedText;
     public TextMeshProUGUI fireRateText;
     public TextMeshProUGUI abilityText;
-    public TextMeshProUGUI nameText;
+    
+    public Button abilityButton;
+public TextMeshProUGUI nameText;
 
     private PlayerHealth playerHealth;
     private PlayerRoleComponent playerRole;
     private PlayerController playerController;
-    private PlayerAbility playerAbility;
+    
+    private bool isHuman;
+private PlayerAbility playerAbility;
     private bool isDead;
 
-public void Initialize(GameObject player, string displayName)
+public void Initialize(GameObject player, string displayName, bool isHumanPlayer)
     {
         playerHealth = player.GetComponent<PlayerHealth>();
         playerRole = player.GetComponent<PlayerRoleComponent>();
         playerController = player.GetComponent<PlayerController>();
         playerAbility = player.GetComponent<PlayerAbility>();
+        isHuman = isHumanPlayer;
 
         if (nameText != null) nameText.text = displayName;
         roleText.text = "Role: " + playerRole.role;
@@ -34,6 +39,23 @@ public void Initialize(GameObject player, string displayName)
         healthBarFill.color = tint;
         roleText.color = tint;
         avatarImage.color = tint;
+
+        // Manual ability triggering is AI-teammate-only - the human already
+        // has E-bound OnAbility(InputValue) for their own ability. The
+        // playerAbility reference is only resolved here at runtime (each
+        // PartyFrame prefab instance is generic until bound to a ship), so
+        // this can't be an Inspector persistent listener - the one
+        // deliberate exception to this codebase's "Inspector listeners
+        // only" convention (see GameOverUI.cs/RoleSelectUI.cs).
+        if (abilityButton != null)
+        {
+            abilityButton.gameObject.SetActive(!isHuman);
+            if (!isHuman)
+            {
+                abilityButton.onClick.RemoveAllListeners();
+                abilityButton.onClick.AddListener(() => playerAbility.TryUseAbility());
+            }
+        }
     }
 
     public void OnPlayerDied()
@@ -43,7 +65,7 @@ public void Initialize(GameObject player, string displayName)
         shieldBarFill.color = Color.gray;
     }
 
-    void Update()
+void Update()
     {
         if (playerHealth == null) return;
         if (isDead) return;
@@ -54,5 +76,6 @@ public void Initialize(GameObject player, string displayName)
         moveSpeedText.text = $"Move Speed: {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
         fireRateText.text = $"Fire Rate: {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
         abilityText.text = $"{playerAbility.AbilityName}: {playerAbility.StatusText}";
+        if (abilityButton != null && !isHuman) abilityButton.interactable = playerAbility.CooldownRemaining <= 0f;
     }
 }

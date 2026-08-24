@@ -54,6 +54,15 @@ public class AIController : MonoBehaviour
     // touching the boss's body, so this floor doesn't defeat that design.
     public float minDistanceFromBoss = 1.9f;
 
+    [Header("Bullet dodging")]
+    // Applied to every role uniformly, blended additively with (not
+    // overriding) whatever positioning direction the role switch below
+    // already computed - see ComputeDodgeVector().
+    public float dodgeDetectionRadius = 3f;
+    public float dodgeLookaheadTime = 0.6f;
+    public float dodgeMissDistance = 0.6f;
+    public float dodgeWeight = 1f;
+
     private PlayerController controller;
     private PlayerAbility ability;
     private PlayerRoleComponent role;
@@ -69,7 +78,7 @@ public class AIController : MonoBehaviour
         cam = Camera.main;
     }
 
-    void Update()
+void Update()
     {
         Vector2 moveDirection;
         switch (role.role)
@@ -96,6 +105,14 @@ public class AIController : MonoBehaviour
                 moveDirection = new Vector2(Mathf.Sin(Time.time * weaveFrequency), 0f) * weaveSpeed;
                 break;
         }
+
+        Vector2 dodge = ComputeDodgeVector();
+        if (dodge != Vector2.zero)
+        {
+            Vector2 blended = moveDirection + dodge * dodgeWeight;
+            moveDirection = blended.sqrMagnitude > 0.0001f ? blended.normalized : dodge;
+        }
+
         controller.SetMoveDirection(moveDirection);
         controller.SetFiring(true);
 
@@ -261,5 +278,52 @@ public class AIController : MonoBehaviour
 
         Vector2 toTarget = targetPoint - (Vector2)transform.position;
         return toTarget.magnitude < attackerDeadzone ? Vector2.zero : toTarget.normalized;
+    }
+
+
+
+    // Steers away from any enemy bullet on an imminent collision course.
+    // Iterates Bullet.Active (populated/depopulated via Bullet's own
+    // Awake/OnDestroy) rather than scanning the scene each frame. For each
+    // enemy bullet within dodgeDetectionRadius, projects this teammate's
+    // position onto the bullet's current straight-line velocity to find the
+    // time/point of closest approach (re-evaluated fresh every frame, so a
+    // re-aiming homing bullet's current heading is still handled reasonably
+    // without full intercept prediction) - if that miss distance is within
+    // dodgeMissDistance, steers perpendicular to the bullet's travel
+    // direction (a sideways step out of its lane, not a radial push away
+    // from its current position) on whichever side increases this
+    // teammate's distance from it. Returns Vector2.zero if nothing is
+    // imminent. Blended additively with role positioning in Update(), not
+    // an override, so e.g. Tank doesn't abandon a block outright.
+    private Vector2 ComputeDodgeVector()
+    {
+        Vector2 selfPos = transform.position;
+        Vector2 escape = Vector2.zero;
+
+        foreach (Bullet bullet in Bullet.Active)
+        {
+            if (bullet == null || bullet.Owner != "Enemy") continue;
+
+            Vector2 bulletPos = bullet.transform.position;
+            if (Vector2.Distance(selfPos, bulletPos) > dodgeDetectionRadius) continue;
+
+            Vector2 vel = bullet.Direction * bullet.Speed;
+            if (vel.sqrMagnitude < 0.0001f) continue;
+
+            Vector2 toSelf = selfPos - bulletPos;
+            float t = Mathf.Clamp(Vector2.Dot(toSelf, vel) / vel.sqrMagnitude, 0f, dodgeLookaheadTime);
+            if (t < 0f) continue;
+
+            Vector2 closestPoint = bulletPos + vel * t;
+            float missDistance = Vector2.Distance(selfPos, closestPoint);
+            if (missDistance > dodgeMissDistance) continue;
+
+            Vector2 perp = new Vector2(-vel.y, vel.x).normalized;
+            if (Vector2.Dot(perp, toSelf) < 0f) perp = -perp;
+            escape += perp;
+        }
+
+        return escape.sqrMagnitude > 0.0001f ? escape.normalized : Vector2.zero;
     }
 }

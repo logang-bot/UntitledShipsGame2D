@@ -123,6 +123,17 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   simulation). Touching the boss still deals contact damage — detection now
   comes from this same overlap check instead of a physics trigger callback.
   See [systems/boss.md](systems/boss.md)'s "Solid-body collision".
+- **Bullet-dodging + manual ability triggering** — the 3 AI teammates now
+  steer away from incoming enemy fire that's on an imminent collision
+  course (a sideways step out of the bullet's path, blended into whatever
+  role-positioning they're already doing rather than abandoning it), on
+  top of the boss-avoidance floor and role positioning they already had.
+  Separately, the human can now click a teammate's ability status line
+  (bottom of its party frame) to force that teammate's ability to fire
+  right now, subject to its own cooldown — the human's own frame has no
+  such button, since **E** already does this for the human. See
+  [systems/boss.md](systems/boss.md)'s "Bullet-dodging" and
+  [systems/player-roles.md](systems/player-roles.md)'s "PlayerAbility.cs".
 
 ## What's NOT there yet
 
@@ -137,9 +148,6 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - No local co-op / dynamic player count — the party is 4 fixed, hand-placed
   scene objects (`Player` + 3 `Teammate_*`), not a runtime spawner that
   reacts to however many humans are actually playing.
-- No bullet-dodging for AI teammates. Manually triggering a teammate's
-  ability from the party frame is also designed but not built. See
-  [systems/boss.md](systems/boss.md)'s "Not yet built".
 - No minions around the boss yet — no minion script/prefab exists.
 - No real art — the avatar slot and every ship are placeholder colored
   squares, no audio.
@@ -202,7 +210,14 @@ real networking last, then art/audio.
    4 party frames (you + 3 teammates), each with a live avatar, name
    ("Player 1" for you, "CPU 1"/"CPU 2"/"CPU 3" for the teammates),
    role/HP/shield-bar/move-speed/fire-rate/ability text, tinted to match
-   the role.
+   the role. Each teammate's ability line is clickable — click it (e.g. on
+   the Tank's frame) to force that teammate's ability to fire right now,
+   subject to its own cooldown (it visibly greys out while on cooldown);
+   your own frame has no such button since **E** already covers you. Watch
+   a teammate near the boss during a Pattern Barrage or a regular shot and
+   you'll see it occasionally juke sideways out of a bullet's path without
+   abandoning its role positioning (Tank still roughly holds its guard
+   point, Medic still hangs back, etc.).
 6. At 0 HP, **only the human `Player`** triggers the "Game Over" overlay and
    ends the test — a teammate dying just grays out its own party frame and
    it keeps fighting inactive (if the remaining teammates go on to defeat

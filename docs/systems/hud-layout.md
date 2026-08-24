@@ -54,8 +54,8 @@ Key public fields: `aspectFitter`, `leftSidebar`, `rightSidebar`. Note:
 **Attached to:** `PartyFrame.prefab` (see Prefabs below) — reusable, not
 scene-specific.
 **Requires:** `public void Initialize(GameObject player, string
-displayName)` to be called before it does anything useful — see
-`PartyFrameManager.cs` below. Also holds Inspector-dragged references to
+displayName, bool isHumanPlayer)` to be called before it does anything
+useful — see `PartyFrameManager.cs` below. Also holds Inspector-dragged references to
 the frame's own children: avatar `Image`, health bar `Image`, shield bar
 `Image` (`ShieldBar`), and six `TextMeshProUGUI` children (name, role,
 health, move speed, fire rate, ability) — these bake into the prefab fine
@@ -64,11 +64,11 @@ since they're internal to it.
 `playerHealth`/`playerRole`/`playerController`/`playerAbility` are
 **private**, set only by `Initialize()` — not Inspector fields. A prefab
 asset can't hold a serialized reference to a specific scene's `Player`
-object, so `Initialize(GameObject player, string displayName)` does the
-four `GetComponent<>()` lookups, then runs one-time setup: `nameText`'s
-text is set to the passed-in `displayName` (`PartyFrameManager.cs` decides
-what that string is — see below, `PartyFrameUI` itself has no concept of
-human-vs-AI), role text set to `"Role: " + PlayerRole`, and tints
+object, so `Initialize(GameObject player, string displayName, bool
+isHumanPlayer)` does the four `GetComponent<>()` lookups, then runs
+one-time setup: `nameText`'s text is set to the passed-in `displayName`
+(`PartyFrameManager.cs` decides what that string is — see below), role
+text set to `"Role: " + PlayerRole`, and tints
 avatar/health-bar/role-text to `Stats.tintColor`, matching the ship
 sprite's tint — `shieldBarFill` is deliberately **not** tinted, always
 shield-blue.
@@ -92,16 +92,25 @@ exist yet.
 
 Key public fields: `healthBarFill`, `shieldBarFill`, `avatarImage`,
 `nameText`, `roleText`, `healthText`, `moveSpeedText`, `fireRateText`,
-`abilityText`. Key public method: `Initialize(GameObject, string)`.
+`abilityText`, `abilityButton`. Key public method: `Initialize(GameObject,
+string, bool)`.
 
-**Planned, not yet implemented** (see [boss.md](boss.md)'s "Not yet
-built"): `abilityText` becomes a clickable/tappable UI element that calls
-the bound player's `PlayerAbility.TryUseAbility()` directly — the same
-public, cooldown-gated method `AIController.cs` and the human `Player`'s
-own `OnAbility(InputValue)` already use (see
-[player-roles.md](player-roles.md)). Click and tap both fire Unity UI's
-standard pointer-click event, so this needs no separate PC/mobile control
-scheme.
+**Manual ability triggering**: `abilityText`'s GameObject also carries a
+`Button` component (`abilityButton`) — the text doubles as its own click
+surface rather than a separate button element, since it already shows
+exactly the state a trigger needs (e.g. `"Taunt: Ready"`). `Initialize()`
+hides/disables this button on the human's own frame (`isHumanPlayer`,
+computed by `PartyFrameManager.cs` from the same `AIController`-presence
+check it already used for the CPU display name) and, for teammate frames,
+wires its `onClick` to that ship's `PlayerAbility.TryUseAbility()` — the
+same public, cooldown-gated method `AIController.cs`'s auto-retry and the
+human `Player`'s own `OnAbility(InputValue)` already call. `Update()`
+additionally drives `abilityButton.interactable` off `CooldownRemaining`
+each frame, so it visibly greys out during cooldown rather than silently
+no-oping on click. See [player-roles.md](player-roles.md)'s
+"PlayerAbility.cs" for the full mechanics writeup, including why the
+`onClick` wiring happens in code rather than as an Inspector persistent
+listener.
 
 ## PartyFrameManager.cs
 
@@ -126,9 +135,10 @@ so this runs before anything could observe a half-initialized frame.
 Not a real runtime spawner — the 4 slots are fixed, hand-wired Inspector
 references, not a loop that reacts to however many players/teammates
 actually exist. `PartyFrameUI.cs` itself needs no changes to support a
-different player count, since `Initialize(GameObject, string)` only does
-generic `GetComponent<>()` lookups (plus setting the passed-in display
-name) that work on any player-shaped GameObject, human or AI-controlled —
+different player count, since `Initialize(GameObject, string, bool)` only
+does generic `GetComponent<>()` lookups (plus setting the passed-in
+display name and human/AI flag) that work on any player-shaped
+GameObject, human or AI-controlled —
 a "loop over connected players and `Instantiate()`s `PartyFrame.prefab`
 per player" version is the natural extension once local co-op (a variable
 player count) exists; that version would need its own human-vs-AI naming
@@ -224,6 +234,3 @@ one-off focus.
   to vary at runtime (local co-op, or a different minion/teammate count).
 - Avatar is an untinted-sprite placeholder box (tinted to role color) — no
   ship art exists yet.
-- Click/tap-to-trigger-ability on `abilityText` is designed but not
-  implemented — see the `PartyFrameUI.cs` section above and
-  [boss.md](boss.md)'s "Not yet built".

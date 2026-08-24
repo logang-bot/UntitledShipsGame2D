@@ -1,7 +1,20 @@
+
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    // AI teammates read this to enumerate live enemy bullets for dodging
+    // (AIController.ComputeDodgeVector()) without a per-frame scene scan.
+    public static readonly List<Bullet> Active = new List<Bullet>();
+
+    public Vector2 Direction => direction;
+    public float Speed => speed;
+    public string Owner => owner;
+
+    void Awake() { Active.Add(this); }
+    void OnDestroy() { Active.Remove(this); }
+
     private Vector2 direction;
     private float speed;
     

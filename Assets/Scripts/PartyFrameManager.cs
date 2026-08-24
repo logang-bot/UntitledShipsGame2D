@@ -17,7 +17,7 @@ void Awake()
             // signal docs/systems/boss.md already uses for this distinction).
             bool isHuman = players[i].GetComponent<AIController>() == null;
             string displayName = isHuman ? "Player 1" : "CPU " + (++cpuIndex);
-            partyFrames[i].Initialize(players[i], displayName);
+            partyFrames[i].Initialize(players[i], displayName, isHuman);
         }
     }
 }

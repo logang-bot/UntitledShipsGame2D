@@ -268,6 +268,22 @@ reference docs live under `systems/`.
   target, and `BossPanelUI`'s new warning/cooldown text tracks live state.
   See `systems/boss.md`'s "Pattern Barrage".
 
+- **Bullet-dodging + manual ability triggering** — the two halves of this
+  roadmap item shipped together. AI teammates now steer away from
+  imminent enemy fire (a new `AIController.ComputeDodgeVector()`,
+  blended additively into whatever positioning direction their role
+  already computed, not an override) using a new `Bullet.Active` static
+  registry and three new public read-only accessors
+  (`Direction`/`Speed`/`Owner`) rather than a per-frame scene scan or a
+  new Unity tag. Separately, each `PartyFrame_N`'s ability status line
+  (`AbilityText`) now doubles as a clickable button calling that
+  teammate's `PlayerAbility.TryUseAbility()` directly — hidden on the
+  human's own frame, interactable state driven by the same
+  `CooldownRemaining` the status text already reads. Neither half needed
+  any change to `PlayerAbility.cs`'s ability logic itself. See
+  `systems/boss.md`'s "Bullet-dodging" and `systems/player-roles.md`'s
+  "PlayerAbility.cs" (manual triggering) for the full writeups.
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -282,11 +298,6 @@ reference docs live under `systems/`.
 
 ### Player-vs-boss dynamics (CPU AI first)
 
-- **Bullet-dodging / manual ability triggering** — all four AI teammates
-  now have role-differentiated positioning (see "Implemented" above), but
-  still have zero bullet-awareness, and there's no way to manually fire a
-  teammate's ability from the party frame yet — both are designed, not
-  built. See `systems/boss.md`'s "Not yet built".
 - **Minions around the boss** — smaller enemy ships flanking the `Boss`,
   motivated the ship-shrink above; not yet designed or built (no minion
   script/prefab exists). Do this **after** the item above (and after Pattern
