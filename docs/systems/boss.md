@@ -638,17 +638,18 @@ self-destruct) rather than a scaled-down `Boss.cs`:
   aggro system for free: Tank taunt redirects minion fire too, with no
   minion-side code needed.
 - **Health/damage** — `public void TakeDamage(float amount)`, round-to-int
-  against an `int health` (2), `Destroy(gameObject)` at ≤0 — identical shape
-  to `Enemy.cs`. `Bullet.cs`'s player-bullet-vs-`Enemy`-tag branch gained a
-  third check (alongside its existing `Enemy`/`Boss` checks):
-  `other.GetComponent<Minion>()` → `TakeDamage(damage)`. Required since a
-  `Minion` isn't literally an `Enemy` component, so without this a player
-  bullet would pass through a minion with no effect.
-- **Contact damage** — `public void ApplyContactDamage(GameObject ship)`,
-  same cooldown-gated shape as `Boss.ApplyContactDamage` (its own private
-  `Dictionary<GameObject, float>` of last-hit times, `contactDamageCooldown`
-  1s), but a smaller `contactDamage` (1) than the boss's own effective
-  contact damage (2) — a lesser hazard than the boss itself.
+  against an `int health` (2), routes into a shared private `Die()` at ≤0 —
+  identical shape to `Enemy.cs` except for that indirection (see "Kamikaze
+  contact + Explosive minions" below for why). `Bullet.cs`'s player-bullet-
+  vs-`Enemy`-tag branch gained a third check (alongside its existing
+  `Enemy`/`Boss` checks): `other.GetComponent<Minion>()` → `TakeDamage(damage)`.
+  Required since a `Minion` isn't literally an `Enemy` component, so without
+  this a player bullet would pass through a minion with no effect.
+- **Contact damage** — `public void ApplyContactDamage(GameObject ship)`
+  deals `contactDamage` (1, a lesser hazard than the boss's own effective
+  contact damage of 2) once, then the minion dies (see below) — no repeat-hit
+  cooldown to track, unlike `Boss.ApplyContactDamage`, since there's no
+  second hit to gate.
 - **Bullets** — reuses `Bullet.cs`/`EnemyBullet.prefab` as-is: a private
   `SpawnBullet(Vector2 dir)` instantiates `bulletPrefab`, sets `.damage`,
   calls `.Init(dir, bulletSpeed, "Enemy")`. This alone makes minion bullets
@@ -664,6 +665,50 @@ self-destruct) rather than a scaled-down `Boss.cs`:
   `HalfExtents` once in `Awake()` from its own `BoxCollider2D`, since (unlike
   the ally/boss colliders `PlayerController` caches once in `Start()`)
   minion colliders can't be cached ahead of time.
+
+**Kamikaze contact + Explosive minions**: touching a minion now costs the
+minion its life, not just a repeatable chip-damage tax on the ship. A private
+`Die()` is the single funnel both death paths (`TakeDamage` from a player
+bullet, `ApplyContactDamage` from ship contact) route through, guarded by a
+private `bool isDead` — `Object.Destroy()` is deferred to end-of-frame, so
+without the guard a minion hit by a bullet and touched by a ship in the same
+physics step could double-fire its death logic before it actually
+disappears. A new `MinionType` enum (`Standard`/`Explosive`) on `type`
+(public field, set via a new `Init(Boss, Vector2, MinionType)` overload
+parameter — has to flow in through `Init()` rather than being set directly
+post-`Instantiate`, since `Awake()`, which needs it for the tint below,
+already ran by then) decides what `Die()` does next:
+
+- **Standard** — same as before this pass, just now single-hit: dies
+  immediately with no further effect, whether killed by a bullet or by
+  touching a ship.
+- **Explosive** — `Die()` also calls a new `SpawnFragments()`: an
+  evenly-spaced ring of `fragmentCount` (8) more `Bullet` instances launched
+  outward from the minion's position, random start-offset angle, reusing
+  `Boss.FireRing()`'s exact idiom (`step = 360 / fragmentCount`,
+  `Quaternion.Euler(0, 0, angle) * Vector2.up` per direction). Each fragment
+  is `Init(dir, fragmentSpeed, "Enemy")` with `damage = fragmentDamage` (1 —
+  same whole-number constraint as `bulletDamage`/`contactDamage` below) — an
+  ordinary enemy-owned `Bullet`, so `Bullet.cs`'s existing enemy-bullet-vs-
+  `Player` routing needed zero changes to make fragments hurt ships,
+  including the one that just killed the minion. Fires on **any** death, not
+  just kamikaze contact — killing an Explosive minion with a well-placed
+  bullet from a distance is exactly as dangerous as letting it touch you, by
+  design, so players can't just snipe them safely. `fragmentPrefab` is
+  optional and falls back to the minion's own `bulletPrefab` if left
+  unassigned, so no dedicated prefab is required to use this.
+
+An Explosive minion is visually distinct the instant it spawns: `Init()`
+tints its `SpriteRenderer` to `explosiveTintColor` (orange, `(1, 0.45,
+0.1)`) — consistent with this project's standing rule of always giving a new
+hazard a visible tell (shockwave ring, aura ring, party-buff ring) rather
+than a mechanic with no on-screen cue.
+
+`MinionSpawner` decides the mix: a new `[Range(0,1)] explosiveMinionChance`
+(0.3, tunable placeholder like every other balance value in this project) is
+rolled independently on every `SpawnMinion()` call, so which of the (up to 2)
+concurrent minions are Explosive varies spawn to spawn rather than being
+pinned to a fixed flank slot.
 
 **Solid-body collision**: minions physically block ships, same as the boss
 does (see "Solid-body collision (ships + boss)" above).
@@ -692,11 +737,27 @@ through a dash exactly (`boss.position + flankOffset`, wobble within
 `boss.CurrentTarget` exactly for two different minions/targets; `TakeDamage`
 reduces health and destroys at 0, and `MinionSpawner` immediately refills
 the freed slot on its next `Update()` (cap never exceeded 2 across repeated
-forced spawns); `ApplyContactDamage` applies once and is blocked by its own
-cooldown on an immediate second call; `ResolveShipCollisions` (invoked
-directly) correctly resolves a ship/minion overlap using `Minion.Active`;
-invoking `Boss.OnDefeated` destroys every live minion immediately
+forced spawns); `ResolveShipCollisions` (invoked directly) correctly
+resolves a ship/minion overlap using `Minion.Active`; invoking
+`Boss.OnDefeated` destroys every live minion immediately
 (`Minion.Active.Count` → 0).
+
+**Kamikaze + Explosive verified live**, both death paths, both types: a
+Standard minion's `ApplyContactDamage` dealt its shield/health hit exactly
+once and a second immediate call on the same (not-yet-destroyed, per the
+end-of-frame `Destroy()` deferral) instance was a confirmed no-op
+(`isDead` guard held) with zero fragments spawned either way; an Explosive
+minion killed via `ApplyContactDamage` **and** a separate one killed via
+`TakeDamage` both spawned exactly `fragmentCount` (8) new `Bullet`s, all
+`Owner == "Enemy"` and `damage == fragmentDamage`; a Standard minion killed
+via `TakeDamage` spawned zero. Confirmed the tint (`SpriteRenderer.color`)
+matched `explosiveTintColor` exactly on an Explosive-`Init()`'d minion. No
+console errors or warnings throughout. (One incidental finding during this
+pass, not a bug: `GameObject.Find` only searches active objects, and the
+unattended human `Player` had been deactivated by ongoing boss fire between
+tool calls — worked around by reactivating/healing all 4 ships via
+`FindObjectsByType<PlayerHealth>(FindObjectsInactive.Include, ...)` before
+testing, not by changing any game code.)
 
 ## Scene wiring
 
@@ -713,7 +774,7 @@ off-screen).
 | --------------- | ----------------------------------------------------------------------- |
 | Transform       | position (0, 4.2, 0), scale (1.6, 1.6, 1) — not shrunk with the ships below |
 | **Boss.cs**     | `maxHealth`: 90; `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `enemySpawner`: `Spawner`; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` + `VictoryPanel/VictoryUI.Show()` |
-| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2 |
+| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2; `explosiveMinionChance`: 0.3 |
 
 ### Teammate_Tank / Teammate_Medic / Teammate_Support
 

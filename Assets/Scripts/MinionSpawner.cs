@@ -13,6 +13,9 @@ public class MinionSpawner : MonoBehaviour
     public int maxConcurrentMinions = 2;
     public float spawnInterval = 6f;
     public float spawnRadius = 2f;
+    // Placeholder/tunable like every other balance value in this project -
+    // rolled independently per spawn, so the mix isn't fixed to a slot.
+    [Range(0f, 1f)] public float explosiveMinionChance = 0.3f;
 
     private Boss boss;
     private float nextSpawnTime;
@@ -41,7 +44,11 @@ public class MinionSpawner : MonoBehaviour
 
         GameObject minionObj = Instantiate(minionPrefab, (Vector2)boss.transform.position + offset, Quaternion.identity);
         Minion minion = minionObj.GetComponent<Minion>();
-        if (minion != null) minion.Init(boss, offset);
+        if (minion != null)
+        {
+            Minion.MinionType type = Random.value < explosiveMinionChance ? Minion.MinionType.Explosive : Minion.MinionType.Standard;
+            minion.Init(boss, offset, type);
+        }
     }
 
     // Wired to Boss.OnDefeated in Awake - no stray minions survive into the

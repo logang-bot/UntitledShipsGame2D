@@ -2130,3 +2130,124 @@ reactivated and the scene confirmed clean (`isDirty: false`) afterward.
 - Scene scaffolding (Main Menu / Lobby) and Nakama networking — next up per
   the roadmap's build order, now that "Player-vs-boss dynamics" is fully
   implemented.
+
+## Session 26 — Minion Kamikaze Contact + Explosive Minion Type
+
+User-requested follow-up boss-combat tuning, chosen over moving on to scene
+scaffolding/networking: minions (Session 24) had zero real risk/reward for
+the player — touching one just cost cooldown-gated chip damage with no
+consequence to the minion itself, so a ship could tank hits from it for
+free indefinitely. Two changes requested together: make contact damage
+"kamikaze" (cost the minion its life), and add a new minion type that
+explodes into damaging fragments on death.
+
+### Design decisions, confirmed upfront
+
+Three open questions, resolved with the user before writing code:
+
+- **Kamikaze scope**: applies to **every** minion, not just a new type —
+  the existing cooldown-gated repeat-contact behavior is gone entirely.
+  Touching a ship deals `contactDamage` once, then the minion dies
+  immediately.
+- **Explosion trigger**: the new Explosive type's fragment burst fires on
+  **any** death — killed by a player bullet, not just by touching a ship —
+  so players can't safely snipe one from a distance either.
+- **Spawn mix**: `MinionSpawner` rolls an independent random chance
+  (`explosiveMinionChance`, 30%) on every spawn, rather than pinning
+  Explosive to a fixed flank slot.
+
+### `Minion.cs` — shared `Die()`, `MinionType`, fragments
+
+Both existing death paths (`TakeDamage` from a player bullet,
+`ApplyContactDamage` from ship contact) now funnel through one new private
+`Die()`, guarded by a new private `bool isDead`. The guard exists because
+`Object.Destroy()` is deferred to end-of-frame — a minion hit by a bullet
+and touched by a ship in the same physics step could otherwise double-fire
+death logic (double contact damage, or two fragment bursts) before it
+actually disappears; confirmed this scenario directly during verification
+(see below), not just reasoned about.
+
+`ApplyContactDamage` dropped its `lastContactDamageTime`
+`Dictionary<GameObject, float>` and `contactDamageCooldown` field entirely
+— dead code once a minion only ever takes one hit.
+
+New `public enum MinionType { Standard, Explosive }` and a public `type`
+field. `Init(Boss, Vector2)` gained a third `MinionType` parameter
+(default `Standard`, so the only real call site — `MinionSpawner`, below —
+is the one place that needs to pass it) — type has to flow in through
+`Init()` rather than being set as a plain field post-`Instantiate`, since
+`Awake()` (which the tint below depends on) already ran by the time the
+spawner would get a reference back. When `Explosive`, `Init()` also tints
+the minion's `SpriteRenderer` to a new `explosiveTintColor` (orange), so
+the danger is visible the instant it spawns — same "always give a new
+hazard a visible tell" precedent as the shockwave ring, Medic's aura ring,
+and Support's party-buff ring.
+
+`Die()` calls a new private `SpawnFragments()` only when `type ==
+Explosive`: an evenly-spaced ring of `fragmentCount` (8) more `Bullet`
+instances launched from the minion's position, reusing
+`Boss.FireRing()`'s exact idiom bit-for-bit (`step = 360 / fragmentCount`,
+random start offset, `Quaternion.Euler(0, 0, angle) * Vector2.up` per
+direction). Each fragment is `Init(dir, fragmentSpeed, "Enemy")` with
+`damage = fragmentDamage` — an ordinary enemy-owned `Bullet`, so
+`Bullet.cs` needed **zero changes**: its existing enemy-bullet-vs-`Player`
+routing already handles a fragment hitting any ship, including the one
+that just killed the minion. `fragmentPrefab` is optional, falling back to
+the minion's own `bulletPrefab` if left unassigned in the Inspector, so no
+new prefab was required to ship this. `fragmentDamage` defaults to `1` —
+kept as a whole number deliberately, the same footgun `bulletDamage`/
+`contactDamage` already hit in Session 24 (`PlayerHealth.TakeDamage(int)`
+round-half-to-even's a fractional value to zero).
+
+### `MinionSpawner.cs`
+
+New `[Range(0,1)] explosiveMinionChance` (0.3) field. `SpawnMinion()` rolls
+`Random.value < explosiveMinionChance` and passes the resulting
+`MinionType` into `Init()`. `PlayerController.cs`/`Bullet.cs` needed no
+changes at all — `ResolveShipCollisions()` already called
+`minion.ApplyContactDamage(gameObject)` on overlap, and the new
+kamikaze/explosion behavior lives entirely inside `Minion.cs`'s own
+`Die()`.
+
+### Verified
+
+Unity MCP bridge, Play mode, after a clean recompile with no console
+errors/warnings. Ran four scenarios via `execute_code`:
+
+1. A Standard minion's `ApplyContactDamage` dealt its shield/health hit
+   exactly once (shield absorbed the 1-point hit first, matching
+   `PlayerHealth.TakeDamage`'s existing shield-then-health order) and
+   `isDead` flipped `true`; an immediate second call on the same
+   still-alive-per-C#-reference instance (exploiting the end-of-frame
+   `Destroy()` deferral to test the guard directly) was a confirmed no-op —
+   health/shield unchanged, zero fragments.
+2. An Explosive minion killed via `ApplyContactDamage` spawned exactly
+   `fragmentCount` (8) new `Bullet`s, all `Owner == "Enemy"` and `damage ==
+   fragmentDamage`.
+3. A separate Explosive minion killed via `TakeDamage` (simulating a
+   player bullet) also spawned exactly 8 fragments — confirming the "any
+   death" trigger, not just kamikaze contact.
+4. A Standard minion killed via `TakeDamage` spawned zero fragments.
+
+Also confirmed an Explosive-`Init()`'d minion's `SpriteRenderer.color`
+matched `explosiveTintColor` exactly.
+
+**Incidental finding, not a bug**: partway through, `GameObject.Find
+("Player")` started returning `null` — the human `Player`, sitting
+unattended with no input while tool calls were in flight, had actually been
+killed and deactivated by ongoing boss fire (`PlayerHealth.Die()` calls
+`SetActive(false)`, and `GameObject.Find` doesn't search inactive
+objects). Worked around by reactivating and fully healing all 4 ships via
+`FindObjectsByType<PlayerHealth>(FindObjectsInactive.Include, ...)` before
+testing — a testing-only workaround, no game code changed for this.
+
+### Still open
+
+- Local co-op / dynamic player count — unchanged, still the only "In
+  Progress" item on the roadmap.
+- Scene scaffolding (Main Menu / Lobby) and Nakama networking — still the
+  next roadmap milestones; this session was boss-combat tuning requested
+  ahead of that, not a change to the build order.
+- The Explosive tint/fragment-burst was verified programmatically
+  (reflection/field checks), not yet screenshotted in a live fight — worth
+  a visual pass next time the boss fight is played end-to-end.

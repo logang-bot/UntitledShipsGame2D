@@ -296,14 +296,25 @@ reference docs live under `systems/`.
   (so Tank taunt redirects minion fire too, with no minion-side aggro table
   needed). Minions are solid — `PlayerController.ResolveShipCollisions()`
   gained a loop over a new `Minion.Active` static registry (mirroring
-  `Bullet.Active`), pushing ships out and applying a smaller contact damage
-  than the boss's own. `Bullet.cs` gained one new check
-  (`GetComponent<Minion>()`) alongside its existing `Enemy`/`Boss` checks so
-  player fire damages them. A first-pass bug (fractional `bulletDamage`/
-  `contactDamage` defaults silently rounding to zero through
-  `PlayerHealth.TakeDamage(int)`'s round-half-to-even behavior) was caught
-  live via the Unity MCP bridge and fixed by switching both to whole
-  numbers. See `systems/boss.md`'s "Minion.cs / MinionSpawner.cs".
+  `Bullet.Active`), pushing ships out and applying contact damage. `Bullet.cs`
+  gained one new check (`GetComponent<Minion>()`) alongside its existing
+  `Enemy`/`Boss` checks so player fire damages them. A first-pass bug
+  (fractional `bulletDamage`/`contactDamage` defaults silently rounding to
+  zero through `PlayerHealth.TakeDamage(int)`'s round-half-to-even
+  behavior) was caught live via the Unity MCP bridge and fixed by switching
+  both to whole numbers. **Follow-up (kamikaze contact + Explosive
+  minions)**: touching a ship now costs a minion its life instead of just
+  dealing repeatable cooldown-gated chip damage — contact still deals its
+  damage once, then the minion dies immediately, funneled through a shared
+  `Die()` alongside the existing bullet-kill path (guarded by an `isDead`
+  flag against a same-frame double-kill). A new `MinionType.Explosive`
+  variant, randomly chosen per spawn (`MinionSpawner.explosiveMinionChance`,
+  30%) and visually tinted orange, bursts into a ring of 8 more `Bullet`
+  fragments on **any** death — bullet-killed or kamikaze alike — reusing
+  `Boss.FireRing()`'s exact "evenly-spaced ring, random start offset" idiom
+  with zero changes needed to `Bullet.cs` itself. See `systems/boss.md`'s
+  "Minion.cs / MinionSpawner.cs" (including its "Kamikaze contact +
+  Explosive minions" subsection).
 
 - **Enemy spawn pattern variety** — `EnemySpawner.cs` now cycles waves through 4 formations
   (`Random`, `Line`, `Cluster`, `VFormation`) in a fixed, escalating order (not Pattern Barrage's

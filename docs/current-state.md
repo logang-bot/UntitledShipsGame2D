@@ -137,10 +137,16 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - **Minions around the boss** — up to 2 smaller enemy ships flank the boss
   at once, tracking its erratic dash movement and always firing at whoever
   currently holds the boss's own aggro (so Tank taunt redirects them too).
-  They're solid (ships push off them and touching one costs a small amount
-  of contact damage), take damage from player fire like any other enemy,
-  and are all destroyed the instant the boss is. See
-  [systems/boss.md](systems/boss.md)'s "Minion.cs / MinionSpawner.cs".
+  They're solid (ships push off them) and now **kamikaze** — touching one
+  deals contact damage once and kills the minion immediately, rather than
+  letting it tank hits repeatedly. They also still take damage from player
+  fire like any other enemy, and are all destroyed the instant the boss is.
+  About 30% of spawned minions are a distinct **Explosive** type, tinted
+  orange — killing one any way (contact or shot down) bursts it into a ring
+  of 8 fragments that fly outward and can hit any nearby ship, including the
+  one that killed it, so shooting one from a distance isn't automatically
+  safe. See [systems/boss.md](systems/boss.md)'s "Minion.cs /
+  MinionSpawner.cs".
 
 - **Enemy spawn pattern variety** — the pre-boss wave system (`EnemySpawner.cs`) cycles through 4
   formations each wave, in a fixed escalating order: `Random` (original uniform-random X), `Line`
