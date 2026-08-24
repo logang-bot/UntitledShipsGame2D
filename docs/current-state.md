@@ -142,6 +142,16 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   and are all destroyed the instant the boss is. See
   [systems/boss.md](systems/boss.md)'s "Minion.cs / MinionSpawner.cs".
 
+- **Enemy spawn pattern variety** — the pre-boss wave system (`EnemySpawner.cs`) cycles through 4
+  formations each wave, in a fixed escalating order: `Random` (original uniform-random X), `Line`
+  (evenly spaced), `Cluster` (tight jittered group around one random center), and `VFormation`
+  (a symmetric V shape as it descends). Each formation pairs with one of 3 `Enemy.cs` movement
+  patterns — `SineWave` (original), `ZigZag` (erratic alternating drift), or `StraightDive`
+  (fast, no horizontal movement) — so later waves read as harder to dodge, not just more
+  enemies. Currently only reachable with the `Boss` GameObject deactivated (see the "How to test
+  it" note below), since `Boss.Awake()` disables the `Spawner` before it ever spawns anything in
+  a normal boss-fight playtest. See [systems/combat.md](systems/combat.md).
+
 ## What's NOT there yet
 
 - No networking/multiplayer — the 3 teammates are CPU-controlled, not real
@@ -178,7 +188,10 @@ real networking last, then art/audio.
    quick iteration without going through Role Select each time.)*
 3. Note: `EnemySpawner`'s `Spawner` is auto-disabled by
    `Boss.Awake()` at Play start, so the old top-down enemy waves don't spawn
-   during a boss-fight test — the boss is the only enemy on screen.
+   during a boss-fight test — the boss is the only enemy on screen. To try
+   the wave/formation system instead, deactivate the `Boss` GameObject in
+   the Inspector before pressing Play (this also means no boss fight runs
+   that session).
 4. Move with **WASD** (arrow keys are not currently bound). Hold **Space**
    or **left mouse button** to fire — it auto-fires while held. Press **E**
    to use the current role's ability (see step 7 for what each role does).

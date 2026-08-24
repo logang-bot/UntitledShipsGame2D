@@ -305,6 +305,14 @@ reference docs live under `systems/`.
   live via the Unity MCP bridge and fixed by switching both to whole
   numbers. See `systems/boss.md`'s "Minion.cs / MinionSpawner.cs".
 
+- **Enemy spawn pattern variety** — `EnemySpawner.cs` now cycles waves through 4 formations
+  (`Random`, `Line`, `Cluster`, `VFormation`) in a fixed, escalating order (not Pattern Barrage's
+  random-no-repeat — the goal here is ramping difficulty, not surprise), each paired with one of
+  3 `Enemy.cs` movement patterns (`SineWave`, `ZigZag`, `StraightDive`) via `MovementPatternFor()`.
+  Follows the same "one system, several shapes" idiom as `Boss.cs`'s Pattern Barrage. See
+  `systems/combat.md`'s `Enemy.cs`/`EnemySpawner.cs` sections. Was the last open item under
+  "Player-vs-boss dynamics" — that sub-phase is now fully implemented.
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -316,13 +324,6 @@ reference docs live under `systems/`.
   runtime.
 
 ## Planned (not yet started)
-
-### Player-vs-boss dynamics (CPU AI first)
-
-- **Enemy spawn pattern variety** — design enemy spawn/movement patterns
-  beyond the current simple top-to-bottom sine-wave drift (`EnemySpawner.cs`
-  picks a random X, `Enemy.cs` sine-waves straight down); more varied
-  formations feed into the boss encounter's bullet-pattern design language.
 
 ### Networking (last)
 

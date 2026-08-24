@@ -228,25 +228,69 @@ Key public fields: `shakeDuration` (default 0.2s), `shakeMagnitude` (default
 **Requires:** `Rigidbody2D`, `Collider2D` (not trigger), tag `Enemy`, an
 `EnemyBullet` prefab reference.
 
-Sine-wave downward movement, periodic downward fire (staggered per-instance
-via random initial delay), takes damage via `TakeDamage(float)`,
-self-destructs at 0 HP or when off-screen.
+Periodic downward fire (staggered per-instance via random initial delay),
+takes damage via `TakeDamage(float)`, self-destructs at 0 HP or when
+off-screen. Movement is one of three shapes selected by the public
+`movementPattern` field (nested `MovementPattern` enum: `SineWave`, `ZigZag`,
+`StraightDive`), set externally by `EnemySpawner.cs` right after
+`Instantiate()` — before `Start()` runs next frame, the same safe
+assign-before-`Start()` ordering `Boss.SpawnBullet()` already relies on for
+`Bullet.damage`. Defaults to `SineWave`, so any stray direct-prefab spawn
+that skips the spawner behaves exactly as it always has:
 
-Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`, `health`,
-`bulletPrefab`, `fireInterval`, `bulletSpeed`.
+- **SineWave** (original, unchanged) — Galaga-style: Y descends at
+  `moveSpeed`, X drifts as `startX + sin(Time.time * sineFrequency) *
+  sineAmplitude`.
+- **ZigZag** — Y still descends at `moveSpeed`; X accumulates by
+  `zigzagSpeed * Time.deltaTime` in a direction that flips every
+  `zigzagInterval` seconds — a real alternating step, not a smoother sine,
+  reads distinctly more erratic.
+- **StraightDive** — X locked to `startX` (no horizontal movement at all);
+  Y descends at `moveSpeed * diveSpeedMultiplier` — faster, no dodging via
+  horizontal reads.
+
+Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`,
+`movementPattern`, `zigzagInterval`, `zigzagSpeed`, `diveSpeedMultiplier`,
+`health`, `bulletPrefab`, `fireInterval`, `bulletSpeed`.
 
 ## EnemySpawner.cs
 
 **Attached to:** `Spawner` GameObject (positioned above camera view).
 **Requires:** an `Enemy` prefab reference.
 
-Spawns waves of enemies at a randomized X position within a configurable
-width, staggered within each wave, repeating on an interval. Auto-disabled
-by `Boss.Awake()` at Play start so wave enemies don't confound a boss-fight
-test (see [boss.md](boss.md)).
+Spawns waves of enemies on a repeating interval. Each wave picks a
+**formation** (nested `WaveFormation` enum: `Random`, `Line`, `Cluster`,
+`VFormation`) from the public `formationOrder` array, cycling through it in
+a fixed order (`formationOrder[waveIndex % formationOrder.Length]`,
+`waveIndex` incremented once per wave) — an escalating, predictable
+sequence rather than `Boss.cs`'s Pattern Barrage random-no-repeat pick,
+since the goal here is ramping difficulty, not surprise. Each formation
+pairs one spawn shape with one `Enemy.MovementPattern` (`MovementPatternFor()`),
+assigned directly on the spawned `Enemy` component right after
+`Instantiate()`:
+
+- **Random** (original behavior, unchanged) — uniform-random X per enemy,
+  `spawnInterval` stagger, `SineWave` movement.
+- **Line** — evenly spaced across `spawnWidth`, spawned with no stagger so
+  they read as a line, `SineWave` movement.
+- **Cluster** — one random center X rolled **once per wave** (not per
+  enemy — a wave-scoped `clusterCenterX` local, passed into the private
+  `PositionFor()` helper), each enemy jittered by `clusterJitter`, `ZigZag`
+  movement.
+- **VFormation** — symmetric X offsets around center plus a Y offset
+  (`vFormationYStep` per position from center) so the wave visibly forms a
+  V as it descends, `StraightDive` movement — the hardest tier.
+
+Auto-disabled by `Boss.Awake()` at Play start so wave enemies don't confound
+a boss-fight test (see [boss.md](boss.md)) — in the current scene this means
+`EnemySpawner.Start()` never actually runs during a normal playtest, since
+`Awake()` order runs before `Start()` on the same frame. To exercise wave
+spawning, temporarily deactivate the `Boss` GameObject (or clear its
+`enemySpawner` field) before entering Play mode.
 
 Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
-`waveInterval`, `spawnWidth`.
+`waveInterval`, `spawnWidth`, `formationOrder`, `clusterJitter`,
+`vFormationYStep`.
 
 ## Scene wiring
 
@@ -278,7 +322,7 @@ Empty GameObject positioned **above** the visible camera area (y ≈ 8).
 
 | Component           | Key inspector values                                                     |
 | -------------------- | ---------------------------------------------------------------------------- |
-| **EnemySpawner.cs**  | enemyPrefab: Enemy prefab, enemiesPerWave: 5, spawnInterval: 0.5, waveInterval: 4, spawnWidth: 6 |
+| **EnemySpawner.cs**  | enemyPrefab: Enemy prefab, enemiesPerWave: 5, spawnInterval: 0.5, waveInterval: 4, spawnWidth: 6, formationOrder: [Random, Line, Cluster, VFormation], clusterJitter: 0.5, vFormationYStep: 0.4 |
 
 ### Prefabs
 
@@ -305,4 +349,4 @@ script.
 | ------------------ | ------------------------------------------------------------------------------ |
 | Sprite Renderer    | Any placeholder sprite                                                        |
 | Collider2D         | Is Trigger: **OFF**                                                            |
-| **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, health: 3, bulletPrefab: EnemyBullet prefab, fireInterval: 1.5, bulletSpeed: 6 |
+| **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, movementPattern: SineWave (default, set per-instance by EnemySpawner), zigzagInterval: 0.4, zigzagSpeed: 3, diveSpeedMultiplier: 1.6, health: 3, bulletPrefab: EnemyBullet prefab, fireInterval: 1.5, bulletSpeed: 6 |

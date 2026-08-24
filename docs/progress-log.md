@@ -2007,3 +2007,126 @@ gained a new "What's playable" bullet.
 - Enemy spawn pattern variety — the other item still open under
   "Player-vs-boss dynamics", not started.
 - Main Menu / Lobby scenes — still not built.
+
+## Session 25 — Enemy Spawn Pattern Variety
+
+The roadmap's last open item under "Player-vs-boss dynamics": `EnemySpawner.cs`
+picked a uniform-random X per enemy every wave, and `Enemy.cs` always
+sine-waved straight down, no variety at all. The roadmap explicitly framed
+this as feeding into "the boss encounter's bullet-pattern design language,"
+i.e. `Boss.cs`'s Pattern Barrage — the established precedent in this
+codebase for "one system, several shapes."
+
+### Scope, decided upfront
+
+Two decisions made with the user before writing any code: (1) scope covers
+**both** spawn formations (where/when enemies appear in a wave) **and**
+movement behavior after spawning, not formations alone; (2) selection is
+**sequential/escalating** — a fixed cycling order that gets harder — rather
+than Pattern Barrage's random-no-repeat, since the goal here is ramping
+difficulty over a session, not keeping the player guessing wave-to-wave.
+
+### `EnemySpawner.cs` — `WaveFormation` enum, fixed cycle
+
+New nested `enum WaveFormation { Random, Line, Cluster, VFormation }` and a
+public `formationOrder` array (defaults to that exact order, easy → hard).
+A new private `waveIndex`, incremented once per `SpawnWaveRoutine()` call,
+picks `formationOrder[waveIndex % formationOrder.Length]` — cycles forever
+rather than terminating, matching this project's "prove fun before infra"
+style (no difficulty cap, no wave-count ending condition). Each formation
+computes its own `(x, yOffset)` per enemy via a new private `PositionFor()`,
+and maps to one `Enemy.MovementPattern` via a new private
+`MovementPatternFor()` — kept as two small private helpers rather than
+inlining the logic into `SpawnWaveRoutine()`, so the formation → shape and
+formation → movement pairings each live in one place:
+
+- **Random** (unchanged) — uniform-random X, `SineWave`.
+- **Line** — evenly spaced across `spawnWidth`, spawned with no stagger
+  (skips the `WaitForSeconds(spawnInterval)` yield only for this formation)
+  so the wave actually reads as a line rather than trickling in, `SineWave`.
+- **Cluster** — one random center X, `ZigZag` movement.
+- **VFormation** — symmetric X offsets around center plus a Y offset
+  (`vFormationYStep` scaled by distance from center) so the wave visibly
+  forms a V as it descends, `StraightDive` — the hardest tier.
+
+### `Enemy.cs` — `MovementPattern` enum, three shapes
+
+New nested `enum MovementPattern { SineWave, ZigZag, StraightDive }` and a
+public `movementPattern` field, defaulting to `SineWave` so a stray
+direct-prefab spawn (bypassing the spawner entirely) behaves exactly as it
+always has. Set externally by `EnemySpawner.cs` as a plain field assignment
+right after `Instantiate()`, before `Start()` runs next frame — same safe
+ordering `Boss.SpawnBullet()` already relies on for `Bullet.damage`.
+`Update()`'s movement block became a switch: `SineWave` is the original
+formula, untouched; `ZigZag` accumulates X by `zigzagSpeed * Time.deltaTime`
+in a direction that flips every `zigzagInterval` seconds (a real alternating
+step, not a smoother sine — reads distinctly more erratic); `StraightDive`
+locks X to `startX` and multiplies `moveSpeed` by `diveSpeedMultiplier` for
+the descent (faster, no horizontal dodging cue). No changes to `Fire()`,
+`TakeDamage()`, or the off-screen cleanup.
+
+### Bug caught live: Cluster's center was re-rolled per enemy, not per wave
+
+First pass called `Random.Range(-spawnWidth/2, spawnWidth/2)` for the
+cluster's center **inside** `PositionFor()`, which is invoked once per
+enemy in the spawn loop — so every enemy in a "Cluster" wave got its own
+independent random center instead of jittering around one shared point.
+Caught immediately during live verification (see below), not by reading the
+code back: reflection-invoking `PositionFor(Cluster, i)` for `i = 0..4`
+directly looked fine in isolation (each call correctly returns *a* jittered
+value), but sampling a real wave spawned via `SpawnWaveRoutine()` showed
+positions spread almost the full `spawnWidth` (`-0.92` to `3.05`) instead of
+a tight group — nowhere near `clusterJitter`'s ±0.5 range. Fixed by rolling
+`clusterCenterX` **once** in `SpawnWaveRoutine()`, before the per-enemy
+loop, and passing it into `PositionFor()` as a parameter rather than letting
+the switch re-roll it. Re-verified: a full wave landed within ±0.5 of a
+single shared center as designed.
+
+### Testing wrinkle: the Spawner is currently unreachable in normal play
+
+`Boss.Awake()` calls `enemySpawner.SetActive(false)`, and `Awake()` runs
+before any `Start()` on the same frame — so in the current `Gameplay`
+scene, `EnemySpawner.Start()` never actually fires and zero enemies spawn
+during a normal playtest; this predates this session and isn't a
+regression, just a pre-existing consequence of the boss always being
+present. Verification worked around it by deactivating the `Boss`
+GameObject in Edit mode before entering Play (keeping `Spawner` active),
+then reactivating `Boss` afterward and confirming via `manage_scene
+get_active`'s `isDirty: false` that the temporary toggle left no scene
+diff — same "temporarily reassign, test, revert, confirm" pattern Session
+17 used for exercising Attacker's AI code path. Flagged in
+`current-state.md`'s testing instructions and `combat.md` so this doesn't
+get assumed away later.
+
+### Verified
+
+All via the Unity MCP bridge, in Play mode, with `Boss` deactivated:
+reflection-invoked `PositionFor()`/`MovementPatternFor()` directly for
+every formation, confirming the exact expected `(x, yOffset)` shape and
+movement-pattern pairing (Line: evenly spaced across ±3 with 0 yOffset;
+VFormation: symmetric X offsets with `yOffset` increasing by distance from
+center; Cluster: initially broken, see above, then confirmed tight after
+the fix). Manually drained `SpawnWaveRoutine()`'s `IEnumerator` five times
+in a row (`MoveNext()` in a loop, skipping the real `WaitForSeconds` waits
+for determinism — same technique Session 22 used to drive Pattern Barrage's
+`FireSpiralRoutine()`), confirming `waveIndex` advanced exactly one per
+call and the formation cycled in the exact fixed order (`Random → Line →
+Cluster → VFormation → Random`, verified across a full second lap too).
+Spawned real `Enemy` instances at `y = 1000` (safe from the `y < -10`
+off-screen cleanup) and reflection-invoked `Start()`/`Update()` directly
+several times each to confirm the live per-frame movement trend for all
+three patterns against the sampled `Time.deltaTime`: `ZigZag` moved in X at
+`zigzagSpeed` while descending at `moveSpeed`; `StraightDive` held X exactly
+constant while descending at `moveSpeed * diveSpeedMultiplier` (faster);
+`SineWave` matched its original, unchanged formula. Confirmed the
+`Random`-formation regression case is bit-for-bit unchanged from before
+this session. No console errors or warnings at any point. `Boss` was
+reactivated and the scene confirmed clean (`isDirty: false`) afterward.
+
+### Still open
+
+- Local co-op / dynamic player count — unchanged, still the only "In
+  Progress" item on the roadmap.
+- Scene scaffolding (Main Menu / Lobby) and Nakama networking — next up per
+  the roadmap's build order, now that "Player-vs-boss dynamics" is fully
+  implemented.
