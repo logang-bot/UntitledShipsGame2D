@@ -33,7 +33,7 @@ public void Initialize(GameObject player, string displayName, bool isHumanPlayer
         isHuman = isHumanPlayer;
 
         if (nameText != null) nameText.text = displayName;
-        roleText.text = "Role: " + playerRole.role;
+        roleText.text = "<b>Role:</b> " + playerRole.role;
 
         Color tint = playerRole.Stats.tintColor;
         healthBarFill.color = tint;
@@ -71,11 +71,11 @@ void Update()
         if (isDead) return;
 
         healthBarFill.fillAmount = (float)playerHealth.CurrentHealth / playerHealth.maxHealth;
-        healthText.text = $"HP: {playerHealth.CurrentHealth}/{playerHealth.maxHealth}";
+        healthText.text = $"<b><color=#A8A8B8>HP:</color></b> {playerHealth.CurrentHealth}/{playerHealth.maxHealth}";
         shieldBarFill.fillAmount = (float)playerHealth.CurrentShield / playerHealth.maxShield;
-        moveSpeedText.text = $"Move Speed: {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
-        fireRateText.text = $"Fire Rate: {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
-        abilityText.text = $"{playerAbility.AbilityName}: {playerAbility.StatusText}";
+        moveSpeedText.text = $"<b><color=#A8A8B8>Move Speed:</color></b> {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
+        fireRateText.text = $"<b><color=#A8A8B8>Fire Rate:</color></b> {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
+        abilityText.text = $"<b><color=#A8A8B8>{playerAbility.AbilityName}:</color></b> {playerAbility.StatusText}";
         if (abilityButton != null && !isHuman) abilityButton.interactable = playerAbility.CooldownRemaining <= 0f;
     }
 }
