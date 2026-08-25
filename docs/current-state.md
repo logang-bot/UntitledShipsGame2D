@@ -174,8 +174,11 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   (fast, no horizontal movement). Runs automatically as part of the Level 1 sequencing above
   (pre-boss, and again at boss phase 2) — no manual setup needed to see it. These wave enemies are
   also **kamikaze** now, same as the boss-flanking minions below — touching one deals contact
-  damage once and destroys it immediately, rather than passing through with no effect. See
-  [systems/combat.md](systems/combat.md).
+  damage once and destroys it immediately, rather than passing through with no effect. About 30%
+  of spawned wave enemies (`EnemySpawner.explosiveEnemyChance`) are a distinct **Explosive** type,
+  tinted orange — same mechanic as the boss-flanking Explosive minions below: killing one any way
+  (contact or shot down) bursts it into a ring of 8 fragments that fly outward and can hit any
+  nearby ship. See [systems/combat.md](systems/combat.md).
 
 ## What's NOT there yet
 

@@ -323,6 +323,14 @@ reference docs live under `systems/`.
   Follows the same "one system, several shapes" idiom as `Level1Boss.cs`'s Pattern Barrage. See
   `systems/combat.md`'s `Enemy.cs`/`EnemySpawner.cs` sections. Was the last open item under
   "Player-vs-boss dynamics" — that sub-phase is now fully implemented.
+- **Explosive wave enemies** — `Enemy.cs` gained `Minion.cs`'s `Explosive`-type fragment-burst
+  mechanic (flagged as a straightforward follow-up back in Session 31, now done): a new `EnemyType`
+  enum (`Standard`/`Explosive`), rolled independently per spawn by `EnemySpawner.explosiveEnemyChance`
+  (0.3, matching `MinionSpawner.explosiveMinionChance`'s idiom exactly), tinted orange, and bursting
+  into a ring of 8 `Bullet` fragments on death — gunfire or kamikaze contact alike, since both already
+  funnel through the same `Die()`. `EnemySpawner` now calls a new `Enemy.Init(movementPattern,
+  enemyType)` instead of setting `movementPattern` as a bare field. See `systems/combat.md`'s
+  `Enemy.cs`/`EnemySpawner.cs` sections.
 - **Level 1 rework: sequencing + scripted boss movement** — the boss fight is now framed as
   "Level 1," one of many levels to come: `Boss.cs`/`Boss.prefab` renamed to `Level1Boss`
   (class/script/prefab only — the in-scene GameObject stays named `Boss`, and `Gameplay.unity`

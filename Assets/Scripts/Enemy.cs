@@ -35,6 +35,16 @@ public class Enemy : MonoBehaviour
     // (see Minion.cs's bulletDamage comment for the same footgun).
     public float contactDamage = 1f;
 
+    public enum EnemyType { Standard, Explosive }
+
+    [Header("Explosive Death")]
+    public EnemyType type = EnemyType.Standard;
+    public GameObject fragmentPrefab;      // falls back to bulletPrefab if unassigned
+    public int fragmentCount = 8;
+    public float fragmentSpeed = 5f;
+    public float fragmentDamage = 1f;      // must stay >= 1 - same rounding footgun as contactDamage
+    public Color explosiveTintColor = new Color(1f, 0.45f, 0.1f);
+
     public Vector2 HalfExtents { get; private set; }
 
     private float startX;
@@ -60,6 +70,20 @@ public class Enemy : MonoBehaviour
         startX = transform.position.x;
         nextFireTime = Time.time + Random.Range(0f, fireInterval); // stagger enemy shots
         nextZigzagFlip = Time.time + zigzagInterval;
+    }
+
+    // Called by EnemySpawner right after Instantiate (Awake has already run by then,
+    // since Unity runs Awake synchronously during Instantiate), same reasoning as
+    // Minion.Init() needing to run after Awake to tint the already-cached SpriteRenderer.
+    public void Init(MovementPattern pattern, EnemyType enemyType)
+    {
+        movementPattern = pattern;
+        type = enemyType;
+        if (type == EnemyType.Explosive)
+        {
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr != null) sr.color = explosiveTintColor;
+        }
     }
 
     void Update()
@@ -132,6 +156,29 @@ public class Enemy : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
+        if (type == EnemyType.Explosive) SpawnFragments();
         Destroy(gameObject);
+    }
+
+    void SpawnFragments()
+    {
+        GameObject prefab = fragmentPrefab != null ? fragmentPrefab : bulletPrefab;
+        if (prefab == null || fragmentCount <= 0) return;
+
+        float step = 360f / fragmentCount;
+        float startOffset = Random.Range(0f, step);
+        for (int i = 0; i < fragmentCount; i++)
+        {
+            float angle = startOffset + step * i;
+            Vector2 dir = (Vector2)(Quaternion.Euler(0, 0, angle) * Vector2.up);
+
+            GameObject fragObj = Instantiate(prefab, transform.position, Quaternion.identity);
+            Bullet b = fragObj.GetComponent<Bullet>();
+            b.damage = fragmentDamage;
+            b.Init(dir, fragmentSpeed, "Enemy");
+
+            SpriteRenderer fragSr = fragObj.GetComponent<SpriteRenderer>();
+            if (fragSr != null) fragSr.color = explosiveTintColor;
+        }
     }
 }

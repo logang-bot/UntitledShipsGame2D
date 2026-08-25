@@ -18,6 +18,10 @@ public class EnemySpawner : MonoBehaviour
     public float clusterJitter = 0.5f;   // +/- random offset from the cluster's center X
     public float vFormationYStep = 0.4f; // Y offset per position from center, builds the V shape
 
+    // Rolled independently per spawn, same as MinionSpawner.explosiveMinionChance,
+    // so the mix isn't tied to formation/wave.
+    [Range(0f, 1f)] public float explosiveEnemyChance = 0.3f;
+
     // Externally controlled by LevelSequencer - doesn't self-start, so the
     // minion-phase timing (pre-boss, then again after phase 2) is entirely
     // owned by the sequencer rather than this component's own Start().
@@ -52,7 +56,8 @@ public class EnemySpawner : MonoBehaviour
             (float x, float yOffset) = PositionFor(formation, i, clusterCenterX);
             Vector3 spawnPos = new Vector3(x, transform.position.y + yOffset, 0);
             GameObject enemyObj = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-            enemyObj.GetComponent<Enemy>().movementPattern = movementPattern;
+            Enemy.EnemyType enemyType = Random.value < explosiveEnemyChance ? Enemy.EnemyType.Explosive : Enemy.EnemyType.Standard;
+            enemyObj.GetComponent<Enemy>().Init(movementPattern, enemyType);
 
             // Line reads clearly as a line only if it spawns near-simultaneously; every other
             // formation keeps the original stagger.

@@ -167,6 +167,9 @@ public class Minion : MonoBehaviour
             Bullet b = fragObj.GetComponent<Bullet>();
             b.damage = fragmentDamage;
             b.Init(dir, fragmentSpeed, "Enemy");
+
+            SpriteRenderer fragSr = fragObj.GetComponent<SpriteRenderer>();
+            if (fragSr != null) fragSr.color = explosiveTintColor;
         }
     }
 }

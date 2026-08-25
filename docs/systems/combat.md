@@ -269,16 +269,34 @@ Added so `LevelSequencer` can detect "zero enemies on screen" before
 starting the boss's entrance — see
 [level-sequencing.md](level-sequencing.md).
 
+**Explosive death** — ported from `Minion.cs`'s `MinionType`/fragment-burst
+mechanic (see [level1-boss.md](level1-boss.md)'s "Minion.cs /
+MinionSpawner.cs"), same idiom: a nested `EnemyType` enum (`Standard`,
+`Explosive`), and a public `Init(MovementPattern, EnemyType)` — replacing
+`EnemySpawner`'s old bare `movementPattern = ...` field assignment — that
+sets both fields and, for `Explosive`, tints the `SpriteRenderer` to
+`explosiveTintColor` (safe to call right after `Instantiate()`, since Unity
+runs `Awake()` synchronously during `Instantiate` — the tint doesn't need to
+wait for `Start()`). `Die()` calls a new private `SpawnFragments()` before
+`Destroy()` whenever `type == Explosive` — an evenly-spaced ring of
+`fragmentCount` (8) `Bullet`s, a single shared random start-offset per
+burst (not per-fragment), `fragmentDamage` (1) each, owner `"Enemy"`, using
+`fragmentPrefab` if assigned or falling back to the enemy's own
+`bulletPrefab` otherwise. Since both the gunfire (`TakeDamage`) and
+kamikaze (`ApplyContactDamage`) paths already funnel through this same
+`Die()`, either kill triggers the burst — no changes needed to either
+method. Each fragment's `SpriteRenderer` is also tinted to
+`explosiveTintColor` right after `Init()`, so it visually reads as a piece
+of the enemy that exploded rather than a plain bullet (same tweak applied
+to `Minion.cs`'s fragments — see [level1-boss.md](level1-boss.md)). A `Standard` enemy's `Die()` is unaffected (no burst).
+
 Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`,
 `movementPattern`, `zigzagInterval`, `zigzagSpeed`, `diveSpeedMultiplier`,
 `health`, `bulletPrefab`, `fireInterval`, `bulletSpeed`, `contactDamage`
-(1). Key public method: `ApplyContactDamage(GameObject)`.
-
-**Not (yet) ported from `Minion.cs`**: no `MinionType`/Explosive-fragment
-mechanic — `Enemy`'s kamikaze contact is unconditional death with no
-fragment burst. Would be straightforward to add the same way if wanted
-later (same `SpawnFragments()` idiom, see
-[level1-boss.md](level1-boss.md)'s "Minion.cs / MinionSpawner.cs").
+(1), `type` (`EnemyType`, default `Standard`), `fragmentPrefab`,
+`fragmentCount` (8), `fragmentSpeed` (5), `fragmentDamage` (1),
+`explosiveTintColor`. Key public methods: `ApplyContactDamage(GameObject)`,
+`Init(MovementPattern, EnemyType)`.
 
 ## EnemySpawner.cs
 
@@ -301,8 +319,12 @@ no-repeat guard, unlike `Level1Boss.cs`'s Pattern Barrage random-no-repeat
 pick; this is the only caller of `formationOrder` today, so the plain
 random pick was the simplest change that satisfies "random order." Each
 formation pairs one spawn shape with one `Enemy.MovementPattern`
-(`MovementPatternFor()`), assigned directly on the spawned `Enemy`
-component right after `Instantiate()`:
+(`MovementPatternFor()`); each spawned `Enemy` also independently rolls an
+`Enemy.EnemyType` (`Random.value < explosiveEnemyChance ? Explosive :
+Standard`, default chance `0.3`, same idiom as `MinionSpawner`'s
+`explosiveMinionChance`) — both are passed together into the enemy's new
+`Init(movementPattern, enemyType)` call right after `Instantiate()` (see
+`Enemy.cs` above):
 
 - **Random** (original behavior, unchanged) — uniform-random X per enemy,
   `spawnInterval` stagger, `SineWave` movement.
@@ -318,7 +340,8 @@ component right after `Instantiate()`:
 
 Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 `waveInterval`, `spawnWidth`, `formationOrder`, `clusterJitter`,
-`vFormationYStep`. Key public methods: `StartSpawning()`, `StopSpawning()`.
+`vFormationYStep`, `explosiveEnemyChance` (0.3). Key public methods:
+`StartSpawning()`, `StopSpawning()`.
 
 ## Scene wiring
 
@@ -350,7 +373,7 @@ Empty GameObject positioned **above** the visible camera area (y ≈ 8).
 
 | Component           | Key inspector values                                                     |
 | -------------------- | ---------------------------------------------------------------------------- |
-| **EnemySpawner.cs**  | enemyPrefab: Enemy prefab, enemiesPerWave: 5, spawnInterval: 0.5, waveInterval: 4, spawnWidth: 6, formationOrder: [Random, Line, Cluster, VFormation], clusterJitter: 0.5, vFormationYStep: 0.4 |
+| **EnemySpawner.cs**  | enemyPrefab: Enemy prefab, enemiesPerWave: 5, spawnInterval: 0.5, waveInterval: 4, spawnWidth: 6, formationOrder: [Random, Line, Cluster, VFormation], clusterJitter: 0.5, vFormationYStep: 0.4, explosiveEnemyChance: 0.3 |
 
 ### Prefabs
 
@@ -378,4 +401,4 @@ script.
 | Transform          | scale (0.6, 0.6, 1) — matches every ship's scale (see [movement.md](movement.md)); was 1.0 ("too big" relative to the party) before the Level 1 rework |
 | Sprite Renderer    | Any placeholder sprite                                                        |
 | Collider2D         | Is Trigger: **ON** — was `OFF` until the Level 1 rework; a solid collider on a `Dynamic` `Rigidbody2D` let real Box2D physics push enemies and the boss around on contact (see [level-sequencing.md](level-sequencing.md)'s "Boss visibility/collision"). Trigger-vs-trigger and trigger-vs-solid pairs still fire `OnTriggerEnter2D` normally, so `Bullet.cs`'s hit detection is unaffected. Ship-vs-`Enemy` kamikaze contact damage (see `Enemy.cs` above) is a separate, unrelated mechanism — manual overlap math in `PlayerController.ResolveShipCollisions()`, not a Unity trigger/physics callback — so it isn't affected by this setting either. |
-| **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, movementPattern: SineWave (default, set per-instance by EnemySpawner), zigzagInterval: 0.4, zigzagSpeed: 3, diveSpeedMultiplier: 1.6, health: 3, bulletPrefab: EnemyBullet prefab, fireInterval: 1.5, bulletSpeed: 6, contactDamage: 1 |
+| **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, movementPattern: SineWave (default, set per-instance by EnemySpawner), zigzagInterval: 0.4, zigzagSpeed: 3, diveSpeedMultiplier: 1.6, health: 3, bulletPrefab: EnemyBullet prefab, fireInterval: 1.5, bulletSpeed: 6, contactDamage: 1, type: Standard (default, set per-instance by EnemySpawner), fragmentPrefab: unassigned (falls back to bulletPrefab), fragmentCount: 8, fragmentSpeed: 5, fragmentDamage: 1, explosiveTintColor: orange |

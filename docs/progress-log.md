@@ -302,3 +302,73 @@ Same as prior sessions. Still no real human playtest.
 ported to `Enemy.cs` this session (not requested) — would be a
 straightforward follow-up if wanted, reusing the same `SpawnFragments()`
 idiom from `Minion.cs`.
+
+## Session 32 — Explosive Wave Enemies (port of Minion.cs's Explosive type)
+
+Followed up on Session 31's flagged-but-unrequested item: ported
+`Minion.cs`'s `MinionType.Explosive` fragment-burst mechanic onto `Enemy.cs`
+(the `EnemySpawner`-spawned wave enemies), on request.
+
+### `Enemy.cs`
+
+Added a nested `EnemyType` enum (`Standard`, `Explosive`) and an
+`[Header("Explosive Death")]` field block, copied field-for-field from
+`Minion.cs`: `type`, `fragmentPrefab` (falls back to `bulletPrefab` if
+unassigned), `fragmentCount` (8), `fragmentSpeed` (5), `fragmentDamage` (1),
+`explosiveTintColor`. Added a public `Init(MovementPattern pattern,
+EnemyType enemyType)` — `Enemy` previously had no `Init()` at all;
+`EnemySpawner` just set `movementPattern` as a bare field post-`Instantiate`.
+The new method sets both fields and, for `Explosive`, tints the
+`SpriteRenderer` — safe to call any time after `Instantiate()` returns since
+Unity runs `Awake()` synchronously during `Instantiate`, same reasoning
+`Minion.Init()` already relies on. Extended `Die()` to call a new private
+`SpawnFragments()` (verbatim copy of `Minion.cs`'s version, using `Enemy`'s
+own fragment fields) before `Destroy()` when `type == Explosive`. Both
+existing kill paths (`TakeDamage` for gunfire, `ApplyContactDamage` for
+kamikaze contact) already funneled through this same `Die()`, so both
+trigger the burst with no further changes.
+
+### `EnemySpawner.cs`
+
+Added `explosiveEnemyChance` (`[Range(0f,1f)]`, default `0.3`) — same
+name pattern and default as `MinionSpawner.explosiveMinionChance`. In
+`SpawnWaveRoutine()`, replaced the bare `movementPattern` field assignment
+with a call through the new `Init(movementPattern, enemyType)`, rolling
+`EnemyType` independently per enemy (`Random.value < explosiveEnemyChance`).
+
+### Verified
+
+Unity MCP bridge, Play mode, all via direct `execute_code` calls
+(no scene-flow dependency — instantiated `Enemy.prefab` directly rather than
+running a full level, same surgical style as Sessions 30-31):
+
+- `Init(SineWave, Explosive)` tints the `SpriteRenderer` to exactly
+  `explosiveTintColor`; a fresh instance's `SpriteRenderer.color` is white
+  before `Init` runs.
+- Killing an `Explosive` enemy via `TakeDamage(999f)` (gunfire path) spawned
+  exactly `fragmentCount` (8) new `Bullet` instances at its position.
+- Killing an `Explosive` enemy via `ApplyContactDamage(ship)` (kamikaze
+  path) spawned the same 8-fragment burst; inspected one fragment directly —
+  `damage == fragmentDamage` (1), `owner == "Enemy"`.
+- Killing a `Standard` enemy via `TakeDamage` spawned zero fragments.
+- Invoked `EnemySpawner.SpawnWaveRoutine()` via reflection 40 times (203
+  enemies total) and tallied `Enemy.type` across the results: 63 Explosive /
+  140 Standard ≈ 31%, matching `explosiveEnemyChance` (0.3) within normal
+  sampling noise.
+- No console errors or warnings across any of the above.
+
+### Follow-up: tint the fragments themselves
+
+User noticed the fragment bullets were using the plain bullet sprite's
+default color — indistinguishable from a regular shot on screen. Added one
+line to both `Enemy.SpawnFragments()` and `Minion.SpawnFragments()` (the
+latter had the same gap, never addressed when the mechanic first shipped):
+right after `b.Init(...)`, `fragObj.GetComponent<SpriteRenderer>().color =
+explosiveTintColor` — each fragment now matches its own source's orange
+tint. Verified live: an Explosive `Enemy`'s and an Explosive `Minion`'s
+fragments both came back with `SpriteRenderer.color == explosiveTintColor`
+exactly, 8/8 for each; no console errors.
+
+### Still open
+
+Same as prior sessions. Still no real human playtest.

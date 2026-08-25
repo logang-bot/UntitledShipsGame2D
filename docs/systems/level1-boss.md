@@ -755,7 +755,12 @@ already ran by then) decides what `Die()` does next:
   bullet from a distance is exactly as dangerous as letting it touch you, by
   design, so players can't just snipe them safely. `fragmentPrefab` is
   optional and falls back to the minion's own `bulletPrefab` if left
-  unassigned, so no dedicated prefab is required to use this.
+  unassigned, so no dedicated prefab is required to use this. Each spawned
+  fragment also gets its `SpriteRenderer` tinted to the minion's own
+  `explosiveTintColor` (added after an initial pass shipped fragments in the
+  bullet prefab's default color, indistinguishable from any other shot on
+  screen) — one line right after `Init()`, so a fragment now visually reads
+  as "piece of the thing that just exploded" rather than a generic bullet.
 
 An Explosive minion is visually distinct the instant it spawns: `Init()`
 tints its `SpriteRenderer` to `explosiveTintColor` (orange, `(1, 0.45,
