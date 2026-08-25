@@ -30,4 +30,9 @@ public class RoleSelectUI : MonoBehaviour
         PartyRoleAssignment.HumanRole = selectedRole.Value;
         SceneManager.LoadScene("Gameplay");
     }
+
+    public void Back()
+    {
+        SceneManager.LoadScene("Lobby");
+    }
 }
