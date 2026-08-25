@@ -58,7 +58,7 @@ blocks re-activation until the current role's cooldown elapses.
 
 - **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. A
   persistent listener redirects the boss's target to the taunter
-  (`Boss.TauntedBy(GameObject)` — see [boss.md](boss.md)'s "Aggro /
+  (`Level1Boss.TauntedBy(GameObject)` — see [level1-boss.md](level1-boss.md)'s "Aggro /
   targeting"), alongside `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
   feedback.
 - **Tank — Shield Arc** (passive/always-on, independent of Taunt, not
@@ -132,7 +132,7 @@ the single source of truth for ability state so the HUD never duplicates
 cooldown math.
 
 `OnAbility(InputValue)` is a thin wrapper around a public, non-input entry
-point — `TryUseAbility()` — so `AIController.cs` (see [boss.md](boss.md))
+point — `TryUseAbility()` — so `AIController.cs` (see [level1-boss.md](level1-boss.md))
 can trigger a CPU teammate's ability directly, through the exact same
 cooldown gate and role-dispatch switch as the human player. The `Trigger*`
 methods stay private.
@@ -194,8 +194,8 @@ MMO-raid "tank and spank" mechanic this project is explicitly modeled on
 
 `Enemy.cs` has **no targeting concept at all** — regular wave enemies move
 in a fixed sine-wave and fire on a timer regardless of who or where any
-player is. The real threat-table aggro system lives on `Boss.cs` — see
-[boss.md](boss.md) for the full design (a plain
+player is. The real threat-table aggro system lives on `Level1Boss.cs` — see
+[level1-boss.md](level1-boss.md) for the full design (a plain
 `Dictionary<GameObject, float>` of damage-dealt-per-target, no decay,
 `TauntedBy(GameObject)` spiking the caster above everyone else).
 
@@ -274,11 +274,11 @@ later — so role has to be set *before* any of those run:
   Hierarchy-panel label mismatch — `AIController`/`PartyFrameManager` are
   fully role-agnostic, keyed by GameObject reference, never by name.
 - **`VictoryUI.cs`** (mirrors `GameOverUI.cs`) — a `VictoryPanel` under
-  `HUDCanvas`, shown as a listener on `Boss.OnDefeated` (alongside
+  `HUDCanvas`, shown as a listener on `Level1Boss.OnDefeated` (alongside
   `BossPanelUI.ShowDefeated()`) unless `GameOverPanel` is already showing
   (`gameOverPanelRoot` guard — the 3 CPU teammates can still defeat the
   boss after the human `Player` has already died, since only the human's
-  own death ends the test; see [boss.md](boss.md)'s "Death handling").
+  own death ends the test; see [level1-boss.md](level1-boss.md)'s "Death handling").
   `PlayAgain()` reloads `Gameplay` (roles preserved via
   `PartyRoleAssignment.HumanRole`); `ChangeRoles()` loads `RoleSelect`.
   `GameOverPanel` has a matching "Change Roles" button
@@ -290,11 +290,11 @@ later — so role has to be set *before* any of those run:
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
 | **PlayerRoleComponent**  | role: Attacker (Inspector default — overwritten at runtime by the Role Select flow, see "Role Select scene" above; used as-is when `Gameplay` is opened directly) |
-| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/Boss.TauntedBy(Player)` (real aggro redirect, see [boss.md](boss.md); same 3 listeners wired on each `Teammate_*`'s `PlayerAbility`, each pointing `TauntedBy` at itself) |
+| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/Level1Boss.TauntedBy(Player)` (real aggro redirect, see [level1-boss.md](level1-boss.md); same 3 listeners wired on each `Teammate_*`'s `PlayerAbility`, each pointing `TauntedBy` at itself) |
 
 ## Not yet built
 
 - Local co-op with multiple **human** players isn't wired up — the 3 extra
   ships fighting alongside `Player` (`Teammate_Tank`/`Teammate_Medic`/
   `Teammate_Support`) are CPU-controlled via `AIController.cs`, not real
-  players; see [boss.md](boss.md).
+  players; see [level1-boss.md](level1-boss.md).

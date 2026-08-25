@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Lives on the Boss GameObject itself (not a separate referenced object like
-// EnemySpawner) - gets a free GetComponent<Boss>() reference in Awake with
+// Lives on the Level1Boss GameObject itself (not a separate referenced object like
+// EnemySpawner) - gets a free GetComponent<Level1Boss>() reference in Awake with
 // no Inspector wiring, and is destroyed automatically the instant
-// Boss.Die() destroys the GameObject, so no explicit spawner cleanup is
+// Level1Boss.Die() destroys the GameObject, so no explicit spawner cleanup is
 // needed either.
 public class MinionSpawner : MonoBehaviour
 {
@@ -17,13 +17,13 @@ public class MinionSpawner : MonoBehaviour
     // rolled independently per spawn, so the mix isn't fixed to a slot.
     [Range(0f, 1f)] public float explosiveMinionChance = 0.3f;
 
-    private Boss boss;
+    private Level1Boss boss;
     private float nextSpawnTime;
     private bool spawnedLeftLast; // alternate flank sides so minions read as symmetric
 
     void Awake()
     {
-        boss = GetComponent<Boss>();
+        boss = GetComponent<Level1Boss>();
         if (boss != null) boss.OnDefeated.AddListener(DestroyAllMinions);
     }
 
@@ -51,7 +51,7 @@ public class MinionSpawner : MonoBehaviour
         }
     }
 
-    // Wired to Boss.OnDefeated in Awake - no stray minions survive into the
+    // Wired to Level1Boss.OnDefeated in Awake - no stray minions survive into the
     // Victory panel once the boss they flank is gone.
     void DestroyAllMinions()
     {

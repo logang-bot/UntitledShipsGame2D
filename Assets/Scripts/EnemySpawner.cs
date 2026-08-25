@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    // One system, several shapes, same idiom as Boss.cs's Pattern Barrage - but the shape here
-    // cycles in a fixed, escalating order (formationOrder) instead of Pattern Barrage's
-    // random-no-repeat pick, so waves get harder to read/dodge as they go.
+    // One system, several shapes, same idiom as Level1Boss.cs's Pattern Barrage - the shape is
+    // picked at random each wave (no no-repeat guard, unlike Pattern Barrage - simplest change
+    // that satisfies "random order" here, since this is the only caller of formationOrder today).
     public enum WaveFormation { Random, Line, Cluster, VFormation }
 
     public GameObject enemyPrefab;
@@ -13,16 +13,25 @@ public class EnemySpawner : MonoBehaviour
     public float waveInterval = 4f;    // delay between waves
     public float spawnWidth = 6f;      // horizontal spread of spawn points
 
-    [Header("Wave formation (escalates each wave, cycles)")]
+    [Header("Wave formation (picked at random each wave)")]
     public WaveFormation[] formationOrder = { WaveFormation.Random, WaveFormation.Line, WaveFormation.Cluster, WaveFormation.VFormation };
     public float clusterJitter = 0.5f;   // +/- random offset from the cluster's center X
     public float vFormationYStep = 0.4f; // Y offset per position from center, builds the V shape
 
-    private int waveIndex = 0;
-
-    void Start()
+    // Externally controlled by LevelSequencer - doesn't self-start, so the
+    // minion-phase timing (pre-boss, then again after phase 2) is entirely
+    // owned by the sequencer rather than this component's own Start().
+    public void StartSpawning()
     {
-        InvokeRepeating(nameof(SpawnWave), 1f, waveInterval);
+        CancelInvoke(nameof(SpawnWave));
+        InvokeRepeating(nameof(SpawnWave), 0f, waveInterval);
+    }
+
+    // Stops scheduling new waves; a wave already in flight (SpawnWaveRoutine)
+    // finishes naturally so a formation doesn't spawn half its enemies.
+    public void StopSpawning()
+    {
+        CancelInvoke(nameof(SpawnWave));
     }
 
     void SpawnWave()
@@ -32,8 +41,7 @@ public class EnemySpawner : MonoBehaviour
 
     System.Collections.IEnumerator SpawnWaveRoutine()
     {
-        WaveFormation formation = formationOrder[waveIndex % formationOrder.Length];
-        waveIndex++;
+        WaveFormation formation = formationOrder[Random.Range(0, formationOrder.Length)];
         Enemy.MovementPattern movementPattern = MovementPatternFor(formation);
         // Rolled once per wave, not per enemy, so every enemy in a Cluster wave jitters around the
         // same shared center instead of each picking its own independent center.

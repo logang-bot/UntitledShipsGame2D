@@ -6,7 +6,7 @@ using UnityEngine;
 // PlayerRoleComponent/PlayerAbility) with PlayerInput removed.
 public class AIController : MonoBehaviour
 {
-    public Boss boss;
+    public Level1Boss boss;
     public float weaveFrequency = 0.8f;
     public float weaveSpeed = 1f;
 
@@ -47,7 +47,7 @@ public class AIController : MonoBehaviour
     [Header("Boss avoidance")]
     // Applied to every role's computed target point (including Support's
     // wander) so default positioning never sits inside the boss's body
-    // contact / shockwave range. Set just outside Boss.shockwaveRadius so
+    // contact / shockwave range. Set just outside Level1Boss.shockwaveRadius so
     // normal positioning doesn't self-trigger the shockwave. Tank's guardBias
     // still leans hard toward the boss for physical blocking - blocking only
     // requires standing between the boss and the ally it's shooting at, not

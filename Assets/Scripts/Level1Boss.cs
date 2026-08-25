@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Boss : MonoBehaviour
+public class Level1Boss : MonoBehaviour
 {
     [Header("Health / Phases")]
     public int maxHealth = 90; // was 60 - x1.5'd to give the fixed-stats/ability rework enough runway to observe
     public UnityEvent OnPhase2;
     public UnityEvent OnDefeated;
 
-    [Header("Movement")]
-    // Erratic dash-or-hold movement, re-decided every dashDecisionInterval,
-    // instead of a continuous predictable sine drift. X roams within the
-    // viewport (minus screenPadding, same clamp idiom as
-    // PlayerController.HandleMovement()); Y is capped by maxAdvanceFraction
-    // so the boss can push toward the ships without ever reaching them.
-    public float dashDecisionInterval = 1.5f;
-    public float dashProbability = 0.35f;
-    public float dashDistanceX = 1.2f;
-    public float dashDistanceY = 0.8f;
-    public float dashSpeed = 8f; // faster than any ship's own move speed - reads as a rapid burst
+    [Header("Movement — pattern")]
+    // Scripted movement, not AI: instantly snap to one side (still on the
+    // home row), advance toward the ships, retreat back to that side,
+    // return home, wait cycleGap seconds, then repeat mirrored to the other
+    // side. Loops for the rest of the fight, unchanged across both phases.
+    // Reuses ClampToBounds()'s existing viewport/maxAdvanceFraction clamp so
+    // the descent limit stays governed by the same tuning knob the old
+    // random-dash movement used.
+    public float sideOffsetX = 2.2f;
+    public float patternMoveDuration = 1.2f; // shared by the advance/retreat/return-home legs
+    public float cycleGap = 1.5f;
     public float maxAdvanceFraction = 0.4f; // "2/5 of the screen" - fraction of playable height below homeY the boss may advance into
     public Vector2 screenPadding = new Vector2(0.8f, 0.5f);
 
@@ -86,9 +86,6 @@ public class Boss : MonoBehaviour
     public GameObject[] targets; // drag Player + 3 Teammates
     public float tauntBonus = 100f;
 
-    [Header("Scene hookup")]
-    public GameObject enemySpawner; // drag Spawner; auto-disabled on Awake so wave enemies don't confound the boss fight
-
     public int CurrentHealth { get; private set; }
     public bool IsPhase2 { get; private set; }
     public GameObject CurrentTarget { get; private set; }
@@ -103,24 +100,29 @@ public class Boss : MonoBehaviour
     private readonly Dictionary<GameObject, float> aggro = new Dictionary<GameObject, float>();
     private readonly Dictionary<GameObject, float> lastContactDamageTime = new Dictionary<GameObject, float>();
     private float nextFireTime;
-    private float nextDashDecisionTime;
     private float nextShockwaveCheckTime;
     private float nextGuidedMissileTime;
     private float nextPatternBarrageTime;
     private BulletPattern? lastPatternBarragePattern;
-    private Vector3 moveTarget;
+    private Vector3 home; // captured fresh in OnEnable - LevelSequencer always lands the boss here first
     private float homeY;
     private Camera cam;
     private LineRenderer shockwaveRing;
     private bool isTelegraphingShockwave;
     private float shockwaveImpactFlashUntil;
+    private SpriteRenderer sr;
+    private Collider2D col;
+    private MinionSpawner minionSpawner;
 
     void Awake()
     {
         CurrentHealth = maxHealth;
         cam = Camera.main;
         homeY = transform.position.y;
-        moveTarget = transform.position;
+        sr = GetComponent<SpriteRenderer>();
+        col = GetComponent<Collider2D>();
+        minionSpawner = GetComponent<MinionSpawner>();
+        if (minionSpawner != null) minionSpawner.enabled = false; // matches this component's own starts-disabled state
         CreateShockwaveRing();
 
         foreach (GameObject t in targets)
@@ -128,14 +130,44 @@ public class Boss : MonoBehaviour
             if (t != null) aggro[t] = 0f;
         }
         CurrentTarget = targets.Length > 0 ? targets[0] : null;
+    }
 
-        if (enemySpawner != null) enemySpawner.SetActive(false);
+    // Hides/shows the sprite, shockwave ring, and collider without touching
+    // the GameObject's active state (SetActive(false) was tried and
+    // rejected - see docs/systems/level-sequencing.md). The collider has to
+    // be toggled too, not just the sprite: it's what Bullet.cs's
+    // OnTriggerEnter2D needs to detect a hit, so leaving it enabled would
+    // let player bullets damage the boss - and rack up real
+    // TakeDamage()/aggro side effects - well before its entrance.
+    //
+    // Deliberately does NOT touch MinionSpawner (see OnEnable() below for
+    // why): this fires at the *start* of the entrance glide, while ships
+    // are still frozen for the next few seconds - starting minions here too
+    // would let them spawn and overlap frozen ships that can't react
+    // (PlayerController.enabled is false, so FixedUpdate/ResolveShipCollisions
+    // never runs), making kamikaze contact silently do nothing.
+    public void SetVisible(bool visible)
+    {
+        if (sr != null) sr.enabled = visible;
+        if (col != null) col.enabled = visible;
+        if (shockwaveRing != null) shockwaveRing.gameObject.SetActive(visible);
+    }
+
+    // Fires every time this component is enabled - LevelSequencer flips it
+    // on right after the boss's own entrance glide completes (ships already
+    // unfrozen by then), so "home" is always wherever the sequencer just
+    // placed it, not a value baked in Awake. MinionSpawner starts here too,
+    // not in SetVisible - see the comment there - so the boss-flanking
+    // kamikaze minions only ever appear once ships can actually react to them.
+    void OnEnable()
+    {
+        home = transform.position;
+        if (minionSpawner != null) minionSpawner.enabled = true;
+        StartCoroutine(MovementPatternRoutine());
     }
 
     void Update()
     {
-        HandleMovement();
-
         PickTarget();
 
         float interval = IsPhase2 ? phase2FireInterval : phase1FireInterval;
@@ -204,24 +236,47 @@ public class Boss : MonoBehaviour
         }
     }
 
-    void HandleMovement()
+    // Loops for the rest of the fight once started: snap to a side, advance
+    // toward the ships, retreat, return home, wait, then mirror to the other
+    // side. Runs identically through phase 1 and phase 2 - no branching.
+    IEnumerator MovementPatternRoutine()
     {
-        if (Time.time >= nextDashDecisionTime)
+        while (true)
         {
-            nextDashDecisionTime = Time.time + dashDecisionInterval;
-            if (Random.value < dashProbability)
-            {
-                float dirX = Random.value < 0.5f ? -1f : 1f;
-                float dirY = Random.value < 0.5f ? -1f : 1f;
-                Vector3 offset = new Vector3(dirX * dashDistanceX, dirY * dashDistanceY, 0f);
-                moveTarget = ClampToBounds(transform.position + offset);
-            }
-            else
-            {
-                moveTarget = transform.position; // hold still
-            }
+            yield return StartCoroutine(RunCycle(sideOffsetX));
+            yield return new WaitForSeconds(cycleGap);
+            yield return StartCoroutine(RunCycle(-sideOffsetX));
+            yield return new WaitForSeconds(cycleGap);
         }
-        transform.position = Vector3.MoveTowards(transform.position, moveTarget, dashSpeed * Time.deltaTime);
+    }
+
+    IEnumerator RunCycle(float side)
+    {
+        // Snap suddenly to the side - instantaneous, not eased.
+        Vector3 sidePos = ClampToBounds(new Vector3(home.x + side, home.y, 0f));
+        transform.position = sidePos;
+
+        // Advance down toward the ships. The far-below candidate Y gets
+        // clamped by ClampToBounds()'s maxAdvanceFraction floor, so "how far
+        // it can push" stays governed by the same knob the old dash used.
+        Vector3 advancePos = ClampToBounds(new Vector3(sidePos.x, home.y - 999f, 0f));
+        yield return MoveOverTime(sidePos, advancePos, patternMoveDuration);
+
+        // Return to the side position, then home.
+        yield return MoveOverTime(advancePos, sidePos, patternMoveDuration);
+        yield return MoveOverTime(sidePos, home, patternMoveDuration);
+    }
+
+    IEnumerator MoveOverTime(Vector3 from, Vector3 to, float duration)
+    {
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            transform.position = Vector3.Lerp(from, to, Mathf.Clamp01(t / duration));
+            yield return null;
+        }
+        transform.position = to;
     }
 
     Vector3 ClampToBounds(Vector3 pos)

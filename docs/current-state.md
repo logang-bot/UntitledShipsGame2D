@@ -60,12 +60,25 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   party, same roles) or "Change Roles" (back to Role Select); Game Over has
   a matching "Change Roles" button alongside its Restart. See
   [systems/player-roles.md](systems/player-roles.md)'s "Role Select scene".
+- **Level 1 sequencing** — the fight is now a scripted opening, not an
+  instant drop-in. The 4 ships start below the visible screen and glide up
+  into a line near the bottom over ~4s (frozen, no input); control hands
+  over fully for a further ~4s of free movement; then minions start
+  spawning (`EnemySpawner`'s wave-formation system, now in random order)
+  for ~2 minutes; once that timer's up and the screen is clear of minions,
+  the boss glides down from off-screen-top to its home position over ~4s
+  (ships frozen again — no movement, firing, or abilities) before combat
+  begins. See [systems/level-sequencing.md](systems/level-sequencing.md).
 - **Boss encounter** — a boss with 90 HP across 2 HP-based phases (Phase 2
   at ≤50% HP fires faster and in a 3-bullet spread) and a real aggro
   system: whoever deals the most damage is the boss's target, and Tank
-  taunt redirects it. The boss erratically dashes or holds still (random
-  probability every ~1.5s) and can push down toward the ships within
-  roughly the top 2/5 of the playable height before retreating back up. A
+  taunt redirects it. Movement is a fixed, scripted pattern (not AI): snap
+  suddenly to one side, advance down toward the ships within roughly the
+  top 2/5 of the playable height, retreat back to that side, return to
+  center, wait 1.5s, then repeat mirrored to the other side — looping for
+  the whole fight, unchanged across both phases. Reaching phase 2 also
+  brings minions back (same wave system as the pre-boss sequencing above),
+  fighting alongside the ongoing boss fight. A
   dim ring around the boss always shows its shockwave danger zone (~1.5
   ship-widths out) — it pulses brighter as a telegraphed shockwave winds
   up, then flashes on impact — getting caught inside deals 3x bullet
@@ -84,7 +97,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   the same shape twice in a row), with `BossPanel` naming the incoming shape
   during the wind-up and showing its own cooldown countdown. AI teammates
   keep a minimum distance from the boss by default so they don't wander into
-  the contact/shockwave range. See [systems/boss.md](systems/boss.md)'s
+  the contact/shockwave range. See [systems/level1-boss.md](systems/level1-boss.md)'s
   "Movement and firing", "Body contact damage", "Shockwave", "Guided
   missile", "Pattern Barrage", and "BossPanelUI.cs" sections. 3 CPU-controlled AI teammates
   (`Teammate_Tank`/`Teammate_Medic`/`Teammate_Support`) fight alongside the
@@ -104,7 +117,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   balanced mid-distance (not as close as Tank, not as far back as Medic) —
   since ships never rotate and shots only ever fire straight up, tracking
   the boss's X is what keeps its shots actually landing as the boss moves
-  (see [systems/boss.md](systems/boss.md)'s "Attacker patrol positioning").
+  (see [systems/level1-boss.md](systems/level1-boss.md)'s "Attacker patrol positioning").
   Medic's AI currently presses its ability the instant it's off cooldown
   regardless of need — a known, flagged-temporary placeholder, not a
   finished heuristic. Every role has fixed, role-specific health/shield/
@@ -115,14 +128,14 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   the boss's live HP bar, phase, current target, guided-missile warning,
   pattern-barrage warning, and shockwave/guided-missile/pattern-barrage
   cooldowns. See
-  [systems/boss.md](systems/boss.md).
+  [systems/level1-boss.md](systems/level1-boss.md).
 - **Solid-body collision** — no two ships (human or AI) can occupy the same
   space, and no ship can occupy the boss's body either; each ship resolves
   its own position against every other ship and the boss every frame
   (`ShipCollisionUtil.cs`, an exact box-vs-box push-out, not a physics
   simulation). Touching the boss still deals contact damage — detection now
   comes from this same overlap check instead of a physics trigger callback.
-  See [systems/boss.md](systems/boss.md)'s "Solid-body collision".
+  See [systems/level1-boss.md](systems/level1-boss.md)'s "Solid-body collision".
 - **Bullet-dodging + manual ability triggering** — the 3 AI teammates now
   steer away from incoming enemy fire that's on an imminent collision
   course (a sideways step out of the bullet's path, blended into whatever
@@ -132,12 +145,17 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   (bottom of its party frame) to force that teammate's ability to fire
   right now, subject to its own cooldown — the human's own frame has no
   such button, since **E** already does this for the human. See
-  [systems/boss.md](systems/boss.md)'s "Bullet-dodging" and
+  [systems/level1-boss.md](systems/level1-boss.md)'s "Bullet-dodging" and
   [systems/player-roles.md](systems/player-roles.md)'s "PlayerAbility.cs".
 - **Minions around the boss** — up to 2 smaller enemy ships flank the boss
-  at once, tracking its erratic dash movement and always firing at whoever
-  currently holds the boss's own aggro (so Tank taunt redirects them too).
-  They're solid (ships push off them) and now **kamikaze** — touching one
+  at once, tracking its position and always firing at whoever currently
+  holds the boss's own aggro (so Tank taunt redirects them too). They start
+  spawning the instant boss combat begins — not any earlier, and not during
+  the boss's own entrance glide (`MinionSpawner` only enables once
+  `Level1Boss` does; see
+  [systems/level-sequencing.md](systems/level-sequencing.md)'s "Boss
+  visibility/collision") — and keep spawning throughout the whole
+  fight. They're solid (ships push off them) and **kamikaze** — touching one
   deals contact damage once and kills the minion immediately, rather than
   letting it tank hits repeatedly. They also still take damage from player
   fire like any other enemy, and are all destroyed the instant the boss is.
@@ -145,18 +163,19 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   orange — killing one any way (contact or shot down) bursts it into a ring
   of 8 fragments that fly outward and can hit any nearby ship, including the
   one that killed it, so shooting one from a distance isn't automatically
-  safe. See [systems/boss.md](systems/boss.md)'s "Minion.cs /
+  safe. See [systems/level1-boss.md](systems/level1-boss.md)'s "Minion.cs /
   MinionSpawner.cs".
 
-- **Enemy spawn pattern variety** — the pre-boss wave system (`EnemySpawner.cs`) cycles through 4
-  formations each wave, in a fixed escalating order: `Random` (original uniform-random X), `Line`
+- **Enemy spawn pattern variety** — the minion wave system (`EnemySpawner.cs`) picks a formation
+  at random each wave from 4 options: `Random` (original uniform-random X), `Line`
   (evenly spaced), `Cluster` (tight jittered group around one random center), and `VFormation`
   (a symmetric V shape as it descends). Each formation pairs with one of 3 `Enemy.cs` movement
   patterns — `SineWave` (original), `ZigZag` (erratic alternating drift), or `StraightDive`
-  (fast, no horizontal movement) — so later waves read as harder to dodge, not just more
-  enemies. Currently only reachable with the `Boss` GameObject deactivated (see the "How to test
-  it" note below), since `Boss.Awake()` disables the `Spawner` before it ever spawns anything in
-  a normal boss-fight playtest. See [systems/combat.md](systems/combat.md).
+  (fast, no horizontal movement). Runs automatically as part of the Level 1 sequencing above
+  (pre-boss, and again at boss phase 2) — no manual setup needed to see it. These wave enemies are
+  also **kamikaze** now, same as the boss-flanking minions below — touching one deals contact
+  damage once and destroys it immediately, rather than passing through with no effect. See
+  [systems/combat.md](systems/combat.md).
 
 ## What's NOT there yet
 
@@ -192,19 +211,22 @@ real networking last, then art/audio.
    and pressing Play still works too, and falls back to whatever roles are
    currently hand-set on `Player`/`Teammate_*` in the Inspector — useful for
    quick iteration without going through Role Select each time.)*
-3. Note: `EnemySpawner`'s `Spawner` is auto-disabled by
-   `Boss.Awake()` at Play start, so the old top-down enemy waves don't spawn
-   during a boss-fight test — the boss is the only enemy on screen. To try
-   the wave/formation system instead, deactivate the `Boss` GameObject in
-   the Inspector before pressing Play (this also means no boss fight runs
-   that session).
+3. Watch the opening sequence play out automatically: all 4 ships glide up
+   from below the screen into their starting line (~4s, no input works
+   yet), then control hands over fully for ~4s of free movement before
+   minion waves start (`EnemySpawner`, random formation each wave, ~2
+   minutes), then — once the screen is clear of minions — the boss glides
+   down from off-screen into position (~4s, ships frozen again) before
+   combat begins. See [systems/level-sequencing.md](systems/level-sequencing.md).
+   *(To iterate faster while testing, temporarily lower `LevelSequencer`'s
+   `minionPhase1Duration` in the Inspector.)*
 4. Move with **WASD** (arrow keys are not currently bound). Hold **Space**
    or **left mouse button** to fire — it auto-fires while held. Press **E**
    to use the current role's ability (see step 7 for what each role does).
    The 3 `Teammate_*` ships fight alongside you fully autonomously — no
    input needed for them.
-5. Watch the boss dash erratically or hold still (no predictable drift) and
-   occasionally push down toward the party before retreating — it fires at
+5. Watch the boss run its scripted pattern (snap to a side, advance toward
+   the party, retreat, return to center, pause, repeat mirrored) — it fires at
    whichever ship (yours or a teammate's) currently holds its aggro, shown
    live as `BossPanel`'s "Target:" text on the right. At ≤50% HP its fire
    rate doubles and it switches to a 3-bullet spread (`BossPanel`'s "Phase"

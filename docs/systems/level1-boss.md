@@ -1,34 +1,69 @@
-# Boss Encounter
+# Level 1 Boss
 
-A single boss with two HP-based phases, a threat-table aggro system that
-Tank taunt redirects, and 3 CPU-controlled AI teammates covering the roles
-the human isn't playing. This is the project's core design bet
+Level 1's boss: two HP-based phases, a threat-table aggro system that Tank
+taunt redirects, and 3 CPU-controlled AI teammates covering the roles the
+human isn't playing. This is the project's core design bet
 (`../overview.md`) — MMO-raid-style role coordination — reached before any
-networking exists, per `../roadmap.md`'s priority order.
+networking exists, per `../roadmap.md`'s priority order. The boss's own
+component/script/prefab are named `Level1Boss` (not just `Boss`) because
+`Gameplay.unity` is a reusable scene meant to host future levels, each with
+its own boss — see [level-sequencing.md](level-sequencing.md) for the
+intro/minion-phase/boss-entrance timeline this boss now fights inside of,
+owned by a separate `LevelSequencer`.
 
-## Boss.cs
+## Level1Boss.cs
 
-**Attached to:** `Boss` GameObject (`Assets/Prefabs/Boss.prefab`, one
+**Attached to:** `Boss` GameObject (`Assets/Prefabs/Level1Boss.prefab`, one
 instance placed directly in `Gameplay` — not spawned; a boss is a one-off,
-not a wave, so it doesn't go through `EnemySpawner.cs`).
+not a wave, so it doesn't go through `EnemySpawner.cs`). The GameObject
+itself keeps the generic name `Boss`; only the script/class/prefab carry
+the `Level1Boss` name. `LevelSequencer` calls the new `public
+SetVisible(bool)` to hide the boss's `SpriteRenderer`/`Collider2D`/
+shockwave ring until its own entrance begins — not `SetActive(false)` on
+the whole GameObject, which was tried first and had a real side effect:
+`MinionSpawner.cs` lives on this same GameObject, and deactivating it also
+stopped kamikaze minions from spawning for the entire pre-boss window. The
+`Boss` GameObject now stays active throughout; only its visibility/
+collidability toggle. It's made visible again at the start of the entrance
+glide but stays combat-inert (the `Level1Boss` component itself stays
+disabled) until the glide finishes, at which point `LevelSequencer` enables
+the component — firing `OnEnable()` and starting the movement-pattern
+coroutine below. See
+[level-sequencing.md](level-sequencing.md).
 **Requires:** tag `Enemy` (so `Bullet.cs`'s player-bullet-vs-`Enemy` branch
 collides with it), a `bulletPrefab` (reuses `EnemyBullet.prefab`), a
 `targets[]` array wired to all 4 player-controlled ships.
 
 ### Movement and firing
 
-**Erratic dash-or-hold movement**: every `dashDecisionInterval` (1.5s),
-`HandleMovement()` rolls `dashProbability` (0.35) to decide whether to dash
-or hold still. On a dash, it picks a random X direction and a random Y
-direction (toward/away from the ships) and moves to a new point offset by
-`dashDistanceX`/`dashDistanceY` (1.2 / 0.8), clamped by `ClampToBounds()`;
-on a hold, it stays put until the next decision. Movement toward the chosen
-point uses `Vector3.MoveTowards` at `dashSpeed` (8 — faster than any ship's
-own move speed, so a dash reads as a rapid burst), not `Rigidbody2D`
-physics — the boss sets `transform.position` directly.
+**Scripted movement pattern, not AI**: the boss no longer decides where to
+go — `OnEnable()` captures the boss's current position as `home` (always
+wherever `LevelSequencer` just landed it after the entrance glide) and
+starts `MovementPatternRoutine()`, which loops for the rest of the fight,
+unchanged across both phases:
 
-`ClampToBounds()` keeps the boss on-screen and limits how far it can push
-toward the ships:
+1. **Snap** instantly to `home.x + sideOffsetX` (2.2) — a one-frame
+   teleport, not an eased move, so it reads as sudden.
+2. **Advance** from there down toward the ships over `patternMoveDuration`
+   (1.2s), via `MoveOverTime()`'s per-frame `Vector3.Lerp` (not
+   `Rigidbody2D` physics — the boss sets `transform.position` directly, as
+   before). The descent target is clamped by `ClampToBounds()` exactly like
+   the old dash was, so "how far it can push" is still governed by
+   `maxAdvanceFraction`.
+3. **Retreat** back to the side position, same duration.
+4. **Return** to `home`, same duration.
+5. **Wait** `cycleGap` (1.5s), then repeat the whole sequence mirrored to
+   `home.x - sideOffsetX` — right side, gap, left side, gap, forever.
+
+`RunCycle(float side)` is the single-cycle coroutine (one side);
+`MoveOverTime(from, to, duration)` is the shared per-frame lerp helper the
+advance/retreat/return legs are all built from (`LevelSequencer`'s own
+entrance-glide coroutine uses the same lerp idiom independently, since it
+moves the boss before `Level1Boss` is even enabled — see
+[level-sequencing.md](level-sequencing.md)).
+
+`ClampToBounds()` is unchanged from the old dash system and still keeps the
+boss on-screen and limits how far it can push toward the ships:
 
 - **X** — clamped to the viewport width minus `screenPadding` (0.8 / 0.5),
   the same `Camera.ViewportToWorldPoint` clamp idiom
@@ -92,10 +127,16 @@ below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
 - `TauntedBy(GameObject taunter)` — see above.
 - `OnPhase2`, `OnDefeated` — `UnityEvent`s (`OnDefeated` has two listeners:
   `BossPanelUI.ShowDefeated()` and `VictoryUI.Show()`).
+- `SetVisible(bool)` — called by `LevelSequencer` to hide/show the sprite,
+  `Collider2D`, and shockwave ring together without touching the
+  GameObject's active state (see [level-sequencing.md](level-sequencing.md)'s
+  "Boss visibility/collision"). Disabling the collider isn't just cosmetic:
+  it's what stops `Bullet.cs` from being able to hit and damage the boss
+  while it's supposed to be hidden.
 
-Key public fields: `maxHealth` (90), `dashDecisionInterval`/
-`dashProbability`/`dashDistanceX`/`dashDistanceY`/`dashSpeed`/
-`maxAdvanceFraction`/`screenPadding` (movement, see above), `bulletPrefab`,
+Key public fields: `maxHealth` (90), `sideOffsetX` (2.2)/
+`patternMoveDuration` (1.2)/`cycleGap` (1.5)/`maxAdvanceFraction`/
+`screenPadding` (movement, see above), `bulletPrefab`,
 `phase1FireInterval`/`phase2FireInterval` (1.2 / 0.6), `bulletSpeed` (6),
 `spreadAngle` (15°), `bulletDamage` (1 — see "Body contact damage" below),
 `bodyContactDamageMultiplier`/`contactDamageCooldown`, `shockwaveRadius`/
@@ -105,9 +146,7 @@ Key public fields: `maxHealth` (90), `dashDecisionInterval`/
 `guidedMissileWarningLingerTime`, `patternBarrageCooldown` (7)/
 `patternBarrageTelegraphTime` (0.7)/`fanBulletCount` (5)/`fanSpreadAngle`
 (50°)/`ringBulletCount` (12)/`spiralBulletCount` (20)/`spiralAngleStep`
-(25°)/`spiralShotInterval` (0.05), `targets[]`, `tauntBonus` (100),
-`enemySpawner` (drag `Spawner` — auto-disabled in `Awake()` so wave enemies
-from `EnemySpawner.cs` don't confound a boss-fight test).
+(25°)/`spiralShotInterval` (0.05), `targets[]`, `tauntBonus` (100).
 
 ### Solid-body collision (ships + boss)
 
@@ -135,13 +174,18 @@ happened — so the same overlap check that computes the push-back also
 drives Body contact damage below, instead of relying on Unity's trigger
 callbacks (which would stop firing once real overlap is actively
 prevented). Ship-vs-ship overlap only ever gets pushed apart, no damage.
+`ResolveShipCollisions()` runs two more of these loops the same way, over
+`Minion.Active` (below) and `Enemy.Active` (see
+[combat.md](combat.md)'s `Enemy.cs`) — both apply kamikaze contact damage
+on overlap, unlike the ship-vs-ship push-only case here.
 
-The boss's own `HandleMovement()`/dash logic is untouched — it doesn't need
-to know about collision at all. Since its dash is already incremental
-(`Vector3.MoveTowards` each `Update()`, not a teleport), a ship's own next
-`FixedUpdate` naturally pushes itself back out the moment the boss dashes
-into it, the same as it would for another ship. In practice the boss reads
-as "shoving" ships out of its path rather than being blocked by them.
+The boss's own movement-pattern coroutine doesn't need to know about
+collision at all. Since its advance/retreat/return legs move incrementally
+(`Vector3.Lerp` each frame, not a teleport — the initial side-snap is the
+one deliberate exception), a ship's own next `FixedUpdate` naturally pushes
+itself back out the moment the boss advances into it, the same as it would
+for another ship. In practice the boss reads as "shoving" ships out of its
+path rather than being blocked by them.
 
 ### Body contact damage
 
@@ -150,7 +194,7 @@ Unity's `OnTriggerStay2D` (the boss's `BoxCollider2D` is non-trigger, ship
 colliders are triggers, so Unity fired the callback on genuine overlap);
 now fires from `PlayerController.ResolveShipCollisions()`'s own box-overlap
 check the moment it detects a ship overlapping the boss, calling a new
-`public Boss.ApplyContactDamage(GameObject ship)`. Same math as before:
+`public Level1Boss.ApplyContactDamage(GameObject ship)`. Same math as before:
 gated per-target by `contactDamageCooldown` (1s, a private
 `Dictionary<GameObject, float>` of last-hit times) so standing against the
 boss doesn't tick every frame, then deals
@@ -296,7 +340,7 @@ updated live during a real triggered barrage.
 `Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObject =
 null)`'s optional `ownerObject` lets player bullets attribute damage back
 to their shooter for aggro. `OnTriggerEnter2D`'s player-bullet-vs-`Enemy`-tag
-branch checks for both an `Enemy` component and a `Boss` component,
+branch checks for both an `Enemy` component and a `Level1Boss` component,
 calling `boss.TakeDamage(damage, ownerObject)` on the latter. See
 [combat.md](combat.md) for `Bullet.cs`'s full reference.
 
@@ -343,7 +387,7 @@ below).
 
 A private `EnforceBossDistance(Vector2 point)` pushes any candidate target
 point out to at least `minDistanceFromBoss` (1.9 — just outside
-`Boss.shockwaveRadius`'s 1.7, so default positioning doesn't self-trigger
+`Level1Boss.shockwaveRadius`'s 1.7, so default positioning doesn't self-trigger
 the shockwave) from `boss.transform.position`, falling back to
 `Vector2.up` if the point lands exactly on the boss. Applied to
 `BiasedPositionDirection()`'s and `AttackerPositionDirection()`'s computed
@@ -534,18 +578,18 @@ existing `minDistanceFromBoss` floor.
 **Requires:** a direct `boss` reference (this panel is scene-bound, not a
 reusable prefab like `PartyFrame.prefab`).
 
-Every `Update()`, reads `Boss.CurrentHealth/maxHealth` into a health-bar
-`Image.fillAmount` + `"HP: x/y"` text, `Boss.IsPhase2` into a `"Phase
-1"`/`"Phase 2"` text, `Boss.CurrentTarget`'s `PlayerRoleComponent.role` into
-a `"Target: {role}"` text, `Boss.GuidedMissileTargetRole` into a `"Guided
+Every `Update()`, reads `Level1Boss.CurrentHealth/maxHealth` into a health-bar
+`Image.fillAmount` + `"HP: x/y"` text, `Level1Boss.IsPhase2` into a `"Phase
+1"`/`"Phase 2"` text, `Level1Boss.CurrentTarget`'s `PlayerRoleComponent.role` into
+a `"Target: {role}"` text, `Level1Boss.GuidedMissileTargetRole` into a `"Guided
 missile: {role}"` warning text (empty string when `null`),
-`Boss.PatternBarrageActivePattern` into an `"Incoming: {shape} Barrage"`
+`Level1Boss.PatternBarrageActivePattern` into an `"Incoming: {shape} Barrage"`
 warning text (empty string when `null`), and
-`Boss.ShockwaveCooldownRemaining`/`Boss.GuidedMissileCooldownRemaining`/
-`Boss.PatternBarrageCooldownRemaining` into `"Shockwave: {n}s"`/`"Guided
+`Level1Boss.ShockwaveCooldownRemaining`/`Level1Boss.GuidedMissileCooldownRemaining`/
+`Level1Boss.PatternBarrageCooldownRemaining` into `"Shockwave: {n}s"`/`"Guided
 Missile: {n}s"`/`"Pattern Barrage: {n}s"` cooldown texts (`"Ready"` at
 0) — same "HUD only reads, never owns game state" pattern as
-`PartyFrameUI.cs`. `ShowDefeated()` (wired to `Boss.OnDefeated`) overwrites
+`PartyFrameUI.cs`. `ShowDefeated()` (wired to `Level1Boss.OnDefeated`) overwrites
 the phase text with `"DEFEATED"`.
 
 `ShockwaveCooldownRemaining` reads `"Ready"` whenever no ship has gotten
@@ -608,10 +652,25 @@ attacks without touching any of them, same "independent `Check*()`, own
 timer, no cross-talk" idiom as Shockwave/Guided Missile/Pattern Barrage
 above.
 
+**Independent of the pre-boss/phase-2 wave system** — those phases (see
+[level-sequencing.md](level-sequencing.md)) use `EnemySpawner.cs`'s
+wave-formation system instead (it doesn't need a live boss to anchor to, so
+it also works before the boss exists). `MinionSpawner` starts disabled in
+`Level1Boss.Awake()` and is enabled by `Level1Boss.OnEnable()` — i.e. it
+starts spawning at the exact same moment boss combat begins, not any
+earlier. This is deliberately *not* tied to `SetVisible()` (which fires at
+the *start* of the entrance glide, several seconds earlier): starting
+minions there let them spawn and overlap ships that were still frozen for
+the rest of the entrance (`PlayerController.enabled == false`, so
+`FixedUpdate`/`ResolveShipCollisions` never runs) — kamikaze contact would
+silently do nothing against a frozen ship even while visibly overlapping
+it. Gating on `OnEnable()` instead guarantees ships are already unfrozen
+before any minion exists.
+
 `MinionSpawner.cs` lives as a component **on the `Boss` GameObject itself**
 (not a separately-referenced object like `EnemySpawner`) — `Awake()` gets a
-free `GetComponent<Boss>()` with no Inspector wiring, and the spawner is
-destroyed automatically the instant `Boss.Die()` destroys the GameObject.
+free `GetComponent<Level1Boss>()` with no Inspector wiring, and the spawner is
+destroyed automatically the instant `Level1Boss.Die()` destroys the GameObject.
 Every `Update()`, while `Minion.Active.Count < maxConcurrentMinions` (2) and
 its own `spawnInterval` (6s) timer allows, it instantiates `minionPrefab` at
 `boss.transform.position` offset by `spawnRadius` (2) along ±X, alternating
@@ -622,19 +681,19 @@ Inspector wire-up, since this script already holds a direct `boss`
 reference) — no stray minions survive into the Victory panel.
 
 `Minion.cs` is modeled on `Enemy.cs`'s simplicity (health/`TakeDamage`/
-self-destruct) rather than a scaled-down `Boss.cs`:
+self-destruct) rather than a scaled-down `Level1Boss.cs`:
 
 - **Positioning** — no free sine-drift like wave `Enemy.cs`. Each `Update()`,
   `transform.position = boss.transform.position + flankOffset + wobble`,
   where `flankOffset` is the fixed per-minion offset assigned at spawn
-  (`Init(Boss, Vector2)`) and `wobble` is a small independent sine bob so it
+  (`Init(Level1Boss, Vector2)`) and `wobble` is a small independent sine bob so it
   still reads as alive, not glued in place. This makes a minion track the
   boss's own erratic dash movement automatically, with zero pathfinding. If
   its `boss` reference is ever null (shouldn't happen outside teardown
   ordering), it self-destructs rather than sitting inert.
 - **Targeting** — minions don't have their own aggro table. `Fire()` always
   aims at `boss.CurrentTarget` (already a public getter), exactly like
-  `Boss.Fire()` aims at it — this ties minion fire to the boss's existing
+  `Level1Boss.Fire()` aims at it — this ties minion fire to the boss's existing
   aggro system for free: Tank taunt redirects minion fire too, with no
   minion-side code needed.
 - **Health/damage** — `public void TakeDamage(float amount)`, round-to-int
@@ -642,13 +701,13 @@ self-destruct) rather than a scaled-down `Boss.cs`:
   identical shape to `Enemy.cs` except for that indirection (see "Kamikaze
   contact + Explosive minions" below for why). `Bullet.cs`'s player-bullet-
   vs-`Enemy`-tag branch gained a third check (alongside its existing
-  `Enemy`/`Boss` checks): `other.GetComponent<Minion>()` → `TakeDamage(damage)`.
+  `Enemy`/`Level1Boss` checks): `other.GetComponent<Minion>()` → `TakeDamage(damage)`.
   Required since a `Minion` isn't literally an `Enemy` component, so without
   this a player bullet would pass through a minion with no effect.
 - **Contact damage** — `public void ApplyContactDamage(GameObject ship)`
   deals `contactDamage` (1, a lesser hazard than the boss's own effective
   contact damage of 2) once, then the minion dies (see below) — no repeat-hit
-  cooldown to track, unlike `Boss.ApplyContactDamage`, since there's no
+  cooldown to track, unlike `Level1Boss.ApplyContactDamage`, since there's no
   second hit to gate.
 - **Bullets** — reuses `Bullet.cs`/`EnemyBullet.prefab` as-is: a private
   `SpawnBullet(Vector2 dir)` instantiates `bulletPrefab`, sets `.damage`,
@@ -674,7 +733,7 @@ private `bool isDead` — `Object.Destroy()` is deferred to end-of-frame, so
 without the guard a minion hit by a bullet and touched by a ship in the same
 physics step could double-fire its death logic before it actually
 disappears. A new `MinionType` enum (`Standard`/`Explosive`) on `type`
-(public field, set via a new `Init(Boss, Vector2, MinionType)` overload
+(public field, set via a new `Init(Level1Boss, Vector2, MinionType)` overload
 parameter — has to flow in through `Init()` rather than being set directly
 post-`Instantiate`, since `Awake()`, which needs it for the tint below,
 already ran by then) decides what `Die()` does next:
@@ -685,7 +744,7 @@ already ran by then) decides what `Die()` does next:
 - **Explosive** — `Die()` also calls a new `SpawnFragments()`: an
   evenly-spaced ring of `fragmentCount` (8) more `Bullet` instances launched
   outward from the minion's position, random start-offset angle, reusing
-  `Boss.FireRing()`'s exact idiom (`step = 360 / fragmentCount`,
+  `Level1Boss.FireRing()`'s exact idiom (`step = 360 / fragmentCount`,
   `Quaternion.Euler(0, 0, angle) * Vector2.up` per direction). Each fragment
   is `Init(dir, fragmentSpeed, "Enemy")` with `damage = fragmentDamage` (1 —
   same whole-number constraint as `bulletDamage`/`contactDamage` below) — an
@@ -724,7 +783,7 @@ existing boss block, just iterating a dynamic list instead of one field.
 `PlayerHealth.TakeDamage(int)`'s `Mathf.RoundToInt` — `0.4` rounds down, and
 `0.5` rounds to the nearest *even* integer (Unity's round-half-to-even),
 which is also `0`. Every other player-facing damage value in the codebase
-(`Boss.bulletDamage`, `Enemy`'s default bullet damage, contact/shockwave
+(`Level1Boss.bulletDamage`, `Enemy`'s default bullet damage, contact/shockwave
 multipliers) happens to already be a whole number, so this footgun had never
 come up before. Fixed by using whole numbers (`bulletDamage`/`contactDamage`
 both `1`) — caught live via the Unity MCP bridge (`ApplyContactDamage`
@@ -739,7 +798,7 @@ reduces health and destroys at 0, and `MinionSpawner` immediately refills
 the freed slot on its next `Update()` (cap never exceeded 2 across repeated
 forced spawns); `ResolveShipCollisions` (invoked directly) correctly
 resolves a ship/minion overlap using `Minion.Active`; invoking
-`Boss.OnDefeated` destroys every live minion immediately
+`Level1Boss.OnDefeated` destroys every live minion immediately
 (`Minion.Active.Count` → 0).
 
 **Kamikaze + Explosive verified live**, both death paths, both types: a
@@ -763,18 +822,21 @@ testing, not by changing any game code.)
 
 ### Boss
 
-**Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/Boss.prefab` (SpriteRenderer,
+**Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/Level1Boss.prefab` (SpriteRenderer,
 Rigidbody2D at Gravity Scale 0, non-trigger BoxCollider2D — same physical
 setup as `Enemy.prefab`). One instance in `Gameplay`, positioned at
 `(0, 4.2, 0)` — must stay within the camera's visible range (Main Camera is
 orthographic with size 5, so world Y outside roughly `[-5, 5]` is
-off-screen).
+off-screen). This is also the boss's "home" — `LevelSequencer` reads it,
+teleports the boss above the screen, then glides it back down to exactly
+this position for the entrance (see
+[level-sequencing.md](level-sequencing.md)).
 
 | Component      | Key inspector values                                                    |
 | --------------- | ----------------------------------------------------------------------- |
 | Transform       | position (0, 4.2, 0), scale (1.6, 1.6, 1) — not shrunk with the ships below |
-| **Boss.cs**     | `maxHealth`: 90; `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `enemySpawner`: `Spawner`; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` + `VictoryPanel/VictoryUI.Show()` |
-| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2; `explosiveMinionChance`: 0.3 |
+| **Level1Boss.cs** | `maxHealth`: 90; `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `sideOffsetX`/`patternMoveDuration`/`cycleGap`: 2.2/1.2/1.5; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` + `VictoryPanel/VictoryUI.Show()`; `OnPhase2`: `Spawner/EnemySpawner.StartSpawning()`; component **starts disabled** — `LevelSequencer` calls `SetVisible(false)` at `Start()` (hiding sprite/collider/ring, GameObject itself stays active) and enables the component once the entrance glide finishes |
+| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2; `explosiveMinionChance`: 0.3 — component **starts disabled**, same as `Level1Boss` itself; `Level1Boss.OnEnable()` enables it, so kamikaze minions only start spawning once boss combat actually begins (ships already unfrozen by then) |
 
 ### Teammate_Tank / Teammate_Medic / Teammate_Support
 
@@ -802,7 +864,7 @@ copies).
 
 On all 4 `PlayerAbility` components (`Player` + 3 `Teammate_*`), `OnTaunt`
 has persistent listeners to `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
-(feedback) and `Boss.TauntedBy(GameObject)` with the fixed argument dragged
+(feedback) and `Level1Boss.TauntedBy(GameObject)` with the fixed argument dragged
 to that same GameObject (each player's taunt targets itself).
 
 ### Death handling
@@ -818,7 +880,7 @@ human is already gone.
 `gameOverPanelRoot`, one dragged to the other's panel) so this can't pop
 `VictoryPanel` on top of an already-showing `GameOverPanel` — whichever
 fires first is a true no-op for the other, not a flash-then-hide. Boss
-combat itself is unaffected; `Boss.Die()` still resolves and destroys the
+combat itself is unaffected; `Level1Boss.Die()` still resolves and destroys the
 `Boss` GameObject normally regardless of which panel is already up, only
 the end-screen popup is guarded. See
 [hud-layout.md](hud-layout.md)'s Scene wiring for the field-level detail.

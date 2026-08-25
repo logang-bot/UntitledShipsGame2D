@@ -1,9 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    // Mirrors Minion.Active - lets LevelSequencer detect "zero enemies on
+    // screen" without a separate manager tracking spawned/destroyed counts.
+    public static readonly List<Enemy> Active = new List<Enemy>();
+
     // Set externally by EnemySpawner right after Instantiate, before Start() runs next frame -
-    // same safe assign-before-Start ordering Boss.SpawnBullet() relies on for b.damage.
+    // same safe assign-before-Start ordering Level1Boss.SpawnBullet() relies on for b.damage.
     // Defaults to SineWave so a stray direct-prefab spawn (no spawner involved) behaves exactly
     // as it always has.
     public enum MovementPattern { SineWave, ZigZag, StraightDive }
@@ -23,10 +28,32 @@ public class Enemy : MonoBehaviour
     public float fireInterval = 1.5f;
     public float bulletSpeed = 6f;
 
+    [Header("Contact")]
+    // Kamikaze - same shape as Minion.cs's contact damage: one hit, then it
+    // dies, rather than a repeat-hit cooldown. Must stay >= 1 - fractions
+    // round to 0 through PlayerHealth.TakeDamage(int)'s Mathf.RoundToInt
+    // (see Minion.cs's bulletDamage comment for the same footgun).
+    public float contactDamage = 1f;
+
+    public Vector2 HalfExtents { get; private set; }
+
     private float startX;
     private float nextFireTime;
     private float zigzagDir = 1f;
     private float nextZigzagFlip;
+    private bool isDead; // guards against a same-frame double-kill (bullet + ship contact), same as Minion.cs
+
+    void Awake()
+    {
+        Active.Add(this);
+        BoxCollider2D col = GetComponent<BoxCollider2D>();
+        if (col != null) HalfExtents = col.bounds.extents;
+    }
+
+    void OnDestroy()
+    {
+        Active.Remove(this);
+    }
 
     void Start()
     {
@@ -70,7 +97,7 @@ public class Enemy : MonoBehaviour
         }
 
         // Destroy if it drifts off the bottom of the screen
-        if (transform.position.y < -10f) Destroy(gameObject);
+        if (transform.position.y < -10f) Die();
     }
 
     void Fire()
@@ -83,7 +110,28 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
+        if (isDead) return;
         health -= Mathf.RoundToInt(amount);
-        if (health <= 0) Destroy(gameObject);
+        if (health <= 0) Die();
+    }
+
+    // Called by a ship's own PlayerController.ResolveShipCollisions() the
+    // moment its overlap-resolution math detects it overlapping this enemy -
+    // same shape as Minion.ApplyContactDamage (kamikaze: doesn't survive the hit).
+    public void ApplyContactDamage(GameObject ship)
+    {
+        if (isDead || ship == null) return;
+        PlayerHealth playerHealth = ship.GetComponent<PlayerHealth>();
+        if (playerHealth == null) return;
+
+        playerHealth.TakeDamage(Mathf.RoundToInt(contactDamage));
+        Die();
+    }
+
+    void Die()
+    {
+        if (isDead) return;
+        isDead = true;
+        Destroy(gameObject);
     }
 }

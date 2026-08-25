@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     public float recoilDamping = 8f;
 
     [Header("Collision")]
-    public Boss boss;
+    public Level1Boss boss;
 
     private Rigidbody2D rb;
     private Camera cam;
@@ -154,6 +154,19 @@ void HandleMovement()
                 minion.transform.position, minion.HalfExtents,
                 out bool overlappingMinion);
             if (overlappingMinion) minion.ApplyContactDamage(gameObject);
+        }
+
+        // Same kamikaze contact damage as Minion.Active above, for the
+        // pre-boss/phase-2 wave enemies (EnemySpawner) - same runtime-spawned
+        // reasoning, each Enemy caches its own HalfExtents.
+        foreach (Enemy enemy in Enemy.Active)
+        {
+            if (enemy == null) continue;
+            candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
+                candidatePos, selfHalfExtents,
+                enemy.transform.position, enemy.HalfExtents,
+                out bool overlappingEnemy);
+            if (overlappingEnemy) enemy.ApplyContactDamage(gameObject);
         }
 
         return candidatePos;

@@ -74,19 +74,19 @@ reference docs live under `systems/`.
   with the human `Player` plus 3 **CPU-controlled AI teammates**
   (`AIController.cs`) covering Tank/Medic/Support. Validates the project's
   core design bet — MMO-raid-style role coordination — before any networking
-  exists. Full writeup: `systems/boss.md`.
+  exists. Full writeup: `systems/level1-boss.md`.
 
 - **Finish the HUD** — `PartyFrame_1..4` (all instances of
   `Assets/Prefabs/PartyFrame.prefab`) show every player's/teammate's
   role-tinted avatar, live health/move-speed/fire-rate/ability stats, driven
   by an array-based `PartyFrameManager.cs`. `BossPanel` now shows the boss's
   real HP bar, phase, and current-target role, driven by `BossPanelUI.cs`.
-  See `systems/hud-layout.md` and `systems/boss.md`.
+  See `systems/hud-layout.md` and `systems/level1-boss.md`.
 
 - **Shrink ship sprites** — `Player`/`Teammate_*` ship scale reduced from
   `1.0` to `0.6` (the `Boss` stays at its larger `1.6` scale so it still
   reads as the central target) — done as part of tuning the boss fight, and
-  leaves room for minions planned around the boss. See `systems/boss.md`.
+  leaves room for minions planned around the boss. See `systems/level1-boss.md`.
 
 - **Shield stat + Tank AI positioning** — a second, health-like `shield`
   pool per role (`PlayerHealth.maxShield`/`CurrentShield`, absorbs damage
@@ -97,14 +97,14 @@ reference docs live under `systems/`.
   home). A shield bar was added to the party frame. (Tank later also got a
   Shield Arc — a wider, functional blocking mechanic — see "Fixed per-role
   stats overhaul + ability rework" below.) Full writeup:
-  `systems/boss.md`'s "Tank guard-point positioning / physical blocking".
+  `systems/level1-boss.md`'s "Tank guard-point positioning / physical blocking".
 
 - **Boss HP / player damage tuning** — `Boss.maxHealth` doubled (30 → 60)
   and every role's player-dealt fire damage cut 40% (regular fire `1` →
   `0.6`, Attacker's Big Shot `3` → `1.8`); `Bullet.damage` and
   `Enemy.TakeDamage`/`Boss.TakeDamage` changed `int` → `float` to allow the
   fractional values. Boss/enemy-dealt damage is unchanged. See
-  `systems/boss.md`'s "Tuning" section.
+  `systems/level1-boss.md`'s "Tuning" section.
 
 - **Medic AI positioning + proximity aura** — Medic teammates default to
   hanging back from the boss (`AIController.BiasedPositionDirection()`,
@@ -124,7 +124,7 @@ reference docs live under `systems/`.
   off cooldown," no need-awareness) — the first version (fire below the
   Medic's *own* HP threshold) turned out to almost never trigger, since
   hanging back means Medic rarely takes damage itself; flagged in code and
-  docs for a smarter, need-aware rework. Full writeup: `systems/boss.md`'s
+  docs for a smarter, need-aware rework. Full writeup: `systems/level1-boss.md`'s
   "Medic positioning + aura", `systems/player-roles.md`'s
   "PlayerAbility.cs".
 
@@ -136,7 +136,7 @@ reference docs live under `systems/`.
   Support's fire-rate/damage catch-up via a `fireRateMultiplier`/
   `damageMultiplier` stat pair — that mechanism was fully replaced by the
   fixed-stats overhaul immediately below; Support's cadence/damage are now
-  just direct numbers in the table there.) See `systems/boss.md`'s "Support
+  just direct numbers in the table there.) See `systems/level1-boss.md`'s "Support
   roaming positioning".
 
 - **Fixed per-role stats overhaul + ability rework** — replaced the entire
@@ -161,7 +161,7 @@ reference docs live under `systems/`.
   `GetComponentInParent<PlayerHealth>()`, so a hit on this child collider
   still routes to the ship's own health pool). `Boss.maxHealth` also went
   ×1.5 (60 → 90) to give this larger rework enough playtest runway. See
-  `systems/player-roles.md` (full mechanics) and `systems/boss.md` (boss
+  `systems/player-roles.md` (full mechanics) and `systems/level1-boss.md` (boss
   HP tuning, cross-references).
 
 - **AI teammate behavior (Attacker)** — `AIController.AttackerPositionDirection()`:
@@ -177,7 +177,7 @@ reference docs live under `systems/`.
   firing ("retry the instant it's off cooldown") needed no change — it
   already worked this way. Completes Tank/Medic/Support/Attacker positioning;
   Tank, Medic, and Support were done in Sessions 12/13/15. See
-  `systems/boss.md`'s "Attacker patrol positioning".
+  `systems/level1-boss.md`'s "Attacker patrol positioning".
 
 - **Role Select scene + Victory screen** — a new `RoleSelect.unity` scene
   (Build Settings index 0, entry point) lets the human pick one of the 4
@@ -213,7 +213,7 @@ reference docs live under `systems/`.
   into the new contact/shockwave range — this also fixed a previously-
   documented degenerate case where AI positioning could collapse onto the
   boss once allies died. Resolves this item's "Future work" design
-  questions from `systems/boss.md` (erratic repositioning, telegraphed
+  questions from `systems/level1-boss.md` (erratic repositioning, telegraphed
   heavier attacks, curved bullet trajectories); the guided missile
   knowingly loosens (doesn't break) Tank's straight-line-blocking guarantee,
   a confirmed trade-off, not an oversight. A visible world-space ring at
@@ -225,7 +225,7 @@ reference docs live under `systems/`.
   progress-log-archive.md) verified for Attacker's Big Shot) after the
   original knockback proved barely
   noticeable, and added live shockwave/guided-missile cooldown countdowns to
-  `BossPanel` (`"Ready"` at 0). See `systems/boss.md`'s "Movement and
+  `BossPanel` (`"Ready"` at 0). See `systems/level1-boss.md`'s "Movement and
   firing", "Body contact damage", "Shockwave", "Guided missile", "Boss
   avoidance", and "BossPanelUI.cs" sections.
 
@@ -244,7 +244,7 @@ reference docs live under `systems/`.
   damage" hazard was reworked to detect off this same overlap check instead
   of a Unity trigger callback (which stopped being reachable once overlap
   is actively prevented) — same cooldown-gated damage as before. See
-  `systems/boss.md`'s "Solid-body collision (ships + boss)".
+  `systems/level1-boss.md`'s "Solid-body collision (ships + boss)".
 
 - **Pattern Barrage (geometric bullet spread patterns)** — a new standalone
   boss attack, layered on top of the existing Phase 1/2 fire (unchanged) the
@@ -268,7 +268,7 @@ reference docs live under `systems/`.
   and angle math confirmed for all three shapes, the no-repeat rule held over
   30 consecutive draws, `CheckPatternBarrage()` correctly no-ops with no
   target, and `BossPanelUI`'s new warning/cooldown text tracks live state.
-  See `systems/boss.md`'s "Pattern Barrage".
+  See `systems/level1-boss.md`'s "Pattern Barrage".
 
 - **Bullet-dodging + manual ability triggering** — the two halves of this
   roadmap item shipped together. AI teammates now steer away from
@@ -283,7 +283,7 @@ reference docs live under `systems/`.
   human's own frame, interactable state driven by the same
   `CooldownRemaining` the status text already reads. Neither half needed
   any change to `PlayerAbility.cs`'s ability logic itself. See
-  `systems/boss.md`'s "Bullet-dodging" and `systems/player-roles.md`'s
+  `systems/level1-boss.md`'s "Bullet-dodging" and `systems/player-roles.md`'s
   "PlayerAbility.cs" (manual triggering) for the full writeups.
 
 - **Minions around the boss** — a new `MinionSpawner.cs` (on the `Boss`
@@ -312,17 +312,48 @@ reference docs live under `systems/`.
   30%) and visually tinted orange, bursts into a ring of 8 more `Bullet`
   fragments on **any** death — bullet-killed or kamikaze alike — reusing
   `Boss.FireRing()`'s exact "evenly-spaced ring, random start offset" idiom
-  with zero changes needed to `Bullet.cs` itself. See `systems/boss.md`'s
+  with zero changes needed to `Bullet.cs` itself. See `systems/level1-boss.md`'s
   "Minion.cs / MinionSpawner.cs" (including its "Kamikaze contact +
   Explosive minions" subsection).
 
-- **Enemy spawn pattern variety** — `EnemySpawner.cs` now cycles waves through 4 formations
-  (`Random`, `Line`, `Cluster`, `VFormation`) in a fixed, escalating order (not Pattern Barrage's
-  random-no-repeat — the goal here is ramping difficulty, not surprise), each paired with one of
+- **Enemy spawn pattern variety** — `EnemySpawner.cs` picks a formation at random each wave from 4
+  options (`Random`, `Line`, `Cluster`, `VFormation`; originally a fixed escalating order, changed
+  to random as part of the Level 1 rework below), each paired with one of
   3 `Enemy.cs` movement patterns (`SineWave`, `ZigZag`, `StraightDive`) via `MovementPatternFor()`.
-  Follows the same "one system, several shapes" idiom as `Boss.cs`'s Pattern Barrage. See
+  Follows the same "one system, several shapes" idiom as `Level1Boss.cs`'s Pattern Barrage. See
   `systems/combat.md`'s `Enemy.cs`/`EnemySpawner.cs` sections. Was the last open item under
   "Player-vs-boss dynamics" — that sub-phase is now fully implemented.
+- **Level 1 rework: sequencing + scripted boss movement** — the boss fight is now framed as
+  "Level 1," one of many levels to come: `Boss.cs`/`Boss.prefab` renamed to `Level1Boss`
+  (class/script/prefab only — the in-scene GameObject stays named `Boss`, and `Gameplay.unity`
+  itself is unrenamed since it's meant to be reused by future levels). A new `LevelSequencer.cs`
+  (see `architecture.md`'s "Sequencing: One Top-Level Orchestrator Per Level" — a new coordination
+  shape, but not a break from any existing convention) owns the whole pre-fight timeline: ships
+  glide up from off-screen into a starting line (~4s, frozen), free movement (~4s), minion waves
+  (`EnemySpawner`, now randomly-ordered — see above) for ~2 minutes, then — once the screen is
+  clear — the boss glides down from off-screen into position (~4s, ships frozen: no movement,
+  firing, or abilities). The boss's sprite/collider/shockwave ring stay hidden (`Level1Boss.SetVisible(false)`)
+  until this entrance begins, so it can neither be seen nor be hit by player bullets early — the
+  `Boss` GameObject itself stays active throughout (not `SetActive(false)`). `MinionSpawner`'s
+  boss-flanking kamikaze minions start disabled too, but on their own separate trigger
+  (`Level1Boss.OnEnable()`, i.e. the moment boss combat actually begins) rather than `SetVisible` —
+  starting them at the entrance instead would let minions spawn while ships were still frozen for
+  the glide and couldn't react to contact at all; `Enemy.prefab`'s collider was also changed to a trigger
+  (like every ship's) so enemy-vs-enemy and
+  enemy-vs-boss physics collision can't happen even once the boss is active again in phase 2, and
+  its scale now matches the ships' (was previously oversized). `Level1Boss`'s old erratic
+  random-dash movement was replaced entirely with a fixed scripted pattern (snap to a side, advance
+  toward the ships, retreat, return home, wait 1.5s, repeat mirrored), looping unchanged through
+  both phases; its other systems (aggro, Fire, Shockwave, Guided Missile, Pattern Barrage) are
+  untouched. Reaching phase 2 also resumes minion waves via a persistent `Level1Boss.OnPhase2`
+  listener straight to `EnemySpawner.StartSpawning()` — no sequencer involvement needed. Two
+  follow-up fixes after user testing: `MinionSpawner` (boss-flanking kamikaze minions) now starts
+  disabled and only enables in `Level1Boss.OnEnable()` (i.e. once boss combat actually begins,
+  ships already unfrozen) rather than any earlier point in the sequence, and `Enemy.cs` (the wave
+  enemies from `EnemySpawner`) gained the same kamikaze contact-damage mechanic `Minion.cs` already
+  had (one hit then destroyed, via the same manual `ResolveShipCollisions()` overlap check) — it
+  previously had none at all. See
+  `systems/level1-boss.md`, `systems/level-sequencing.md`, and `systems/combat.md`.
 
 ## In Progress
 

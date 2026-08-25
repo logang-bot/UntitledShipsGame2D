@@ -2,7 +2,7 @@
 
 Shooting, projectiles, damage, health, and enemy waves. See
 [movement.md](movement.md) for ship movement and the fixed-orientation
-design decision that firing direction depends on, and [boss.md](boss.md)
+design decision that firing direction depends on, and [level1-boss.md](level1-boss.md)
 for the boss encounter built on top of this system (boss HP/phases, aggro,
 CPU teammates).
 
@@ -52,7 +52,7 @@ folded into the same position formula before clamping runs.
 
 `OnMove(InputValue)`/`OnFire(InputValue)` are thin wrappers around public,
 non-input entry points — `SetMoveDirection(Vector2)` and `SetFiring(bool)`
-— so `AIController.cs` (see [boss.md](boss.md)) can drive a CPU-controlled
+— so `AIController.cs` (see [level1-boss.md](level1-boss.md)) can drive a CPU-controlled
 teammate's movement/firing directly, without constructing a fake
 `InputValue` (which is only valid inside a real input callback).
 
@@ -88,7 +88,7 @@ code.
 
 `InitHoming(Transform target, float turnRate, float spd, string ownerTag,
 GameObject ownerObj = null)` is an alternate init path used by the boss's
-guided missile (see [boss.md](boss.md)): it re-aims `direction` toward the
+guided missile (see [level1-boss.md](level1-boss.md)): it re-aims `direction` toward the
 target's current position every frame via `Vector3.RotateTowards`, capped
 by `turnRate` (degrees/second), instead of the fixed-at-spawn direction
 `Init()` uses. If the target dies/deactivates mid-flight, the bullet just
@@ -107,10 +107,10 @@ collider still resolves to its own `PlayerHealth` first, since
 ownerTag, GameObject ownerObject = null)` — lets player-fired bullets pass
 their shooter as `ownerObject`, so `OnTriggerEnter2D`'s
 player-bullet-vs-`Enemy`-tag branch — in addition to its
-`Enemy.TakeDamage(damage)` call — also checks for a `Boss` component and
+`Enemy.TakeDamage(damage)` call — also checks for a `Level1Boss` component and
 calls `boss.TakeDamage(damage, ownerObject)`, attributing the hit to its
-shooter for the boss's aggro system. See [boss.md](boss.md). Both
-`Enemy.TakeDamage`/`Boss.TakeDamage` take a `float amount` — each rounds
+shooter for the boss's aggro system. See [level1-boss.md](level1-boss.md). Both
+`Enemy.TakeDamage`/`Level1Boss.TakeDamage` take a `float amount` — each rounds
 (`Mathf.RoundToInt`) only at the point it subtracts from its own `int`
 health pool, so no fractional HP appears anywhere. The enemy-bullet-vs-
 `PlayerHealth` branch does the same rounding at its call site, since
@@ -142,7 +142,7 @@ is the symmetric inverse of `TakeDamage(int)` — adds HP, clamped at
 `maxHealth`; `RestoreShield(int)` is the shield equivalent (clamps at
 `maxShield`). Both are called every tick, on any ally within range, by
 Medic's passive proximity aura (`PlayerAbility.TickAura()` — see
-[player-roles.md](player-roles.md) and [boss.md](boss.md)), not on self. No
+[player-roles.md](player-roles.md) and [level1-boss.md](level1-boss.md)), not on self. No
 event fires on either call since `PartyFrameUI` already polls
 `CurrentHealth`/`CurrentShield` every frame, so a heal/shield-restore shows
 up live for free. **No passive shield regen anywhere** — shield only ever
@@ -167,7 +167,7 @@ Purely event-driven, no `Update()`. `Awake()` hides `panelRoot` so it's
 invisible during normal play. `Show()` is wired as a listener on `Player`'s
 `PlayerHealth.OnDeath` — reveals the panel, unless `VictoryPanel` is already
 showing (`victoryPanelRoot` guard — the 3 CPU teammates can still defeat the
-boss after the human dies, see [boss.md](boss.md)'s "Death handling" for the
+boss after the human dies, see [level1-boss.md](level1-boss.md)'s "Death handling" for the
 mutual-exclusion guard with `VictoryUI.cs`). `Restart()` is wired to the
 panel's Restart `Button.OnClick()` — calls
 `SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex)`, reloading
@@ -189,7 +189,7 @@ GameObject (see [player-roles.md](player-roles.md)).
 Flashes the ship's sprite on a non-fatal hit. Wired as a listener on
 `PlayerHealth.OnDamaged`, and also on `PlayerAbility.OnTaunt` as Tank-ability
 feedback (see [player-roles.md](player-roles.md)), alongside the real
-`Boss.TauntedBy()` aggro-redirect listener (see [boss.md](boss.md)).
+`Level1Boss.TauntedBy()` aggro-redirect listener (see [level1-boss.md](level1-boss.md)).
 `Flash()` restarts the coroutine (`StopCoroutine` + `StartCoroutine`) so
 rapid hits re-flash at full brightness instead of stacking or blending. A
 `Flash(Color)` overload lets other systems (Medic's heal) use a distinct
@@ -225,16 +225,29 @@ Key public fields: `shakeDuration` (default 0.2s), `shakeMagnitude` (default
 ## Enemy.cs
 
 **Attached to:** `Enemy` prefab.
-**Requires:** `Rigidbody2D`, `Collider2D` (not trigger), tag `Enemy`, an
-`EnemyBullet` prefab reference.
+**Requires:** `Rigidbody2D`, `Collider2D` (trigger — see "Scene wiring"
+below for why), tag `Enemy`, an `EnemyBullet` prefab reference.
 
 Periodic downward fire (staggered per-instance via random initial delay),
 takes damage via `TakeDamage(float)`, self-destructs at 0 HP or when
-off-screen. Movement is one of three shapes selected by the public
+off-screen. **Kamikaze contact damage** — same shape as
+`Minion.ApplyContactDamage` (see [level1-boss.md](level1-boss.md)): a ship
+overlapping an `Enemy` (via `PlayerController.ResolveShipCollisions()`,
+same manual-overlap idiom used for allies/boss/minions, not a Unity
+trigger callback) takes `contactDamage` (1) once and the `Enemy` dies
+immediately, funneled through a private `Die()` guarded by `isDead` (same
+double-kill guard as `Minion.cs`, needed since `Destroy()` is deferred to
+end-of-frame — a bullet kill and a ship contact landing in the same
+physics step could otherwise double-fire). `TakeDamage(float)` and the
+off-screen self-destruct both route through the same `Die()`. A new
+`HalfExtents` (`Vector2`, cached from the `BoxCollider2D` in `Awake()`,
+same as `Minion.HalfExtents`) is what `ResolveShipCollisions()` uses for
+the overlap math, since runtime-spawned colliders can't be cached ship-side
+in `Start()`. Movement is one of three shapes selected by the public
 `movementPattern` field (nested `MovementPattern` enum: `SineWave`, `ZigZag`,
 `StraightDive`), set externally by `EnemySpawner.cs` right after
 `Instantiate()` — before `Start()` runs next frame, the same safe
-assign-before-`Start()` ordering `Boss.SpawnBullet()` already relies on for
+assign-before-`Start()` ordering `Level1Boss.SpawnBullet()` already relies on for
 `Bullet.damage`. Defaults to `SineWave`, so any stray direct-prefab spawn
 that skips the spawner behaves exactly as it always has:
 
@@ -249,25 +262,47 @@ that skips the spawner behaves exactly as it always has:
   Y descends at `moveSpeed * diveSpeedMultiplier` — faster, no dodging via
   horizontal reads.
 
+**Static registry** — `public static readonly List<Enemy> Active`,
+populated in `Awake()`/depopulated in `OnDestroy()`, same pattern as
+`Bullet.Active`/`Minion.Active` (see [level1-boss.md](level1-boss.md)).
+Added so `LevelSequencer` can detect "zero enemies on screen" before
+starting the boss's entrance — see
+[level-sequencing.md](level-sequencing.md).
+
 Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`,
 `movementPattern`, `zigzagInterval`, `zigzagSpeed`, `diveSpeedMultiplier`,
-`health`, `bulletPrefab`, `fireInterval`, `bulletSpeed`.
+`health`, `bulletPrefab`, `fireInterval`, `bulletSpeed`, `contactDamage`
+(1). Key public method: `ApplyContactDamage(GameObject)`.
+
+**Not (yet) ported from `Minion.cs`**: no `MinionType`/Explosive-fragment
+mechanic — `Enemy`'s kamikaze contact is unconditional death with no
+fragment burst. Would be straightforward to add the same way if wanted
+later (same `SpawnFragments()` idiom, see
+[level1-boss.md](level1-boss.md)'s "Minion.cs / MinionSpawner.cs").
 
 ## EnemySpawner.cs
 
 **Attached to:** `Spawner` GameObject (positioned above camera view).
 **Requires:** an `Enemy` prefab reference.
 
-Spawns waves of enemies on a repeating interval. Each wave picks a
-**formation** (nested `WaveFormation` enum: `Random`, `Line`, `Cluster`,
-`VFormation`) from the public `formationOrder` array, cycling through it in
-a fixed order (`formationOrder[waveIndex % formationOrder.Length]`,
-`waveIndex` incremented once per wave) — an escalating, predictable
-sequence rather than `Boss.cs`'s Pattern Barrage random-no-repeat pick,
-since the goal here is ramping difficulty, not surprise. Each formation
-pairs one spawn shape with one `Enemy.MovementPattern` (`MovementPatternFor()`),
-assigned directly on the spawned `Enemy` component right after
-`Instantiate()`:
+Spawns waves of enemies on a repeating interval — this is Level 1's minion
+system: `LevelSequencer` runs it before the boss appears and again once the
+boss reaches phase 2 (see [level-sequencing.md](level-sequencing.md)).
+Doesn't self-start: `public void StartSpawning()` (re-arms
+`InvokeRepeating(nameof(SpawnWave), 0f, waveInterval)`) and `public void
+StopSpawning()` (`CancelInvoke` — only halts *future* waves; a wave already
+in flight via `SpawnWaveRoutine` finishes naturally so a formation doesn't
+spawn half its enemies) are called externally by `LevelSequencer` instead.
+
+Each wave picks a **formation** (nested `WaveFormation` enum: `Random`,
+`Line`, `Cluster`, `VFormation`) from the public `formationOrder` array, at
+random (`formationOrder[Random.Range(0, formationOrder.Length)]`) — no
+no-repeat guard, unlike `Level1Boss.cs`'s Pattern Barrage random-no-repeat
+pick; this is the only caller of `formationOrder` today, so the plain
+random pick was the simplest change that satisfies "random order." Each
+formation pairs one spawn shape with one `Enemy.MovementPattern`
+(`MovementPatternFor()`), assigned directly on the spawned `Enemy`
+component right after `Instantiate()`:
 
 - **Random** (original behavior, unchanged) — uniform-random X per enemy,
   `spawnInterval` stagger, `SineWave` movement.
@@ -281,16 +316,9 @@ assigned directly on the spawned `Enemy` component right after
   (`vFormationYStep` per position from center) so the wave visibly forms a
   V as it descends, `StraightDive` movement — the hardest tier.
 
-Auto-disabled by `Boss.Awake()` at Play start so wave enemies don't confound
-a boss-fight test (see [boss.md](boss.md)) — in the current scene this means
-`EnemySpawner.Start()` never actually runs during a normal playtest, since
-`Awake()` order runs before `Start()` on the same frame. To exercise wave
-spawning, temporarily deactivate the `Boss` GameObject (or clear its
-`enemySpawner` field) before entering Play mode.
-
 Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 `waveInterval`, `spawnWidth`, `formationOrder`, `clusterJitter`,
-`vFormationYStep`.
+`vFormationYStep`. Key public methods: `StartSpawning()`, `StopSpawning()`.
 
 ## Scene wiring
 
@@ -347,6 +375,7 @@ script.
 
 | Component        | Key inspector values                                                        |
 | ------------------ | ------------------------------------------------------------------------------ |
+| Transform          | scale (0.6, 0.6, 1) — matches every ship's scale (see [movement.md](movement.md)); was 1.0 ("too big" relative to the party) before the Level 1 rework |
 | Sprite Renderer    | Any placeholder sprite                                                        |
-| Collider2D         | Is Trigger: **OFF**                                                            |
-| **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, movementPattern: SineWave (default, set per-instance by EnemySpawner), zigzagInterval: 0.4, zigzagSpeed: 3, diveSpeedMultiplier: 1.6, health: 3, bulletPrefab: EnemyBullet prefab, fireInterval: 1.5, bulletSpeed: 6 |
+| Collider2D         | Is Trigger: **ON** — was `OFF` until the Level 1 rework; a solid collider on a `Dynamic` `Rigidbody2D` let real Box2D physics push enemies and the boss around on contact (see [level-sequencing.md](level-sequencing.md)'s "Boss visibility/collision"). Trigger-vs-trigger and trigger-vs-solid pairs still fire `OnTriggerEnter2D` normally, so `Bullet.cs`'s hit detection is unaffected. Ship-vs-`Enemy` kamikaze contact damage (see `Enemy.cs` above) is a separate, unrelated mechanism — manual overlap math in `PlayerController.ResolveShipCollisions()`, not a Unity trigger/physics callback — so it isn't affected by this setting either. |
+| **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, movementPattern: SineWave (default, set per-instance by EnemySpawner), zigzagInterval: 0.4, zigzagSpeed: 3, diveSpeedMultiplier: 1.6, health: 3, bulletPrefab: EnemyBullet prefab, fireInterval: 1.5, bulletSpeed: 6, contactDamage: 1 |
