@@ -187,7 +187,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 8
-  screenPadding: {x: 0.5, y: 0.5}
+  acceleration: 12
+  screenPadding: {x: 0, y: 0}
   speedBuffMultiplier: 1
   bulletPrefab: {fileID: 229699745721229377, guid: c026c6169059d5645a02f38dedd8d3b6, type: 3}
   firePoint: {fileID: 9095539630377812806}
@@ -196,6 +197,7 @@ MonoBehaviour:
   fireDamage: 0.6
   fireRateBuffMultiplier: 1
   recoilDamping: 8
+  boss: {fileID: 0}
 --- !u!114 &4065885798416288575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,8 +381,19 @@ MonoBehaviour:
   guardDeadzone: 0.2
   medicBias: -0.3
   medicApproachThreshold: 0.55
+  medicStandoffDistance: 0.5
   roamDeadzone: 0.3
   roamInterval: 3
+  attackerBias: 0.45
+  attackerPatrolAmplitude: 1.5
+  attackerDeadzone: 0.2
+  minDistanceFromBoss: 1.9
+  separationRadius: 1.1
+  separationWeight: 1
+  dodgeDetectionRadius: 3
+  dodgeLookaheadTime: 0.6
+  dodgeMissDistance: 0.6
+  dodgeWeight: 1
 --- !u!1 &6535522730374422398
 GameObject:
   m_ObjectHideFlags: 0

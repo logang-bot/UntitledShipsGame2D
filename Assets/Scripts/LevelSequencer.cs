@@ -26,11 +26,16 @@ public class LevelSequencer : MonoBehaviour
     [Header("Timing")]
     public float introDuration = 4f;
     public float freeMovementDuration = 4f;
-    public float minionPhase1Duration = 120f;
+    public float minionPhase1Duration = 15f; // shortened for testing - was 120s, too slow to iterate on boss phase
     public float bossEntranceDuration = 4f;
     public float offScreenMargin = 1f; // buffer beyond the viewport edge ships/boss start hidden behind
 
     public SequenceState CurrentState { get; private set; }
+
+    // Enemy scripts (Level1Boss, Minion) check this before firing so
+    // nothing can hit a ship while it's frozen and unable to dodge (during
+    // Intro/BossEntrance) - see SetShipsFrozen().
+    public static bool ShipsFrozen { get; private set; }
 
     private Vector3[] shipHomes;
     private PlayerInput[] shipInputs;
@@ -149,6 +154,8 @@ public class LevelSequencer : MonoBehaviour
     // is needed to block ability use.
     void SetShipsFrozen(bool frozen)
     {
+        ShipsFrozen = frozen;
+
         for (int i = 0; i < ships.Length; i++)
         {
             PlayerController pc = ships[i];
@@ -161,6 +168,7 @@ public class LevelSequencer : MonoBehaviour
                 if (ai != null) ai.enabled = false;
                 pc.SetMoveDirection(Vector2.zero);
                 pc.SetFiring(false);
+                pc.ResetVelocity(); // so the next unfreeze ramps up from rest, not leftover velocity
                 pc.enabled = false;
             }
             else

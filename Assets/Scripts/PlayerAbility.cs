@@ -14,13 +14,17 @@ public class PlayerAbility : MonoBehaviour
     // the aura can reach the human Player too, unlike AIController's
     // teammates[] which deliberately excludes Player.
     public Transform[] allies;
-    public float auraRadius = 0.5f; // tiny: allies must nearly touch the Medic
+    // Ship colliders are ~0.6 world units across, and ship-vs-ship overlap
+    // resolution (PlayerController.ResolveShipCollisions) never lets two
+    // ships get closer than roughly that - so this must stay comfortably
+    // above ~0.6 or the Medic can never physically get an ally in range.
+    public float auraRadius = 1.0f;
     public float auraTickInterval = 1f;
     public int auraHealPerTick = 1;
     public int auraShieldPerTick = 1;
 
     [Header("Medic - Aura Boost (E ability)")]
-    public float auraBoostRadius = 1.5f; // drastically larger while active - halved from 3, was flagged overpowered
+    public float auraBoostRadius = 2.0f; // drastically larger while active - halved from 3, was flagged overpowered
     public float auraBoostTickInterval = 0.25f; // much faster while active
     public float auraBoostDuration = 4f;
     public float auraBoostCooldown = 10f; // must stay >= duration, same constraint as Support's buff
@@ -111,6 +115,23 @@ public class PlayerAbility : MonoBehaviour
         if (roleComponent.role == PlayerRole.Medic) CreateAuraRing();
         if (roleComponent.role == PlayerRole.Tank) CreateShieldArc();
         CreatePartyBuffRing();
+
+        // Start on cooldown instead of immediately available - same
+        // per-role cooldown value TryUseAbility() would apply on first use,
+        // just without actually triggering the ability's effects.
+        nextAbilityTime = Time.time + InitialCooldown(roleComponent.role);
+    }
+
+    float InitialCooldown(PlayerRole role)
+    {
+        switch (role)
+        {
+            case PlayerRole.Tank: return tauntCooldown;
+            case PlayerRole.Medic: return auraBoostCooldown;
+            case PlayerRole.Support: return speedBoostCooldown;
+            case PlayerRole.Attacker: return bigShotCooldown;
+            default: return 0f;
+        }
     }
 
     void Update()

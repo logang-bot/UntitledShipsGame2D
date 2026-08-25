@@ -5,7 +5,14 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 8f; // fixed per-role base, see PlayerRoleStats
-    public Vector2 screenPadding = new Vector2(0.5f, 0.5f);
+    // Caps how fast actual velocity can change, so movement ramps up/down
+    // instead of snapping to full speed instantly - most noticeable right
+    // after LevelSequencer unfreezes a ship (see ResetVelocity()).
+    public float acceleration = 12f;
+    // Extra buffer beyond the ship's own collider size (see HandleMovement's
+    // clamp) - 0 lets the ship's edge reach all the way to the true screen
+    // edge, same as enemies (which have no screen clamp at all).
+    public Vector2 screenPadding = Vector2.zero;
     // Non-destructive buff multiplier - set/cleared by PlayerAbility's
     // party-wide speed boost, never mutated into moveSpeed itself, so
     // there's nothing to divide back out (and nothing to double-apply).
@@ -29,6 +36,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Camera cam;
     private Vector2 moveInput;
+    private Vector2 currentVelocity;
     private bool isFiring;
     private float nextFireTime;
     private Vector2 recoilVelocity;
@@ -96,15 +104,22 @@ void HandleMovement()
     {
         recoilVelocity = Vector2.Lerp(recoilVelocity, Vector2.zero, recoilDamping * Time.fixedDeltaTime);
 
-        Vector2 move = moveInput.normalized * (moveSpeed * speedBuffMultiplier) + recoilVelocity;
+        Vector2 targetVelocity = moveInput.normalized * (moveSpeed * speedBuffMultiplier);
+        currentVelocity = Vector2.MoveTowards(currentVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
+
+        Vector2 move = currentVelocity + recoilVelocity;
         Vector2 newPos = rb.position + move * Time.fixedDeltaTime;
 
         newPos = ResolveShipCollisions(newPos);
 
         Vector3 min = cam.ViewportToWorldPoint(new Vector3(0, 0, 0));
         Vector3 max = cam.ViewportToWorldPoint(new Vector3(1, 1, 0));
-        newPos.x = Mathf.Clamp(newPos.x, min.x + screenPadding.x, max.x - screenPadding.x);
-        newPos.y = Mathf.Clamp(newPos.y, min.y + screenPadding.y, max.y - screenPadding.y);
+        // Clamp by the ship's own half-extent (not a flat guess) so its edge
+        // - not its center - is what reaches the screen boundary.
+        float marginX = selfHalfExtents.x + screenPadding.x;
+        float marginY = selfHalfExtents.y + screenPadding.y;
+        newPos.x = Mathf.Clamp(newPos.x, min.x + marginX, max.x - marginX);
+        newPos.y = Mathf.Clamp(newPos.y, min.y + marginY, max.y - marginY);
 
         rb.MovePosition(newPos);
     }
@@ -186,6 +201,14 @@ void HandleMovement()
     public void SetMoveDirection(Vector2 direction)
     {
         moveInput = direction;
+    }
+
+    // Called by LevelSequencer right before freezing a ship, so the next
+    // unfreeze ramps up from a standing start instead of resuming whatever
+    // velocity carried over from before the freeze.
+    public void ResetVelocity()
+    {
+        currentVelocity = Vector2.zero;
     }
 
     // Auto-called by PlayerInput whenever the "Fire" action is pressed/released.

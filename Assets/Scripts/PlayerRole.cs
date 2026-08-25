@@ -40,10 +40,10 @@ public static class PlayerRoleStats
     // See docs/systems/player-roles.md for the full table/reasoning.
     private static readonly Dictionary<PlayerRole, RoleStats> stats = new Dictionary<PlayerRole, RoleStats>
     {
-        { PlayerRole.Attacker, new RoleStats(maxHealth: 6, maxShield: 5, fireDamage: 2.0f, shotsPerSecond: 2.5f, moveSpeed: 3.0f, tintColor: new Color(1f, 0.3f, 0.3f)) },
-        { PlayerRole.Tank, new RoleStats(maxHealth: 8, maxShield: 20, fireDamage: 1.0f, shotsPerSecond: 1f, moveSpeed: 1.5f, tintColor: new Color(0.3f, 0.5f, 1f)) },
-        { PlayerRole.Medic, new RoleStats(maxHealth: 4, maxShield: 3, fireDamage: 0.7f, shotsPerSecond: 1.5f, moveSpeed: 3.0f, tintColor: new Color(0.3f, 1f, 0.4f)) },
-        { PlayerRole.Support, new RoleStats(maxHealth: 5, maxShield: 3, fireDamage: 1.0f, shotsPerSecond: 2f, moveSpeed: 4.5f, tintColor: new Color(1f, 0.85f, 0.3f)) },
+        { PlayerRole.Attacker, new RoleStats(maxHealth: 6, maxShield: 5, fireDamage: 2.0f, shotsPerSecond: 2.5f, moveSpeed: 2.4f, tintColor: new Color(1f, 0.3f, 0.3f)) },
+        { PlayerRole.Tank, new RoleStats(maxHealth: 8, maxShield: 20, fireDamage: 1.0f, shotsPerSecond: 1f, moveSpeed: 1.2f, tintColor: new Color(0.3f, 0.5f, 1f)) },
+        { PlayerRole.Medic, new RoleStats(maxHealth: 4, maxShield: 3, fireDamage: 0.7f, shotsPerSecond: 1.5f, moveSpeed: 2.4f, tintColor: new Color(0.3f, 1f, 0.4f)) },
+        { PlayerRole.Support, new RoleStats(maxHealth: 5, maxShield: 3, fireDamage: 1.0f, shotsPerSecond: 2f, moveSpeed: 3.6f, tintColor: new Color(1f, 0.85f, 0.3f)) },
     };
 
     public static RoleStats Get(PlayerRole role) => stats[role];

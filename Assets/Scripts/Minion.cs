@@ -91,7 +91,7 @@ public class Minion : MonoBehaviour
         Vector2 wobble = new Vector2(0f, Mathf.Sin(Time.time * wobbleFrequency + wobblePhase) * wobbleAmplitude);
         transform.position = (Vector2)boss.transform.position + flankOffset + wobble;
 
-        if (boss.CurrentTarget != null && Time.time >= nextFireTime)
+        if (!LevelSequencer.ShipsFrozen && boss.CurrentTarget != null && Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + fireInterval;
             Fire();

@@ -27,6 +27,21 @@ public class MinionSpawner : MonoBehaviour
         if (boss != null) boss.OnDefeated.AddListener(DestroyAllMinions);
     }
 
+    // Fires when Level1Boss.OnEnable() flips this component on, right as the
+    // boss's entrance finishes - spawns both flank minions together so they
+    // read as arriving "with" the boss, instead of one immediately and the
+    // other up to spawnInterval seconds later with no warning (SpawnMinion()
+    // alternates sides each call, so two calls back-to-back covers both).
+    // Update()'s own timed spawning then takes over for later reinforcements.
+    void OnEnable()
+    {
+        if (minionPrefab == null || boss == null) return;
+
+        SpawnMinion();
+        SpawnMinion();
+        nextSpawnTime = Time.time + spawnInterval;
+    }
+
     void Update()
     {
         if (minionPrefab == null || boss == null) return;

@@ -11,21 +11,39 @@ public class Level1Boss : MonoBehaviour
     public UnityEvent OnDefeated;
 
     [Header("Movement — pattern")]
-    // Scripted movement, not AI: instantly snap to one side (still on the
-    // home row), advance toward the ships, retreat back to that side,
-    // return home, wait cycleGap seconds, then repeat mirrored to the other
-    // side. Loops for the rest of the fight, unchanged across both phases.
-    // Reuses ClampToBounds()'s existing viewport/maxAdvanceFraction clamp so
-    // the descent limit stays governed by the same tuning knob the old
+    // Scripted movement, not AI: hops between the fixed vertices of an "M"
+    // shape (home, the two outer top corners, their low points below, and
+    // the middle notch between them) in random order - see
+    // MovementPatternRoutine/GetPatternVertices. Every hop is a real eased
+    // travel (MoveOverTime) from wherever the boss currently is, so nothing
+    // ever snaps/teleports. Both the hop's travel duration and how long the
+    // boss pauses at each vertex before the next hop are re-rolled every
+    // time, so the shape stays recognizable (it only ever stops at one of
+    // these six points) while the path and pacing are unpredictable. Loops
+    // for the rest of the fight, unchanged across both phases. Reuses
+    // ClampToBounds()'s existing viewport/maxAdvanceFraction clamp so the
+    // descent limit stays governed by the same tuning knob the old
     // random-dash movement used.
     public float sideOffsetX = 2.2f;
-    public float patternMoveDuration = 1.2f; // shared by the advance/retreat/return-home legs
-    public float cycleGap = 1.5f;
+    // Per-hop travel duration is randomized within this range every hop -
+    // the low end can be fast enough to read as a sudden dart between points.
+    public float patternMoveDurationMin = 0.4f;
+    public float patternMoveDurationMax = 2f;
+    // How long the boss sits still at a vertex before hopping to the next
+    // one, randomized within this range each time - see MovementPatternRoutine.
+    public float cycleGapMin = 0.5f;
+    public float cycleGapMax = 2.5f;
     public float maxAdvanceFraction = 0.4f; // "2/5 of the screen" - fraction of playable height below homeY the boss may advance into
+    [Range(0f, 1f)] public float mPatternNotchDepth = 0.5f; // how deep the M's middle notch dips, 0 = stays at home row, 1 = as deep as the outer low points
     public Vector2 screenPadding = new Vector2(0.8f, 0.5f);
 
     [Header("Combat")]
     public GameObject bulletPrefab;
+    // Delay after this component is enabled (right when ships regain
+    // control post-entrance) before it's allowed to attack at all - see
+    // OnEnable(). Without this, attack timers default to 0 and the boss can
+    // land a hit on the very first Update() with zero reaction time.
+    public float postEntranceGracePeriod = 1.5f;
     public float phase1FireInterval = 1.2f;
     public float phase2FireInterval = 0.6f;
     public float bulletSpeed = 6f;
@@ -164,10 +182,25 @@ public class Level1Boss : MonoBehaviour
         home = transform.position;
         if (minionSpawner != null) minionSpawner.enabled = true;
         StartCoroutine(MovementPatternRoutine());
+
+        // Attack timers default to 0, which without this would let every
+        // attack fire on literally the first Update() after enabling - the
+        // instant ships regain control, with zero reaction time. Give
+        // players a breath before the boss's first move.
+        float graceUntil = Time.time + postEntranceGracePeriod;
+        nextFireTime = graceUntil;
+        nextShockwaveCheckTime = graceUntil;
+        nextGuidedMissileTime = graceUntil;
+        nextPatternBarrageTime = graceUntil;
     }
 
     void Update()
     {
+        // Belt-and-suspenders: LevelSequencer already keeps this component
+        // disabled while ships are frozen, but this guarantees no attack can
+        // land while a ship can't move/dodge even if that timing ever changes.
+        if (LevelSequencer.ShipsFrozen) return;
+
         PickTarget();
 
         float interval = IsPhase2 ? phase2FireInterval : phase1FireInterval;
@@ -236,35 +269,68 @@ public class Level1Boss : MonoBehaviour
         }
     }
 
-    // Loops for the rest of the fight once started: snap to a side, advance
-    // toward the ships, retreat, return home, wait, then mirror to the other
-    // side. Runs identically through phase 1 and phase 2 - no branching.
+    // Loops for the rest of the fight once started: sit still for a random
+    // beat (so players can't time when it'll move), then hop to a random
+    // vertex of the "M" at a random speed. Runs identically through phase 1
+    // and phase 2 - no branching.
     IEnumerator MovementPatternRoutine()
     {
         while (true)
         {
-            yield return StartCoroutine(RunCycle(sideOffsetX));
-            yield return new WaitForSeconds(cycleGap);
-            yield return StartCoroutine(RunCycle(-sideOffsetX));
-            yield return new WaitForSeconds(cycleGap);
+            float stillTime = Random.Range(cycleGapMin, cycleGapMax);
+            yield return new WaitForSeconds(stillTime);
+
+            Vector3 target = PickRandomVertex();
+            float legDuration = Random.Range(patternMoveDurationMin, patternMoveDurationMax);
+            yield return MoveOverTime(transform.position, target, legDuration);
         }
     }
 
-    IEnumerator RunCycle(float side)
+    // The fixed points an "M" is built from: home, its two outer top
+    // corners, their low points below, and the middle notch between them.
+    // Recomputed each hop (not cached) since it depends on the live camera
+    // viewport via BottomY()/ClampToBounds().
+    Vector3[] GetPatternVertices()
     {
-        // Snap suddenly to the side - instantaneous, not eased.
-        Vector3 sidePos = ClampToBounds(new Vector3(home.x + side, home.y, 0f));
-        transform.position = sidePos;
+        float bottomY = BottomY();
+        float notchY = Mathf.Lerp(homeY, bottomY, mPatternNotchDepth);
+        return new Vector3[]
+        {
+            home,
+            ClampToBounds(new Vector3(home.x - sideOffsetX, home.y, 0f)), // top-left
+            ClampToBounds(new Vector3(home.x - sideOffsetX, bottomY, 0f)), // bottom-left
+            ClampToBounds(new Vector3(home.x, notchY, 0f)), // notch
+            ClampToBounds(new Vector3(home.x + sideOffsetX, bottomY, 0f)), // bottom-right
+            ClampToBounds(new Vector3(home.x + sideOffsetX, home.y, 0f)), // top-right
+        };
+    }
 
-        // Advance down toward the ships. The far-below candidate Y gets
-        // clamped by ClampToBounds()'s maxAdvanceFraction floor, so "how far
-        // it can push" stays governed by the same knob the old dash used.
-        Vector3 advancePos = ClampToBounds(new Vector3(sidePos.x, home.y - 999f, 0f));
-        yield return MoveOverTime(sidePos, advancePos, patternMoveDuration);
+    // Picks a random vertex, re-rolling (bounded) if it happens to land on
+    // wherever the boss already is, so a hop always actually goes somewhere.
+    Vector3 PickRandomVertex()
+    {
+        Vector3[] vertices = GetPatternVertices();
+        Vector3 current = transform.position;
+        Vector3 target;
+        int guard = 0;
+        do
+        {
+            target = vertices[Random.Range(0, vertices.Length)];
+            guard++;
+        } while (Vector3.Distance(target, current) < 0.05f && guard < 10);
+        return target;
+    }
 
-        // Return to the side position, then home.
-        yield return MoveOverTime(advancePos, sidePos, patternMoveDuration);
-        yield return MoveOverTime(sidePos, home, patternMoveDuration);
+    // The lowest Y the M's outer corners descend to - same
+    // maxAdvanceFraction-of-viewport floor ClampToBounds() enforces, just
+    // computed directly instead of relying on clamping an already-far-below candidate.
+    float BottomY()
+    {
+        if (cam == null) return homeY;
+        Vector3 min = cam.ViewportToWorldPoint(new Vector3(0, 0, 0));
+        Vector3 max = cam.ViewportToWorldPoint(new Vector3(1, 1, 0));
+        float viewportHeight = max.y - min.y;
+        return homeY - maxAdvanceFraction * viewportHeight;
     }
 
     IEnumerator MoveOverTime(Vector3 from, Vector3 to, float duration)

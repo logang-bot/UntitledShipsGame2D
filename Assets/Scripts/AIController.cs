@@ -26,6 +26,11 @@ public class AIController : MonoBehaviour
     // Uses PlayerAbility.allies (all 4 ships, unlike teammates[] above)
     // since the Medic should react to the human Player being hurt too.
     public float medicApproachThreshold = 0.55f;
+    // How far behind the hurt ally (on the side away from the boss) the
+    // Medic aims to stand, instead of steering straight at the ally's exact
+    // position - keeps it out of the ally's path while still landing well
+    // within PlayerAbility.auraRadius once it closes in. See ApproachDirection().
+    public float medicStandoffDistance = 0.5f;
 
     [Header("Support positioning")]
     public float roamDeadzone = 0.3f;
@@ -54,6 +59,15 @@ public class AIController : MonoBehaviour
     // touching the boss's body, so this floor doesn't defeat that design.
     public float minDistanceFromBoss = 1.9f;
 
+    [Header("Ship separation")]
+    // Additive steering push away from nearby allies so two ships whose
+    // targets sit on opposite sides of each other don't just lock up
+    // face-to-face - PlayerController's own collision resolution only ever
+    // shoves a ship back to the overlap boundary, it never redirects
+    // sideways, so nothing else breaks that kind of standoff on its own.
+    public float separationRadius = 1.1f;
+    public float separationWeight = 1f;
+
     [Header("Bullet dodging")]
     // Applied to every role uniformly, blended additively with (not
     // overriding) whatever positioning direction the role switch below
@@ -80,6 +94,11 @@ public class AIController : MonoBehaviour
 
 void Update()
     {
+        // Resolved once per frame (not just inside the Medic case) so it can
+        // also be excluded from separation below - otherwise the Medic would
+        // be pushed away from the very ally it's trying to close in on heal.
+        Transform medicTarget = role.role == PlayerRole.Medic ? FindHurtAlly() : null;
+
         Vector2 moveDirection;
         switch (role.role)
         {
@@ -87,12 +106,9 @@ void Update()
                 moveDirection = BiasedPositionDirection(guardBias, guardDeadzone);
                 break;
             case PlayerRole.Medic:
-                {
-                    Transform hurtAlly = FindHurtAlly();
-                    moveDirection = hurtAlly != null
-                        ? ApproachDirection(hurtAlly)
-                        : BiasedPositionDirection(medicBias, guardDeadzone);
-                }
+                moveDirection = medicTarget != null
+                    ? ApproachDirection(medicTarget)
+                    : BiasedPositionDirection(medicBias, guardDeadzone);
                 break;
             case PlayerRole.Support:
                 moveDirection = WanderDirection();
@@ -106,12 +122,13 @@ void Update()
                 break;
         }
 
+        Vector2 separation = ComputeSeparationVector(medicTarget);
         Vector2 dodge = ComputeDodgeVector();
-        if (dodge != Vector2.zero)
-        {
-            Vector2 blended = moveDirection + dodge * dodgeWeight;
-            moveDirection = blended.sqrMagnitude > 0.0001f ? blended.normalized : dodge;
-        }
+        Vector2 combined = moveDirection + separation * separationWeight + dodge * dodgeWeight;
+        if (combined.sqrMagnitude > 0.0001f)
+            moveDirection = combined.normalized;
+        else if (dodge != Vector2.zero)
+            moveDirection = dodge;
 
         controller.SetMoveDirection(moveDirection);
         controller.SetFiring(true);
@@ -211,10 +228,44 @@ void Update()
         return (Vector2)boss.transform.position + pushDir * minDistanceFromBoss;
     }
 
+    // Steers toward a point offset from `target` on the side away from the
+    // boss (medicStandoffDistance), rather than the ally's exact position -
+    // lands the Medic near but not on top of the ally it's healing, instead
+    // of nose-to-nose blocking its path. Falls back to the ally's exact
+    // position if there's no boss reference to compute "away" from.
     private Vector2 ApproachDirection(Transform target)
     {
-        Vector2 toTarget = (Vector2)target.position - (Vector2)transform.position;
+        Vector2 targetPos = target.position;
+        if (boss != null)
+        {
+            Vector2 awayFromBoss = (Vector2)target.position - (Vector2)boss.transform.position;
+            if (awayFromBoss.sqrMagnitude > 0.0001f)
+                targetPos += awayFromBoss.normalized * medicStandoffDistance;
+        }
+
+        Vector2 toTarget = targetPos - (Vector2)transform.position;
         return toTarget.magnitude < guardDeadzone ? Vector2.zero : toTarget.normalized;
+    }
+
+    // Steers away from any other living ally within separationRadius,
+    // scaled by how deep into the radius they are (closer = stronger push).
+    // Excludes `ignore` so e.g. the Medic can still close the last stretch
+    // of distance on the ally it's actively approaching to heal. Blended
+    // additively in Update(), same pattern as ComputeDodgeVector().
+    private Vector2 ComputeSeparationVector(Transform ignore)
+    {
+        Vector2 push = Vector2.zero;
+        if (ability.allies == null) return push;
+
+        foreach (Transform ally in ability.allies)
+        {
+            if (ally == null || ally == transform || ally == ignore || !ally.gameObject.activeInHierarchy) continue;
+            Vector2 offset = (Vector2)transform.position - (Vector2)ally.position;
+            float dist = offset.magnitude;
+            if (dist >= separationRadius || dist < 0.0001f) continue;
+            push += offset.normalized * (1f - dist / separationRadius);
+        }
+        return push;
     }
 
     // Average position of the AI-controlled allies (teammates[], self

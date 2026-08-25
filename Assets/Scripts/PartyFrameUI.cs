@@ -9,6 +9,7 @@ public class PartyFrameUI : MonoBehaviour
     public Image avatarImage;
     public TextMeshProUGUI roleText;
     public TextMeshProUGUI healthText;
+    public TextMeshProUGUI shieldText;
     public TextMeshProUGUI moveSpeedText;
     public TextMeshProUGUI fireRateText;
     public TextMeshProUGUI abilityText;
@@ -60,6 +61,20 @@ public void Initialize(GameObject player, string displayName, bool isHumanPlayer
 
     public void OnPlayerDied()
     {
+        // One last paint before Update() stops running (below): TakeDamage()
+        // already finished mutating playerHealth by the time Die() invokes
+        // OnDeath (which calls this), and that happens in the same frame as
+        // the killing blow - before this frame's own Update() - so without
+        // this, the bars/text would freeze on the *previous* frame's values
+        // (e.g. "1/5") instead of the true final ones. Clamped to 0 since
+        // overkill damage can leave CurrentHealth/CurrentShield negative.
+        int health = Mathf.Max(0, playerHealth.CurrentHealth);
+        int shield = Mathf.Max(0, playerHealth.CurrentShield);
+        healthBarFill.fillAmount = (float)health / playerHealth.maxHealth;
+        healthText.text = $"<b><color=#A8A8B8>HP:</color></b> {health}/{playerHealth.maxHealth}";
+        shieldBarFill.fillAmount = (float)shield / playerHealth.maxShield;
+        if (shieldText != null) shieldText.text = $"<b><color=#A8A8B8>SH:</color></b> {shield}/{playerHealth.maxShield}";
+
         isDead = true;
         healthBarFill.color = Color.gray;
         shieldBarFill.color = Color.gray;
@@ -73,6 +88,7 @@ void Update()
         healthBarFill.fillAmount = (float)playerHealth.CurrentHealth / playerHealth.maxHealth;
         healthText.text = $"<b><color=#A8A8B8>HP:</color></b> {playerHealth.CurrentHealth}/{playerHealth.maxHealth}";
         shieldBarFill.fillAmount = (float)playerHealth.CurrentShield / playerHealth.maxShield;
+        if (shieldText != null) shieldText.text = $"<b><color=#A8A8B8>SH:</color></b> {playerHealth.CurrentShield}/{playerHealth.maxShield}";
         moveSpeedText.text = $"<b><color=#A8A8B8>Move Speed:</color></b> {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
         fireRateText.text = $"<b><color=#A8A8B8>Fire Rate:</color></b> {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
         abilityText.text = $"<b><color=#A8A8B8>{playerAbility.AbilityName}:</color></b> {playerAbility.StatusText}";
