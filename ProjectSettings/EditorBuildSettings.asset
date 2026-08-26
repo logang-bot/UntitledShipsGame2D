@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: 72a7005e7f93f384c803f3c1ebc9b742
   - enabled: 1
+    path: Assets/Scenes/JoinLobby.unity
+    guid: 6bb6bbe10fd6c084aa891026daca2878
+  - enabled: 1
     path: Assets/Scenes/RoleSelect.unity
     guid: a064663232776dc4c8778836977c070f
   - enabled: 1

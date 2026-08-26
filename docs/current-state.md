@@ -8,16 +8,28 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
-- **Main Menu / Lobby / Pause** — the game now boots into `MainMenu.unity`
-  (Build Settings index 0): Play → `Lobby`, Quit. Lobby offers **Local**
-  (proceeds into the existing single-human + 3-AI-teammate flow, unchanged)
-  or **Online** — Online is a disabled placeholder button, since there's no
-  Nakama backend yet. Role Select (now index 2) gained a Back button to
-  Lobby. Mid-run, pressing **Escape** in `Gameplay` pauses (freezes the game
-  via `Time.timeScale`, shows Resume/Restart/Change Roles/Quit to Main Menu)
-  — disabled while Game Over/Victory is already showing, and will
+- **Main Menu / Lobby / Join / Pause** — the game now boots into
+  `MainMenu.unity` (Build Settings index 0): Play → `Lobby`, Quit. Lobby
+  offers **Local** (proceeds to `JoinLobby`, a co-op device-join screen —
+  see "Local co-op" below) or **Online** — Online is a disabled placeholder
+  button, since there's no Nakama backend yet. Role Select (now index 3)
+  gained a Back button (to `JoinLobby` or `Lobby`). Mid-run, pressing
+  **Escape** (or a gamepad's **Start**) in `Gameplay` pauses (freezes the
+  game via `Time.timeScale`, shows Resume/Restart/Change Roles/Quit to Main
+  Menu) — disabled while Game Over/Victory is already showing, and will
   auto-disable once Online mode is real. See
   [systems/scene-flow.md](systems/scene-flow.md).
+- **Local co-op (up to 4 players, one machine)** — `Lobby`'s Local button
+  leads to `JoinLobby.unity`: press any key/click (keyboard+mouse) or any
+  button on a gamepad to claim one of 4 slots, shown live; **Continue** once
+  at least one player has joined. `RoleSelect` then shows either the
+  original single-picker (0-1 joined) or a per-player row picker (2+
+  joined) — each row moves its own highlight and locks a role using that
+  player's own device (dpad/stick or WASD, confirm with South/Enter), and
+  no two players can lock the same role. Any of the 4 roles nobody picked
+  is filled by AI, same as always. See
+  [systems/player-roles.md](systems/player-roles.md)'s "Local co-op /
+  dynamic player count".
 - **Ship movement** — a single player ship strafes left/right/up/down within
   a fixed portrait viewport. The ship has a fixed orientation (no rotation,
   Galaga-style) and always fires straight up. See
@@ -63,12 +75,14 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   9:16 portrait aspect ratio and adapts automatically: full-width on
   narrow/phone-like aspects, pillarboxed with HUD sidebar space on wider
   desktop aspects. See [systems/hud-layout.md](systems/hud-layout.md).
-- **Role Select + Victory screens** — the game boots into `RoleSelect.unity`:
-  pick one of the 4 roles for the human `Player` and press Start; the 3 AI
-  teammates automatically take the remaining 3 roles. Defeating the boss
-  shows a `VictoryPanel` (mirrors Game Over) offering "Play Again" (same
-  party, same roles) or "Change Roles" (back to Role Select); Game Over has
-  a matching "Change Roles" button alongside its Restart. See
+- **Role Select + Victory screens** — `RoleSelect.unity` shows either the
+  original single 4-button picker (0-1 players joined at `JoinLobby` — pick
+  one of the 4 roles and press Start) or, with 2+ local co-op players
+  joined, a row-per-player picker (see "Local co-op" above); whichever roles
+  nobody picked auto-fill with AI. Defeating the boss shows a `VictoryPanel`
+  (mirrors Game Over) offering "Play Again" (same party, same roles/devices)
+  or "Change Roles" (back to Role Select); Game Over has a matching "Change
+  Roles" button alongside its Restart. See
   [systems/player-roles.md](systems/player-roles.md)'s "Role Select scene".
 - **Level 1 sequencing** — the fight is now a scripted opening, not an
   instant drop-in. The 4 ships start below the visible screen and glide up
@@ -128,7 +142,11 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   since ships never rotate and shots only ever fire straight up, tracking
   the boss's X is what keeps its shots actually landing as the boss moves
   (see [systems/level1-boss.md](systems/level1-boss.md)'s "Attacker patrol positioning").
-  Medic's AI currently presses its ability the instant it's off cooldown
+  *(Written for the single-human default; with 2+ local co-op players
+  joined — see "Local co-op" above — the same per-role behavior applies to
+  whichever roles end up AI-controlled, and `Teammate_Tank`/`_Medic`/
+  `_Support`'s GameObject names are cosmetic only, not a guarantee of which
+  role or control type actually ends up there.)* Medic's AI currently presses its ability the instant it's off cooldown
   regardless of need — a known, flagged-temporary placeholder, not a
   finished heuristic. Every role has fixed, role-specific health/shield/
   fire-damage/fire-rate/move-speed values (see
@@ -192,17 +210,15 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's NOT there yet
 
-- No networking/multiplayer — the 3 teammates are CPU-controlled, not real
-  human players; local co-op isn't wired up. Lobby's **Online** option is a
-  disabled placeholder until this lands.
-- Four scenes now exist: `MainMenu.unity` (0), `Lobby.unity` (1),
-  `RoleSelect.unity` (2), `Gameplay.unity` (3) — see
+- No networked/authoritative multiplayer (multiple humans across *separate*
+  machines) — Lobby's **Online** option is a disabled placeholder until
+  Nakama networking lands. Local co-op (multiple humans on *one* machine) is
+  implemented — see the "Local co-op" bullet above.
+- Five scenes now exist: `MainMenu.unity` (0), `Lobby.unity` (1),
+  `JoinLobby.unity` (2), `RoleSelect.unity` (3), `Gameplay.unity` (4) — see
   [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
   are same-scene UI overlays within `Gameplay`, not separate scenes (see
   [systems/combat.md](systems/combat.md)).
-- No local co-op / dynamic player count — the party is 4 fixed, hand-placed
-  scene objects (`Player` + 3 `Teammate_*`), not a runtime spawner that
-  reacts to however many humans are actually playing.
 - No real art — the avatar slot and every ship are placeholder colored
   squares, no audio.
 
@@ -218,17 +234,26 @@ real networking last, then art/audio.
    build boots into.
 2. Press **Play**, click **Play** on the Main Menu to load `Lobby`, then
    click **Local** (Online is a disabled placeholder for now) to load
-   `RoleSelect`. Click one of the 4 role buttons (Attacker/Tank/Medic/
-   Support — this is the role the human `Player` will use), then click
-   **Start** once it's enabled. This loads `Gameplay` and auto-assigns
-   the 3 remaining roles to the 3 `Teammate_*` AI ships (any of the 4 you
-   didn't pick, exactly once each). *(Opening `Gameplay` directly instead
-   and pressing Play still works too, bypassing Main Menu/Lobby/Role Select
+   `JoinLobby`. Press any key or click to join as Player 1 (Keyboard &
+   Mouse), then click **Continue** to load `RoleSelect`. Click one of the 4
+   role buttons (Attacker/Tank/Medic/Support — this is the role the human
+   `Player` will use), then click **Start** once it's enabled. This loads
+   `Gameplay` and auto-assigns the 3 remaining roles to 3 AI ships (any of
+   the 4 you didn't pick, exactly once each). *(Opening `Gameplay` directly
+   instead and pressing Play still works too, bypassing every menu scene
    entirely, and falls back to whatever roles are currently hand-set on
    `Player`/`Teammate_*` in the Inspector — useful for quick iteration. A
-   Back button on both Lobby and Role Select lets you step back a screen at
+   Back button on Lobby/JoinLobby/Role Select lets you step back a screen at
    a time instead.)*
-3. Watch the opening sequence play out automatically: all 4 ships glide up
+3. *(Optional, local co-op)* At `JoinLobby`, connect one or more gamepads and
+   press a button on each to join additional players (up to 4 total) — each
+   claims its own slot, shown live. Click **Continue** once everyone's
+   joined; with 2+ players, `RoleSelect` shows a row per player instead of
+   the single picker — move each row's highlight with that player's own
+   dpad/stick or WASD and confirm with South/Enter to lock a role (no two
+   rows can lock the same one). Click **Start** once every row is locked.
+   Any role nobody picked is filled by AI, same as the single-player flow.
+4. Watch the opening sequence play out automatically: all 4 ships glide up
    from below the screen into their starting line (~4s, no input works
    yet), then control hands over fully for ~4s of free movement before
    minion waves start (`EnemySpawner`, random formation each wave, ~2
@@ -237,12 +262,13 @@ real networking last, then art/audio.
    combat begins. See [systems/level-sequencing.md](systems/level-sequencing.md).
    *(To iterate faster while testing, temporarily lower `LevelSequencer`'s
    `minionPhase1Duration` in the Inspector.)*
-4. Move with **WASD** (arrow keys are not currently bound). Hold **Space**
-   or **left mouse button** to fire — it auto-fires while held. Press **E**
-   to use the current role's ability (see step 7 for what each role does).
-   The 3 `Teammate_*` ships fight alongside you fully autonomously — no
-   input needed for them.
-5. Watch the boss run its scripted pattern (snap to a side, advance toward
+5. Move with **WASD** (or a gamepad's left stick, if you joined that way).
+   Hold **Space**/**left mouse button** (or a gamepad's South button) to
+   fire — it auto-fires while held. Press **E** (or a gamepad's West
+   button) to use the current role's ability (see step 9 for what each role
+   does). Any AI-controlled ships fight alongside you fully autonomously —
+   no input needed for them.
+6. Watch the boss run its scripted pattern (snap to a side, advance toward
    the party, retreat, return to center, pause, repeat mirrored) — it fires at
    whichever ship (yours or a teammate's) currently holds its aggro, shown
    live as `BossPanel`'s "Target:" text on the right. At ≤50% HP its fire
@@ -271,8 +297,9 @@ real networking last, then art/audio.
    side-to-side but stay roughly under wherever the boss currently is
    horizontally, at a distance between Tank's and Medic's, rather than
    patrolling a fixed lane independent of the boss. The left-sidebar shows
-   4 party frames (you + 3 teammates), each with a live avatar, name
-   ("Player 1" for you, "CPU 1"/"CPU 2"/"CPU 3" for the teammates),
+   4 party frames (you + your teammates), each with a live avatar, name
+   ("Player 1"/"Player 2"/... for humans in join order, "CPU 1"/"CPU 2"/...
+   for the AI-controlled slots),
    role/HP/shield-bar/move-speed/fire-rate/ability text, tinted to match
    the role. Each teammate's ability line is clickable — click it (e.g. on
    the Tank's frame) to force that teammate's ability to fire right now,
@@ -282,14 +309,14 @@ real networking last, then art/audio.
    you'll see it occasionally juke sideways out of a bullet's path without
    abandoning its role positioning (Tank still roughly holds its guard
    point, Medic still hangs back, etc.).
-6. Press **Escape** at any point during the run to pause — a `Paused`
+7. Press **Escape** (or a gamepad's Start button) at any point during the run to pause — a `Paused`
    overlay appears (Resume/Restart/Change Roles/Quit to Main Menu) and the
    game genuinely freezes (`Time.timeScale = 0`, so ships, bullets, the boss,
    and minions all stop mid-motion). Press **Escape** again or click
    **Resume** to continue exactly where you left off. Pause won't open on
    top of an already-showing Game Over/Victory overlay.
-7. At 0 HP, **only the human `Player`** triggers the "Game Over" overlay and
-   ends the test — a teammate dying just grays out its own party frame and
+8. At 0 HP, **only a human-controlled ship** triggers the "Game Over" overlay
+   and ends the test — a teammate dying just grays out its own party frame and
    it keeps fighting inactive (if the remaining teammates go on to defeat
    the boss after that, the Victory panel is suppressed rather than popping
    on top of Game Over — whichever end screen shows first wins). Click
@@ -297,7 +324,7 @@ real networking last, then art/audio.
    same party/roles, or **Change Roles** to go back to the Role Select
    screen and pick again. Defeating the boss instead shows a **Victory**
    overlay with the same two options ("Play Again" / "Change Roles").
-8. To see the different roles side by side, use **Change Roles** (from
+9. To see the different roles side by side, use **Change Roles** (from
    either end screen, or just stop Play and press Play again from
    `RoleSelect`) and pick a different role each time — compare HP/shield
    taken to disable, fire damage, fire rate, and move speed against the
@@ -317,7 +344,7 @@ real networking last, then art/audio.
    boost amount and cooldown countdown. As Attacker, **E** fires a wider,
    harder-hitting shot (damage scales with your own current fire damage)
    with a visible backward recoil kick.
-9. *(Optional)* Resize the Game view window (or check the Scene view via
+10. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`
    so this previews without even pressing Play.

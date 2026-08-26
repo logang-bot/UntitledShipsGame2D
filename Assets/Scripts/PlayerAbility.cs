@@ -112,9 +112,19 @@ public class PlayerAbility : MonoBehaviour
         roleComponent = GetComponent<PlayerRoleComponent>();
         playerController = GetComponent<PlayerController>();
         playerHealth = GetComponent<PlayerHealth>();
+        CreatePartyBuffRing();
+    }
+
+    // Start, not Awake: see PlayerRoleComponent.cs's Start() comment - the
+    // role-dependent setup below needs the real assigned role, which a
+    // dynamically-Instantiate()'d ship (co-op spawner) only has after
+    // Instantiate() returns, i.e. after Awake() already ran. The ref
+    // caching/CreatePartyBuffRing above stay in Awake since they're
+    // role-agnostic.
+    void Start()
+    {
         if (roleComponent.role == PlayerRole.Medic) CreateAuraRing();
         if (roleComponent.role == PlayerRole.Tank) CreateShieldArc();
-        CreatePartyBuffRing();
 
         // Start on cooldown instead of immediately available - same
         // per-role cooldown value TryUseAbility() would apply on first use,

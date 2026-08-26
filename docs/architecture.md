@@ -154,12 +154,19 @@ them — each is noted with where it already showed up in practice.
   broken reference produces a null at runtime with no compiler warning.
   This already caused the `PlayerRoleComponent` broken-script-reference bug
   (see "Script Organization" above) and the prefab-drift issue below.
-- **Prefab drift risk.** `Teammate_Medic`/`Teammate_Support` are plain
-  duplicated GameObjects, not real `Teammate.prefab` instances (only
-  `Teammate_Tank` is) — see `unity-notes.md`'s "Duplicating a GameObject
-  before it's a prefab instance." A prefab-default edit doesn't propagate
-  to the other two automatically; each has needed the same edit applied by
-  hand repeatedly across the project's history.
+- **Prefab drift risk — resolved.** `Player`/`Teammate_Tank`/`Teammate_Medic`/
+  `Teammate_Support` used to be a mix of plain duplicated GameObjects and one
+  real `Teammate.prefab` instance (see `unity-notes.md`'s "Duplicating a
+  GameObject before it's a prefab instance") — a prefab-default edit didn't
+  propagate to the duplicates automatically, and each needed the same edit
+  applied by hand repeatedly across the project's history. Fixed as part of
+  local co-op / dynamic player count (see `systems/player-roles.md`'s "Local
+  co-op / dynamic player count"): all 4 are now real instances of one
+  unified `Ship.prefab`. A related gotcha surfaced during that same fix,
+  documented in `unity-notes.md`'s "Prefab-instance overrides" section: an
+  instance value that happens to match the prefab's default at the moment
+  it's set isn't recorded as a real override, so changing the prefab's
+  default later can silently flip that instance too.
 - **Float/int inconsistency in damage types.** `Bullet.damage`/
   `Enemy.TakeDamage`/`Level1Boss.TakeDamage` are `float`, but
   `PlayerHealth.TakeDamage(int)` stayed `int`. This already caused a real

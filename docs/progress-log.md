@@ -550,3 +550,205 @@ Same as prior sessions. Still no real human playtest — this fix in
 particular would benefit from one at a genuinely arbitrary (non-16:9)
 window size, since that's the exact condition this environment couldn't
 reproduce directly.
+
+## Session 35 — Local Co-op / Dynamic Player Count
+
+**Correcting the record first**: every prior session above notes "still no
+real human playtest." That's no longer true as of this session — the user
+has since playtested the game for real. Not revising those old entries
+(this is a chronological log), just flagging it here so the refrain doesn't
+keep getting treated as current.
+
+Picked up `roadmap.md`'s "In Progress" item: let up to 4 local humans play
+together on one machine (extra players via gamepad, the first via
+keyboard+mouse or gamepad), each picking a distinct role, any unpicked role
+auto-filled by AI exactly as before. Key framing that shaped the whole
+design: the party is **always exactly 4 ships**, one per `PlayerRole` — only
+the human/AI split of those 4 fixed slots varies, not the total count. That
+meant `PlayerRoleStats`'s 4-entry table, `PartyFrameManager`'s 4 hand-placed
+HUD frames, `LevelSequencer.ships`'s always-4-element array, and the boss's
+aggro table all stayed untouched.
+
+### Prerequisite: Awake → Start refactor
+
+`PartySetupBootstrap` has always worked by setting `.role` on
+already-existing scene objects before their own `Awake()` runs, via
+`[DefaultExecutionOrder(-1000)]`. That guarantee breaks for a dynamically
+`Instantiate()`d ship (needed for co-op): `Instantiate()` runs the new
+object's `Awake()` synchronously, before the caller can set `.role`. Moved
+every role-dependent side effect — `PlayerRoleComponent`'s sprite tint,
+`PlayerHealth`'s `maxHealth`/`maxShield`, `PlayerAbility`'s aura ring/shield
+arc construction and initial cooldown — from `Awake()` to `Start()`, which
+Unity does *not* run synchronously on a freshly-instantiated object.
+Behavior-preserving for the legacy scene-placed path (role is already set
+well before any `Start()` runs either way); verified the existing
+single-player flow was unchanged before building anything else on top.
+
+### Ship.prefab
+
+Replaced the long-standing inconsistency (`Player` and 2 of the 3
+`Teammate_*` GameObjects were plain hand-placed duplicates, not real prefab
+instances — see `unity-notes.md`'s "Duplicating a GameObject before it's a
+prefab instance") with one unified `Assets/Prefabs/Ship.prefab`, created
+from `Player` via the Unity MCP bridge's `create_from_gameobject` (which
+correctly converted `Player` into a real instance in place, no duplicate
+object). Carries both `PlayerInput` and `AIController` — never adds/removes
+either at runtime, only toggles `.enabled`. Deleted and re-instantiated the
+3 `Teammate_*` objects from the new prefab, then rewired every
+cross-reference that pointed at their old (now-destroyed) component
+instances: `PartySetupBootstrap.teammates[]`, `LevelSequencer.ships[]`,
+`PartyFrameManager.players[]`, every ship's `PlayerAbility.allies[]`, and
+every AI ship's `AIController.teammates[]`.
+
+**Real bug caught immediately by re-testing this checkpoint in Play mode**:
+`PartyFrameManager`'s old humanness check (`GetComponent<AIController>() ==
+null`) broke the instant `Player` also had an `AIController` (disabled) —
+every party frame read "CPU". Not a hypothetical, an MCP-bridge screenshot
+showed all 4 frames labeled CPU immediately. Fixed by checking
+`GetComponent<PlayerInput>().enabled` instead (see "PartyFrameManager.cs
+fix" below) — this turned out to be needed *before* any co-op-specific code
+existed, purely from unifying the prefab.
+
+### Input Actions asset
+
+Added `Keyboard&Mouse` and `Gamepad` control schemes to
+`PlayerControls.inputactions`; tagged every pre-existing binding into
+`Keyboard&Mouse` (previously group-less/scheme-agnostic — a real hazard once
+a `Gamepad`-scheme player and a `Keyboard&Mouse`-scheme player are both live
+at once); added `<Gamepad>/leftStick`/`buttonSouth`/`buttonWest` bindings
+for Move/Fire/Ability. Zero code changes needed in `PlayerController.cs`/
+`PlayerAbility.cs` — confirmed live (join a virtual `Gamepad` device via
+`InputSystem.AddDevice<Gamepad>()`, pair it through `PlayerInputManager`,
+verify `PlayerInput.currentControlScheme == "Gamepad"`) that input
+consumption was already fully device-agnostic.
+
+### CoOpRoster.cs, JoinLobby.unity, RoleSelect overhaul
+
+`CoOpRoster.cs` (new static carrier, mirrors `PartyRoleAssignment.cs`/
+`GameModeSelection.cs`'s pattern exactly) holds a `List<JoinedPlayer>`
+(`controlScheme`, paired `devices[]`, `role`), `null` meaning "co-op flow
+wasn't used." New `JoinLobby.unity` scene (Build index 2, `RoleSelect`→3,
+`Gameplay`→4) hosts a `PlayerInputManager`
+(`JoinPlayersWhenButtonIsPressed`, a throwaway `JoinSlotMarker.prefab`) and
+`JoinLobbyUI.cs`, which reflects `PlayerInput.all` into 4 live slot rows and
+snapshots them into `CoOpRoster.Players` on Continue. `LobbyUI.SelectLocal()`
+now routes here instead of straight to `RoleSelect`.
+
+`RoleSelectUI.cs` now routes to one of two child panels:
+`SinglePickerPanel` (the original 4-button picker, unchanged, used for 0-1
+joined players) or a new `MultiPickerPanel` (`RoleSelectMultiUI.cs` +
+`RolePickerRow.prefab`, one row per joined player). Each row polls its own
+paired device *directly* (`Gamepad`/`Keyboard` objects, dpad/stick or WASD
+to move a highlight, South/Enter to confirm) rather than standing up a
+second `EventSystem`/`InputSystemUIInputModule` per player — real, correct
+Unity functionality, but judged more infrastructure than a 4-role button
+grid needs for a first co-op pass. A shared taken-role check across rows
+blocks duplicate picks; Start enables once every row has locked a role.
+
+### PartySetupBootstrap.cs dynamic spawn branch
+
+Added a `SpawnDynamicParty()` branch, checked first in `Awake()`, gated on
+`CoOpRoster.Players`. The legacy branch (single-human `PartyRoleAssignment`
+or Inspector-only fallback) is untouched. The 4 legacy scene ships are
+reused purely as position markers (read position, `SetActive(false)`) so
+both branches share one authored set of spawn points.
+
+**Two real bugs caught live, both traced by direct Play-mode testing, not
+inspection**:
+
+1. `PlayerInput.Instantiate(shipPrefab, controlScheme, pairWithDevices)`
+   pairs devices but does **not** flip the prefab's serialized
+   `PlayerInput.enabled: false` (the AI-slot default) back to `true` — the
+   human-joined ship came out with a correctly-paired `PlayerInput` that was
+   simply disabled. Caught by reading `PI.enabled` on the spawned ship
+   directly after `StartGame()`; fixed with an explicit `pi.enabled = true`
+   right after `Instantiate`.
+2. Complementary bug: the AI-slot default (`PlayerInput` enabled, before the
+   fix above) meant a plain `Instantiate(shipPrefab)` for an *AI* slot would
+   have its `PlayerInput` try to auto-pair itself to an already-claimed
+   device the instant it was created, logging "Cannot find matching control
+   scheme" — caught via `read_console` during the exact same test. Fixed by
+   flipping `Ship.prefab`'s own defaults (`PlayerInput.enabled: false`,
+   `AIController.enabled: true` — "most slots are AI"), with the human path
+   explicitly overriding both after `PlayerInput.Instantiate`.
+
+A third bug surfaced only after forcing a genuine scene reload from disk
+(the standing verification habit from `unity-notes.md`'s "Prefab-instance
+overrides" section): `Player`'s `PlayerInput.enabled = true` /
+`AIController.enabled = false` had been set *while `Ship.prefab`'s own
+defaults still matched those exact values* (the prefab was created from
+`Player`), so neither was recorded as a real per-instance override — no
+diff, nothing to record. When `Ship.prefab`'s defaults were changed to the
+AI-slot shape above, `Player` silently inherited the new defaults too,
+flipping it to AI-controlled with no error, no warning, and a
+correct-looking in-memory read right up until the disk reload exposed it.
+Fixed by re-applying and re-recording `Player`'s values *after* the prefab
+default change; documented as a sharper variant of the existing gotcha in
+`unity-notes.md`.
+
+### LevelSequencer.cs / PartyFrameManager.cs fixes
+
+`LevelSequencer.SetShipsFrozen()`'s unfreeze branch used to unconditionally
+re-enable both `PlayerInput` and `AIController` whenever non-null — safe
+only because exactly one of the two ever existed per ship before
+`Ship.prefab`. Fixed by caching `shipIsHuman[i]` once in `Awake()` (after
+`PartySetupBootstrap`'s `-1000` `Awake()` has already configured each ship)
+and restoring each ship to *its own* real driver on unfreeze, not both.
+Verified via reflection-invoked `SetShipsFrozen(true)` then `(false)` on
+both a legacy 1-human party and a live 2-human co-op party, confirming
+`PlayerInput`/`AIController.enabled` came back exactly right for every ship
+both times. `PartyFrameManager`'s humanness check (see "Ship.prefab" above)
+also picked up a display-name fix alongside its `enabled`-based check: the
+hardcoded `"Player 1"` became a running counter so multiple humans get
+distinct names.
+
+### PauseUI.cs
+
+Added a `<Gamepad>/start` binding alongside the existing
+`<Keyboard>/escape` one, unrestricted to any device — a shared pause,
+matching local co-op convention, so a gamepad-only human isn't stuck unable
+to pause.
+
+### Verified
+
+Unity MCP bridge, Play mode, three full end-to-end passes:
+
+1. **Legacy** (`Gameplay` opened directly, no `CoOpRoster`/
+   `PartyRoleAssignment` set) — confirmed identical to pre-session behavior,
+   including after a forced freeze/unfreeze cycle.
+2. **Single human through the lobby** — real `JoinLobby` join (keyboard +
+   mouse), `Continue`, single-picker `RoleSelect`, `StartGame` — confirmed
+   the spawned party has exactly one `PlayerInput`-enabled ship at the
+   picked role, 3 AI ships at the rest, correct after freeze/unfreeze, and
+   `PartyFrameManager` labels it "Player 1."
+3. **2-human co-op** — one real keyboard+mouse join plus one **virtual**
+   `Gamepad` device added via `InputSystem.AddDevice<Gamepad>()` and joined
+   through `PlayerInputManager.JoinPlayer(...)` (this environment has no
+   physical second controller to press). Confirmed the multi-picker built 2
+   rows, enforced distinct role locks (a duplicate-role lock attempt
+   correctly failed), and that `Gameplay` spawned exactly 2
+   `PlayerInput`-enabled ships (one per scheme/device set) plus 2 AI ships,
+   correct after freeze/unfreeze, `PartyFrameManager` labeling them "Player
+   1"/"Player 2"/"CPU 1"/"CPU 2".
+
+No console errors or warnings across any of the three passes (after the bugs
+above were fixed).
+
+### Still open
+
+- **Real multiple-gamepad playtest** — this session's 2-human co-op
+  verification used one real device plus one virtual `Gamepad` added
+  programmatically; the MCP bridge has no way to press buttons on actual
+  physical controllers, so a real human check with 2+ genuine gamepads
+  (device-unplug-mid-session handling, real button-press join timing, the
+  keyboard+mouse-as-one-scheme join case with a real mouse click, actual
+  gamepad D-pad/stick navigation feel in the row picker) hasn't happened
+  yet.
+- 3+/4-human co-op wasn't separately exercised beyond the architecture (the
+  spawner loop and role-taken logic are count-agnostic, verified structurally,
+  but not run live at 3 or 4 joined players).
+- The detailed boss-encounter narrative in `current-state.md` still describes
+  "the human `Player`" and "3 CPU-controlled AI teammates" throughout — left
+  as-is this session (still substantively accurate per-role regardless of
+  the human/AI split) rather than rewritten line-by-line; worth a pass if it
+  reads as confusing against the new co-op reality.

@@ -233,6 +233,22 @@ because of this gotcha: after any prefab-instance edit, force a full scene
 reload from disk and re-read the value — never trust the in-memory value
 alone.
 
+**Sharper variant, hit while building `Ship.prefab` for local co-op**: an
+instance value is only recorded as an override if it *differs* from the
+prefab's default **at the moment `RecordPrefabInstancePropertyModifications`
+is called**. `Player`'s `PlayerInput.enabled = true` was set while
+`Ship.prefab`'s own default for that field was still `true` too (since the
+prefab was created *from* `Player`) — no diff, so nothing was recorded, and
+`Player` silently fell back to inheriting the prefab's default from then on.
+Later, changing `Ship.prefab`'s default `PlayerInput.enabled` to `false` (to
+fix a separate AI-auto-pairing bug) silently flipped `Player`'s live value
+too, with no error, no warning, and a correct-looking in-memory read right
+up until a real disk reload exposed it. Any instance value that happens to
+equal the prefab's current default is at risk of this — re-apply (and
+re-record) every such value *after* changing a prefab's own defaults, not
+just once when the instance was first configured, and verify with the same
+"force a full disk reload" habit above.
+
 Hit and re-confirmed in `docs/progress-log.md`/`docs/progress-log-archive.md`
 Sessions 12, 13, 16, 18, 19, 20.
 

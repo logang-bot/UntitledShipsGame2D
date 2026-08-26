@@ -40,6 +40,12 @@ public class LevelSequencer : MonoBehaviour
     private Vector3[] shipHomes;
     private PlayerInput[] shipInputs;
     private AIController[] shipAI;
+    // Which driver each ship should return to on unfreeze. Every ship now
+    // carries both PlayerInput and AIController (see Ship.prefab), so
+    // "not null" no longer tells human from AI - captured once here, right
+    // after PartySetupBootstrap ([DefaultExecutionOrder(-1000)]) has already
+    // configured each ship's real driver for this run, human or AI.
+    private bool[] shipIsHuman;
     private Camera cam;
 
     void Awake()
@@ -49,11 +55,13 @@ public class LevelSequencer : MonoBehaviour
         shipHomes = new Vector3[ships.Length];
         shipInputs = new PlayerInput[ships.Length];
         shipAI = new AIController[ships.Length];
+        shipIsHuman = new bool[ships.Length];
         for (int i = 0; i < ships.Length; i++)
         {
             shipHomes[i] = ships[i].transform.position;
             shipInputs[i] = ships[i].GetComponent<PlayerInput>();
             shipAI[i] = ships[i].GetComponent<AIController>();
+            shipIsHuman[i] = shipInputs[i] != null && shipInputs[i].enabled;
         }
     }
 
@@ -174,8 +182,12 @@ public class LevelSequencer : MonoBehaviour
             else
             {
                 pc.enabled = true;
-                if (pi != null) pi.enabled = true;
-                if (ai != null) ai.enabled = true;
+                // Restore each ship to its own real driver (human or AI),
+                // not both - every ship carries both components now, so
+                // unconditionally re-enabling both would hand AI control to
+                // a human ship (and vice versa) the instant a freeze ends.
+                if (pi != null) pi.enabled = shipIsHuman[i];
+                if (ai != null) ai.enabled = !shipIsHuman[i];
             }
         }
     }

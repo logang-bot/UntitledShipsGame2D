@@ -14,7 +14,11 @@ public class PlayerHealth : MonoBehaviour
     public int CurrentHealth => currentHealth;
     public int CurrentShield => currentShield;
 
-    void Awake()
+    // Start, not Awake: see PlayerRoleComponent.cs's Start() comment - a
+    // dynamically-Instantiate()'d ship (co-op spawner) only has its role
+    // assigned after Instantiate() returns, and Awake() already runs
+    // synchronously inside Instantiate() itself.
+    void Start()
     {
         PlayerRoleComponent roleComponent = GetComponent<PlayerRoleComponent>();
         if (roleComponent != null)

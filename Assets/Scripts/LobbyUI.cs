@@ -16,7 +16,9 @@ public class LobbyUI : MonoBehaviour
     public void SelectLocal()
     {
         GameModeSelection.Mode = GameMode.Local;
-        SceneManager.LoadScene("RoleSelect");
+        // JoinLobby (co-op device join screen) now precedes RoleSelect - see
+        // docs/systems/scene-flow.md.
+        SceneManager.LoadScene("JoinLobby");
     }
 
     public void Back()

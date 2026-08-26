@@ -16,7 +16,13 @@ public class PauseUI : MonoBehaviour
     void Awake()
     {
         panelRoot.SetActive(false);
-        pauseAction = new InputAction("Pause", InputActionType.Button, "<Keyboard>/escape");
+        // Two bindings, not restricted to a specific device/player - a
+        // shared pause matches local co-op convention, and a gamepad-only
+        // human (co-op players 2-4, or player 1 choosing a controller) has
+        // no keyboard to reach Escape with otherwise.
+        pauseAction = new InputAction("Pause", InputActionType.Button);
+        pauseAction.AddBinding("<Keyboard>/escape");
+        pauseAction.AddBinding("<Gamepad>/start");
         pauseAction.performed += OnPausePerformed;
     }
 

@@ -393,15 +393,38 @@ reference docs live under `systems/`.
   `systems/input.md` (the standalone Pause `InputAction`, independent of
   `PlayerControls.inputactions`).
 
+- **Local co-op / dynamic player count** — up to 4 local humans can now join
+  and play together on one machine (extra players via gamepad, the first via
+  keyboard+mouse or gamepad), each picking a distinct role; any unpicked
+  role auto-fills with AI, same as before. A new `JoinLobby.unity` scene
+  (between `Lobby` and `RoleSelect`) hosts a `PlayerInputManager`
+  (`JoinPlayersWhenButtonIsPressed`) that pairs any device pressing a button
+  into one of 4 slots, shown live; a new `CoOpRoster.cs` static carrier
+  snapshots the joined devices/schemes through to `RoleSelect.unity`, whose
+  `RoleSelectUI` now routes to either the original single 4-button picker
+  (0-1 joined) or a new `RoleSelectMultiUI` + `RolePickerRow.prefab` grid
+  (2+ joined, one row per player, each polling its own paired device
+  directly rather than standing up a second `EventSystem` per player) that
+  enforces distinct role picks. All 4 party ships in `Gameplay.unity` are
+  now real instances of one new unified `Ship.prefab` (replacing the old,
+  inconsistent mix of hand-placed duplicates and one real `Teammate.prefab`
+  instance — see `architecture.md`'s "Known Limitations"), carrying both
+  `PlayerInput` and `AIController` with only one ever enabled per ship.
+  `PartySetupBootstrap.cs` gained a dynamic spawn branch (alongside the
+  original single-human/legacy branch, left untouched) that instantiates
+  and wires the right human/AI mix from `CoOpRoster`; `LevelSequencer.cs`'s
+  freeze/unfreeze and `PartyFrameManager.cs`'s human-vs-AI display logic
+  both needed real correctness fixes once every ship could carry both driver
+  components at once (caught and fixed during this work, not left as known
+  bugs). `PlayerControls.inputactions` gained `Keyboard&Mouse`/`Gamepad`
+  control schemes and gamepad bindings for Move/Fire/Ability — no gameplay
+  script needed any change to support them, since input consumption was
+  already device-agnostic. See `systems/player-roles.md`'s "Local co-op /
+  dynamic player count", `systems/scene-flow.md`, and `systems/input.md`.
+
 ## In Progress
 
-- **Local co-op / dynamic player count** — the party is still 4 fixed scene
-  objects (`Player` + 3 hand-placed `Teammate_*`), not a spawner that reacts
-  to however many humans/AI are actually present; `PartyFrameManager.cs`
-  is array-based now but still Inspector-wired to those 4 fixed slots, not
-  a real "loop over connected players and `Instantiate()`" spawner. Deferred
-  until local co-op (or the minion/AI-teammate count) needs to vary at
-  runtime.
+*(none currently)*
 
 ## Planned (not yet started)
 
