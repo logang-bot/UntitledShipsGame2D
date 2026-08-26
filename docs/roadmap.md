@@ -363,6 +363,36 @@ reference docs live under `systems/`.
   previously had none at all. See
   `systems/level1-boss.md`, `systems/level-sequencing.md`, and `systems/combat.md`.
 
+- **Scene scaffolding: Main Menu, Lobby, Pause menu** — `MainMenu.unity` (new
+  Build Settings index 0, `MainMenuUI.cs`) is now the real entry point: Play
+  → `Lobby`, Quit. `Lobby.unity` (index 1, `LobbyUI.cs`) lets the player pick
+  **Local** (proceeds into the existing single-human + 3-AI-teammate flow,
+  unchanged) or **Online** — Online stays a disabled placeholder button since
+  there's no Nakama backend yet. A new `GameModeSelection.cs` static carrier
+  (`GameMode? Mode`, `Local`/`Online`) records the choice, built on the exact
+  same pattern as `PartyRoleAssignment.cs` (survives `SceneManager.LoadScene`
+  within a session, resets to `null` on domain reload, treated as "allowed"/
+  local by anything gating on it — preserves opening any scene directly for
+  quick iteration). `RoleSelect.unity` (now index 2, otherwise unchanged)
+  gained a Back button to `Lobby`, since it's no longer the entry point.
+  `Gameplay.unity` (now index 3) gained a same-scene Pause overlay
+  (`PauseUI.cs`, mirrors `GameOverUI.cs`/`VictoryUI.cs`'s panel shape):
+  Escape toggles a `PausePanel` (Resume/Restart/Change Roles/Quit to Main
+  Menu), backed by `Time.timeScale` (reset to `1` before every scene-load
+  button, since timeScale is global, not scene-scoped); gated off whenever
+  Game Over/Victory is already showing (mirrors their own mutual-exclusion
+  guard) or once `GameModeSelection.Mode == Online` (pausing a
+  networked/authoritative match won't make sense — auto-disables itself once
+  Online is real, no further code change needed then). Caught and fixed a
+  real bug live via the Unity MCP bridge during this work: `PauseUI` was
+  initially attached directly to the panel it shows/hides, so `Awake()`
+  deactivating that same GameObject meant `OnEnable()` (where the Escape
+  `InputAction` gets enabled) never ran — fixed by moving `PauseUI` onto a
+  separate, always-active `PauseController` GameObject, with `panelRoot` as
+  a plain reference instead. See `systems/scene-flow.md` (full writeup) and
+  `systems/input.md` (the standalone Pause `InputAction`, independent of
+  `PlayerControls.inputactions`).
+
 ## In Progress
 
 - **Local co-op / dynamic player count** — the party is still 4 fixed scene
@@ -377,19 +407,13 @@ reference docs live under `systems/`.
 
 ### Networking (last)
 
-- **Scene scaffolding** — Main Menu and Lobby scenes still don't exist.
-  Role Select shipped early (see "Implemented" above, built ahead of this
-  item's original timeline for testing purposes) — `RoleSelect.unity`
-  exists and is Build Settings index 0, but it's a standalone role-picker,
-  not part of a Main Menu flow yet. Main Menu/Lobby remain deferred until
-  the boss prototype (specifically boss combat dynamism) is further along
-  to inform what those screens actually need to show. Prerequisite for
-  wiring up Nakama matchmaking below, since a lobby needs
-  somewhere to live before players can be matched into it.
 - **Nakama networking** — self-hosted on Fly.io, authoritative combat/boss
   state, matchmaking for 1–4 players. Offline/host mode using the same
   simulation layer. Only starts once the CPU-AI boss loop above is proven
   fun; this is what upgrades AI-controlled teammates to real human players.
+  `Lobby.unity`'s Online button (see "Scene scaffolding" above) is already
+  in place as a disabled placeholder — this item is what wires it up for
+  real and gives it somewhere (a real lobby/matchmaking flow) to lead to.
 
 ### Art & audio (final pass)
 

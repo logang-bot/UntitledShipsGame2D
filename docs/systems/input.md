@@ -29,3 +29,19 @@ consumed by `PlayerAbility.cs` — see [player-roles.md](player-roles.md).
 | Component        | Key inspector values                                                     |
 | ------------------ | ---------------------------------------------------------------------------- |
 | **Player Input**   | Actions: `PlayerControls` asset, Default Map: `Player`, Behavior: Send Messages |
+
+## Pause action (standalone, not part of PlayerControls)
+
+`PauseUI.cs` (see [scene-flow.md](scene-flow.md)'s "Pause overlay") needs a
+global Escape-key listener, but the project has no UI-facing action map and
+the only `PlayerInput` component lives on the human `Player` ship (Send
+Messages only reaches components on that same GameObject — no fit for a
+scene-global concern). Rather than extending `PlayerControls.inputactions`,
+`PauseUI` builds its own `InputAction` directly in code —
+`new InputAction("Pause", InputActionType.Button, "<Keyboard>/escape")` —
+enabled in `OnEnable()`/disabled in `OnDisable()`, entirely independent of
+the asset-based setup above. This keeps Pause decoupled from
+`LevelSequencer`'s per-ship freeze/enable toggling and from AI-vs-human ship
+swapping, at the cost of being a second, code-only input path alongside the
+asset-based one — worth revisiting if more global (non-per-ship) input needs
+show up later.

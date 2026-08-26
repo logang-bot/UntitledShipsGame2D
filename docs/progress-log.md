@@ -372,3 +372,181 @@ exactly, 8/8 for each; no console errors.
 ### Still open
 
 Same as prior sessions. Still no real human playtest.
+
+## Session 33 — Scene Scaffolding: Main Menu, Lobby, Pause Menu
+
+Picked up `roadmap.md`'s long-deferred "Scene scaffolding" item (Main
+Menu/Lobby, originally deferred until the boss prototype was further along —
+it now is, per Sessions 28-32). Scoped in conversation beyond the docs'
+original framing: Lobby should actually fork **Local vs. Online** mode (not
+just be an empty pass-through — Online has no backend yet, so it's a
+disabled placeholder), and a Pause menu (flagged as a real gap during
+discussion, not in any prior doc) should ship alongside it, valid only
+offline.
+
+### New scenes and scripts
+
+`MainMenu.unity` (new Build Settings index 0, `MainMenuUI.cs`: Play → Lobby,
+Quit) and `Lobby.unity` (index 1, `LobbyUI.cs`: Local → sets
+`GameModeSelection.Mode` and proceeds to `RoleSelect`; Online →
+non-interactable placeholder). Both built via the Unity MCP bridge's
+`execute_code`, constructing the Canvas/CanvasScaler/EventSystem/Button
+hierarchy directly in C# (cheaper than dozens of granular tool calls) after
+first reading `RoleSelect.unity`'s existing Canvas settings live
+(`ScreenSpaceOverlay`, `ScaleWithScreenSize` at 1920x1080, the
+`DefaultInputActions` asset on its `InputSystemUIInputModule`) so the new
+scenes match its look exactly rather than guessing values. `RoleSelect.unity`
+(now index 2) gained a `Back` button (`RoleSelectUI.Back()` → `Lobby`), since
+it's no longer the entry point. Build Settings reordered to
+`MainMenu`/`Lobby`/`RoleSelect`/`Gameplay` (0-3) via `manage_build(action=
+"scenes")` — every existing `SceneManager.LoadScene(...)` call uses scene
+names, not indices (`GameOverUI.Restart()`'s
+`SceneManager.GetActiveScene().buildIndex` is self-referential/index-
+agnostic), so reordering broke nothing already wired.
+
+`GameModeSelection.cs` (new): a `GameMode?` (`Local`/`Online`) static
+carrier, built on the exact same pattern as `PartyRoleAssignment.cs` —
+survives `SceneManager.LoadScene` within a session, resets to `null` on
+domain reload, unset treated as "allowed"/local everywhere it's read
+(preserves the existing "open any scene directly" quick-iteration workflow).
+
+### Pause overlay + a real Awake/OnEnable bug
+
+`PauseUI.cs` (new) adds a same-scene `PausePanel` overlay to `Gameplay`,
+mirroring `GameOverUI.cs`/`VictoryUI.cs`'s shape (Resume/Restart/Change
+Roles/Quit to Main Menu buttons), toggled by Escape via a **standalone**
+`InputAction` built in code (`new InputAction("Pause", InputActionType.
+Button, "<Keyboard>/escape")`) rather than extending
+`PlayerControls.inputactions` — the project has no UI-facing action map, and
+the only `PlayerInput` lives on the human `Player` ship, whose Send-Messages
+behavior can't reach a scene-global listener. `Show()`/scene-transition
+methods reset `Time.timeScale` (global, not scene-scoped) so a mid-pause
+Restart doesn't reload into a frozen scene. Gated off whenever Game Over/
+Victory is already showing (mirrors their existing mutual-exclusion guard on
+each other) or once `GameModeSelection.Mode == GameMode.Online`.
+
+First implementation attached `PauseUI` directly to `PausePanel` itself
+(matching `GameOverUI`/`VictoryUI`'s exact shape). This silently broke Pause
+entirely: `Awake()` calls `panelRoot.SetActive(false)` to hide the panel at
+startup, but since `panelRoot` *was* the same GameObject the script lived
+on, that deactivation happened synchronously inside its own `Awake()` —
+before Unity ever reached `OnEnable()` for it. Unity only calls `OnEnable()`
+if the object is still active once `Awake()` finishes, so the `InputAction`
+built earlier in that same `Awake()` never got `.Enable()` called on it, and
+Escape silently did nothing. Caught live via the Unity MCP bridge, not by
+inspection: `FindFirstObjectByType<PauseUI>(FindObjectsInactive.Include)`
+followed by reflecting out the private `pauseAction` field confirmed
+`enabled == false` in Play mode, isolating the fault to the enable path
+specifically. Fixed by splitting the two roles: `PauseUI` now lives on a
+separate `PauseController` GameObject that stays active for the whole
+scene, while `panelRoot` is just a plain field reference to `PausePanel`,
+toggled via `SetActive()` like any other field — never the GameObject the
+script itself is attached to. Re-verified after the fix: `OnEnable` fires,
+`pauseAction.enabled == true`, and a reflection-invoked press of the actual
+callback correctly opened/closed the panel and flipped `Time.timeScale`.
+
+### Verified
+
+Unity MCP bridge, Play mode, full click-through of the real flow
+(`MainMenuUI.Play()` → `LobbyUI.SelectLocal()` → `RoleSelectUI.SelectTank()`
++ `StartGame()` → `Gameplay`), confirming `GameModeSelection.Mode`/
+`PartyRoleAssignment.HumanRole` set correctly and the right scene active at
+each step. In `Gameplay`: confirmed `Online`'s `interactable == false` back
+in `Lobby`; confirmed the Pause gating with Game Over forced active (Escape
+correctly did nothing); confirmed `Restart()` resets `Time.timeScale` to `1`
+*before* the reload (checked in the same call, no time-gap). No console
+errors or warnings across the entire flow, both before and after the
+Awake/OnEnable fix. Full mechanics writeup: `systems/scene-flow.md`; the
+standalone Pause `InputAction` also documented in `systems/input.md`.
+
+### Still open
+
+Same as prior sessions. Still no real human playtest. Local co-op (multiple
+*human* players) remains unbuilt — `GameModeSelection.Mode.Local` currently
+just routes into the existing single-human + 3-AI-teammate flow unchanged; a
+future pass would read this same flag to actually spawn/wire up multiple
+local human players.
+
+## Session 34 — Fix: Sub-Pixel Seam at the Pillarbox/HUD-Sidebar Edges
+
+User report, with screenshots: two thin, colored vertical strips visible at
+the left and right edges of the playable game area in `Gameplay`, right
+where the gray HUD sidebars (`LeftSidebar`, `BossPanel`) meet the game
+viewport — present both entering via `RoleSelect` and opening `Gameplay`
+directly, ruling out anything scene-scaffolding-related from Session 33.
+
+### Investigation (two wrong theories first)
+
+First guess: leftover `RoleSelect` scene objects not being unloaded. Ruled
+out by grepping `Gameplay.unity`'s saved file for `RoleSelect`'s button
+names — no matches; `SceneManager.LoadScene` is `Single` mode everywhere, so
+nothing was ever left behind on disk. Second guess: the AI teammates'
+intro-glide animation (`LevelSequencer.IntroRoutine()`) being momentarily
+visible — discarded once the user's screenshots showed the strips at the
+**sides**, not the bottom, and `IntroRoutine()` only moves ships vertically.
+
+Third theory, confirmed correct: `AspectRatioFitter.cs` (sets `Main
+Camera.rect` for the pillarbox) and `HUDSidebarFitter.cs` (sizes the HUD
+sidebars to close the gap against it) independently compute the same pixel
+boundary from `Screen.width`/`Screen.height`, but neither ever rounds it.
+Computed the boundary for a spread of common resolutions directly: `2560x
+1440` lands exactly on pixel `875` (a coincidence of that specific 16:9
+resolution against the 9:16 target), but `1920x1080` lands on `656.25px`,
+`1600x900` on `546.875px`, `1280x720` on `437.5px`, and so on — fractional
+at most sizes. `Camera.rect` drives the GPU viewport, which Unity rounds to
+an integer pixel internally to actually render; `HUDSidebarFitter` reads the
+same rect back as an *unrounded* float pixel value
+(`GetViewportPixelRect()`) to size the sidebar. Two independent roundings of
+the same fractional boundary can disagree by under a pixel, leaving a
+sub-pixel seam where neither the sidebar nor the camera's rendered content
+fully covers that column — visible as a thin, anti-aliased sliver of
+whatever's directly behind it, which is why its color varied between the
+user's two screenshots (not a fixed leftover object, just inconsistent
+partial coverage of whatever happened to be there). This also explains why
+the first live check (at `2560x1440`, picked without knowing this yet) found
+a perfect `0px` diff between the sidebar edge and the camera viewport edge —
+that resolution happens to be one of the few that lands on a whole pixel by
+coincidence, so it couldn't have reproduced the bug.
+
+### Fix
+
+`AspectRatioFitter.ApplyPillarbox()`: after computing the pillarbox/letterbox
+`Rect` as before, snap `x`/`y`/`width`/`height` each to the nearest whole
+pixel (`Mathf.Round(rect.x * Screen.width) / Screen.width`, etc.) before
+assigning `cam.rect`. Guarantees `GetViewportPixelRect()` always returns
+whole-pixel values, so `HUDSidebarFitter`'s sidebar sizing and the camera's
+actual rendered viewport always agree on the exact same boundary, with
+nothing left to round independently downstream.
+
+### Verified
+
+Unity MCP bridge. Recomputed the boundary math for the same resolution
+spread with the fix applied — every previously-fractional case (`1920x1080`,
+`1600x900`, `1280x720`, `1912x1043`, `1918x1038`, `2000x1125`, `1707x960`)
+now lands exactly on a whole pixel on both edges. Live in Play mode at
+`2560x1440` (the one resolution directly reproducible in this environment):
+re-confirmed `LeftSidebar`/`BossPanel`'s `RectTransform` world-corner edges
+still match `AspectRatioFitter.GetViewportPixelRect()` exactly (`0px` diff,
+no regression from the already-working case), screenshotted for a visual
+sanity check, and confirmed no console errors/warnings. Could not directly
+reproduce a fractional-boundary resolution live in this environment (no way
+to force the Editor Game view to an exact arbitrary pixel size through the
+available tools), so the fix's correctness rests on the resolution-spread
+math check above rather than a live before/after screenshot at a failing
+size — flagged here in case a real human playtest at a non-16:9-multiple
+window size is worth double-checking against.
+
+### Docs
+
+`hud-layout.md`'s `HUDCanvas` table claimed `Canvas Scaler: Scale With
+Screen Size` — the actual saved scene value is `Constant Pixel Size` (scale
+factor 1), found while investigating. Unrelated to this bug (Constant Pixel
+Size means 1 canvas unit = 1 screen pixel, so it isn't what let the two
+systems disagree) but a real doc/reality drift, corrected in the same pass.
+
+### Still open
+
+Same as prior sessions. Still no real human playtest — this fix in
+particular would benefit from one at a genuinely arbitrary (non-16:9)
+window size, since that's the exact condition this environment couldn't
+reproduce directly.

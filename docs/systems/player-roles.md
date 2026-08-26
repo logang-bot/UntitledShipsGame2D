@@ -230,9 +230,11 @@ see above) ever sets them, and only ever via plain assignment.
 
 ## Role Select scene
 
-An in-game role picker: `RoleSelect.unity` (Build Settings index 0, entry
-point) and `Gameplay.unity` (gameplay, index 1) — a real second scene, not
-a same-scene overlay.
+An in-game role picker: `RoleSelect.unity` (Build Settings index 2, reached
+via `MainMenu` → `Lobby` → `RoleSelect` — see
+[scene-flow.md](scene-flow.md)) and `Gameplay.unity` (gameplay, index 3) — a
+real separate scene, not a same-scene overlay. `RoleSelect` also has a Back
+button (→ `Lobby`), since it's no longer the entry point.
 
 **`RoleSelect.unity` contents**: a single Screen Space - Overlay `Canvas`
 (title text, 4 role buttons, a Start button that stays non-interactable

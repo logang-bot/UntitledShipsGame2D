@@ -58,6 +58,21 @@ public class AspectRatioFitter : MonoBehaviour
             rect.y = 0f;
         }
 
+        // Snap to whole pixels. Camera.rect drives the GPU viewport, which
+        // Unity rounds to integer pixels internally, but HUDSidebarFitter
+        // reads this same rect back as unrounded float pixels
+        // (GetViewportPixelRect()) to size the HUD sidebars. At most screen
+        // sizes the pillarbox math lands on a fractional pixel (e.g. at
+        // 1920x1080 the boundary is 656.25px) - left unrounded, the two
+        // independent roundings (GPU viewport vs. UI RectTransform) can
+        // disagree by a sub-pixel sliver, visible as a thin seam at the
+        // sidebar/viewport edge. Rounding here guarantees both read the
+        // exact same integer boundary, with nothing left to diverge on.
+        rect.x = Mathf.Round(rect.x * Screen.width) / Screen.width;
+        rect.y = Mathf.Round(rect.y * Screen.height) / Screen.height;
+        rect.width = Mathf.Round(rect.width * Screen.width) / Screen.width;
+        rect.height = Mathf.Round(rect.height * Screen.height) / Screen.height;
+
         cam.rect = rect;
     }
 

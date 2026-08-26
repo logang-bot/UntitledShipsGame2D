@@ -21,6 +21,9 @@
 Per-system reference: what each script does, what it's attached to, and how
 the scene is wired.
 
+- [systems/scene-flow.md](systems/scene-flow.md) — Main Menu → Lobby →
+  Role Select → Gameplay scene flow, `GameModeSelection` (Local/Online), and
+  the Pause overlay.
 - [systems/movement.md](systems/movement.md) — ship movement, fixed
   orientation decision.
 - [systems/combat.md](systems/combat.md) — shooting, bullets, health, enemy

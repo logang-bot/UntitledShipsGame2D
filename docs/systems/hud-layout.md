@@ -29,10 +29,26 @@ Marked `[ExecuteAlways]` so it also runs in the Editor outside Play mode,
 letting Game view preview the pillarbox/letterbox live. Recalculates only on
 screen resize (not every frame).
 
+**Whole-pixel snapping**: the computed `Camera.rect` is rounded to an exact
+integer pixel boundary (`Mathf.Round(rect.x * Screen.width) / Screen.width`,
+same for `y`/`width`/`height`) before being assigned. Without this, the
+pillarbox math lands on a fractional pixel at most screen sizes (e.g. at
+1920x1080 the boundary is `656.25px`) — `Camera.rect` drives the GPU
+viewport, which Unity rounds to an integer pixel internally, but
+`HUDSidebarFitter` reads the same rect back as an *unrounded* float
+(`GetViewportPixelRect()`) to size the HUD sidebars. Those two independent
+roundings could disagree by a sub-pixel sliver, visible as a thin seam at
+the sidebar/viewport edge — user-reported (see `progress-log.md`'s Session
+34), and only reproduced at screen sizes where the boundary isn't already a
+whole pixel by coincidence (2560x1440 happens to land exactly on `875px`,
+which is why it didn't show up in the first live check). Snapping here
+means both sides always agree on the same integer boundary, with nothing
+left to round independently downstream.
+
 Key public fields: `targetAspectWidth`, `targetAspectHeight`.
 Key public method: `GetViewportPixelRect()` — returns the current gameplay
-viewport in screen pixels, used by `HUDSidebarFitter` to size the side HUD
-to match exactly.
+viewport in screen pixels (now always whole numbers, see above), used by
+`HUDSidebarFitter` to size the side HUD to match exactly.
 
 ## HUDSidebarFitter.cs
 
@@ -165,7 +181,7 @@ the pillarbox. Used for sidebar content visible outside the gameplay area.
 | Component               | Key inspector values                                                     |
 | ------------------------ | ---------------------------------------------------------------------------- |
 | Canvas                   | Render Mode: Screen Space - Overlay                                          |
-| Canvas Scaler            | UI Scale Mode: Scale With Screen Size (reference resolution to taste)        |
+| Canvas Scaler            | UI Scale Mode: Constant Pixel Size (scale factor 1) — matters for the pixel-snapping note above: 1 canvas unit = 1 real screen pixel, no separate scale factor to account for |
 | **HUDSidebarFitter.cs**  | aspectFitter: drag Main Camera here, leftSidebar/rightSidebar: sidebar rect transforms |
 | **PartyFrameManager.cs** | `players[]`: `Player`, `Teammate_Tank`, `Teammate_Medic`, `Teammate_Support`; `partyFrames[]`: `PartyFrame_1..4`'s `PartyFrameUI` (matching index order) |
 

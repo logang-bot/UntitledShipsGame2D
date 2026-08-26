@@ -8,6 +8,16 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Main Menu / Lobby / Pause** — the game now boots into `MainMenu.unity`
+  (Build Settings index 0): Play → `Lobby`, Quit. Lobby offers **Local**
+  (proceeds into the existing single-human + 3-AI-teammate flow, unchanged)
+  or **Online** — Online is a disabled placeholder button, since there's no
+  Nakama backend yet. Role Select (now index 2) gained a Back button to
+  Lobby. Mid-run, pressing **Escape** in `Gameplay` pauses (freezes the game
+  via `Time.timeScale`, shows Resume/Restart/Change Roles/Quit to Main Menu)
+  — disabled while Game Over/Victory is already showing, and will
+  auto-disable once Online mode is real. See
+  [systems/scene-flow.md](systems/scene-flow.md).
 - **Ship movement** — a single player ship strafes left/right/up/down within
   a fixed portrait viewport. The ship has a fixed orientation (no rotation,
   Galaga-style) and always fires straight up. See
@@ -183,13 +193,13 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 ## What's NOT there yet
 
 - No networking/multiplayer — the 3 teammates are CPU-controlled, not real
-  human players; local co-op isn't wired up.
-- Two scenes exist: `RoleSelect.unity` (entry point, Build Settings index 0)
-  and `Gameplay.unity` (gameplay, index 1) — no Main Menu or Lobby scene
-  yet (Game Over/Victory are same-scene UI overlays within `Gameplay`,
-  not separate scenes — see [systems/combat.md](systems/combat.md)). See
-  `roadmap.md`'s "Networking (last)" section for where the rest of scene
-  scaffolding fits into the build order.
+  human players; local co-op isn't wired up. Lobby's **Online** option is a
+  disabled placeholder until this lands.
+- Four scenes now exist: `MainMenu.unity` (0), `Lobby.unity` (1),
+  `RoleSelect.unity` (2), `Gameplay.unity` (3) — see
+  [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
+  are same-scene UI overlays within `Gameplay`, not separate scenes (see
+  [systems/combat.md](systems/combat.md)).
 - No local co-op / dynamic player count — the party is 4 fixed, hand-placed
   scene objects (`Player` + 3 `Teammate_*`), not a runtime spawner that
   reacts to however many humans are actually playing.
@@ -203,17 +213,21 @@ real networking last, then art/audio.
 
 ## How to test it
 
-1. Open the project in Unity, with `RoleSelect` (under `Assets/Scenes/`) as
+1. Open the project in Unity, with `MainMenu` (under `Assets/Scenes/`) as
    the open scene — it's Build Settings index 0, so this is also what a real
    build boots into.
-2. Press **Play**, click one of the 4 role buttons (Attacker/Tank/Medic/
+2. Press **Play**, click **Play** on the Main Menu to load `Lobby`, then
+   click **Local** (Online is a disabled placeholder for now) to load
+   `RoleSelect`. Click one of the 4 role buttons (Attacker/Tank/Medic/
    Support — this is the role the human `Player` will use), then click
    **Start** once it's enabled. This loads `Gameplay` and auto-assigns
    the 3 remaining roles to the 3 `Teammate_*` AI ships (any of the 4 you
    didn't pick, exactly once each). *(Opening `Gameplay` directly instead
-   and pressing Play still works too, and falls back to whatever roles are
-   currently hand-set on `Player`/`Teammate_*` in the Inspector — useful for
-   quick iteration without going through Role Select each time.)*
+   and pressing Play still works too, bypassing Main Menu/Lobby/Role Select
+   entirely, and falls back to whatever roles are currently hand-set on
+   `Player`/`Teammate_*` in the Inspector — useful for quick iteration. A
+   Back button on both Lobby and Role Select lets you step back a screen at
+   a time instead.)*
 3. Watch the opening sequence play out automatically: all 4 ships glide up
    from below the screen into their starting line (~4s, no input works
    yet), then control hands over fully for ~4s of free movement before
@@ -268,7 +282,13 @@ real networking last, then art/audio.
    you'll see it occasionally juke sideways out of a bullet's path without
    abandoning its role positioning (Tank still roughly holds its guard
    point, Medic still hangs back, etc.).
-6. At 0 HP, **only the human `Player`** triggers the "Game Over" overlay and
+6. Press **Escape** at any point during the run to pause — a `Paused`
+   overlay appears (Resume/Restart/Change Roles/Quit to Main Menu) and the
+   game genuinely freezes (`Time.timeScale = 0`, so ships, bullets, the boss,
+   and minions all stop mid-motion). Press **Escape** again or click
+   **Resume** to continue exactly where you left off. Pause won't open on
+   top of an already-showing Game Over/Victory overlay.
+7. At 0 HP, **only the human `Player`** triggers the "Game Over" overlay and
    ends the test — a teammate dying just grays out its own party frame and
    it keeps fighting inactive (if the remaining teammates go on to defeat
    the boss after that, the Victory panel is suppressed rather than popping
@@ -277,7 +297,7 @@ real networking last, then art/audio.
    same party/roles, or **Change Roles** to go back to the Role Select
    screen and pick again. Defeating the boss instead shows a **Victory**
    overlay with the same two options ("Play Again" / "Change Roles").
-7. To see the different roles side by side, use **Change Roles** (from
+8. To see the different roles side by side, use **Change Roles** (from
    either end screen, or just stop Play and press Play again from
    `RoleSelect`) and pick a different role each time — compare HP/shield
    taken to disable, fire damage, fire rate, and move speed against the
@@ -297,7 +317,7 @@ real networking last, then art/audio.
    boost amount and cooldown countdown. As Attacker, **E** fires a wider,
    harder-hitting shot (damage scales with your own current fire damage)
    with a visible backward recoil kick.
-8. *(Optional)* Resize the Game view window (or check the Scene view via
+9. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`
    so this previews without even pressing Play.
