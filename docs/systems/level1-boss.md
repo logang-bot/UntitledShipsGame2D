@@ -34,6 +34,23 @@ coroutine below. See
 collides with it), a `bulletPrefab` (reuses `EnemyBullet.prefab`), a
 `targets[]` array wired to all 4 player-controlled ships.
 
+**Current tuning (attacker-combo prototype)**: three Inspector toggles/values
+dial the boss back to a stable, low-noise target while the Attacker combo
+rotation is being played against it — none of the underlying systems were
+removed, so each is a one-line revert:
+
+- `maxHealth`: 150 (was 90) — a stationary, less-frequently-firing boss needs
+  more HP or the fight is over before the combo rotation matters.
+- `enableMovementPattern` (new, default `false`): skips starting
+  `Level1BossMovement`'s coroutine in `OnEnable()`, so the boss just sits at
+  `home`. The movement system itself (below) is untouched.
+- `phase1FireInterval`/`phase2FireInterval`: 2.4 / 1.2 (were 1.2 / 0.6) —
+  halved, so a boss that can't be dodged by repositioning still doesn't
+  overwhelm with bullet volume alone.
+- `enableMinions` (new, default `false`): skips enabling `MinionSpawner` in
+  `OnEnable()`, so no kamikaze minion waves spawn during the fight. Same
+  one-line-revert shape as `enableMovementPattern`.
+
 ### Movement and firing
 
 **Scripted movement pattern, not AI**: the boss no longer decides where to
@@ -185,10 +202,11 @@ below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
   it's what stops `Bullet.cs` from being able to hit and damage the boss
   while it's supposed to be hidden.
 
-Key public fields: `maxHealth` (90), `sideOffsetX` (2.2)/
+Key public fields: `maxHealth` (150, see "Current tuning" above),
+`enableMovementPattern` (`false`), `sideOffsetX` (2.2)/
 `patternMoveDuration` (1.2)/`cycleGap` (1.5)/`maxAdvanceFraction`/
 `screenPadding` (movement, see above), `bulletPrefab`,
-`phase1FireInterval`/`phase2FireInterval` (1.2 / 0.6), `bulletSpeed` (6),
+`phase1FireInterval`/`phase2FireInterval` (2.4 / 1.2), `bulletSpeed` (6),
 `spreadAngle` (15°), `bulletDamage` (1 — see "Body contact damage" below),
 `bodyContactDamageMultiplier`/`contactDamageCooldown`, `shockwaveRadius`/
 `shockwaveDamageMultiplier`/`shockwaveKnockback`/`shockwaveCooldown`/
@@ -891,8 +909,8 @@ this position for the entrance (see
 | Component      | Key inspector values                                                    |
 | --------------- | ----------------------------------------------------------------------- |
 | Transform       | position (0, 4.2, 0), scale (1.6, 1.6, 1) — not shrunk with the ships below |
-| **Level1Boss.cs** | `maxHealth`: 90; `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `sideOffsetX`/`patternMoveDuration`/`cycleGap`: 2.2/1.2/1.5; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` + `VictoryPanel/VictoryUI.Show()`; `OnPhase2`: `Spawner/EnemySpawner.StartSpawning()`; component **starts disabled** — `LevelSequencer` calls `SetVisible(false)` at `Start()` (hiding sprite/collider/ring, GameObject itself stays active) and enables the component once the entrance glide finishes |
-| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2; `explosiveMinionChance`: 0.3 — component **starts disabled**, same as `Level1Boss` itself; `Level1Boss.OnEnable()` enables it, so kamikaze minions only start spawning once boss combat actually begins (ships already unfrozen by then) |
+| **Level1Boss.cs** | `maxHealth`: 150; `enableMovementPattern`: **false** (attacker-combo tuning — see "Current tuning" above); `enableMinions`: **false** (same); `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `sideOffsetX`/`patternMoveDuration`/`cycleGap`: 2.2/1.2/1.5; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` + `VictoryPanel/VictoryUI.Show()`; `OnPhase2`: `Spawner/EnemySpawner.StartSpawning()`; component **starts disabled** — `LevelSequencer` calls `SetVisible(false)` at `Start()` (hiding sprite/collider/ring, GameObject itself stays active) and enables the component once the entrance glide finishes |
+| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2; `explosiveMinionChance`: 0.3 — component **starts disabled**, same as `Level1Boss` itself; `Level1Boss.OnEnable()` only enables it while `enableMinions` is true (currently false — see "Current tuning" above), so kamikaze minions are off for now |
 
 ### Teammate_Tank / Teammate_Medic / Teammate_Support
 

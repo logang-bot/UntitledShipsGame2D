@@ -5,11 +5,15 @@ using UnityEngine.Events;
 public class Level1Boss : MonoBehaviour
 {
     [Header("Health / Phases")]
-    public int maxHealth = 90; // was 60 - x1.5'd to give the fixed-stats/ability rework enough runway to observe
+    public int maxHealth = 150; // was 90 - bumped again now the boss stands still and fires less, so the fight still takes real time
     public UnityEvent OnPhase2;
     public UnityEvent OnDefeated;
 
     [Header("Movement — pattern")]
+    // Off for now while the attacker-combo rotation is being tuned - a
+    // stationary boss is a stable target to test damage rotation against.
+    // Level1BossMovement itself is untouched, so this is a one-line revert.
+    public bool enableMovementPattern = false;
     // Scripted movement, not AI: hops in random order between the fixed
     // vertices of an "M" shape via real eased travel (never a snap/teleport)
     // - see Level1BossMovement. Loops unchanged across both phases.
@@ -33,8 +37,8 @@ public class Level1Boss : MonoBehaviour
     // OnEnable(). Without this, attack timers default to 0 and the boss can
     // land a hit on the very first Update() with zero reaction time.
     public float postEntranceGracePeriod = 1.5f;
-    public float phase1FireInterval = 1.2f;
-    public float phase2FireInterval = 0.6f;
+    public float phase1FireInterval = 2.4f; // was 1.2 - halved fire rate to go with the boss standing still now
+    public float phase2FireInterval = 1.2f; // was 0.6 - same halving as phase1FireInterval
     public float bulletSpeed = 6f;
     public float spreadAngle = 15f; // phase 2 side-bullet offset
     public float bulletDamage = 1f; // single source of truth - contact/shockwave damage are multiples of this
@@ -86,6 +90,13 @@ public class Level1Boss : MonoBehaviour
     [Header("Aggro / Targets")]
     public GameObject[] targets; // drag Player + 3 Teammates
     public float tauntBonus = 100f;
+
+    [Header("Sub-enemies")]
+    // Off for now - hides the boss's kamikaze minion waves (MinionSpawner)
+    // while the attacker-combo rotation is being tuned, so the fight is just
+    // ships vs. boss. MinionSpawner itself is untouched, so this is a
+    // one-line revert.
+    public bool enableMinions = false;
 
     public int CurrentHealth { get; private set; }
     public bool IsPhase2 { get; private set; }
@@ -169,8 +180,8 @@ public class Level1Boss : MonoBehaviour
     /// </summary>
     void OnEnable()
     {
-        if (minionSpawner != null) minionSpawner.enabled = true;
-        movement.OnEnable();
+        if (minionSpawner != null) minionSpawner.enabled = enableMinions;
+        if (enableMovementPattern) movement.OnEnable();
 
         // LevelSequencer enables this component exactly when BossCombat
         // starts, which is the only moment ships can both act and damage the
