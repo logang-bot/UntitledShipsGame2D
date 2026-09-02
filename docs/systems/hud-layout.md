@@ -73,8 +73,8 @@ scene-specific.
 displayName, bool isHumanPlayer)` to be called before it does anything
 useful — see `PartyFrameManager.cs` below. Also holds Inspector-dragged references to
 the frame's own children: avatar `Image`, health bar `Image`, shield bar
-`Image` (`ShieldBar`), and six `TextMeshProUGUI` children (name, role,
-health, move speed, fire rate, ability) — these bake into the prefab fine
+`Image` (`ShieldBar`), and seven `TextMeshProUGUI` children (name, role,
+health, move speed, fire rate, **DPS**, ability) — these bake into the prefab fine
 since they're internal to it.
 
 `playerHealth`/`playerRole`/`playerController`/`playerAbility` are
@@ -163,6 +163,61 @@ by player count.
 
 Key public fields: `players[]`, `partyFrames[]`.
 
+### DPS line
+
+`dpsText` (`DpsText`, directly below `FireRateText` in `InfoColumn`) shows
+`PlayerController.CurrentDps` — the ship's live damage-per-second including
+Support's fire-rate buff. It is **null-guarded** in `Update()`, matching
+`shieldText`, so a `PartyFrame` instance predating the line keeps working
+rather than throwing.
+
+Read it against the `DpsMeter` panel below: the frame shows what this ship
+*could* do, the meter shows what it actually landed on the boss.
+
+## DpsMeterUI.cs
+
+**Attached to:** an empty `RectTransform` GameObject under
+`HUDCanvas/LeftSidebar` (sibling of `PartyFrame_1..4`, below them).
+**Requires:** one Inspector reference — `boss`, the scene's `Boss` — exactly
+like `BossPanelUI.cs`. Nothing else needs wiring.
+
+A Recount-style damage/DPS meter for the boss fight: one bar per ship,
+sorted by damage descending, showing total damage, DPS, and percent of party
+damage. Bars are tinted with the ship's own `PlayerRoleStats.tintColor`, so a
+row reads as the same ship as its party frame and its sprite.
+
+**Boss damage only.** Minion and wave-enemy damage is deliberately excluded —
+the meter exists to compare each role's contribution to the encounter that
+matters, and counting trash would drown that signal.
+
+**Built procedurally**, not from a prefab with Inspector-dragged children —
+the one UI script here that does. Two reasons it's the exception: the row
+count is genuinely variable (1–4, however many ships the party ended up
+with), and a meter is telemetry rather than authored layout, so there's
+nothing to art-direct. It builds its own panel `Image`,
+`VerticalLayoutGroup`, `LayoutElement`, title, and rows in `Build()` on
+`Start()`, and declares its own `preferredHeight` so `LeftSidebar`'s vertical
+layout can size it.
+
+Bar length is anchor-driven (`RectTransform.anchorMax.x`), **not**
+`Image.fillAmount` — `fillAmount` needs a real sprite to behave, and these
+are sprite-less colored rects. Repaints are throttled to `refreshInterval`
+(0.2s) rather than running every frame, since reformatting four rows of text
+per frame is pure string garbage for no readability gain.
+
+**Data source:** `Level1Boss.GetDamageDealt(GameObject)` and
+`Level1Boss.CombatElapsed` (see
+[level1-boss.md](level1-boss.md)'s "Damage tracking"). The DPS denominator is
+time since boss combat began, not since the scene loaded.
+
+When the boss dies its GameObject is destroyed, so the meter freezes on the
+final numbers and retitles to `DAMAGE · BOSS DOWN` rather than blanking —
+the end-of-fight totals are the point of having one.
+
+Key public fields: `boss`, `titleHeight`/`rowHeight`/`rowSpacing`/`padding`,
+`titleFontSize`/`rowFontSize`, `refreshInterval`, and the color set
+(`panelColor`/`titleColor`/`barTrackColor`/`rowTextColor`/`fallbackBarColor`).
+
 ## Scene wiring
 
 ### Main Camera
@@ -189,7 +244,9 @@ the pillarbox. Used for sidebar content visible outside the gameplay area.
 is no `RightSidebar` wrapper):
 - **LeftSidebar** — Vertical Layout Group, and also carries
   `PartyFrameManager.cs` (table above). Contains **`PartyFrame_1..4`** — 4
-  instances of `PartyFrame.prefab` (see Prefabs below). See
+  instances of `PartyFrame.prefab` (see Prefabs below) — and, below them,
+  **`DpsMeter`**, an otherwise-empty GameObject carrying `DpsMeterUI.cs`
+  (see above), which builds its own contents at runtime. See
   [../unity-notes.md](../unity-notes.md) for Layout Group configuration
   details.
 - **BossPanel** — the boss's real HP bar, phase, current target,

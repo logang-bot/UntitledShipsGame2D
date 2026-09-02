@@ -208,6 +208,35 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   (contact or shot down) bursts it into a ring of 8 fragments that fly outward and can hit any
   nearby ship. See [systems/combat.md](systems/combat.md).
 
+- **DPS on the party frame** — each frame now shows a live `DPS:` line below
+  Fire Rate, driven by `PlayerController.CurrentDps`
+  (`fireDamage x shotsPerSecond x fireRateBuffMultiplier`), so it rises while
+  Support's boost is active. Base values are Attacker 5.00, Support 2.00,
+  Medic 1.05, Tank 1.00 — see
+  [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role stats".
+- **DPS meter (Recount-style)** — the left sidebar now carries a damage
+  meter below the party frames: one role-tinted bar per ship, sorted by
+  damage descending, showing total damage, DPS, and percent of party damage,
+  with the party total in its title. **Boss damage only** — minions and wave
+  enemies are deliberately not counted. The DPS denominator is time since
+  boss combat began, so it reads 0 until the boss actually engages. When the
+  boss dies the meter freezes on the final numbers and retitles to
+  `DAMAGE · BOSS DOWN`. Built procedurally by `DpsMeterUI.cs` — attach it to
+  an empty GameObject under `LeftSidebar` and drag the `Boss` in; it builds
+  its own panel, rows, and bars on `Start()`. See
+  [systems/hud-layout.md](systems/hud-layout.md)'s "DpsMeterUI.cs".
+- **Aggro now works on the normal route into the game** — previously
+  `Level1Boss` built its aggro table from the four Inspector-wired
+  `targets[]` objects, which the co-op spawner deactivates and replaces with
+  freshly-spawned ships. So on any run that went through Join Lobby (i.e.
+  the normal flow, including a single player), no ship was in the aggro
+  table: damage never became threat, the boss's `CurrentTarget` stayed a
+  disabled marker for the entire fight, and Tank's taunt silently did
+  nothing. `PartySetupBootstrap` now assigns `boss.targets = spawned`
+  alongside the roster assignments it already made. See
+  [systems/level1-boss.md](systems/level1-boss.md)'s "Aggro roster comes from
+  `targets[]`".
+
 ## What's NOT there yet
 
 - No networked/authoritative multiplayer (multiple humans across *separate*

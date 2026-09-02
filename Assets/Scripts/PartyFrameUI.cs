@@ -12,6 +12,7 @@ public class PartyFrameUI : MonoBehaviour
     public TextMeshProUGUI shieldText;
     public TextMeshProUGUI moveSpeedText;
     public TextMeshProUGUI fireRateText;
+    public TextMeshProUGUI dpsText;
     public TextMeshProUGUI abilityText;
     
     public Button abilityButton;
@@ -20,7 +21,7 @@ public TextMeshProUGUI nameText;
     private PlayerHealth playerHealth;
     private PlayerRoleComponent playerRole;
     private PlayerController playerController;
-    
+
     private bool isHuman;
 private PlayerAbility playerAbility;
     private bool isDead;
@@ -91,6 +92,10 @@ void Update()
         if (shieldText != null) shieldText.text = $"<b><color=#A8A8B8>SH:</color></b> {playerHealth.CurrentShield}/{playerHealth.maxShield}";
         moveSpeedText.text = $"<b><color=#A8A8B8>Move Speed:</color></b> {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
         fireRateText.text = $"<b><color=#A8A8B8>Fire Rate:</color></b> {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
+        // Null-guarded like shieldText above, so an older PartyFrame instance
+        // that hasn't had the line added yet keeps working instead of NREing.
+        if (dpsText != null)
+            dpsText.text = $"<b><color=#A8A8B8>DPS:</color></b> {playerController.CurrentDps:0.0}";
         abilityText.text = $"<b><color=#A8A8B8>{playerAbility.AbilityName}:</color></b> {playerAbility.StatusText}";
         if (abilityButton != null && !isHuman) abilityButton.interactable = playerAbility.CooldownRemaining <= 0f;
     }

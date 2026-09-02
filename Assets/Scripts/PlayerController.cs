@@ -52,6 +52,14 @@ public class PlayerController : MonoBehaviour
     // buffs never need to mutate a cached interval.
     private float FireInterval => 1f / (shotsPerSecond * fireRateBuffMultiplier);
 
+    // This ship's live damage-per-second if every shot lands, including any
+    // active fire-rate buff (Support's party-wide boost). Computed at the
+    // point of use like FireInterval above, never cached, so a buff starting
+    // or ending needs no invalidation. Distinct from RoleStats.Dps, which is
+    // the role's *designed* number from the static table - these differ
+    // whenever a buff is up, or if a field was hand-tweaked in the Inspector.
+    public float CurrentDps => fireDamage * shotsPerSecond * fireRateBuffMultiplier;
+
 void Start()
     {
         rb = GetComponent<Rigidbody2D>();

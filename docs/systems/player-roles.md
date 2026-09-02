@@ -227,12 +227,36 @@ source of truth for a role's numbers; nothing else in the codebase
 independently defines health, shield, fire damage, fire rate, or move
 speed.
 
-| Role     | Health | Shield | Fire damage | Fire rate | Move speed |
-| -------- | ------ | ------ | ------------ | --------- | ---------- |
-| Attacker | 6      | 5      | 2.0          | 2.5/s     | 3.0 u/s    |
-| Tank     | 8      | 20     | 1.0          | 1/s       | 1.5 u/s    |
-| Medic    | 4      | 3      | 0.7          | 1.5/s     | 3.0 u/s    |
-| Support  | 5      | 3      | 1.0          | 2/s       | 4.5 u/s    |
+| Role     | Health | Shield | Fire damage | Fire rate | **DPS** | Move speed |
+| -------- | ------ | ------ | ------------ | --------- | ------- | ---------- |
+| Attacker | 6      | 5      | 2.0          | 2.5/s     | **5.00** | 3.0 u/s   |
+| Tank     | 8      | 20     | 1.0          | 1/s       | **1.00** | 1.5 u/s   |
+| Medic    | 4      | 3      | 0.7          | 1.5/s     | **1.05** | 3.0 u/s   |
+| Support  | 5      | 3      | 1.0          | 2/s       | **2.00** | 4.5 u/s   |
+
+> **Move speed in this table is stale.** `PlayerRole.cs` actually holds
+> 2.4 / 1.2 / 2.4 / 3.6 — every value exactly 0.8x the ones above, which reads
+> as a deliberate global tuning pass that never reached the docs or
+> `PlayerRoleStatsTests` (where it is currently the only failing assertion).
+> Every other column here matches the code. Resolve before trusting the
+> movement numbers.
+
+**DPS is derived, not stored** — `RoleStats.Dps => fireDamage *
+shotsPerSecond`. There is no third field to keep in sync, and asserting it in
+`PlayerRoleStatsTests` is what catches a role's damage output moving when only
+one of its two inputs was tuned.
+
+This is a **ceiling, not a prediction**: ships fire straight up (`Vector2.up`)
+at a boss that moves side to side, so real output is this minus everything that
+missed. `DpsMeterUI` (see [hud-layout.md](hud-layout.md)) reports what actually
+landed, and the gap between the two numbers is the positioning skill. Attacker's
+Big Shot widens its bullet 3x on top of doubling its damage, so part of that
+ability's value is accuracy against a moving target, not raw damage.
+
+`PlayerController.CurrentDps` is the *live* equivalent —
+`fireDamage * shotsPerSecond * fireRateBuffMultiplier` — so it reflects
+Support's party-wide fire-rate boost while it is up. That is what the party
+frame's DPS line displays.
 
 Units: **Fire rate** is shots/second (higher = faster) —
 `PlayerController.shotsPerSecond`. **Move speed** is world units/second

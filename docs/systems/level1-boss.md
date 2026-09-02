@@ -92,7 +92,58 @@ Phase 1 and Phase 2 are two difficulty tiers of the *same* HP bar
 0 HP in either phase calls `Die()` and ends the fight — there's no third
 phase after Phase 2.
 
-### Aggro / targeting
+### Aggro roster comes from `targets[]` — which the co-op spawner must set
+
+`Awake()` seeds both `aggro` and `damageDealt` from the Inspector-wired
+`targets[]` array. In the **legacy** path (Gameplay opened directly) those
+four scene objects are the real ships and everything works.
+
+In the **dynamic co-op** path they are not:
+`PartySetupBootstrap.SpawnDynamicParty()` deactivates those four objects and
+uses them only as position markers, spawning fresh `Ship.prefab` instances
+instead. `PartySetupBootstrap` therefore assigns `boss.targets = spawned`
+before `Level1Boss.Awake()` runs (it is `[DefaultExecutionOrder(-1000)]`),
+alongside the `levelSequencer.ships` / `partyFrameManager.players`
+assignments it already made.
+
+Without that assignment the entire aggro system is inert on the normal route
+into the game: no spawned ship is a key in `aggro`, so damage never registers
+as threat, `CurrentTarget` stays a deactivated marker for the whole fight,
+and `TauntedBy()` early-returns on an unknown taunter — making Tank's taunt a
+silent no-op. Fixed as part of adding the DPS meter, which needs the same
+live roster.
+
+## Damage tracking (separate from aggro)
+
+`Level1Boss` keeps a second dictionary, `damageDealt`, alongside `aggro`.
+They look similar and must not be conflated:
+
+| | `aggro` | `damageDealt` |
+|---|---|---|
+| Means | current threat | cumulative damage to the boss |
+| Written by | `TakeDamage()` **and** `TauntedBy()` | `TakeDamage()` only |
+| Taunt effect | overwritten to `highest + tauntBonus` | untouched |
+
+That taunt overwrite is exactly why the DPS meter can't read `aggro`: the
+instant Tank presses `E`, its aggro value becomes `highest + 100` and stops
+being a damage number at all.
+
+Public read API, consumed by `DpsMeterUI` (see
+[hud-layout.md](hud-layout.md)):
+
+- `float GetDamageDealt(GameObject source)` — total damage that source has
+  dealt. A method rather than an exposed dictionary, so nothing outside can
+  mutate it and per-ship iteration allocates no enumerator.
+- `float CombatElapsed` — seconds since boss combat began, captured in
+  `OnEnable()` (the moment `LevelSequencer` enables the component, which is
+  the only point at which ships can both act and deal damage). Returns 0
+  before the fight starts, so callers can avoid dividing by it.
+
+`TakeDamage` accumulates via `TryGetValue` rather than gating on
+`ContainsKey` the way aggro does, so damage from a source that never made it
+into `targets[]` still appears on the meter instead of silently vanishing.
+
+## Aggro / targeting
 
 A plain threat table (`Dictionary<GameObject, float> aggro`, private,
 populated in `Awake()` from `targets[]`): every point of damage a target

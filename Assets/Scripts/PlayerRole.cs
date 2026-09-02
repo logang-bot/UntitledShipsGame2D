@@ -23,6 +23,14 @@ public struct RoleStats
     public float moveSpeed; // world units/second
     public Color tintColor;
 
+    // This role's designed damage-per-second, assuming every shot lands.
+    // Derived, never stored - fireDamage and shotsPerSecond stay the single
+    // source of truth, so there's no third number to keep in sync. Note this
+    // is a ceiling: ships fire straight up (Vector2.up) at a boss that moves
+    // side to side, so what DpsMeterUI reports is always this minus whatever
+    // missed. That gap is the positioning skill.
+    public float Dps => fireDamage * shotsPerSecond;
+
     public RoleStats(int maxHealth, int maxShield, float fireDamage, float shotsPerSecond, float moveSpeed, Color tintColor)
     {
         this.maxHealth = maxHealth;

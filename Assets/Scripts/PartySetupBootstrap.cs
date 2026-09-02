@@ -145,8 +145,18 @@ public class PartySetupBootstrap : MonoBehaviour
 
         // Safe to assign directly (not via Inspector) because this script
         // runs at [DefaultExecutionOrder(-1000)], guaranteed before
-        // LevelSequencer.Awake()/PartyFrameManager.Awake() read these fields.
+        // LevelSequencer.Awake()/PartyFrameManager.Awake()/Level1Boss.Awake()
+        // read these fields.
         if (levelSequencer != null) levelSequencer.ships = controllers.ToArray();
         if (partyFrameManager != null) partyFrameManager.players = spawned;
+        // Without this, the boss keeps pointing at the 4 legacy marker
+        // objects this method just deactivated: Level1Boss.Awake() builds its
+        // aggro table from targets[], so every spawned ship would be absent
+        // from it - damage would never register as threat, CurrentTarget
+        // would stay a disabled marker, and Tank's taunt would silently
+        // no-op (TauntedBy early-returns on an unknown taunter). The co-op
+        // join flow is the *normal* path into Gameplay, so this affected
+        // every run that didn't open the scene directly.
+        if (boss != null) boss.targets = spawned;
     }
 }

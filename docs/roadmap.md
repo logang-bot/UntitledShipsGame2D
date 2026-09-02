@@ -422,6 +422,15 @@ reference docs live under `systems/`.
   already device-agnostic. See `systems/player-roles.md`'s "Local co-op /
   dynamic player count", `systems/scene-flow.md`, and `systems/input.md`.
 
+- DPS meter (`DpsMeterUI.cs`): Recount-style per-ship damage/DPS/percent bars
+  in the left HUD sidebar, boss damage only, built procedurally. Ships with
+  the aggro-roster fix below, since both need the live party roster. See
+  `systems/hud-layout.md`.
+- Aggro roster fix: `PartySetupBootstrap` now points `Level1Boss.targets` at
+  the ships it actually spawned. Aggro, boss targeting, and Tank's taunt were
+  all inert on the normal (Join Lobby) route into Gameplay before this. See
+  `systems/level1-boss.md`.
+
 ## In Progress
 
 *(none currently)*
