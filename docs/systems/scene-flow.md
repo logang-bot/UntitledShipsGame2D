@@ -160,3 +160,7 @@ itself is attached to.
   networking").
 - No Settings/Credits/Level Select screens — not yet needed (no audio system,
   only one level exists).
+- No `DeckBuild.unity` — the deck loadout screen is designed but not built.
+  It will sit between `RoleSelect` and `Gameplay` in flow order while being
+  appended at Build Settings index **5**, so `Gameplay` stays at 4 and
+  nothing renumbers. See [cards.md](cards.md)'s "Deck loadout scene".

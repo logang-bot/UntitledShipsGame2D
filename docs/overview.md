@@ -2,10 +2,28 @@
 
 ## Concept
 
-A Galaga-inspired top-down arcade shooter with online co-op boss encounters.
+A co-op bullet-hell raid-boss deckbuilder: a top-down shooter with online
+co-op boss encounters, dense Touhou-style bullet curtains, and a per-player
+deck that acts as your hotbar during the fight.
 
-- **Core loop**: bullet-pattern arcade shooting (Galaga DNA) combined with a scripted,
-  multi-phase boss encounter in the style of an MMO raid boss (WoW-inspired).
+*(This project began as `UntitledShipsGame2D`, a Galaga-inspired co-op raid
+shooter, and was merged with `tohou_deck`, a solo Touhou-style bullet-hell
+deckbuilder. Everything below is the merged direction; see `../AGENTS.md`'s
+"Decisions log" for what the merge decided and `systems/cards.md` for the
+deck layer's design.)*
+
+- **Core loop**: bullet-pattern arcade shooting (Galaga DNA) and dense
+  Touhou-style bullet curtains, combined with a scripted, multi-phase boss
+  encounter in the style of an MMO raid boss (WoW-inspired).
+- **Three stacked skill layers**: dodging (execution — small hitbox, focus
+  mode, grazing), roles (coordination), and deck (preparation). The layer
+  that binds them is **grazing**: dodging closely earns the energy that pays
+  for cards, so bullet-hell skill funds the deckbuilding layer instead of
+  running beside it. See `systems/cards.md`.
+- **Deck**: each player builds a fixed 10-card deck from their **own role's**
+  card pool before the fight. Cards customize a role, they don't replace it —
+  role stats and the signature `E` ability stay exactly as they are, and cards
+  layer on top. See `systems/cards.md`.
 - **Players**: 1-4, each piloting a ship with a defined RPG-style role:
   - Attacker (DPS)
   - Tank
@@ -36,10 +54,19 @@ Researched to confirm this isn't a re-tread of an existing game:
 - **Alienation** (Housemarque) — closest mechanical reference (actual RPG classes,
   co-op up to 4, twin-stick), but wave-survival/looter-shooter structured, not built
   around a single scripted boss encounter.
+- **Touhou series** (Team Shanghai Alice) — the reference for the bullet-curtain
+  half: tiny hitbox, focus mode, grazing, named spell-card boss phases. Solo,
+  no roles, no deck.
+- **Slay the Spire / roguelike deckbuilders** — the reference for the deck half,
+  but turn-based, so all the tension is in the choice, none in the execution. The
+  merge's whole bet is that a deck can be a real-time hotbar without eating the
+  attention that dodging needs.
 - **Conclusion**: the specific combination of Galaga-style bullet patterns + a
   scripted raid-style boss + hard role-locked co-op (tank/healer/dps/support) is not
-  a crowded space. Risk is design complexity (boss encounters are hard to get right),
-  not idea collision.
+  a crowded space, and adding a per-role deck funded by grazing has no close
+  comparison at all. Risk is design complexity (boss encounters are hard to get
+  right, and the deck layer adds a second system that must not fight the first
+  for the player's attention), not idea collision.
 
 ## Tech Stack Decisions
 
@@ -57,9 +84,13 @@ Researched to confirm this isn't a re-tread of an existing game:
 1. **Prove gameplay is fun before investing in infrastructure.** Build order is:
    local single-player prototype → full basic mechanics → player-vs-boss mechanics
    (single boss, one role mechanic) validated with CPU-controlled AI teammates
-   filling the non-human roles → only then real (human) networking, which upgrades
-   those AI teammates to real players → only then final art. See `roadmap.md` for
-   the current status against this order.
+   filling the non-human roles → then the bullet-hell/deck layer (grazing, energy,
+   cards) on top of that proven fight → only then real (human) networking, which
+   upgrades those AI teammates to real players → only then final art. See
+   `roadmap.md` for the current status against this order. The deck layer sits
+   deliberately *after* the boss fight is proven fun: if the fight isn't fun
+   without cards, cards won't rescue it, and if it is, cards have something worth
+   modifying.
 2. **Server-authoritative for boss encounters.** Clients send input, server (Nakama)
    resolves combat — required so a 4-player boss fight's state can't desync or be
    cheated.
