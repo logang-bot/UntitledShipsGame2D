@@ -5,8 +5,13 @@ using UnityEngine.Events;
 
 public class PlayerHealthTests
 {
-    private static readonly MethodInfo AwakeMethod = typeof(PlayerHealth)
-        .GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
+    // PlayerHealth's role-driven init lives in Start(), not Awake() - it was
+    // moved there so a ship spawned by PartySetupBootstrap's co-op path (whose
+    // Awake runs synchronously inside Instantiate, before .role is assigned)
+    // still reads its real role. This lookup asked for "Awake" and so silently
+    // returned null after that move, NREing every test in this file on Invoke.
+    private static readonly MethodInfo StartMethod = typeof(PlayerHealth)
+        .GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance);
 
     private GameObject go;
 
@@ -25,7 +30,7 @@ public class PlayerHealthTests
         PlayerHealth health = go.AddComponent<PlayerHealth>();
         health.OnDamaged = new UnityEvent();
         health.OnDeath = new UnityEvent();
-        AwakeMethod.Invoke(health, null);
+        StartMethod.Invoke(health, null);
         return health;
     }
 
