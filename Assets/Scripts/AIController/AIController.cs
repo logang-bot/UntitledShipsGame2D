@@ -199,6 +199,10 @@ public class AIController : MonoBehaviour
             if (boss != null && boss.CurrentTarget != gameObject) ability.TryUseAbility();
             return;
         }
+        // Always requests whatever slot continues the rotation correctly, so
+        // Attacker bots play a perfect combo - TryComboAttack's own per-slot
+        // cooldown (comboAttackCooldown) is what paces it, not this call.
+        if (role.role == PlayerRole.Attacker) ability.TryComboAttack(ability.AttackerComboExpectedSlot);
         ability.TryUseAbility();
     }
 }

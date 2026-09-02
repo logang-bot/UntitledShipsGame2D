@@ -12,10 +12,15 @@ reference docs live under `systems/`.
    prove the raid-style boss fight using AI-controlled teammates for the
    non-human roles, so role-coordination can be shown to be fun with a
    single human player, before any networking exists.
-3. **Networking (Nakama) — last.** Only starts once the CPU-AI boss loop is
+3. **Bullet-hell + deck layer** — the merged `tohou_deck` half: small hitbox,
+   focus mode, grazing/energy, then cards and the loadout screen, then boss
+   spell cards. Deliberately *after* step 2: cards modify a fight that has
+   already been shown to be fun, they don't substitute for one. See
+   `systems/cards.md`.
+4. **Networking (Nakama) — last.** Only starts once the CPU-AI boss loop is
    proven fun. This is what upgrades the AI-controlled teammates to real
    human players, not a separate feature bolted on afterward.
-4. **Art & audio — final pass**, once everything above works with
+5. **Art & audio — final pass**, once everything above works with
    placeholder assets.
 
 ## Implemented
@@ -422,11 +427,51 @@ reference docs live under `systems/`.
   already device-agnostic. See `systems/player-roles.md`'s "Local co-op /
   dynamic player count", `systems/scene-flow.md`, and `systems/input.md`.
 
+- DPS meter (`DpsMeterUI.cs`): Recount-style per-ship damage/DPS/percent bars
+  in the left HUD sidebar, boss damage only, built procedurally. Ships with
+  the aggro-roster fix below, since both need the live party roster. See
+  `systems/hud-layout.md`.
+- Aggro roster fix: `PartySetupBootstrap` now points `Level1Boss.targets` at
+  the ships it actually spawned. Aggro, boss targeting, and Tank's taunt were
+  all inert on the normal (Join Lobby) route into Gameplay before this. See
+  `systems/level1-boss.md`.
+
 ## In Progress
 
 *(none currently)*
 
 ## Planned (not yet started)
+
+### Bullet-hell + deck layer
+
+Full design spec: [systems/cards.md](systems/cards.md). Ordered so each step
+is independently testable and the one before it de-risks the next.
+
+- **Small hitbox + focus mode** — shrink the ship's damage collider to a tiny
+  central box (~15-20% of sprite width), add a `Focus` input that halves move
+  speed via a non-destructive multiplier and renders the hitbox. Testable on
+  its own against the existing boss: the fight should immediately feel
+  survivable at much higher bullet density.
+- **Bullet density pass** — retune the boss's existing Fan/Ring/Spiral
+  barrages upward now that a small hitbox makes them dodgeable. No new
+  systems, just numbers.
+- **Grazing + energy** — `PlayerGraze.cs` reading the existing `Bullet.Active`
+  static registry, awarding energy on near-misses; energy bar on the human's
+  party frame. Testable before a single card exists: does *earning* energy by
+  dodging feel good on its own?
+- **Card framework** — `Card.cs` / `CardEffect.cs` / `PlayerCards.cs`, the
+  3-slot hand, the card tray HUD, and a hardcoded starter deck set in the
+  Inspector. No loadout screen yet.
+- **Starter card set** — ~20 cards, five per role plus Neutral, split Passive
+  and Active.
+- **`DeckBuild.unity` loadout scene** — appended at Build Settings index 5,
+  between `RoleSelect` and `Gameplay` in flow order; single/multi picker
+  mirroring `RoleSelect`; `PartyDeckAssignment` static carrying the result
+  across the scene load.
+- **AI decks** — `AIController` playing cards through `PlayerCards.TryPlayCard()`,
+  so a solo party fights the same fight a full party does.
+- **Boss spell cards** — named, timed, individually-HP-barred attack phases
+  inside the existing HP-threshold phases, announced on `BossPanel`.
 
 ### Networking (last)
 

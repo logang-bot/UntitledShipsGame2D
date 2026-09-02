@@ -30,6 +30,9 @@ the scene is wired.
   waves.
 - [systems/player-roles.md](systems/player-roles.md) — `PlayerRole`
   enum/stats/component.
+- [systems/cards.md](systems/cards.md) — **design spec, not yet built**: the
+  deckbuilding layer merged in from `tohou_deck`. Grazing/energy, the 3-slot
+  hand, deck rules, the `DeckBuild` loadout scene, and boss spell cards.
 - [systems/hud-layout.md](systems/hud-layout.md) — portrait/crossplay
   screen layout, HUD canvases.
 - [systems/level1-boss.md](systems/level1-boss.md) — Level 1's boss: phases,

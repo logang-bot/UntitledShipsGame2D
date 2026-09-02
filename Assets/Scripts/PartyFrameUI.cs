@@ -12,6 +12,7 @@ public class PartyFrameUI : MonoBehaviour
     public TextMeshProUGUI shieldText;
     public TextMeshProUGUI moveSpeedText;
     public TextMeshProUGUI fireRateText;
+    public TextMeshProUGUI dpsText;
     public TextMeshProUGUI abilityText;
     
     public Button abilityButton;
@@ -20,13 +21,19 @@ public TextMeshProUGUI nameText;
     private PlayerHealth playerHealth;
     private PlayerRoleComponent playerRole;
     private PlayerController playerController;
-    
+
     private bool isHuman;
 private PlayerAbility playerAbility;
     private bool isDead;
+    // The ship's own root GameObject - kept so DPS can be looked up as
+    // Level1Boss.GetDamageDealt(shipObject), the same key TakeDamage()
+    // records it under (see PlayerController.SpawnBullet's `gameObject`
+    // passed as the bullet's source).
+    private GameObject shipObject;
 
 public void Initialize(GameObject player, string displayName, bool isHumanPlayer)
     {
+        shipObject = player;
         playerHealth = player.GetComponent<PlayerHealth>();
         playerRole = player.GetComponent<PlayerRoleComponent>();
         playerController = player.GetComponent<PlayerController>();
@@ -91,6 +98,23 @@ void Update()
         if (shieldText != null) shieldText.text = $"<b><color=#A8A8B8>SH:</color></b> {playerHealth.CurrentShield}/{playerHealth.maxShield}";
         moveSpeedText.text = $"<b><color=#A8A8B8>Move Speed:</color></b> {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
         fireRateText.text = $"<b><color=#A8A8B8>Fire Rate:</color></b> {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
+        // Null-guarded like shieldText above, so an older PartyFrame instance
+        // that hasn't had the line added yet keeps working instead of NREing.
+        //
+        // Real damage-dealt-to-boss DPS, not PlayerController.CurrentDps's
+        // theoretical "every normal shot lands" ceiling - that number never
+        // moves for combo/Big Shot hits, since those bypass fireDamage
+        // entirely (see PlayerAbilityAttacker.TryComboAttack/Trigger).
+        // Level1Boss.GetDamageDealt/CombatElapsed is the same source of
+        // truth DpsMeterUI's Recount-style panel reads.
+        if (dpsText != null)
+        {
+            Level1Boss boss = playerController.boss;
+            float dps = (boss != null && boss.CombatElapsed > 0f)
+                ? boss.GetDamageDealt(shipObject) / boss.CombatElapsed
+                : 0f;
+            dpsText.text = $"<b><color=#A8A8B8>DPS:</color></b> {dps:0.0}";
+        }
         abilityText.text = $"<b><color=#A8A8B8>{playerAbility.AbilityName}:</color></b> {playerAbility.StatusText}";
         if (abilityButton != null && !isHuman) abilityButton.interactable = playerAbility.CooldownRemaining <= 0f;
     }

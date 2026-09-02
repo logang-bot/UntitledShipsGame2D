@@ -131,6 +131,22 @@ blocks re-activation until the current role's cooldown elapses.
   See [combat.md](combat.md) for why recoil has to be a decaying velocity
   blended into `HandleMovement()` rather than a physics impulse
   (`MovePosition` overwrites plain `AddForce` every `FixedUpdate`).
+- **Attacker — 3-attack combo**: separate from Big Shot above, bound to
+  three dedicated inputs (`Combo1`/`Combo2`/`Combo3` — keyboard `1`/`2`/`3`,
+  gamepad North/L1/R1). `PlayerAbilityAttacker` tracks a single
+  `expectedSlot` (1→2→3→1…, the fixed "correct rotation"). Landing the
+  expected slot fires `FireBigShot` with that step's damage/width
+  multiplier (`comboStepDamageMultipliers`/`comboStepWidthMultipliers` —
+  escalating toward a finisher bonus on step 3) and advances `expectedSlot`;
+  landing the wrong slot ("bad execution") fires at
+  `comboBreakDamageMultiplier` (0.5x) instead and resets `expectedSlot` back
+  to 1, rather than dealing no damage at all. Each slot has its own short
+  `comboAttackCooldown` (0.5s) — independent of `bigShotCooldown` — so the
+  gate is "don't mash one key", not the sequencing itself; the sequencing is
+  entirely on the player picking the right key. `AIController` always feeds
+  `TryComboAttack()` the current `AttackerComboExpectedSlot`, so Attacker
+  bots play a perfect rotation every time — there's no "bad execution" mode
+  for bots yet, only for human input.
 
 Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
 (3), `shieldArcHeight` (0.4), `shieldArcYOffset` (0.3),
@@ -142,7 +158,10 @@ Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
 (15s), `speedBoostDuration` (4s), `speedBoostMultiplier` (1.5),
 `partyBuffRingRadius`/`partyBuffRingWidth`; `bigShotCooldown` (3s),
 `bigShotWidthMultiplier` (3), `bigShotDamageMultiplier` (2), `recoilForce`
-(6). Key public method: `OnAbility(InputValue)`.
+(6); `comboAttackCooldown` (0.5s), `comboStepDamageMultipliers` (`1, 1.3,
+1.8`), `comboStepWidthMultipliers` (`1, 1.5, 2.5`),
+`comboBreakDamageMultiplier` (0.5). Key public methods: `OnAbility(InputValue)`,
+`OnCombo1/2/3(InputValue)`.
 
 Also exposes read-only status for the HUD (see `PartyFrameUI.cs` in
 [hud-layout.md](hud-layout.md)): `CooldownRemaining`, `IsSpeedBoostActive`,
@@ -155,7 +174,10 @@ cooldown math.
 point — `TryUseAbility()` — so `AIController.cs` (see [level1-boss.md](level1-boss.md))
 can trigger a CPU teammate's ability directly, through the exact same
 cooldown gate and role-dispatch switch as the human player. The `Trigger*`
-methods stay private.
+methods stay private. `OnCombo1/2/3(InputValue)` follow the same pattern
+via `TryComboAttack(int slot)`, which no-ops outside the Attacker role since
+every ship's `PlayerAbility` builds all four role helpers regardless of its
+actual role (see `CreateHelpers()`).
 
 **Manual teammate-ability triggering from the party frame**: each
 `PartyFrame_N`'s `AbilityText` line (see [hud-layout.md](hud-layout.md))
@@ -227,12 +249,38 @@ source of truth for a role's numbers; nothing else in the codebase
 independently defines health, shield, fire damage, fire rate, or move
 speed.
 
-| Role     | Health | Shield | Fire damage | Fire rate | Move speed |
-| -------- | ------ | ------ | ------------ | --------- | ---------- |
-| Attacker | 6      | 5      | 2.0          | 2.5/s     | 3.0 u/s    |
-| Tank     | 8      | 20     | 1.0          | 1/s       | 1.5 u/s    |
-| Medic    | 4      | 3      | 0.7          | 1.5/s     | 3.0 u/s    |
-| Support  | 5      | 3      | 1.0          | 2/s       | 4.5 u/s    |
+| Role     | Health | Shield | Fire damage | Fire rate | **DPS** | Move speed |
+| -------- | ------ | ------ | ------------ | --------- | ------- | ---------- |
+| Attacker | 6      | 5      | 2.0          | 2.5/s     | **5.00** | 3.0 u/s   |
+| Tank     | 8      | 20     | 1.0          | 1/s       | **1.00** | 1.5 u/s   |
+| Medic    | 4      | 3      | 0.7          | 1.5/s     | **1.05** | 3.0 u/s   |
+| Support  | 5      | 3      | 1.0          | 2/s       | **2.00** | 4.5 u/s   |
+
+> **Move speed in this table is stale.** `PlayerRole.cs` actually holds
+> 2.4 / 1.2 / 2.4 / 3.6 — every value exactly 0.8x the ones above, which reads
+> as a deliberate global tuning pass that never reached the docs or
+> `PlayerRoleStatsTests` (where it is currently the only failing assertion).
+> Every other column here matches the code. Resolve before trusting the
+> movement numbers.
+
+**DPS is derived, not stored** — `RoleStats.Dps => fireDamage *
+shotsPerSecond`. There is no third field to keep in sync, and asserting it in
+`PlayerRoleStatsTests` is what catches a role's damage output moving when only
+one of its two inputs was tuned.
+
+This is a **ceiling, not a prediction**: ships fire straight up (`Vector2.up`)
+at a boss that moves side to side, so real output is this minus everything that
+missed. `DpsMeterUI` (see [hud-layout.md](hud-layout.md)) reports what actually
+landed, and the gap between the two numbers is the positioning skill. Attacker's
+Big Shot widens its bullet 3x on top of doubling its damage, so part of that
+ability's value is accuracy against a moving target, not raw damage.
+
+`PlayerController.CurrentDps` is the *live* equivalent —
+`fireDamage * shotsPerSecond * fireRateBuffMultiplier` — so it reflects
+Support's party-wide fire-rate boost while it is up. It's still a valid
+stat, but as of the Attacker combo it's no longer what the party frame's DPS
+line displays — see [hud-layout.md](hud-layout.md)'s "DPS line" for why that
+switched to real damage-dealt-to-boss instead.
 
 Units: **Fire rate** is shots/second (higher = faster) —
 `PlayerController.shotsPerSecond`. **Move speed** is world units/second
