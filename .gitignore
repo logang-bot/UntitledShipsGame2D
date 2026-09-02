@@ -78,3 +78,6 @@ Thumbs.db
 
 # Unity MCP verification screenshots (disposable test artifacts)
 /[Aa]ssets/[Ss]creenshots/
+
+# VS Code
+.vscode/
