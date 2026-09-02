@@ -209,11 +209,11 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   nearby ship. See [systems/combat.md](systems/combat.md).
 
 - **DPS on the party frame** — each frame now shows a live `DPS:` line below
-  Fire Rate, driven by `PlayerController.CurrentDps`
-  (`fireDamage x shotsPerSecond x fireRateBuffMultiplier`), so it rises while
-  Support's boost is active. Base values are Attacker 5.00, Support 2.00,
-  Medic 1.05, Tank 1.00 — see
-  [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role stats".
+  Fire Rate, driven by real damage dealt to the boss
+  (`Level1Boss.GetDamageDealt(ship) / CombatElapsed`), not the theoretical
+  `fireDamage x shotsPerSecond` ceiling — switched once the Attacker combo
+  landed, since combo/Big Shot hits bypass `fireDamage` and never moved the
+  old number. See [systems/hud-layout.md](systems/hud-layout.md)'s "DPS line".
 - **DPS meter (Recount-style)** — the left sidebar now carries a damage
   meter below the party frames: one role-tinted bar per ship, sorted by
   damage descending, showing total damage, DPS, and percent of party damage,

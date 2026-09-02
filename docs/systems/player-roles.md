@@ -277,8 +277,10 @@ ability's value is accuracy against a moving target, not raw damage.
 
 `PlayerController.CurrentDps` is the *live* equivalent —
 `fireDamage * shotsPerSecond * fireRateBuffMultiplier` — so it reflects
-Support's party-wide fire-rate boost while it is up. That is what the party
-frame's DPS line displays.
+Support's party-wide fire-rate boost while it is up. It's still a valid
+stat, but as of the Attacker combo it's no longer what the party frame's DPS
+line displays — see [hud-layout.md](hud-layout.md)'s "DPS line" for why that
+switched to real damage-dealt-to-boss instead.
 
 Units: **Fire rate** is shots/second (higher = faster) —
 `PlayerController.shotsPerSecond`. **Move speed** is world units/second

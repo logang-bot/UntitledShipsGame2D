@@ -166,13 +166,27 @@ Key public fields: `players[]`, `partyFrames[]`.
 ### DPS line
 
 `dpsText` (`DpsText`, directly below `FireRateText` in `InfoColumn`) shows
-`PlayerController.CurrentDps` — the ship's live damage-per-second including
-Support's fire-rate buff. It is **null-guarded** in `Update()`, matching
-`shieldText`, so a `PartyFrame` instance predating the line keeps working
-rather than throwing.
+this ship's **real** damage-per-second dealt to the boss —
+`Level1Boss.GetDamageDealt(ship) / Level1Boss.CombatElapsed`, read via
+`PlayerController.boss` (already wired for contact-damage collision, so no
+extra Inspector reference was needed). It is **null-guarded** in `Update()`,
+matching `shieldText`, so a `PartyFrame` instance predating the line keeps
+working rather than throwing, and reads `0.0` before combat starts
+(`CombatElapsed` is `0` until then).
 
-Read it against the `DpsMeter` panel below: the frame shows what this ship
-*could* do, the meter shows what it actually landed on the boss.
+Originally showed `PlayerController.CurrentDps` (`fireDamage x
+shotsPerSecond` — a static "if every normal shot lands" ceiling) instead.
+Switched once the Attacker combo landed: combo/Big Shot hits fire through
+`FireBigShot()` with their own computed damage, entirely bypassing
+`fireDamage`, so `CurrentDps` never moved even while the boss was visibly
+taking bonus damage from a correctly-played rotation — indistinguishable
+from the number being broken. `CurrentDps` itself is untouched and still a
+valid stat (see `PlayerRole.cs`'s `RoleStats.Dps`), just no longer surfaced
+here.
+
+Read it against the `DpsMeter` panel below: this line is one ship's own
+number, the meter is the whole party's damage compared side by side — same
+underlying data, different scope.
 
 ## DpsMeterUI.cs
 
