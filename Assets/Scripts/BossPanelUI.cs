@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class BossPanelUI : MonoBehaviour
 {
-    public Level1Boss boss; // direct scene reference - BossPanel is scene-bound, not a reusable prefab
+    public MarauderBoss boss; // direct scene reference - BossPanel is scene-bound, not a reusable prefab
     public Image healthBarFill;
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI phaseText;

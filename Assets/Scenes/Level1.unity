@@ -6416,7 +6416,7 @@ MonoBehaviour:
   - {fileID: 542596811}
   - {fileID: 477075369}
   enemySpawner: {fileID: 971623269}
-  level1Boss: {fileID: 1636344750194998057}
+  marauderBoss: {fileID: 1636344750194998057}
   introDuration: 4
   freeMovementDuration: 4
   minionPhase1Duration: 15

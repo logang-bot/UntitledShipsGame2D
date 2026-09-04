@@ -93,7 +93,7 @@ public class RoleSelectMultiUI : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Gameplay");
+        SceneManager.LoadScene("LevelSelect");
     }
 
     public void Back()

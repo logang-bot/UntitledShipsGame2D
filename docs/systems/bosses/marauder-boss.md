@@ -1,23 +1,56 @@
-# Level 1 Boss
+# Marauder
 
 Level 1's boss: two HP-based phases, a threat-table aggro system that Tank
 taunt redirects, and 3 CPU-controlled AI teammates covering the roles the
 human isn't playing. This is the project's core design bet
-(`../overview.md`) — MMO-raid-style role coordination — reached before any
-networking exists, per `../roadmap.md`'s priority order. The boss's own
-component/script/prefab are named `Level1Boss` (not just `Boss`) because
-`Gameplay.unity` is a reusable scene meant to host future levels, each with
-its own boss — see [level-sequencing.md](level-sequencing.md) for the
+(`../../overview.md`) — MMO-raid-style role coordination — reached before any
+networking exists, per `../../roadmap.md`'s priority order. The boss's own
+component/script/prefab are named `MarauderBoss` (not just `Boss`) — this is
+Level 1's own dedicated scene, `Level1.unity`, one of three separate level
+scenes (`Level1`/`Level2`/`Level3`, one per boss — a shared-scene design was
+considered and rejected, see `../../roadmap.md`) that each reuse the same
+`LevelSequencer` script — see [level-sequencing.md](../level-sequencing.md) for the
 intro/minion-phase/boss-entrance timeline this boss now fights inside of,
-owned by a separate `LevelSequencer`.
+owned by a separate `LevelSequencer`, and [scene-flow.md](../scene-flow.md) for
+how a player reaches this level via `LevelSelect`.
 
-## Level1Boss.cs
+## At a Glance
 
-**Attached to:** `Boss` GameObject (`Assets/Prefabs/Level1Boss.prefab`, one
-instance placed directly in `Gameplay` — not spawned; a boss is a one-off,
+- **Identity:** a stationary-but-erratic brawler — it never chases the party
+  across the arena, but punishes standing still near it or clustering with
+  a wide toolkit of proximity/targeted/area attacks. The well-rounded
+  "first encounter," exercising every core system (aggro, phases, multiple
+  attack types, sub-enemies) at once.
+- **Movement:** hops at random intervals and random speed between the fixed
+  points of an "M"-shaped pattern anchored on its home position, confined to
+  roughly the top 40% of the playable height — see "Movement and firing"
+  below. (Currently disabled — see "Current tuning" below.)
+- **Mechanics:** [phase-based fire](#movement-and-firing) (aimed shot →
+  faster 3-bullet spread at ≤50% HP) · [body contact
+  damage](#body-contact-damage) (touching it directly) ·
+  [shockwave](#shockwave) (telegraphed proximity pulse + knockback) ·
+  [guided missile](#guided-missile) (homes in on a locked Medic or Attacker)
+  · [Pattern Barrage](#pattern-barrage) (Fan/Ring/Spiral bullet spreads) ·
+  [minions](#minioncs--minionspawnercs) (kamikaze flanking adds, some
+  Explosive) · [aggro/taunt](#aggro--targeting) (threat table, Tank
+  redirects it).
+- **Level summary:** reached via `LevelSelect` → `Level1.unity`, which
+  runs the shared `LevelSequencer` timeline (see
+  [level-sequencing.md](../level-sequencing.md)): ships glide in
+  (`Intro`), free movement, ~2 minutes of wave-enemy minion phases
+  (`MinionPhase1`), then — once the screen is clear — the boss glides in
+  (`BossEntrance`, hidden/non-collidable via `SetVisible(false)` until this
+  point) and combat begins (`BossCombat`, firing `OnEnable()` below).
+  Reaching Phase 2 resumes wave-enemy minions alongside the boss's own
+  flanking ones.
+
+## MarauderBoss.cs
+
+**Attached to:** `Boss` GameObject (`Assets/Prefabs/MarauderBoss.prefab`, one
+instance placed directly in `Level1.unity` — not spawned; a boss is a one-off,
 not a wave, so it doesn't go through `EnemySpawner.cs`). The GameObject
 itself keeps the generic name `Boss`; only the script/class/prefab carry
-the `Level1Boss` name. `LevelSequencer` calls the new `public
+the `MarauderBoss` name. `LevelSequencer` calls the new `public
 SetVisible(bool)` to hide the boss's `SpriteRenderer`/`Collider2D`/
 shockwave ring until its own entrance begins — not `SetActive(false)` on
 the whole GameObject, which was tried first and had a real side effect:
@@ -25,11 +58,11 @@ the whole GameObject, which was tried first and had a real side effect:
 stopped kamikaze minions from spawning for the entire pre-boss window. The
 `Boss` GameObject now stays active throughout; only its visibility/
 collidability toggle. It's made visible again at the start of the entrance
-glide but stays combat-inert (the `Level1Boss` component itself stays
+glide but stays combat-inert (the `MarauderBoss` component itself stays
 disabled) until the glide finishes, at which point `LevelSequencer` enables
 the component — firing `OnEnable()` and starting the movement-pattern
 coroutine below. See
-[level-sequencing.md](level-sequencing.md).
+[level-sequencing.md](../level-sequencing.md).
 **Requires:** tag `Enemy` (so `Bullet.cs`'s player-bullet-vs-`Enemy` branch
 collides with it), a `bulletPrefab` (reuses `EnemyBullet.prefab`), a
 `targets[]` array wired to all 4 player-controlled ships.
@@ -42,7 +75,7 @@ removed, so each is a one-line revert:
 - `maxHealth`: 150 (was 90) — a stationary, less-frequently-firing boss needs
   more HP or the fight is over before the combo rotation matters.
 - `enableMovementPattern` (new, default `false`): skips starting
-  `Level1BossMovement`'s coroutine in `OnEnable()`, so the boss just sits at
+  `MarauderBossMovement`'s coroutine in `OnEnable()`, so the boss just sits at
   `home`. The movement system itself (below) is untouched.
 - `phase1FireInterval`/`phase2FireInterval`: 2.4 / 1.2 (were 1.2 / 0.6) —
   halved, so a boss that can't be dodged by repositioning still doesn't
@@ -53,41 +86,46 @@ removed, so each is a one-line revert:
 
 ### Movement and firing
 
-**Scripted movement pattern, not AI**: the boss no longer decides where to
-go — `OnEnable()` captures the boss's current position as `home` (always
-wherever `LevelSequencer` just landed it after the entrance glide) and
-starts `MovementPatternRoutine()`, which loops for the rest of the fight,
-unchanged across both phases:
+**Scripted movement pattern, not AI**: `MarauderBossMovement` (a plain
+helper class, not a `MonoBehaviour` — constructed once in
+`MarauderBoss.CreateHelpers()`) owns this. `OnEnable()` captures the boss's
+current position as `home` (always wherever `LevelSequencer` just landed it
+after the entrance glide) and starts `MovementPatternRoutine()`, which loops
+for the rest of the fight, unchanged across both phases:
 
-1. **Snap** instantly to `home.x + sideOffsetX` (2.2) — a one-frame
-   teleport, not an eased move, so it reads as sudden.
-2. **Advance** from there down toward the ships over `patternMoveDuration`
-   (1.2s), via `MoveOverTime()`'s per-frame `Vector3.Lerp` (not
-   `Rigidbody2D` physics — the boss sets `transform.position` directly, as
-   before). The descent target is clamped by `ClampToBounds()` exactly like
-   the old dash was, so "how far it can push" is still governed by
-   `maxAdvanceFraction`.
-3. **Retreat** back to the side position, same duration.
-4. **Return** to `home`, same duration.
-5. **Wait** `cycleGap` (1.5s), then repeat the whole sequence mirrored to
-   `home.x - sideOffsetX` — right side, gap, left side, gap, forever.
+1. **Sit still** for a randomized beat, `Random.Range(cycleGapMin,
+   cycleGapMax)` (0.5–2.5s) — long enough, and random enough, that players
+   can't time when the next hop is coming.
+2. **Hop** to a randomly picked point of a fixed "M"-shaped vertex set (see
+   below), over a randomized travel duration,
+   `Random.Range(patternMoveDurationMin, patternMoveDurationMax)`
+   (0.4–2s), via `MoveOverTime()`'s per-frame `Vector3.Lerp` — an eased
+   move, not a teleport (the boss sets `transform.position` directly, not
+   `Rigidbody2D` physics).
+3. Repeat — sit, hop, sit, hop, forever.
 
-`RunCycle(float side)` is the single-cycle coroutine (one side);
-`MoveOverTime(from, to, duration)` is the shared per-frame lerp helper the
-advance/retreat/return legs are all built from (`LevelSequencer`'s own
-entrance-glide coroutine uses the same lerp idiom independently, since it
-moves the boss before `Level1Boss` is even enabled — see
-[level-sequencing.md](level-sequencing.md)).
+**The "M" vertex set** (`GetPatternVertices()`, recomputed each hop since it
+depends on the live camera viewport): six fixed points — `home` itself, the
+two upper corners (`home.x ± sideOffsetX`, at `home`'s own Y), the two lower
+corners (same X offsets, down at `BottomY()`), and a middle notch
+(`home.x`, at a Y interpolated between `home`'s Y and `BottomY()` by
+`mPatternNotchDepth` — 0 stays at home row, 1 dips as deep as the outer
+corners). `PickRandomVertex()` picks uniformly among the six, re-rolling
+(bounded to 10 tries) if it happens to land on wherever the boss already is,
+so a hop always actually goes somewhere.
 
-`ClampToBounds()` is unchanged from the old dash system and still keeps the
-boss on-screen and limits how far it can push toward the ships:
+`BottomY()` is `homeY - maxAdvanceFraction * viewportHeight` — the same "how
+far down can it push" floor the old dash system used, just computed
+directly for the M's lower vertices instead of applied as a post-hoc clamp.
+`ClampToBounds()` still exists and is applied to every computed vertex when
+the M is built:
 
 - **X** — clamped to the viewport width minus `screenPadding` (0.8 / 0.5),
   the same `Camera.ViewportToWorldPoint` clamp idiom
   `PlayerController.HandleMovement()` uses.
 - **Y** — clamped to `[homeY - maxAdvanceFraction * viewportHeight, homeY]`,
-  where `homeY` is captured once in `Awake()` (the boss's starting Y, ~4.2)
-  and `viewportHeight` is the live 10-unit playable height.
+  where `homeY` is captured once in the constructor (the boss's starting Y,
+  ~4.2) and `viewportHeight` is the live 10-unit playable height.
   `maxAdvanceFraction` (0.4) means the boss can push down into roughly the
   top 40% of the playable height, never above its home row and never near
   the ships' own operating area.
@@ -112,14 +150,14 @@ phase after Phase 2.
 ### Aggro roster comes from `targets[]` — which the co-op spawner must set
 
 `Awake()` seeds both `aggro` and `damageDealt` from the Inspector-wired
-`targets[]` array. In the **legacy** path (Gameplay opened directly) those
-four scene objects are the real ships and everything works.
+`targets[]` array. In the **legacy** path (`Level1.unity` opened directly)
+those four scene objects are the real ships and everything works.
 
 In the **dynamic co-op** path they are not:
 `PartySetupBootstrap.SpawnDynamicParty()` deactivates those four objects and
 uses them only as position markers, spawning fresh `Ship.prefab` instances
 instead. `PartySetupBootstrap` therefore assigns `boss.targets = spawned`
-before `Level1Boss.Awake()` runs (it is `[DefaultExecutionOrder(-1000)]`),
+before `MarauderBoss.Awake()` runs (it is `[DefaultExecutionOrder(-1000)]`),
 alongside the `levelSequencer.ships` / `partyFrameManager.players`
 assignments it already made.
 
@@ -132,7 +170,7 @@ live roster.
 
 ## Damage tracking (separate from aggro)
 
-`Level1Boss` keeps a second dictionary, `damageDealt`, alongside `aggro`.
+`MarauderBoss` keeps a second dictionary, `damageDealt`, alongside `aggro`.
 They look similar and must not be conflated:
 
 | | `aggro` | `damageDealt` |
@@ -146,7 +184,7 @@ instant Tank presses `E`, its aggro value becomes `highest + 100` and stops
 being a damage number at all.
 
 Public read API, consumed by `DpsMeterUI` (see
-[hud-layout.md](hud-layout.md)):
+[hud-layout.md](../hud-layout.md)):
 
 - `float GetDamageDealt(GameObject source)` — total damage that source has
   dealt. A method rather than an exposed dictionary, so nothing outside can
@@ -197,7 +235,7 @@ below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
   `BossPanelUI.ShowDefeated()` and `VictoryUI.Show()`).
 - `SetVisible(bool)` — called by `LevelSequencer` to hide/show the sprite,
   `Collider2D`, and shockwave ring together without touching the
-  GameObject's active state (see [level-sequencing.md](level-sequencing.md)'s
+  GameObject's active state (see [level-sequencing.md](../level-sequencing.md)'s
   "Boss visibility/collision"). Disabling the collider isn't just cosmetic:
   it's what stops `Bullet.cs` from being able to hit and damage the boss
   while it's supposed to be hidden.
@@ -245,7 +283,7 @@ callbacks (which would stop firing once real overlap is actively
 prevented). Ship-vs-ship overlap only ever gets pushed apart, no damage.
 `ResolveShipCollisions()` runs two more of these loops the same way, over
 `Minion.Active` (below) and `Enemy.Active` (see
-[combat.md](combat.md)'s `Enemy.cs`) — both apply kamikaze contact damage
+[combat.md](../combat.md)'s `Enemy.cs`) — both apply kamikaze contact damage
 on overlap, unlike the ship-vs-ship push-only case here.
 
 The boss's own movement-pattern coroutine doesn't need to know about
@@ -263,7 +301,7 @@ Unity's `OnTriggerStay2D` (the boss's `BoxCollider2D` is non-trigger, ship
 colliders are triggers, so Unity fired the callback on genuine overlap);
 now fires from `PlayerController.ResolveShipCollisions()`'s own box-overlap
 check the moment it detects a ship overlapping the boss, calling a new
-`public Level1Boss.ApplyContactDamage(GameObject ship)`. Same math as before:
+`public MarauderBoss.ApplyContactDamage(GameObject ship)`. Same math as before:
 gated per-target by `contactDamageCooldown` (1s, a private
 `Dictionary<GameObject, float>` of last-hit times) so standing against the
 boss doesn't tick every frame, then deals
@@ -409,9 +447,9 @@ updated live during a real triggered barrage.
 `Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObject =
 null)`'s optional `ownerObject` lets player bullets attribute damage back
 to their shooter for aggro. `OnTriggerEnter2D`'s player-bullet-vs-`Enemy`-tag
-branch checks for both an `Enemy` component and a `Level1Boss` component,
+branch checks for both an `Enemy` component and a `MarauderBoss` component,
 calling `boss.TakeDamage(damage, ownerObject)` on the latter. See
-[combat.md](combat.md) for `Bullet.cs`'s full reference.
+[combat.md](../combat.md) for `Bullet.cs`'s full reference.
 
 ## AIController.cs
 
@@ -456,7 +494,7 @@ below).
 
 A private `EnforceBossDistance(Vector2 point)` pushes any candidate target
 point out to at least `minDistanceFromBoss` (1.9 — just outside
-`Level1Boss.shockwaveRadius`'s 1.7, so default positioning doesn't self-trigger
+`MarauderBoss.shockwaveRadius`'s 1.7, so default positioning doesn't self-trigger
 the shockwave) from `boss.transform.position`, falling back to
 `Vector2.up` if the point lands exactly on the boss. Applied to
 `BiasedPositionDirection()`'s and `AttackerPositionDirection()`'s computed
@@ -504,7 +542,7 @@ Tank also has a second, unrelated mechanic — a wide, curved Shield Arc that
 functionally blocks bullets beyond the guard-point positioning here,
 passive and always-on, independent of Taunt. It lives on `PlayerAbility.cs`
 (so it works for a human-controlled Tank too), not here — see
-[player-roles.md](player-roles.md)'s "PlayerAbility.cs" for the full
+[player-roles.md](../player-roles.md)'s "PlayerAbility.cs" for the full
 mechanics.
 
 ### Medic positioning + aura
@@ -520,7 +558,7 @@ directly at it (`ApproachDirection()`) instead of hanging back,
 re-evaluated every frame.
 
 **Aura + boost ability** (full mechanics in
-[player-roles.md](player-roles.md)): Medic passively heals/shields nearby
+[player-roles.md](../player-roles.md)): Medic passively heals/shields nearby
 allies via an always-on aura; pressing `E` triggers a temporary, drastic
 expansion of that aura's radius/tick rate rather than an instant heal.
 
@@ -643,22 +681,22 @@ existing `minDistanceFromBoss` floor.
 ## BossPanelUI.cs
 
 **Attached to:** `BossPanel` (child of `HUDCanvas` — see
-[hud-layout.md](hud-layout.md)).
+[hud-layout.md](../hud-layout.md)).
 **Requires:** a direct `boss` reference (this panel is scene-bound, not a
 reusable prefab like `PartyFrame.prefab`).
 
-Every `Update()`, reads `Level1Boss.CurrentHealth/maxHealth` into a health-bar
-`Image.fillAmount` + `"HP: x/y"` text, `Level1Boss.IsPhase2` into a `"Phase
-1"`/`"Phase 2"` text, `Level1Boss.CurrentTarget`'s `PlayerRoleComponent.role` into
-a `"Target: {role}"` text, `Level1Boss.GuidedMissileTargetRole` into a `"Guided
+Every `Update()`, reads `MarauderBoss.CurrentHealth/maxHealth` into a health-bar
+`Image.fillAmount` + `"HP: x/y"` text, `MarauderBoss.IsPhase2` into a `"Phase
+1"`/`"Phase 2"` text, `MarauderBoss.CurrentTarget`'s `PlayerRoleComponent.role` into
+a `"Target: {role}"` text, `MarauderBoss.GuidedMissileTargetRole` into a `"Guided
 missile: {role}"` warning text (empty string when `null`),
-`Level1Boss.PatternBarrageActivePattern` into an `"Incoming: {shape} Barrage"`
+`MarauderBoss.PatternBarrageActivePattern` into an `"Incoming: {shape} Barrage"`
 warning text (empty string when `null`), and
-`Level1Boss.ShockwaveCooldownRemaining`/`Level1Boss.GuidedMissileCooldownRemaining`/
-`Level1Boss.PatternBarrageCooldownRemaining` into `"Shockwave: {n}s"`/`"Guided
+`MarauderBoss.ShockwaveCooldownRemaining`/`MarauderBoss.GuidedMissileCooldownRemaining`/
+`MarauderBoss.PatternBarrageCooldownRemaining` into `"Shockwave: {n}s"`/`"Guided
 Missile: {n}s"`/`"Pattern Barrage: {n}s"` cooldown texts (`"Ready"` at
 0) — same "HUD only reads, never owns game state" pattern as
-`PartyFrameUI.cs`. `ShowDefeated()` (wired to `Level1Boss.OnDefeated`) overwrites
+`PartyFrameUI.cs`. `ShowDefeated()` (wired to `MarauderBoss.OnDefeated`) overwrites
 the phase text with `"DEFEATED"`.
 
 `ShockwaveCooldownRemaining` reads `"Ready"` whenever no ship has gotten
@@ -706,7 +744,7 @@ going through `PlayerInput`'s input-callback path:
 manual teammate-ability triggering possible with zero changes to this
 file: a party-frame click just calls the same method a third way,
 alongside `AIController`'s auto-retry and the human's own `E` binding —
-see [player-roles.md](player-roles.md)'s "PlayerAbility.cs" for the UI
+see [player-roles.md](../player-roles.md)'s "PlayerAbility.cs" for the UI
 side of this.
 
 `PlayerController.SpawnBullet()` passes `gameObject` into
@@ -722,10 +760,10 @@ timer, no cross-talk" idiom as Shockwave/Guided Missile/Pattern Barrage
 above.
 
 **Independent of the pre-boss/phase-2 wave system** — those phases (see
-[level-sequencing.md](level-sequencing.md)) use `EnemySpawner.cs`'s
+[level-sequencing.md](../level-sequencing.md)) use `EnemySpawner.cs`'s
 wave-formation system instead (it doesn't need a live boss to anchor to, so
 it also works before the boss exists). `MinionSpawner` starts disabled in
-`Level1Boss.Awake()` and is enabled by `Level1Boss.OnEnable()` — i.e. it
+`MarauderBoss.Awake()` and is enabled by `MarauderBoss.OnEnable()` — i.e. it
 starts spawning at the exact same moment boss combat begins, not any
 earlier. This is deliberately *not* tied to `SetVisible()` (which fires at
 the *start* of the entrance glide, several seconds earlier): starting
@@ -738,8 +776,8 @@ before any minion exists.
 
 `MinionSpawner.cs` lives as a component **on the `Boss` GameObject itself**
 (not a separately-referenced object like `EnemySpawner`) — `Awake()` gets a
-free `GetComponent<Level1Boss>()` with no Inspector wiring, and the spawner is
-destroyed automatically the instant `Level1Boss.Die()` destroys the GameObject.
+free `GetComponent<MarauderBoss>()` with no Inspector wiring, and the spawner is
+destroyed automatically the instant `MarauderBoss.Die()` destroys the GameObject.
 Every `Update()`, while `Minion.Active.Count < maxConcurrentMinions` (2) and
 its own `spawnInterval` (6s) timer allows, it instantiates `minionPrefab` at
 `boss.transform.position` offset by `spawnRadius` (2) along ±X, alternating
@@ -750,19 +788,19 @@ Inspector wire-up, since this script already holds a direct `boss`
 reference) — no stray minions survive into the Victory panel.
 
 `Minion.cs` is modeled on `Enemy.cs`'s simplicity (health/`TakeDamage`/
-self-destruct) rather than a scaled-down `Level1Boss.cs`:
+self-destruct) rather than a scaled-down `MarauderBoss.cs`:
 
 - **Positioning** — no free sine-drift like wave `Enemy.cs`. Each `Update()`,
   `transform.position = boss.transform.position + flankOffset + wobble`,
   where `flankOffset` is the fixed per-minion offset assigned at spawn
-  (`Init(Level1Boss, Vector2)`) and `wobble` is a small independent sine bob so it
+  (`Init(MarauderBoss, Vector2)`) and `wobble` is a small independent sine bob so it
   still reads as alive, not glued in place. This makes a minion track the
   boss's own erratic dash movement automatically, with zero pathfinding. If
   its `boss` reference is ever null (shouldn't happen outside teardown
   ordering), it self-destructs rather than sitting inert.
 - **Targeting** — minions don't have their own aggro table. `Fire()` always
   aims at `boss.CurrentTarget` (already a public getter), exactly like
-  `Level1Boss.Fire()` aims at it — this ties minion fire to the boss's existing
+  `MarauderBoss.Fire()` aims at it — this ties minion fire to the boss's existing
   aggro system for free: Tank taunt redirects minion fire too, with no
   minion-side code needed.
 - **Health/damage** — `public void TakeDamage(float amount)`, round-to-int
@@ -770,13 +808,13 @@ self-destruct) rather than a scaled-down `Level1Boss.cs`:
   identical shape to `Enemy.cs` except for that indirection (see "Kamikaze
   contact + Explosive minions" below for why). `Bullet.cs`'s player-bullet-
   vs-`Enemy`-tag branch gained a third check (alongside its existing
-  `Enemy`/`Level1Boss` checks): `other.GetComponent<Minion>()` → `TakeDamage(damage)`.
+  `Enemy`/`MarauderBoss` checks): `other.GetComponent<Minion>()` → `TakeDamage(damage)`.
   Required since a `Minion` isn't literally an `Enemy` component, so without
   this a player bullet would pass through a minion with no effect.
 - **Contact damage** — `public void ApplyContactDamage(GameObject ship)`
   deals `contactDamage` (1, a lesser hazard than the boss's own effective
   contact damage of 2) once, then the minion dies (see below) — no repeat-hit
-  cooldown to track, unlike `Level1Boss.ApplyContactDamage`, since there's no
+  cooldown to track, unlike `MarauderBoss.ApplyContactDamage`, since there's no
   second hit to gate.
 - **Bullets** — reuses `Bullet.cs`/`EnemyBullet.prefab` as-is: a private
   `SpawnBullet(Vector2 dir)` instantiates `bulletPrefab`, sets `.damage`,
@@ -802,7 +840,7 @@ private `bool isDead` — `Object.Destroy()` is deferred to end-of-frame, so
 without the guard a minion hit by a bullet and touched by a ship in the same
 physics step could double-fire its death logic before it actually
 disappears. A new `MinionType` enum (`Standard`/`Explosive`) on `type`
-(public field, set via a new `Init(Level1Boss, Vector2, MinionType)` overload
+(public field, set via a new `Init(MarauderBoss, Vector2, MinionType)` overload
 parameter — has to flow in through `Init()` rather than being set directly
 post-`Instantiate`, since `Awake()`, which needs it for the tint below,
 already ran by then) decides what `Die()` does next:
@@ -813,7 +851,7 @@ already ran by then) decides what `Die()` does next:
 - **Explosive** — `Die()` also calls a new `SpawnFragments()`: an
   evenly-spaced ring of `fragmentCount` (8) more `Bullet` instances launched
   outward from the minion's position, random start-offset angle, reusing
-  `Level1Boss.FireRing()`'s exact idiom (`step = 360 / fragmentCount`,
+  `MarauderBoss.FireRing()`'s exact idiom (`step = 360 / fragmentCount`,
   `Quaternion.Euler(0, 0, angle) * Vector2.up` per direction). Each fragment
   is `Init(dir, fragmentSpeed, "Enemy")` with `damage = fragmentDamage` (1 —
   same whole-number constraint as `bulletDamage`/`contactDamage` below) — an
@@ -857,7 +895,7 @@ existing boss block, just iterating a dynamic list instead of one field.
 `PlayerHealth.TakeDamage(int)`'s `Mathf.RoundToInt` — `0.4` rounds down, and
 `0.5` rounds to the nearest *even* integer (Unity's round-half-to-even),
 which is also `0`. Every other player-facing damage value in the codebase
-(`Level1Boss.bulletDamage`, `Enemy`'s default bullet damage, contact/shockwave
+(`MarauderBoss.bulletDamage`, `Enemy`'s default bullet damage, contact/shockwave
 multipliers) happens to already be a whole number, so this footgun had never
 come up before. Fixed by using whole numbers (`bulletDamage`/`contactDamage`
 both `1`) — caught live via the Unity MCP bridge (`ApplyContactDamage`
@@ -872,7 +910,7 @@ reduces health and destroys at 0, and `MinionSpawner` immediately refills
 the freed slot on its next `Update()` (cap never exceeded 2 across repeated
 forced spawns); `ResolveShipCollisions` (invoked directly) correctly
 resolves a ship/minion overlap using `Minion.Active`; invoking
-`Level1Boss.OnDefeated` destroys every live minion immediately
+`MarauderBoss.OnDefeated` destroys every live minion immediately
 (`Minion.Active.Count` → 0).
 
 **Kamikaze + Explosive verified live**, both death paths, both types: a
@@ -896,21 +934,21 @@ testing, not by changing any game code.)
 
 ### Boss
 
-**Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/Level1Boss.prefab` (SpriteRenderer,
+**Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/MarauderBoss.prefab` (SpriteRenderer,
 Rigidbody2D at Gravity Scale 0, non-trigger BoxCollider2D — same physical
-setup as `Enemy.prefab`). One instance in `Gameplay`, positioned at
+setup as `Enemy.prefab`). One instance in `Level1.unity`, positioned at
 `(0, 4.2, 0)` — must stay within the camera's visible range (Main Camera is
 orthographic with size 5, so world Y outside roughly `[-5, 5]` is
 off-screen). This is also the boss's "home" — `LevelSequencer` reads it,
 teleports the boss above the screen, then glides it back down to exactly
 this position for the entrance (see
-[level-sequencing.md](level-sequencing.md)).
+[level-sequencing.md](../level-sequencing.md)).
 
 | Component      | Key inspector values                                                    |
 | --------------- | ----------------------------------------------------------------------- |
 | Transform       | position (0, 4.2, 0), scale (1.6, 1.6, 1) — not shrunk with the ships below |
-| **Level1Boss.cs** | `maxHealth`: 150; `enableMovementPattern`: **false** (attacker-combo tuning — see "Current tuning" above); `enableMinions`: **false** (same); `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `sideOffsetX`/`patternMoveDuration`/`cycleGap`: 2.2/1.2/1.5; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` + `VictoryPanel/VictoryUI.Show()`; `OnPhase2`: `Spawner/EnemySpawner.StartSpawning()`; component **starts disabled** — `LevelSequencer` calls `SetVisible(false)` at `Start()` (hiding sprite/collider/ring, GameObject itself stays active) and enables the component once the entrance glide finishes |
-| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2; `explosiveMinionChance`: 0.3 — component **starts disabled**, same as `Level1Boss` itself; `Level1Boss.OnEnable()` only enables it while `enableMinions` is true (currently false — see "Current tuning" above), so kamikaze minions are off for now |
+| **MarauderBoss.cs** | `maxHealth`: 150; `enableMovementPattern`: **false** (attacker-combo tuning — see "Current tuning" above); `enableMinions`: **false** (same); `targets`: `Player` + all 3 `Teammate_*`; `bulletPrefab`: EnemyBullet prefab; `sideOffsetX`/`patternMoveDuration`/`cycleGap`: 2.2/1.2/1.5; `OnDefeated`: `BossPanel/BossPanelUI.ShowDefeated()` + `VictoryPanel/VictoryUI.Show()`; `OnPhase2`: `Spawner/EnemySpawner.StartSpawning()`; component **starts disabled** — `LevelSequencer` calls `SetVisible(false)` at `Start()` (hiding sprite/collider/ring, GameObject itself stays active) and enables the component once the entrance glide finishes |
+| **MinionSpawner.cs** | `minionPrefab`: `Assets/Prefabs/Minion.prefab`; `maxConcurrentMinions`: 2; `spawnInterval`: 6; `spawnRadius`: 2; `explosiveMinionChance`: 0.3 — component **starts disabled**, same as `MarauderBoss` itself; `MarauderBoss.OnEnable()` only enables it while `enableMinions` is true (currently false — see "Current tuning" above), so kamikaze minions are off for now |
 
 ### Teammate_Tank / Teammate_Medic / Teammate_Support
 
@@ -919,7 +957,7 @@ and `AIController` added, tagged `Player` (so `Bullet.cs`'s player/enemy
 tag logic treats them exactly like the human player), with a distinct
 `PlayerRoleComponent.role` (Tank / Medic / Support — `Player` itself
 defaults to `Attacker`, all overwritten at runtime by Role Select — see
-[player-roles.md](player-roles.md)'s "Role Select scene") so all 4 roles
+[player-roles.md](../player-roles.md)'s "Role Select scene") so all 4 roles
 are covered exactly once. `Teammate_Tank` is linked to
 `Assets/Prefabs/Teammate.prefab`; `Teammate_Medic`/`Teammate_Support` are
 plain independent GameObjects with the same component values, not prefab
@@ -938,7 +976,7 @@ copies).
 
 On all 4 `PlayerAbility` components (`Player` + 3 `Teammate_*`), `OnTaunt`
 has persistent listeners to `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
-(feedback) and `Level1Boss.TauntedBy(GameObject)` with the fixed argument dragged
+(feedback) and `MarauderBoss.TauntedBy(GameObject)` with the fixed argument dragged
 to that same GameObject (each player's taunt targets itself).
 
 ### Death handling
@@ -954,15 +992,15 @@ human is already gone.
 `gameOverPanelRoot`, one dragged to the other's panel) so this can't pop
 `VictoryPanel` on top of an already-showing `GameOverPanel` — whichever
 fires first is a true no-op for the other, not a flash-then-hide. Boss
-combat itself is unaffected; `Level1Boss.Die()` still resolves and destroys the
+combat itself is unaffected; `MarauderBoss.Die()` still resolves and destroys the
 `Boss` GameObject normally regardless of which panel is already up, only
 the end-screen popup is guarded. See
-[hud-layout.md](hud-layout.md)'s Scene wiring for the field-level detail.
+[hud-layout.md](../hud-layout.md)'s Scene wiring for the field-level detail.
 
 ## Not yet built
 
 - **Local co-op / dynamic player count** — the party is 4 fixed,
-  hand-placed scene objects, not a runtime spawner (see `../roadmap.md`'s
+  hand-placed scene objects, not a runtime spawner (see `../../roadmap.md`'s
   "In Progress").
 - **Out of scope by design**: a 3rd boss phase, an enrage state, or any
   behavior after Phase 2 beyond death. 2 phases ending in death is the

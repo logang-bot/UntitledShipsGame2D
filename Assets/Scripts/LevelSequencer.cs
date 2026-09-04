@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 // Owns the whole pre-fight-to-boss timeline for a level: ships glide in,
 // free movement, minions spawn and fight for a while, the boss glides in
 // once the screen is clear, then boss combat begins (with minions
-// returning at phase 2 via Level1Boss.OnPhase2, wired in the Inspector -
+// returning at phase 2 via MarauderBoss.OnPhase2, wired in the Inspector -
 // no sequencer state needed for that part).
 //
 // This is a deliberate, acknowledged exception to this project's normal
@@ -21,7 +21,7 @@ public class LevelSequencer : MonoBehaviour
     [Header("Scene hookup")]
     public PlayerController[] ships; // drag Player + 3 Teammates
     public EnemySpawner enemySpawner; // drag Spawner
-    public Level1Boss level1Boss;
+    public MarauderBoss marauderBoss;
 
     [Header("Timing")]
     public float introDuration = 4f;
@@ -32,7 +32,7 @@ public class LevelSequencer : MonoBehaviour
 
     public SequenceState CurrentState { get; private set; }
 
-    // Enemy scripts (Level1Boss, Minion) check this before firing so
+    // Enemy scripts (MarauderBoss, Minion) check this before firing so
     // nothing can hit a ship while it's frozen and unable to dodge (during
     // Intro/BossEntrance) - see SetShipsFrozen().
     public static bool ShipsFrozen { get; private set; }
@@ -74,11 +74,11 @@ public class LevelSequencer : MonoBehaviour
         // throughout (kamikaze minions are unaffected by boss visibility).
         // Physics push from wave enemies is prevented separately - see
         // Enemy.prefab's collider (now a trigger, see combat.md). Called
-        // from Start(), not Awake(): Level1Boss.Awake() (which caches the
+        // from Start(), not Awake(): MarauderBoss.Awake() (which caches the
         // SpriteRenderer/builds the shockwave ring SetVisible touches) isn't
         // guaranteed to run before this script's own Awake() - Unity only
         // guarantees every object's Awake() finishes before any Start().
-        level1Boss.SetVisible(false);
+        marauderBoss.SetVisible(false);
         StartCoroutine(RunSequence());
     }
 
@@ -103,7 +103,7 @@ public class LevelSequencer : MonoBehaviour
 
         CurrentState = SequenceState.BossCombat;
         SetShipsFrozen(false);
-        level1Boss.enabled = true; // fires OnEnable(), which starts its movement-pattern coroutine
+        marauderBoss.enabled = true; // fires OnEnable(), which starts its movement-pattern coroutine
     }
 
     IEnumerator IntroRoutine()
@@ -134,21 +134,21 @@ public class LevelSequencer : MonoBehaviour
     IEnumerator BossEntranceRoutine()
     {
         SetShipsFrozen(true);
-        level1Boss.SetVisible(true);
+        marauderBoss.SetVisible(true);
 
-        Vector3 home = level1Boss.transform.position;
+        Vector3 home = marauderBoss.transform.position;
         Vector3 viewMax = cam.ViewportToWorldPoint(new Vector3(1f, 1f, 0f));
         Vector3 start = new Vector3(home.x, viewMax.y + offScreenMargin, home.z);
-        level1Boss.transform.position = start;
+        marauderBoss.transform.position = start;
 
         float t = 0f;
         while (t < bossEntranceDuration)
         {
             t += Time.deltaTime;
-            level1Boss.transform.position = Vector3.Lerp(start, home, Mathf.Clamp01(t / bossEntranceDuration));
+            marauderBoss.transform.position = Vector3.Lerp(start, home, Mathf.Clamp01(t / bossEntranceDuration));
             yield return null;
         }
-        level1Boss.transform.position = home;
+        marauderBoss.transform.position = home;
     }
 
     // Disabling only PlayerInput/AIController isn't enough to actually stop

@@ -1,10 +1,23 @@
 # Scene Flow
 
-Five scenes now exist, in this order (Build Settings index in parens):
+Eight scenes now exist, in this order (Build Settings index in parens):
 `MainMenu` (0) → `Lobby` (1) → `JoinLobby` (2) → `RoleSelect` (3) →
-`Gameplay` (4). Game Over/Victory/Pause stay same-scene UI overlays inside
-`Gameplay`, not separate scenes — see [combat.md](combat.md) for Game
+`LevelSelect` (4) → `Level1` (5) → `Level2` (6) → `Level3` (7). Game
+Over/Victory/Pause stay same-scene UI overlays inside whichever level scene
+is active, not separate scenes — see [combat.md](combat.md) for Game
 Over/Victory and "Pause overlay" below.
+
+**Scene naming**: each level is its own dedicated scene, not one shared
+scene reused across bosses (a shared-scene design was considered and
+rejected — see `../roadmap.md` — because it makes accidentally running two
+bosses at once possible, and concentrates scene-corruption/merge-conflict
+risk across all three instead of scoping it per level). `Level2.unity`/
+`Level3.unity` are plain `Ctrl+D` duplicates of `Level1.unity`'s full
+structure (`LevelSequencer`, `PartySetupBootstrap`, `HUDCanvas`,
+pause/game-over/victory overlays all copy across with references intact),
+each with its own placeholder boss prefab in place of `MarauderBoss.prefab`
+— see [marauder-boss.md](bosses/marauder-boss.md) and
+[level-sequencing.md](level-sequencing.md).
 
 ## MainMenuUI.cs
 
@@ -36,8 +49,8 @@ same pattern as `PartyRoleAssignment.cs`/`CoOpRoster.cs` (see
 reload. Anything that gates on `Mode` treats `null` as "allowed"/local — the
 same "unset = no-op fallback" contract `PartySetupBootstrap` relies on for
 `PartyRoleAssignment.HumanRole`/`CoOpRoster.Players`, which is what keeps
-opening `Gameplay` directly (bypassing `Lobby`/`JoinLobby`/`RoleSelect`
-entirely) working for quick iteration.
+opening `Level1` (or any level scene) directly (bypassing
+`Lobby`/`JoinLobby`/`RoleSelect` entirely) working for quick iteration.
 
 ## JoinLobbyUI.cs + CoOpRoster.cs — local co-op device join
 
@@ -65,7 +78,7 @@ persisted `PlayerInput` objects are needed — each later scene re-pairs the
 same physical devices fresh via `PlayerInput.Instantiate(...)` (see
 `PartySetupBootstrap.cs` below). `Back` → loads `Lobby`.
 
-`CoOpRoster.Players == null` (e.g. `Gameplay`/`RoleSelect` opened directly,
+`CoOpRoster.Players == null` (e.g. `Level1`/`RoleSelect` opened directly,
 bypassing `JoinLobby`) is treated as "co-op flow wasn't used" everywhere it's
 read, falling back to the older single-human `PartyRoleAssignment.HumanRole`
 carrier or (if that's unset too) the Inspector-only manual role assignment —
@@ -80,12 +93,43 @@ loads `JoinLobby` when `CoOpRoster.Players != null` (the co-op flow was
 used) or `Lobby` otherwise (direct-open fallback). `RoleSelectUI.Awake()`
 also now picks between two child panels based on how many players joined —
 see [player-roles.md](player-roles.md)'s "Role Select scene" for the full
-single-vs-multi-picker mechanics.
+single-vs-multi-picker mechanics. `StartGame()` (both the single-picker
+`RoleSelectUI` and the multi-picker `RoleSelectMultiUI`) now loads
+`LevelSelect` instead of a level scene directly — see below.
+
+## LevelSelectUI.cs + LevelSelection.cs
+
+**Attached to:** `Canvas` in `LevelSelect.unity` (new scene, between
+`RoleSelect` and each level's own scene).
+
+A card per level — **Marauder** / **Halcyon** / **Warden**, name plus a
+one-line flavor blurb each (see [marauder-boss.md](bosses/marauder-boss.md)'s "At a
+Glance" for Marauder's; Halcyon/Warden's mechanics aren't built yet, so
+their cards are a name/flavor placeholder for now) — one click per card, no
+separate confirm step needed (unlike `RoleSelectUI`'s pick-then-Start flow,
+which exists specifically to gate on a variable-length multi-picker; here
+each card is already a complete, unambiguous choice, closer to
+`LobbyUI.SelectLocal()`'s shape). Each card's handler
+(`SelectLevel1()`/`SelectLevel2()`/`SelectLevel3()`) writes the pick to
+`LevelSelection.SelectedLevel` then loads that level's scene by name
+(`"Level1"`/`"Level2"`/`"Level3"`). `Back()` loads `RoleSelect`.
+
+`LevelSelection.cs` is a plain `public static class` holding `Level?
+SelectedLevel` (`Level` enum: `Level1`/`Level2`/`Level3`) — built on exactly
+the same static-carrier pattern as `GameModeSelection.cs`. Nothing currently
+branches on it: each level's own scene already fully determines its own
+behavior via its own `LevelSequencer`/boss instance, so the carrier exists
+now purely so a future HUD "Level N: Halcyon" title has something to read,
+without over-building for that today. Its fallback contract is trivial by
+construction — `SelectedLevel == null` (e.g. a level scene opened directly,
+bypassing `LevelSelect`) requires no special handling anywhere, since
+nothing reads it for control flow.
 
 ## Pause overlay (PauseUI.cs)
 
-**Attached to:** a standalone `PauseController` GameObject in `Gameplay.unity`
-— **not** the `PausePanel` it shows/hides (see "Awake/OnEnable pitfall"
+**Attached to:** a standalone `PauseController` GameObject in each level
+scene (`Level1.unity`/`Level2.unity`/`Level3.unity`) — **not** the
+`PausePanel` it shows/hides (see "Awake/OnEnable pitfall"
 below for why that distinction matters). `PausePanel` itself lives under
 `HUDCanvas`, alongside `GameOverPanel`/`VictoryPanel`, and follows the same
 overlay shape (forced inactive in `Awake()`, an `Image` background, TMP
@@ -116,7 +160,7 @@ title text, and Button children) — see [combat.md](combat.md) for
   `GameModeSelection.Mode == GameMode.Online` (pausing a
   networked/authoritative match won't make sense once Online is real — this
   makes Pause auto-disable itself then, with no further code change needed).
-  An unset `Mode` — e.g. `Gameplay` opened directly — is treated as allowed,
+  An unset `Mode` — e.g. `Level1` opened directly — is treated as allowed,
   matching `GameModeSelection`'s fallback contract above.
 
 ### Awake/OnEnable pitfall (why PauseUI isn't on its own panel)
@@ -151,16 +195,24 @@ itself is attached to.
 | `Lobby` | `Canvas` (`LobbyUI`, `onlineButton` → `OnlineButton`), `EventSystem`, `Main Camera` |
 | `JoinLobby` | `Canvas` (`JoinLobbyUI`, 4 slot-text rows, `ContinueButton`/`BackButton`), `PlayerInputManager`, `EventSystem`, `Main Camera` |
 | `RoleSelect` | `Canvas` (`RoleSelectUI`, `singlePickerPanel` → `SinglePickerPanel` [original 4 role buttons + Start], `multiPickerPanel` → `MultiPickerPanel` [`RoleSelectMultiUI`, `RolePickerRow.prefab` instances]) plus `BackButton` |
-| `Gameplay` | `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`, both the legacy fixed-4-object fallback fields and the new dynamic co-op spawner fields — see [player-roles.md](player-roles.md)) |
+| `LevelSelect` | `Canvas` (`LevelSelectUI`, `MarauderButton`/`HalcyonButton`/`WardenButton` cards) plus `BackButton` |
+| `Level1` / `Level2` / `Level3` | Each: `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`, both the legacy fixed-4-object fallback fields and the new dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` wired to that scene's own boss instance (`MarauderBoss.prefab` for `Level1`, `Level2BossPlaceholder.prefab`/`Level3BossPlaceholder.prefab` for `Level2`/`Level3` — see [marauder-boss.md](bosses/marauder-boss.md)) |
 
 ## Not yet built
 
 - Online mode has no real backend — Lobby's `Online` button is a disabled
   placeholder until Nakama networking lands (see `roadmap.md`'s "Nakama
   networking").
-- No Settings/Credits/Level Select screens — not yet needed (no audio system,
-  only one level exists).
+- No Settings/Credits screens — not yet needed (no audio system).
 - No `DeckBuild.unity` — the deck loadout screen is designed but not built.
-  It will sit between `RoleSelect` and `Gameplay` in flow order while being
-  appended at Build Settings index **5**, so `Gameplay` stays at 4 and
-  nothing renumbers. See [cards.md](cards.md)'s "Deck loadout scene".
+  It will sit between `RoleSelect` and whichever level scene is chosen, in
+  flow order, while being appended at whatever the next available Build
+  Settings index is when it's built (currently **8**, since `LevelSelect`
+  and `Level1`/`Level2`/`Level3` now occupy indices 4/5/6/7). Its exact position
+  relative to `LevelSelect` (before or after level-picking) is a decision
+  for that future work, not settled here. See [cards.md](cards.md)'s "Deck
+  loadout scene".
+- Halcyon and Warden (Level 2/3) don't have real boss mechanics yet — their
+  scenes/placeholders exist so the level-select flow and scene plumbing
+  didn't need to be re-touched once each boss's own design lands. See
+  `../roadmap.md`.

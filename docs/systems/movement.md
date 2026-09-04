@@ -20,7 +20,7 @@ continue to spawn from the top (see `EnemySpawner.cs` in
 Handles ship movement, clamped to stay within the camera viewport. Before
 that clamp, `HandleMovement()` also resolves the candidate position against
 every other ship and the boss so none of them can physically overlap — see
-[level1-boss.md](level1-boss.md)'s "Solid-body collision (ships + boss)" for the full
+[marauder-boss.md](bosses/marauder-boss.md)'s "Solid-body collision (ships + boss)" for the full
 mechanics (`ShipCollisionUtil.cs`). Move input arrives via
 `OnMove(InputValue)`, called automatically by the `Player Input` component —
 not polled manually.
@@ -44,11 +44,11 @@ This same script also handles shooting — see [combat.md](combat.md) for the
 | Component                | Key inspector values                                   |
 | ------------------------ | -------------------------------------------------------- |
 | Collider2D (Box/Poly)    | Is Trigger: **ON**                                       |
-| **PlayerController.cs**  | moveSpeed: overwritten by role at `Start()` (see [player-roles.md](player-roles.md)), screenPadding: (0.5, 0.5), boss: the `Boss` instance (solid-body ship/boss collision — see [level1-boss.md](level1-boss.md)'s "Solid-body collision") |
+| **PlayerController.cs**  | moveSpeed: overwritten by role at `Start()` (see [player-roles.md](player-roles.md)), screenPadding: (0.5, 0.5), boss: the `Boss` instance (solid-body ship/boss collision — see [marauder-boss.md](bosses/marauder-boss.md)'s "Solid-body collision") |
 | **Player Input**         | Actions: PlayerControls asset, Default Map: Player, Behavior: Send Messages |
 | Transform                | localScale: (0.6, 0.6, 1) |
 
 (`Player` also carries `PlayerHealth.cs` and `PlayerRoleComponent` — see
 [combat.md](combat.md) and [player-roles.md](player-roles.md). The 3
 CPU-controlled `Teammate_*` ships share this same movement code via
-`AIController.cs` — see [level1-boss.md](level1-boss.md).)
+`AIController.cs` — see [marauder-boss.md](bosses/marauder-boss.md).)

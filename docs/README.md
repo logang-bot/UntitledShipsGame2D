@@ -22,8 +22,9 @@ Per-system reference: what each script does, what it's attached to, and how
 the scene is wired.
 
 - [systems/scene-flow.md](systems/scene-flow.md) — Main Menu → Lobby → Join
-  Lobby → Role Select → Gameplay scene flow, `GameModeSelection`
-  (Local/Online), local co-op device joining, and the Pause overlay.
+  Lobby → Role Select → Level Select → Level1/Level2/Level3 scene flow,
+  `GameModeSelection` (Local/Online), local co-op device joining, and the
+  Pause overlay.
 - [systems/movement.md](systems/movement.md) — ship movement, fixed
   orientation decision.
 - [systems/combat.md](systems/combat.md) — shooting, bullets, health, enemy
@@ -35,8 +36,15 @@ the scene is wired.
   hand, deck rules, the `DeckBuild` loadout scene, and boss spell cards.
 - [systems/hud-layout.md](systems/hud-layout.md) — portrait/crossplay
   screen layout, HUD canvases.
-- [systems/level1-boss.md](systems/level1-boss.md) — Level 1's boss: phases,
-  aggro/taunt, CPU-controlled AI teammates, boss-fight HUD, tuning.
+- [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md) — **Marauder**, Level 1's
+  boss: phases, aggro/taunt, CPU-controlled AI teammates, boss-fight HUD,
+  tuning.
+- [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md) — **Halcyon**, Level 2's
+  boss: **design spec, not yet built** — a mobility/Support-check pitch
+  (full-arena roam, Surge window, Static Field pulse).
+- [systems/bosses/warden-boss.md](systems/bosses/warden-boss.md) — **Warden**, Level 3's
+  boss: **design spec, not yet built** — a dual-threat/Tank-coordination
+  pitch (dual turret-arms, Lockdown volley).
 - [systems/level-sequencing.md](systems/level-sequencing.md) — the
   intro/minion-phase/boss-entrance timeline that orchestrates a level.
 - [systems/input.md](systems/input.md) — New Input System setup,

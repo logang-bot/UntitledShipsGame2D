@@ -46,8 +46,9 @@ public class PauseUI : MonoBehaviour
 
         // Pause is only meaningful offline - once Online mode is real,
         // pausing a networked/authoritative match won't make sense. Unset
-        // (e.g. Gameplay opened directly, bypassing Lobby) is treated as
-        // allowed, matching PartySetupBootstrap's same direct-open fallback.
+        // (e.g. a level scene opened directly, bypassing Lobby) is treated
+        // as allowed, matching PartySetupBootstrap's same direct-open
+        // fallback.
         if (GameModeSelection.Mode == GameMode.Online) return;
         if (gameOverPanelRoot != null && gameOverPanelRoot.activeSelf) return;
         if (victoryPanelRoot != null && victoryPanelRoot.activeSelf) return;
