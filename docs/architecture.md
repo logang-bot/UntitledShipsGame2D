@@ -7,9 +7,8 @@ philosophy), see `overview.md`'s "Architecture Principles" section.
 
 ## Script Organization
 
-`Assets/Scripts/` is flat — no `Managers/`, `Controllers/`, `UI/`, or
-per-feature subfolders — and every file holds exactly one class. This is
-deliberate, not sloppy: Unity's script serialization depends on the file's
+Every file holds exactly one class — no exceptions. This is deliberate,
+not sloppy: Unity's script serialization depends on the file's
 *matching-name* class being the `MonoBehaviour`/`ScriptableObject` (see
 `unity-notes.md`'s "Script serialization" section). The project got bitten
 by this once — `PlayerRoleComponent` was originally bundled into
@@ -17,8 +16,22 @@ by this once — `PlayerRoleComponent` was originally bundled into
 produced a component with a silently broken script reference — and the
 one-class-per-file rule has been followed strictly ever since.
 
-At ~25 scripts the flat structure is still easy to scan; it's a convention
-worth revisiting if the script count grows substantially.
+`Assets/Scripts/` itself is *mostly* flat, with one exception: a
+`FeatureName/` subfolder for a `MonoBehaviour` that outgrew a single file
+and needed owned helper classes split out (originally to stay readable,
+now also to stay under this session's file-size cap — see
+`docs/superpowers/specs/2026-09-04-halcyon-boss-design.md`). Not
+`Managers/`, `Controllers/`, or `UI/` — those would group by *kind*, which
+this project deliberately avoids; a feature folder groups by *owner*
+instead, holding only that one `MonoBehaviour` and the plain helper
+classes it alone constructs (e.g. `MarauderBoss/` holds `MarauderBoss.cs`
+plus `MarauderBossMovement`/`Shockwave`/`Attacks`/`Aggro`/its two
+`[System.Serializable]` settings classes; `HalcyonBoss/` holds
+`HalcyonBoss.cs` plus its three sibling `MonoBehaviour`s;
+`AIController/`/`PlayerAbility/` follow the same shape). At 58 scripts
+across a handful of these feature folders plus the flat majority, this is
+still easy to scan; a `Managers/`/`Controllers/`/`UI/`-style regrouping
+remains something to revisit only if that stops being true.
 
 ## Component Model: Plain MonoBehaviours Only
 
@@ -27,11 +40,34 @@ Nearly every class is a plain `MonoBehaviour`. The only exceptions are
 `PartyRoleAssignment`'s static nullable field — no interfaces, no abstract
 base classes, no component hierarchies anywhere in the codebase.
 
+## Boss-type-agnostic orchestration: IBoss
+
+The one deliberate exception to "Component Model: Plain MonoBehaviours
+Only" above. `LevelSequencer.cs`/`PlayerController.cs` are reused verbatim
+across every level scene and need to drive whichever boss a level uses
+(`MarauderBoss`, `HalcyonBoss`, ...) without knowing its concrete type —
+with no inheritance hierarchy in this codebase, a shared type was needed.
+`IBoss.cs` is a small interface (`SetVisible(bool)`,
+`ApplyContactDamage(GameObject)`) covering exactly the two methods those
+two orchestrator scripts call on a boss; both boss classes implement it.
+
+Unity can't serialize an interface-typed field directly, so the actual
+Inspector fields (`LevelSequencer.bossObject`, `PlayerController.bossObject`,
+`AIController.bossObject`, `PartySetupBootstrap.bossObject`) stay
+`MonoBehaviour`-typed (drag either boss prefab/instance in) and are cast to
+a cached `private IBoss boss` field once, in `Awake()`/`Start()`. Plain
+`.transform`/`.enabled` access (needed by `LevelSequencer`'s entrance glide
+and `AIController`'s boss-avoidance positioning) stays on the
+`MonoBehaviour` reference directly — no interface member needed for those,
+since every `Component` already exposes them. See
+`docs/systems/bosses/halcyon-boss.md`'s "Code architecture: sibling
+MonoBehaviours + IBoss" for the full context this was introduced under.
+
 ## Primary Wiring: Inspector-Wired Public Fields
 
 Direct references dragged in the Inspector are the primary way components
-find each other: `PlayerController.boss`, `AIController.teammates[]`/
-`boss`, `PartyFrameManager.players[]`/`partyFrames[]`. This is used where
+find each other: `PlayerController.bossObject`, `AIController.teammates[]`/
+`bossObject`, `PartyFrameManager.players[]`/`partyFrames[]`. This is used where
 the relationship is fixed at design time — a teammate always has the same
 boss reference, a party frame always tracks the same ship.
 
@@ -133,7 +169,7 @@ system runs. This is new *coordination-shape* — nothing else in the
 codebase owns a multi-phase timeline spanning several other components —
 but it doesn't violate any convention above: it's still a plain
 `MonoBehaviour`, still Inspector-wired (`ships[]`/`enemySpawner`/
-`level1Boss` are dragged in, not resolved via `FindObjectOfType`), and
+`bossObject` are dragged in, not resolved via `FindObjectOfType`), and
 still holds no singleton/static instance. Kept deliberately minimal — one
 script, no generic "level framework" — and named generically (not
 `Level1`-prefixed) since it's meant to be reused by future levels' own

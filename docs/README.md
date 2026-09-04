@@ -40,8 +40,8 @@ the scene is wired.
   boss: phases, aggro/taunt, CPU-controlled AI teammates, boss-fight HUD,
   tuning.
 - [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md) — **Halcyon**, Level 2's
-  boss: **design spec, not yet built** — a mobility/Support-check pitch
-  (full-arena roam, Surge window, Static Field pulse).
+  boss: a pure positioning fight — full-arena roam, a Surge vulnerability
+  window, and a Static Field proximity pulse as the real damage source.
 - [systems/bosses/warden-boss.md](systems/bosses/warden-boss.md) — **Warden**, Level 3's
   boss: **design spec, not yet built** — a dual-threat/Tank-coordination
   pitch (dual turret-arms, Lockdown volley).

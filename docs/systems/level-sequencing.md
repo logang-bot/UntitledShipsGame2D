@@ -23,7 +23,10 @@ this component's own Inspector-tuned durations are Level-1-specific.
 **Attached to:** a standalone `LevelSequencer` GameObject in each level
 scene (`Level1`/`Level2`/`Level3`).
 **Requires:** `ships[]` (drag `Player` + all 3 `Teammate_*`), `enemySpawner`
-(drag `Spawner`), `level1Boss` (drag the `Boss` instance).
+(drag `Spawner`), `bossObject` (drag the `Boss` instance — `MonoBehaviour`-typed
+and cast to `IBoss` internally so this same script drives either
+`MarauderBoss` or `HalcyonBoss` with zero sequencing changes; see
+`../architecture.md`'s "Boss-type-agnostic orchestration: IBoss").
 
 A `SequenceState` enum (`Intro`, `FreeMovement`, `MinionPhase1`,
 `WaitingForClear`, `BossEntrance`, `BossCombat`) tracks progress, exposed
@@ -51,12 +54,14 @@ read-only as `CurrentState` for inspection. `Start()` runs one coroutine
    teleported above the top of the viewport and lerped back down to `home`.
    `MarauderBoss`'s component stays disabled throughout the glide, so it does
    nothing but move — no firing, no aggro, no movement pattern.
-6. **BossCombat** — ships unfreeze, `level1Boss.enabled = true`. This fires
-   `MarauderBoss.OnEnable()`, which captures its current position as its own
-   `home` and starts its movement-pattern coroutine (see
-   [marauder-boss.md](bosses/marauder-boss.md)'s "Movement and firing"). The sequence
-   coroutine ends here — everything past this point is ordinary boss
-   combat, unowned by `LevelSequencer`.
+6. **BossCombat** — ships unfreeze, `bossObject.enabled = true`. This fires
+   the boss's own `OnEnable()` — for `MarauderBoss`, captures its current
+   position as its own `home` and starts its movement-pattern coroutine
+   (see [marauder-boss.md](bosses/marauder-boss.md)'s "Movement and
+   firing"); for `HalcyonBoss`, enables its three sibling mechanics (see
+   [halcyon-boss.md](bosses/halcyon-boss.md)). The sequence coroutine ends
+   here — everything past this point is ordinary boss combat, unowned by
+   `LevelSequencer`.
 
 **Phase 2 minions need no sequencer state at all.** `MarauderBoss.OnPhase2` has
 a persistent `UnityEvent` listener straight to `enemySpawner.StartSpawning()`,
@@ -68,11 +73,16 @@ combat, with zero additional code.
 
 ### Boss visibility/collision (Start / BossEntrance)
 
-`LevelSequencer.Start()` calls `level1Boss.SetVisible(false)` — a method on
-`MarauderBoss` (see [marauder-boss.md](bosses/marauder-boss.md)) that disables its
-`SpriteRenderer`, its `Collider2D`, and the shockwave ring's child
-GameObject, all together. It does **not** call `SetActive(false)` on the
-whole `Boss` GameObject, and the choice not to matters:
+`LevelSequencer.Start()` calls `bossObject.SetVisible(false)` — `IBoss`'s
+`SetVisible(bool)`, implemented by both boss types (`MarauderBoss` disables
+its `SpriteRenderer`/`Collider2D`/shockwave ring; `HalcyonBoss` its
+`SpriteRenderer`/`Collider2D`/Static Field ring — see
+[marauder-boss.md](bosses/marauder-boss.md)/[halcyon-boss.md](bosses/halcyon-boss.md)).
+The narrative below was worked out against `MarauderBoss` specifically, but
+the mechanism and the reasoning both generalize — it's why `SetVisible`
+became an `IBoss` method rather than staying `MarauderBoss`-only. It does
+**not** call `SetActive(false)` on the whole `Boss` GameObject, and the
+choice not to matters:
 
 - **First attempt** disabled only the `MarauderBoss` component. That left the
   `SpriteRenderer` visible and the `Collider2D` live at the boss's home
@@ -104,10 +114,14 @@ and overlap ships that couldn't react yet (`PlayerController.enabled ==
 false` during the freeze means `FixedUpdate`/`ResolveShipCollisions` never
 runs) — contact would silently do nothing even though the overlap was
 plainly visible. `MarauderBoss.OnEnable()` fires later, exactly when
-`LevelSequencer` sets `level1Boss.enabled = true` at `BossCombat` — by
+`LevelSequencer` sets `bossObject.enabled = true` at `BossCombat` — by
 which point `SetShipsFrozen(false)` has already run, so ships can always
 react to any minion that exists. See
 [marauder-boss.md](bosses/marauder-boss.md)'s "Minion.cs / MinionSpawner.cs".
+(`HalcyonBoss` has no minions, but its own `OnEnable()` — enabling
+`HalcyonRoam`/`HalcyonSurge`/`HalcyonStaticField` — is gated on the exact
+same `bossObject.enabled = true` call, for the same reason: nothing of
+Halcyon's should act before ships can react to it.)
 
 **Awake-order gotcha**: `SetVisible` is called from `LevelSequencer.Start()`,
 not `Awake()`. `MarauderBoss.Awake()` is what caches the `SpriteRenderer`
@@ -145,7 +159,7 @@ only ever called by `AIController.TryUseAbility()` (CPU), so disabling
 those two components alone is sufficient to also block ability use — no
 separate lock needed there.
 
-Key public fields: `ships[]`, `enemySpawner`, `level1Boss`, `introDuration`
+Key public fields: `ships[]`, `enemySpawner`, `bossObject`, `introDuration`
 (4)/`freeMovementDuration` (4)/`minionPhase1Duration` (120)/
 `bossEntranceDuration` (4)/`offScreenMargin` (1). Key public property:
 `CurrentState`.
@@ -158,7 +172,7 @@ Standalone empty GameObject in each level scene.
 
 | Component | Key inspector values |
 | --- | --- |
-| **LevelSequencer.cs** | `ships`: `Player` + all 3 `Teammate_*`; `enemySpawner`: `Spawner`; `level1Boss`: the `Boss` instance; `introDuration`/`freeMovementDuration`/`bossEntranceDuration`: 4; `minionPhase1Duration`: 120; `offScreenMargin`: 1 |
+| **LevelSequencer.cs** | `ships`: `Player` + all 3 `Teammate_*`; `enemySpawner`: `Spawner`; `bossObject`: the `Boss` instance (`MarauderBoss` in `Level1`, `HalcyonBoss` in `Level2`); `introDuration`/`freeMovementDuration`/`bossEntranceDuration`: 4; `minionPhase1Duration`: 120 (15 in the current scenes, shortened for testing); `offScreenMargin`: 1 |
 
 The 4 ships' Transform positions in the saved scene are each ship's "home"
 — `LevelSequencer` captures them once in `Awake()`, before anything moves,

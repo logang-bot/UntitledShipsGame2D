@@ -39,13 +39,13 @@ public class AIControllerPositioning
     /// </summary>
     public Vector2 EnforceBossDistance(Vector2 point)
     {
-        if (owner.boss == null) return point;
+        if (owner.bossObject == null) return point;
 
-        Vector2 fromBoss = point - (Vector2)owner.boss.transform.position;
+        Vector2 fromBoss = point - (Vector2)owner.bossObject.transform.position;
         if (fromBoss.magnitude >= owner.minDistanceFromBoss) return point;
 
         Vector2 pushDir = fromBoss.sqrMagnitude > 0.0001f ? fromBoss.normalized : Vector2.up;
-        return (Vector2)owner.boss.transform.position + pushDir * owner.minDistanceFromBoss;
+        return (Vector2)owner.bossObject.transform.position + pushDir * owner.minDistanceFromBoss;
     }
 
     /// <summary>
@@ -60,9 +60,9 @@ public class AIControllerPositioning
     /// </summary>
     public Vector2 BiasedPositionDirection(float bias, float deadzone)
     {
-        if (owner.boss == null) return Vector2.zero;
+        if (owner.bossObject == null) return Vector2.zero;
 
-        Vector2 targetPoint = Vector2.LerpUnclamped(GetAllyCenter(), owner.boss.transform.position, bias);
+        Vector2 targetPoint = Vector2.LerpUnclamped(GetAllyCenter(), owner.bossObject.transform.position, bias);
         targetPoint = EnforceBossDistance(targetPoint);
 
         Vector2 toTarget = targetPoint - (Vector2)owner.transform.position;

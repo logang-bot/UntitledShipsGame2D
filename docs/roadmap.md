@@ -469,8 +469,23 @@ reference docs live under `systems/`.
   `PauseUI.Restart()`'s existing pattern. Build Settings renumbered
   (`MainMenu`0/`Lobby`1/`JoinLobby`2/`RoleSelect`3/`LevelSelect`4/
   `Level1`5/`Level2`6/`Level3`7); the previously-reserved index 5 for the
-  not-yet-built `DeckBuild.unity` moves to 8. Halcyon/Warden's actual boss
-  mechanics are separate, not-yet-started work. See `systems/scene-flow.md`.
+  not-yet-built `DeckBuild.unity` moves to 8. Halcyon's actual boss
+  mechanics were separate, follow-up work — see the next item; Warden's are
+  still not-yet-started. See `systems/scene-flow.md`.
+- **Halcyon (Level 2's boss)** — resolved via a brainstorming session (see
+  `docs/superpowers/specs/2026-09-04-halcyon-boss-design.md`) and built:
+  a pure positioning fight with no ambient bullets, replacing
+  `Level2BossPlaceholder.prefab`. Full-arena waypoint roam
+  (`HalcyonRoam.cs`), a periodic stillness/vulnerability window
+  (`HalcyonSurge.cs`), and a proximity Static Field pulse
+  (`HalcyonStaticField.cs`) — the fight's actual damage source, alongside
+  body contact damage kept from Marauder. No aggro/threat table at all;
+  Tank's Taunt is a genuine no-op against this boss. Introduced a small,
+  deliberate `IBoss` interface (`SetVisible`/`ApplyContactDamage`) so
+  `LevelSequencer`/`PlayerController`/`AIController`/`PartySetupBootstrap`
+  can drive either boss type — a scoped exception to this project's
+  "no interfaces" convention, see `architecture.md`'s "Boss-type-agnostic
+  orchestration: IBoss". See `systems/bosses/halcyon-boss.md`.
 
 ## In Progress
 

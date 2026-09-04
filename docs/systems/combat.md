@@ -107,10 +107,13 @@ collider still resolves to its own `PlayerHealth` first, since
 ownerTag, GameObject ownerObject = null)` — lets player-fired bullets pass
 their shooter as `ownerObject`, so `OnTriggerEnter2D`'s
 player-bullet-vs-`Enemy`-tag branch — in addition to its
-`Enemy.TakeDamage(damage)` call — also checks for a `MarauderBoss` component and
-calls `boss.TakeDamage(damage, ownerObject)`, attributing the hit to its
-shooter for the boss's aggro system. See [marauder-boss.md](bosses/marauder-boss.md). Both
-`Enemy.TakeDamage`/`MarauderBoss.TakeDamage` take a `float amount` — each rounds
+`Enemy.TakeDamage(damage)` call — also checks for a `MarauderBoss` component
+(calls `boss.TakeDamage(damage, ownerObject)`, attributing the hit to its
+shooter for the boss's aggro system) and a `HalcyonBoss` component (calls
+`boss.TakeDamage(damage)` — no `ownerObject`, since Halcyon has no aggro to
+attribute it to). See [marauder-boss.md](bosses/marauder-boss.md) and
+[halcyon-boss.md](bosses/halcyon-boss.md). Both `Enemy.TakeDamage`/
+`MarauderBoss.TakeDamage` take a `float amount` — each rounds
 (`Mathf.RoundToInt`) only at the point it subtracts from its own `int`
 health pool, so no fractional HP appears anywhere. The enemy-bullet-vs-
 `PlayerHealth` branch does the same rounding at its call site, since

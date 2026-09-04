@@ -168,11 +168,15 @@ Key public fields: `players[]`, `partyFrames[]`.
 `dpsText` (`DpsText`, directly below `FireRateText` in `InfoColumn`) shows
 this ship's **real** damage-per-second dealt to the boss —
 `MarauderBoss.GetDamageDealt(ship) / MarauderBoss.CombatElapsed`, read via
-`PlayerController.boss` (already wired for contact-damage collision, so no
-extra Inspector reference was needed). It is **null-guarded** in `Update()`,
-matching `shieldText`, so a `PartyFrame` instance predating the line keeps
-working rather than throwing, and reads `0.0` before combat starts
-(`CombatElapsed` is `0` until then).
+`playerController.bossObject as MarauderBoss` (`bossObject` is already
+wired for contact-damage collision, so no extra Inspector reference was
+needed — see `../architecture.md`'s "Boss-type-agnostic orchestration:
+IBoss"). The cast is `null` for a Halcyon-side ship (no `GetDamageDealt`
+equivalent exists there), which the existing null guard already handles
+for free. It is **null-guarded** in `Update()`, matching `shieldText`, so a
+`PartyFrame` instance predating the line keeps working rather than
+throwing, and reads `0.0` before combat starts (`CombatElapsed` is `0`
+until then).
 
 Originally showed `PlayerController.CurrentDps` (`fireDamage x
 shotsPerSecond` — a static "if every normal shot lands" ceiling) instead.

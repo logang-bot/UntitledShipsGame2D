@@ -26,7 +26,12 @@ public class PartySetupBootstrap : MonoBehaviour
     public GameObject shipPrefab; // Ship.prefab
     public LevelSequencer levelSequencer;
     public PartyFrameManager partyFrameManager;
-    public MarauderBoss boss;
+    public MonoBehaviour bossObject; // must implement IBoss - MarauderBoss or HalcyonBoss
+    // Only set (and only used) in a Halcyon level scene - Halcyon has no
+    // targets[]/aggro roster, but HalcyonStaticField still needs the live
+    // spawned roster for its proximity scan, same reason MarauderBoss needs
+    // targets[] set below.
+    public HalcyonStaticField halcyonStaticField;
 
     void Awake()
     {
@@ -127,12 +132,12 @@ public class PartySetupBootstrap : MonoBehaviour
         {
             shipGO.tag = "Player";
             shipGO.GetComponent<PlayerAbility>().allies = allAllies;
-            shipGO.GetComponent<PlayerController>().boss = boss;
+            shipGO.GetComponent<PlayerController>().bossObject = bossObject;
 
             AIController ai = shipGO.GetComponent<AIController>();
             if (ai.enabled)
             {
-                ai.boss = boss;
+                ai.bossObject = bossObject;
                 aiOnly.Add(shipGO.transform);
             }
             controllers.Add(shipGO.GetComponent<PlayerController>());
@@ -157,6 +162,7 @@ public class PartySetupBootstrap : MonoBehaviour
         // no-op (TauntedBy early-returns on an unknown taunter). The co-op
         // join flow is the *normal* path into a level scene, so this
         // affected every run that didn't open the scene directly.
-        if (boss != null) boss.targets = spawned;
+        if (bossObject is MarauderBoss marauderBoss) marauderBoss.targets = spawned;
+        if (halcyonStaticField != null) halcyonStaticField.ships = spawned;
     }
 }

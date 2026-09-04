@@ -67,21 +67,22 @@ public class MarauderBossShockwave
 
     private void SelectRingColorAndWidth(out Color color, out float width)
     {
+        MarauderBossShockwaveSettings s = boss.shockwaveSettings;
         if (isTelegraphing)
         {
-            float pulse = (Mathf.Sin(Time.time * boss.shockwaveTelegraphPulseSpeed) + 1f) * 0.5f;
-            color = Color.Lerp(boss.shockwaveRingColor, boss.shockwaveRingTelegraphColor, pulse);
-            width = Mathf.Lerp(boss.shockwaveRingWidth, boss.shockwaveRingTelegraphWidth, pulse);
+            float pulse = (Mathf.Sin(Time.time * s.telegraphPulseSpeed) + 1f) * 0.5f;
+            color = Color.Lerp(s.ringColor, s.ringTelegraphColor, pulse);
+            width = Mathf.Lerp(s.ringWidth, s.ringTelegraphWidth, pulse);
         }
         else if (Time.time < impactFlashUntil)
         {
-            color = boss.shockwaveRingImpactColor;
-            width = boss.shockwaveRingTelegraphWidth;
+            color = s.ringImpactColor;
+            width = s.ringTelegraphWidth;
         }
         else
         {
-            color = boss.shockwaveRingColor;
-            width = boss.shockwaveRingWidth;
+            color = s.ringColor;
+            width = s.ringWidth;
         }
     }
 
@@ -90,7 +91,7 @@ public class MarauderBossShockwave
         for (int i = 0; i < RingSegments; i++)
         {
             float angle = (i / (float)RingSegments) * Mathf.PI * 2f;
-            ring.SetPosition(i, center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * boss.shockwaveRadius);
+            ring.SetPosition(i, center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * boss.shockwaveSettings.radius);
         }
     }
 
@@ -101,9 +102,9 @@ public class MarauderBossShockwave
         foreach (GameObject t in boss.targets)
         {
             if (t == null || !t.activeInHierarchy) continue;
-            if (Vector2.Distance(t.transform.position, boss.transform.position) <= boss.shockwaveRadius)
+            if (Vector2.Distance(t.transform.position, boss.transform.position) <= boss.shockwaveSettings.radius)
             {
-                nextCheckTime = Time.time + boss.shockwaveCooldown;
+                nextCheckTime = Time.time + boss.shockwaveSettings.cooldown;
                 boss.StartCoroutine(ShockwaveRoutine());
                 return;
             }
@@ -113,9 +114,9 @@ public class MarauderBossShockwave
     private IEnumerator ShockwaveRoutine()
     {
         isTelegraphing = true;
-        yield return new WaitForSeconds(boss.shockwaveTelegraphTime);
+        yield return new WaitForSeconds(boss.shockwaveSettings.telegraphTime);
         isTelegraphing = false;
-        impactFlashUntil = Time.time + boss.shockwaveImpactFlashDuration;
+        impactFlashUntil = Time.time + boss.shockwaveSettings.impactFlashDuration;
 
         foreach (GameObject t in boss.targets)
         {
@@ -127,16 +128,16 @@ public class MarauderBossShockwave
     private void ApplyShockwaveEffect(GameObject target)
     {
         Vector2 toTarget = (Vector2)target.transform.position - (Vector2)boss.transform.position;
-        if (toTarget.magnitude > boss.shockwaveRadius) return;
+        if (toTarget.magnitude > boss.shockwaveSettings.radius) return;
 
         PlayerHealth health = target.GetComponent<PlayerHealth>();
-        if (health != null) health.TakeDamage(Mathf.RoundToInt(boss.bulletDamage * boss.shockwaveDamageMultiplier));
+        if (health != null) health.TakeDamage(Mathf.RoundToInt(boss.bulletDamage * boss.shockwaveSettings.damageMultiplier));
 
         PlayerController pc = target.GetComponent<PlayerController>();
         if (pc != null)
         {
             Vector2 pushDir = toTarget.sqrMagnitude > 0.0001f ? toTarget.normalized : Vector2.up;
-            pc.AddRecoil(pushDir * boss.shockwaveKnockback);
+            pc.AddRecoil(pushDir * boss.shockwaveSettings.knockback);
         }
     }
 }

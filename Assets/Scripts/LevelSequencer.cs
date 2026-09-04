@@ -21,7 +21,7 @@ public class LevelSequencer : MonoBehaviour
     [Header("Scene hookup")]
     public PlayerController[] ships; // drag Player + 3 Teammates
     public EnemySpawner enemySpawner; // drag Spawner
-    public MarauderBoss marauderBoss;
+    public MonoBehaviour bossObject; // must implement IBoss - MarauderBoss or HalcyonBoss
 
     [Header("Timing")]
     public float introDuration = 4f;
@@ -46,10 +46,12 @@ public class LevelSequencer : MonoBehaviour
     // after PartySetupBootstrap ([DefaultExecutionOrder(-1000)]) has already
     // configured each ship's real driver for this run, human or AI.
     private bool[] shipIsHuman;
+    private IBoss boss;
     private Camera cam;
 
     void Awake()
     {
+        boss = bossObject as IBoss;
         cam = Camera.main;
 
         shipHomes = new Vector3[ships.Length];
@@ -78,7 +80,7 @@ public class LevelSequencer : MonoBehaviour
         // SpriteRenderer/builds the shockwave ring SetVisible touches) isn't
         // guaranteed to run before this script's own Awake() - Unity only
         // guarantees every object's Awake() finishes before any Start().
-        marauderBoss.SetVisible(false);
+        boss.SetVisible(false);
         StartCoroutine(RunSequence());
     }
 
@@ -103,7 +105,7 @@ public class LevelSequencer : MonoBehaviour
 
         CurrentState = SequenceState.BossCombat;
         SetShipsFrozen(false);
-        marauderBoss.enabled = true; // fires OnEnable(), which starts its movement-pattern coroutine
+        bossObject.enabled = true; // fires OnEnable(), which starts its movement-pattern coroutine
     }
 
     IEnumerator IntroRoutine()
@@ -134,21 +136,21 @@ public class LevelSequencer : MonoBehaviour
     IEnumerator BossEntranceRoutine()
     {
         SetShipsFrozen(true);
-        marauderBoss.SetVisible(true);
+        boss.SetVisible(true);
 
-        Vector3 home = marauderBoss.transform.position;
+        Vector3 home = bossObject.transform.position;
         Vector3 viewMax = cam.ViewportToWorldPoint(new Vector3(1f, 1f, 0f));
         Vector3 start = new Vector3(home.x, viewMax.y + offScreenMargin, home.z);
-        marauderBoss.transform.position = start;
+        bossObject.transform.position = start;
 
         float t = 0f;
         while (t < bossEntranceDuration)
         {
             t += Time.deltaTime;
-            marauderBoss.transform.position = Vector3.Lerp(start, home, Mathf.Clamp01(t / bossEntranceDuration));
+            bossObject.transform.position = Vector3.Lerp(start, home, Mathf.Clamp01(t / bossEntranceDuration));
             yield return null;
         }
-        marauderBoss.transform.position = home;
+        bossObject.transform.position = home;
     }
 
     // Disabling only PlayerInput/AIController isn't enough to actually stop

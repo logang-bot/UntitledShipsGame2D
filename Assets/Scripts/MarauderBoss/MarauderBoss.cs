@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class MarauderBoss : MonoBehaviour
+public class MarauderBoss : MonoBehaviour, IBoss
 {
     [Header("Health / Phases")]
     public int maxHealth = 150; // was 90 - bumped again now the boss stands still and fires less, so the fight still takes real time
@@ -48,32 +48,10 @@ public class MarauderBoss : MonoBehaviour
     public float contactDamageCooldown = 1f;
 
     [Header("Shockwave")]
-    public float shockwaveRadius = 1.7f; // boss half-extent (0.8) + ~1.5 ship-widths (0.9) from its edge
-    public float shockwaveDamageMultiplier = 3f;
-    public float shockwaveKnockback = 33f; // ~3.5 units of total displacement, see AddRecoil's decay math in PlayerController.cs
-    public float shockwaveCooldown = 3f;
-    public float shockwaveTelegraphTime = 0.3f;
-
-    [Header("Shockwave Visual")]
-    // Always-visible dim ring at shockwaveRadius so the danger zone reads
-    // before it ever triggers; pulses to a bright warning color during the
-    // telegraph wind-up, then flashes on the frame it actually hits. See
-    // MarauderBossShockwave for the LineRenderer setup.
-    public Color shockwaveRingColor = new Color(1f, 0.4f, 0.1f, 0.25f);
-    public Color shockwaveRingTelegraphColor = new Color(1f, 0.15f, 0.1f, 0.85f);
-    public Color shockwaveRingImpactColor = new Color(1f, 0.9f, 0.3f, 1f);
-    public float shockwaveRingWidth = 0.06f;
-    public float shockwaveRingTelegraphWidth = 0.14f;
-    public float shockwaveTelegraphPulseSpeed = 12f;
-    public float shockwaveImpactFlashDuration = 0.15f;
+    public MarauderBossShockwaveSettings shockwaveSettings = new MarauderBossShockwaveSettings();
 
     [Header("Guided missile")]
-    public PlayerRole[] guidedMissileTargetRoles = { PlayerRole.Medic, PlayerRole.Attacker };
-    public float guidedMissileInterval = 5f;
-    public float guidedMissileTelegraphTime = 0.8f;
-    public float guidedMissileTurnRate = 90f; // degrees/second
-    public float guidedMissileSpeed = 5f;
-    public float guidedMissileWarningLingerTime = 2f; // keep the HUD warning up briefly after firing
+    public MarauderBossGuidedMissileSettings guidedMissile = new MarauderBossGuidedMissileSettings();
 
     [Header("Pattern Barrage")]
     // One attack, three shapes - randomly picked each activation, never the
@@ -100,21 +78,14 @@ public class MarauderBoss : MonoBehaviour
 
     public int CurrentHealth { get; private set; }
     public bool IsPhase2 { get; private set; }
-    public GameObject CurrentTarget { get; private set; }
+    public GameObject CurrentTarget => aggroSystem.CurrentTarget;
     public PlayerRole? GuidedMissileTargetRole => attacks.GuidedMissileTargetRole;
     public MarauderBossAttacks.BulletPattern? PatternBarrageActivePattern => attacks.PatternBarrageActivePattern;
     public float ShockwaveCooldownRemaining => shockwave.CooldownRemaining;
     public float GuidedMissileCooldownRemaining => attacks.GuidedMissileCooldownRemaining;
     public float PatternBarrageCooldownRemaining => attacks.PatternBarrageCooldownRemaining;
 
-    private readonly Dictionary<GameObject, float> aggro = new Dictionary<GameObject, float>();
     private readonly Dictionary<GameObject, float> lastContactDamageTime = new Dictionary<GameObject, float>();
-    // Raw cumulative damage per source, deliberately kept separate from
-    // `aggro` above: TauntedBy() overwrites a taunter's aggro with
-    // (highest + tauntBonus), which would corrupt these numbers the moment
-    // Tank pressed E. Aggro is a threat value; this is a damage stat.
-    private readonly Dictionary<GameObject, float> damageDealt = new Dictionary<GameObject, float>();
-    private float combatStartTime;
     private float nextFireTime;
     private SpriteRenderer sr;
     private Collider2D col;
@@ -122,13 +93,14 @@ public class MarauderBoss : MonoBehaviour
     private MarauderBossMovement movement;
     private MarauderBossShockwave shockwave;
     private MarauderBossAttacks attacks;
+    private MarauderBossAggro aggroSystem;
 
     void Awake()
     {
         CurrentHealth = maxHealth;
         CacheComponents();
         CreateHelpers();
-        InitAggro();
+        aggroSystem.Init();
     }
 
     private void CacheComponents()
@@ -144,18 +116,8 @@ public class MarauderBoss : MonoBehaviour
         movement = new MarauderBossMovement(this);
         shockwave = new MarauderBossShockwave(this);
         attacks = new MarauderBossAttacks(this);
+        aggroSystem = new MarauderBossAggro(this);
         shockwave.CreateRing();
-    }
-
-    private void InitAggro()
-    {
-        foreach (GameObject t in targets)
-        {
-            if (t == null) continue;
-            aggro[t] = 0f;
-            damageDealt[t] = 0f;
-        }
-        CurrentTarget = targets.Length > 0 ? targets[0] : null;
     }
 
     /// <summary>
@@ -183,11 +145,7 @@ public class MarauderBoss : MonoBehaviour
         if (minionSpawner != null) minionSpawner.enabled = enableMinions;
         if (enableMovementPattern) movement.OnEnable();
 
-        // LevelSequencer enables this component exactly when BossCombat
-        // starts, which is the only moment ships can both act and damage the
-        // boss - so it's the correct zero for a DPS denominator. Guarded so a
-        // re-enable can't restart the fight clock mid-run.
-        if (combatStartTime <= 0f) combatStartTime = Time.time;
+        aggroSystem.StartCombatClock();
 
         float graceUntil = Time.time + postEntranceGracePeriod;
         nextFireTime = graceUntil;
@@ -199,7 +157,7 @@ public class MarauderBoss : MonoBehaviour
     {
         if (LevelSequencer.ShipsFrozen) return;
 
-        PickTarget();
+        aggroSystem.PickTarget();
         HandleFiring();
         shockwave.CheckShockwave();
         attacks.CheckGuidedMissile();
@@ -214,31 +172,6 @@ public class MarauderBoss : MonoBehaviour
 
         nextFireTime = Time.time + interval;
         Fire();
-    }
-
-    void PickTarget()
-    {
-        CurrentTarget = FindHighestAggroTarget();
-    }
-
-    private GameObject FindHighestAggroTarget()
-    {
-        float bestAggro;
-        if (CurrentTarget == null || !aggro.TryGetValue(CurrentTarget, out bestAggro)) bestAggro = -1f;
-
-        GameObject best = CurrentTarget;
-        foreach (GameObject t in targets)
-        {
-            if (t == null || !t.activeInHierarchy) continue;
-            float candidateAggro;
-            if (!aggro.TryGetValue(t, out candidateAggro)) continue;
-            if (candidateAggro > bestAggro)
-            {
-                bestAggro = candidateAggro;
-                best = t;
-            }
-        }
-        return best;
     }
 
     void Fire()
@@ -283,15 +216,7 @@ public class MarauderBoss : MonoBehaviour
     public void TakeDamage(float amount, GameObject source)
     {
         CurrentHealth -= Mathf.RoundToInt(amount);
-        if (source != null)
-        {
-            if (aggro.ContainsKey(source)) aggro[source] += amount;
-            // TryGetValue rather than ContainsKey-gating, so damage from a
-            // source that never made it into targets[] still shows up on the
-            // meter instead of silently vanishing.
-            damageDealt.TryGetValue(source, out float dealtSoFar);
-            damageDealt[source] = dealtSoFar + amount;
-        }
+        aggroSystem.RegisterDamage(amount, source);
 
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2)
         {
@@ -304,11 +229,7 @@ public class MarauderBoss : MonoBehaviour
 
     public void TauntedBy(GameObject taunter)
     {
-        if (!aggro.ContainsKey(taunter)) return;
-
-        float highest = 0f;
-        foreach (KeyValuePair<GameObject, float> kv in aggro) highest = Mathf.Max(highest, kv.Value);
-        aggro[taunter] = highest + tauntBonus;
+        aggroSystem.TauntedBy(taunter);
     }
 
     void Die()
@@ -317,18 +238,7 @@ public class MarauderBoss : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // Seconds of real boss combat so far - the DPS denominator. Stays 0
-    // until the fight actually starts, so DpsMeterUI can avoid dividing by
-    // an elapsed time that hasn't begun.
-    public float CombatElapsed => combatStartTime > 0f ? Time.time - combatStartTime : 0f;
+    public float CombatElapsed => aggroSystem.CombatElapsed;
 
-    // Total damage this source has dealt to the boss. Read by DpsMeterUI
-    // per-ship rather than exposing the dictionary, so nothing outside can
-    // mutate it and iterating costs no allocation.
-    public float GetDamageDealt(GameObject source)
-    {
-        if (source == null) return 0f;
-        damageDealt.TryGetValue(source, out float dealt);
-        return dealt;
-    }
+    public float GetDamageDealt(GameObject source) => aggroSystem.GetDamageDealt(source);
 }

@@ -752,3 +752,192 @@ above were fixed).
   as-is this session (still substantively accurate per-role regardless of
   the human/AI split) rather than rewritten line-by-line; worth a pass if it
   reads as confusing against the new co-op reality.
+
+## Session 36 — Halcyon (Level 2's Boss): Design + Implementation
+
+Picked up `roadmap.md`'s next open item: Halcyon's design doc
+(`halcyon-boss.md`) was a pitch with explicit open questions, not an
+implementation-ready spec. Ran a full brainstorming session with the user
+first (recorded as
+`docs/superpowers/specs/2026-09-04-halcyon-boss-design.md`) to resolve
+every open question before writing any code — identity (a pure positioning
+fight, no ambient bullets at all), which of Marauder's mechanics carry over
+(only body contact damage), the roam pattern (full-arena waypoint-to-
+waypoint), Surge window timing (8s cooldown / 1s telegraph / 2s vulnerable
+window, unaffected by phase), Static Field's numbers (6s/4s pulse cooldown,
+1.8-unit boss range, 0.6-unit cluster range, 3x bullet damage), and
+explicitly dropping aggro/taunt entirely.
+
+### Code architecture: sibling MonoBehaviours, not owned helper classes
+
+Unlike `MarauderBoss` (one component owning several non-`MonoBehaviour`
+helper classes), Halcyon's three mechanics are separate sibling
+`MonoBehaviour`s on the same `Boss` GameObject (`HalcyonRoam.cs`,
+`HalcyonSurge.cs`, `HalcyonStaticField.cs`), each independently sized and
+independently toggleable - closer to how `MinionSpawner` already sits
+alongside `MarauderBoss`. `HalcyonBoss.cs` itself stays small (HP/phases/
+contact damage only) and, in `OnEnable()` (fired when `LevelSequencer`
+enables it at `BossCombat`), enables the three siblings - mirroring how
+`MarauderBoss.OnEnable()` already enables `MinionSpawner`.
+
+### IBoss: a scoped exception to "no interfaces"
+
+`LevelSequencer.cs`/`PlayerController.cs`/`AIController.cs`/
+`PartySetupBootstrap.cs` are all reused verbatim across level scenes and
+called boss-specific methods on a `MarauderBoss`-typed field. With
+`HalcyonBoss` an unrelated class (no inheritance in this codebase), a new
+`IBoss` interface (`SetVisible(bool)`, `ApplyContactDamage(GameObject)`) -
+the only two methods those orchestrators actually call - lets both boss
+types be driven identically. Since Unity can't serialize an interface-typed
+field, every consuming field stays `MonoBehaviour`-typed (`bossObject`) and
+is cast to a cached `IBoss` once in `Awake()`/`Start()`; plain
+`.transform`/`.enabled` access needs no cast at all. Full writeup:
+`architecture.md`'s "Boss-type-agnostic orchestration: IBoss".
+
+Retyping `PlayerController.boss`/`AIController.boss` (renamed `bossObject`)
+turned out to touch far more than `LevelSequencer` alone: `AIController`'s
+positioning helpers (`AIControllerAttacker`/`Medic`/`Positioning`) all read
+`owner.boss.transform.position` for boss-avoidance/patrol math (pure
+`Transform` access, no cast needed), `PartyFrameUI`'s DPS line read
+`playerController.boss.GetDamageDealt(...)` (Marauder-only - fixed with an
+`as MarauderBoss` cast, so a Halcyon-side ship's DPS line just reads 0
+instead of needing special-casing), and `AIController.UpdateAbilityUsage()`'s
+Tank heuristic read `boss.CurrentTarget` (also Marauder-only aggro API -
+fixed the same way, so a Halcyon-side Tank simply never auto-taunts,
+matching the designed no-op). All caught at compile time, not discovered
+live - Unity's compiler immediately flagged every broken reference once the
+field types changed.
+
+### Renaming a public field drops its serialized value
+
+Renaming `PlayerController.boss`/`AIController.boss`/
+`LevelSequencer.marauderBoss`/`PartySetupBootstrap.boss` to `bossObject`
+orphaned every existing Inspector reference in `Level1.unity` (Unity keys
+serialized values by field name, not type) - confirmed live via the Unity
+MCP bridge (`bossObject: null` on every ship after recompiling). Re-wired
+all of them (4 ships' `PlayerController`/`AIController`, `LevelSequencer`,
+`PartySetupBootstrap`) back to the same `MarauderBoss` instance and
+re-verified end-to-end before touching `Level2.unity` at all, per the
+plan's explicit "confirm Marauder's behavior is unchanged" step.
+
+### HalcyonBoss.prefab / Level2.unity wiring
+
+Built in place on `Level2.unity`'s existing `Boss` GameObject (removed
+`MarauderBoss`/`MinionSpawner`, added `HalcyonBoss`/`HalcyonRoam`/
+`HalcyonSurge`/`HalcyonStaticField`) rather than a separate prefab asset -
+same one-off-per-level treatment `MarauderBoss.prefab` gets. Caught one
+real bug live: a freshly-added `HalcyonBoss` component defaults to
+`enabled: true`, so without explicitly unchecking it the boss (and its
+three siblings, cascaded via `OnEnable()`) was active from scene start
+instead of only at `BossCombat` - confirmed via `execute_code` showing all
+three mechanics `enabled: true` during `FreeMovement`, fixed by setting
+`HalcyonBoss.enabled = false` to match `MarauderBoss`'s own established
+convention, re-verified disabled through `Intro`/`FreeMovement`/
+`MinionPhase1` and correctly enabled at `BossCombat`. `BossPanel`'s script
+swapped from `BossPanelUI` to a new `HalcyonBossPanelUI`, reusing the
+existing HP/phase text objects by content and repurposing
+`BossWarningText`/`BossShockwaveCooldownText`/`BossGuidedMissileCooldownText`
+for Surge/Static Field's own text rather than adding new UI objects;
+`BossTargetText`/`BossPatternBarrageWarningText`/
+`BossPatternBarrageCooldownText` (nothing left to drive them) were
+deactivated rather than left showing stale text.
+
+### Verified
+
+Unity MCP bridge, both edit-mode (compile checks after every script change)
+and Play-mode. `HalcyonRoam`/`HalcyonSurge`/`HalcyonStaticField` confirmed
+disabled and the boss hidden/uncollidable throughout `Intro`/
+`FreeMovement`/`MinionPhase1`, correctly enabled and visible at
+`BossCombat` (accelerated via `Time.timeScale` rather than waiting through
+the full ~30s pre-boss sequence at 1x). Live in `BossCombat`: the boss's
+position had actually moved off its home point (confirming `HalcyonRoam`
+is really roaming), `HalcyonSurge`/`HalcyonStaticField`'s cooldowns were
+counting down from fresh values (confirming `OnEnable()`'s reset), and the
+party's own AI auto-fire had already landed real damage on the boss (90 ->
+86 HP) with zero extra code - confirming `Bullet.cs`'s new `HalcyonBoss`
+check works end-to-end, not just in isolation. Directly verified
+`HalcyonStaticField`'s pairwise proximity logic via
+`ApplyPulseDamage()` (reflection-invoked, matching this project's
+established fallback style whenever live timing is unreliable): two ships
+both moved onto the boss's position each took exactly 3 damage (3x
+`bulletDamage`); a lone ship on the boss's position took nothing. Confirmed
+`HalcyonBoss.TakeDamage` reduces `CurrentHealth` by exactly the rounded
+amount. No console errors or warnings across any of the above, including a
+full compile pass after every file touched (10 existing scripts edited
+alongside the 6 new ones).
+
+**Environment note**: hit the same `playmode_transition`-stuck issue
+documented in Session 29 (`editor.play_mode.is_changing` stuck `true`,
+`Time.time` frozen at `0.00` across repeated real-time waits) more
+persistently than that session described - stopping/re-entering Play mode
+plus one `refresh_unity` call eventually cleared it. Once clear, real
+elapsed time behaved normally (including one run that, left alone at
+`Time.timeScale = 50` for a few real seconds, compressed enough game time
+for the whole party to wipe against the boss - a legitimate outcome, not a
+bug, just a reminder this environment's Play-mode timing is still not
+fully reliable).
+
+### Follow-up: MarauderBoss.cs over this session's new file-size cap
+
+A style hook flagged `MarauderBoss.cs` at 289 lines against a newly-enforced
+~200/250-line cap the instant this session touched it (adding `, IBoss` to
+the class declaration) - pre-existing length, but the hook holds any file a
+session edits to the cap regardless of who wrote the excess. Split out a
+fourth helper, `MarauderBossAggro` (the threat table, `PickTarget`/
+`TauntedBy`/damage-tracking - see "Aggro / targeting" above), matching the
+existing `MarauderBossMovement`/`Shockwave`/`Attacks` shape exactly. That
+alone wasn't enough margin, so Shockwave's and guided missile's tunable
+fields were also grouped into two small `[System.Serializable]` classes
+(`MarauderBossShockwaveSettings`, `MarauderBossGuidedMissileSettings`) -
+still fully Inspector-editable as a foldout, just declared in their own
+files instead of as ~18/~7 top-level fields on `MarauderBoss` itself.
+Pattern Barrage's fields were left flat; the first two extractions alone
+brought the file to 241 lines (from 289), comfortably under the cap.
+
+Confirmed zero tuning drift before touching anything: read `Level1.unity`'s
+live `Boss` component values via the Unity MCP bridge first, and every
+value being moved (`shockwaveRadius` 1.7, `damageMultiplier` 3, ...,
+`guidedMissileInterval` 5, ...) already matched the field defaults already
+declared in code - so re-declaring them as the new settings classes'
+defaults reproduces the scene exactly with no Inspector re-wiring needed,
+unlike the `bossObject` field renames above (which did orphan their
+serialized references). Verified this held after the refactor: read the
+live component back and confirmed every nested value matched the
+pre-refactor numbers exactly, then re-exercised the shockwave path
+live (`CheckShockwave()`/`ApplyShockwaveEffect()`, both reflection-invoked)
+- shield dropped by exactly 3 (`bulletDamage x shockwaveSettings.damageMultiplier`),
+matching pre-refactor behavior. No console errors across any step.
+
+### Follow-up: dangling OnTaunt listener in Level2, and an unrelated pre-existing gap found alongside it
+
+A docs-accuracy pass after this session's main work surfaced a real side
+effect of swapping `Level2.unity`'s `Boss` GameObject from `MarauderBoss`
+to `HalcyonBoss` in place: each of the 4 ships' `PlayerAbility.OnTaunt`
+still carried a persistent listener to the now-deleted `MarauderBoss`
+component's `TauntedBy` method. Unity doesn't error on this (a
+null-target persistent listener is silently skipped), so it was invisible
+functionally — Taunt already does nothing against Halcyon by design either
+way — but it's a dangling reference, not the clean absence the design
+called for. Removed via the Unity MCP bridge
+(`UnityEditor.Events.UnityEventTools.RemovePersistentListener`) on all 4
+ships, confirmed via `UnityEventBase.GetPersistentEventCount()`/
+`GetPersistentTarget()` before and after.
+
+Found something unrelated while inspecting these listeners: in **both**
+`Level1.unity` and `Level2.unity` (so this predates this session entirely,
+not something introduced by it), `Teammate_Tank`/`Teammate_Medic`/
+`Teammate_Support`'s `OnTaunt` are missing the `CameraShake.Shake()`
+listener that `Player`'s has — only a human-controlled Taunt shakes the
+camera; an AI teammate's Taunt doesn't. Left as-is (out of scope for this
+pass), flagged here for a future session.
+
+### Still open
+
+- **Real human playtest** - same as every prior session's boss/mechanic
+  work, this fight has only been exercised via the Unity MCP bridge.
+- Halcyon's own numeric tuning (roam speed, Surge timing, Static Field
+  range/cooldown/damage, HP) are first-pass placeholders like every other
+  balance value in this project, not validated against real play.
+- **Pre-existing gap, not caused by this session**: `Teammate_*`'s
+  `OnTaunt` is missing a `CameraShake.Shake()` listener in every level
+  scene — see the follow-up note above.

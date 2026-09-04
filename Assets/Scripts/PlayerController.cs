@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
     public float recoilDamping = 8f;
 
     [Header("Collision")]
-    public MarauderBoss boss;
+    public MonoBehaviour bossObject; // must implement IBoss - MarauderBoss or HalcyonBoss
 
     private Rigidbody2D rb;
     private Camera cam;
@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
     private BoxCollider2D selfCollider;
     private Vector2 selfHalfExtents;
     private PlayerAbility ability;
+    private IBoss boss;
     private BoxCollider2D bossCollider;
     private Vector2 bossHalfExtents;
     private BoxCollider2D[] allyColliders;
@@ -68,9 +69,10 @@ void Start()
         selfHalfExtents = selfCollider.bounds.extents;
         ability = GetComponent<PlayerAbility>();
 
-        if (boss != null)
+        boss = bossObject as IBoss;
+        if (bossObject != null)
         {
-            bossCollider = boss.GetComponent<BoxCollider2D>();
+            bossCollider = bossObject.GetComponent<BoxCollider2D>();
             if (bossCollider != null) bossHalfExtents = bossCollider.bounds.extents;
         }
 
@@ -157,11 +159,11 @@ void HandleMovement()
             }
         }
 
-        if (boss != null && bossCollider != null)
+        if (bossObject != null && bossCollider != null)
         {
             candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
                 candidatePos, selfHalfExtents,
-                boss.transform.position, bossHalfExtents,
+                bossObject.transform.position, bossHalfExtents,
                 out bool overlappingBoss);
             if (overlappingBoss) boss.ApplyContactDamage(gameObject);
         }

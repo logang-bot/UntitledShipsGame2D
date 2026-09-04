@@ -25,10 +25,10 @@ public class AIControllerAttacker
     /// </summary>
     public Vector2 PositionDirection()
     {
-        if (owner.boss == null) return Vector2.zero;
+        if (owner.bossObject == null) return Vector2.zero;
 
-        float targetY = Mathf.LerpUnclamped(owner.Positioning.GetAllyCenter().y, owner.boss.transform.position.y, owner.attackerBias);
-        float targetX = owner.boss.transform.position.x + Mathf.Sin(Time.time * owner.weaveFrequency) * owner.attackerPatrolAmplitude;
+        float targetY = Mathf.LerpUnclamped(owner.Positioning.GetAllyCenter().y, owner.bossObject.transform.position.y, owner.attackerBias);
+        float targetX = owner.bossObject.transform.position.x + Mathf.Sin(Time.time * owner.weaveFrequency) * owner.attackerPatrolAmplitude;
         Vector2 targetPoint = owner.Positioning.EnforceBossDistance(new Vector2(targetX, targetY));
 
         Vector2 toTarget = targetPoint - (Vector2)owner.transform.position;

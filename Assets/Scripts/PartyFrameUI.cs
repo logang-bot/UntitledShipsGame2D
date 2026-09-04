@@ -109,7 +109,7 @@ void Update()
         // truth DpsMeterUI's Recount-style panel reads.
         if (dpsText != null)
         {
-            MarauderBoss boss = playerController.boss;
+            MarauderBoss boss = playerController.bossObject as MarauderBoss;
             float dps = (boss != null && boss.CombatElapsed > 0f)
                 ? boss.GetDamageDealt(shipObject) / boss.CombatElapsed
                 : 0f;

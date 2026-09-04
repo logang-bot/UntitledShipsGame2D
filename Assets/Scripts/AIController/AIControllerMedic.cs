@@ -59,9 +59,9 @@ public class AIControllerMedic
     public Vector2 ApproachDirection(Transform target)
     {
         Vector2 targetPos = target.position;
-        if (owner.boss != null)
+        if (owner.bossObject != null)
         {
-            Vector2 awayFromBoss = (Vector2)target.position - (Vector2)owner.boss.transform.position;
+            Vector2 awayFromBoss = (Vector2)target.position - (Vector2)owner.bossObject.transform.position;
             if (awayFromBoss.sqrMagnitude > 0.0001f)
                 targetPos += awayFromBoss.normalized * owner.medicStandoffDistance;
         }

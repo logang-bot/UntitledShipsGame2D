@@ -196,7 +196,7 @@ itself is attached to.
 | `JoinLobby` | `Canvas` (`JoinLobbyUI`, 4 slot-text rows, `ContinueButton`/`BackButton`), `PlayerInputManager`, `EventSystem`, `Main Camera` |
 | `RoleSelect` | `Canvas` (`RoleSelectUI`, `singlePickerPanel` → `SinglePickerPanel` [original 4 role buttons + Start], `multiPickerPanel` → `MultiPickerPanel` [`RoleSelectMultiUI`, `RolePickerRow.prefab` instances]) plus `BackButton` |
 | `LevelSelect` | `Canvas` (`LevelSelectUI`, `MarauderButton`/`HalcyonButton`/`WardenButton` cards) plus `BackButton` |
-| `Level1` / `Level2` / `Level3` | Each: `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`, both the legacy fixed-4-object fallback fields and the new dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` wired to that scene's own boss instance (`MarauderBoss.prefab` for `Level1`, `Level2BossPlaceholder.prefab`/`Level3BossPlaceholder.prefab` for `Level2`/`Level3` — see [marauder-boss.md](bosses/marauder-boss.md)) |
+| `Level1` / `Level2` / `Level3` | Each: `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`, both the legacy fixed-4-object fallback fields and the new dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` wired to that scene's own boss instance (`MarauderBoss.prefab` for `Level1`, `HalcyonBoss`/`HalcyonRoam`/`HalcyonSurge`/`HalcyonStaticField` built on the `Boss` GameObject for `Level2`, `Level3BossPlaceholder.prefab` for `Level3` — see [marauder-boss.md](bosses/marauder-boss.md)/[halcyon-boss.md](bosses/halcyon-boss.md)) |
 
 ## Not yet built
 
@@ -212,7 +212,7 @@ itself is attached to.
   relative to `LevelSelect` (before or after level-picking) is a decision
   for that future work, not settled here. See [cards.md](cards.md)'s "Deck
   loadout scene".
-- Halcyon and Warden (Level 2/3) don't have real boss mechanics yet — their
-  scenes/placeholders exist so the level-select flow and scene plumbing
-  didn't need to be re-touched once each boss's own design lands. See
-  `../roadmap.md`.
+- Warden (Level 3) doesn't have real boss mechanics yet — its placeholder
+  exists so the level-select flow and scene plumbing didn't need to be
+  re-touched once its own design lands. Halcyon (Level 2) does now — see
+  [bosses/halcyon-boss.md](bosses/halcyon-boss.md) and `../roadmap.md`.

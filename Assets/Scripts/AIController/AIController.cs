@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class AIController : MonoBehaviour
 {
-    public MarauderBoss boss;
+    public MonoBehaviour bossObject; // must implement IBoss - MarauderBoss or HalcyonBoss
     public float weaveFrequency = 0.8f;
     public float weaveSpeed = 1f;
 
@@ -196,7 +196,11 @@ public class AIController : MonoBehaviour
     {
         if (role.role == PlayerRole.Tank)
         {
-            if (boss != null && boss.CurrentTarget != gameObject) ability.TryUseAbility();
+            // Only MarauderBoss has an aggro table to check against - a Tank
+            // never auto-taunts against a boss with no aggro (e.g. Halcyon),
+            // matching its documented no-op there.
+            MarauderBoss marauderBoss = bossObject as MarauderBoss;
+            if (marauderBoss != null && marauderBoss.CurrentTarget != gameObject) ability.TryUseAbility();
             return;
         }
         // Always requests whatever slot continues the rotation correctly, so

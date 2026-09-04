@@ -241,6 +241,19 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s "Aggro roster comes from
   `targets[]`".
 
+- **Halcyon (Level 2's boss)** — a pure positioning fight, no ambient
+  bullets at all. It roams the entire arena continuously (not confined
+  near a home position like Marauder), periodically stopping for a brief
+  ~2s window (telegraphed ~1s ahead) that's the only reliable time to land
+  hits on it. Its real damage source is a Static Field pulse every 6s
+  (4s once it hits phase 2): any two ships both near the boss and near
+  each other when it pulses take a hit — a dim ring around it always
+  shows the pulse's range, brightening right before it fires. Touching the
+  boss directly still costs a ship 2x bullet damage, same as Marauder. It
+  has no aggro/target system at all — Tank's Taunt does nothing against it
+  (still flashes/shakes as feedback, just doesn't redirect anything). See
+  [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md).
+
 ## What's NOT there yet
 
 - No networked/authoritative multiplayer (multiple humans across *separate*
@@ -273,8 +286,10 @@ real networking last, then art/audio.
    role buttons (Attacker/Tank/Medic/Support — this is the role the human
    `Player` will use), then click **Start** once it's enabled. This loads
    `LevelSelect` — click a card (**Marauder**, **Halcyon**, or **Warden**;
-   only Marauder has real boss mechanics right now, see
-   [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)) to load that
+   Marauder and Halcyon both have real boss mechanics, Warden is still a
+   placeholder, see
+   [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md) and
+   [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md)) to load that
    level's scene, which auto-assigns the 3 remaining roles to 3 AI ships (any
    of the 4 you didn't pick, exactly once each). *(Opening `Level1`/
    `Level2`/`Level3` directly instead and pressing Play still works too,

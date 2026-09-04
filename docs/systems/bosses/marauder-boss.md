@@ -149,9 +149,11 @@ phase after Phase 2.
 
 ### Aggro roster comes from `targets[]` — which the co-op spawner must set
 
-`Awake()` seeds both `aggro` and `damageDealt` from the Inspector-wired
-`targets[]` array. In the **legacy** path (`Level1.unity` opened directly)
-those four scene objects are the real ships and everything works.
+`MarauderBoss.Awake()` calls `MarauderBossAggro.Init()` (see "Aggro /
+targeting" below), which seeds both `aggro` and `damageDealt` from the
+Inspector-wired `targets[]` array. In the **legacy** path (`Level1.unity`
+opened directly) those four scene objects are the real ships and
+everything works.
 
 In the **dynamic co-op** path they are not:
 `PartySetupBootstrap.SpawnDynamicParty()` deactivates those four objects and
@@ -170,8 +172,8 @@ live roster.
 
 ## Damage tracking (separate from aggro)
 
-`MarauderBoss` keeps a second dictionary, `damageDealt`, alongside `aggro`.
-They look similar and must not be conflated:
+`MarauderBossAggro` keeps a second dictionary, `damageDealt`, alongside
+`aggro`. They look similar and must not be conflated:
 
 | | `aggro` | `damageDealt` |
 |---|---|---|
@@ -200,12 +202,17 @@ into `targets[]` still appears on the meter instead of silently vanishing.
 
 ## Aggro / targeting
 
-A plain threat table (`Dictionary<GameObject, float> aggro`, private,
-populated in `Awake()` from `targets[]`): every point of damage a target
-deals adds to that target's aggro; the boss's `CurrentTarget` is whichever
-active target currently holds the highest aggro. No decay. `PickTarget()`
-uses `Dictionary.TryGetValue` rather than a raw indexer, so it stays safe
-even if `aggro` and `targets[]` were ever to drift out of sync.
+Lives in `MarauderBossAggro` (a plain, non-`MonoBehaviour` helper owned by
+`MarauderBoss`, same shape as `MarauderBossMovement`/`Shockwave`/`Attacks`)
+— split out purely to keep `MarauderBoss.cs` under this project's
+file-size cap, no behavior change from when this lived directly on
+`MarauderBoss`. A plain threat table (`Dictionary<GameObject, float>
+aggro`, private, populated in `Init()` from `targets[]`): every point of
+damage a target deals adds to that target's aggro; `CurrentTarget` (exposed
+on `MarauderBoss` as a forwarding property) is whichever active target
+currently holds the highest aggro. No decay. `PickTarget()` uses
+`Dictionary.TryGetValue` rather than a raw indexer, so it stays safe even
+if `aggro` and `targets[]` were ever to drift out of sync.
 
 `TauntedBy(GameObject taunter)` — the listener for Tank taunt (see
 below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
@@ -246,14 +253,28 @@ Key public fields: `maxHealth` (150, see "Current tuning" above),
 `screenPadding` (movement, see above), `bulletPrefab`,
 `phase1FireInterval`/`phase2FireInterval` (2.4 / 1.2), `bulletSpeed` (6),
 `spreadAngle` (15°), `bulletDamage` (1 — see "Body contact damage" below),
-`bodyContactDamageMultiplier`/`contactDamageCooldown`, `shockwaveRadius`/
-`shockwaveDamageMultiplier`/`shockwaveKnockback`/`shockwaveCooldown`/
-`shockwaveTelegraphTime`, `guidedMissileTargetRoles`/`guidedMissileInterval`/
-`guidedMissileTelegraphTime`/`guidedMissileTurnRate`/`guidedMissileSpeed`/
-`guidedMissileWarningLingerTime`, `patternBarrageCooldown` (7)/
-`patternBarrageTelegraphTime` (0.7)/`fanBulletCount` (5)/`fanSpreadAngle`
-(50°)/`ringBulletCount` (12)/`spiralBulletCount` (20)/`spiralAngleStep`
-(25°)/`spiralShotInterval` (0.05), `targets[]`, `tauntBonus` (100).
+`bodyContactDamageMultiplier`/`contactDamageCooldown`,
+`patternBarrageCooldown` (7)/`patternBarrageTelegraphTime` (0.7)/
+`fanBulletCount` (5)/`fanSpreadAngle` (50°)/`ringBulletCount` (12)/
+`spiralBulletCount` (20)/`spiralAngleStep` (25°)/`spiralShotInterval`
+(0.05), `targets[]`, `tauntBonus` (100). Shockwave and guided-missile
+tuning moved out of this flat list — see "Settings grouped into nested
+classes" below.
+
+### Settings grouped into nested classes
+
+To keep `MarauderBoss.cs` under this project's file-size cap, Shockwave's
+tuning (`radius`/`damageMultiplier`/`knockback`/`cooldown`/`telegraphTime`
+plus the ring-visual fields) lives in `public MarauderBossShockwaveSettings
+shockwaveSettings`, and guided missile's (`targetRoles`/`interval`/
+`telegraphTime`/`turnRate`/`speed`/`warningLingerTime`) in `public
+MarauderBossGuidedMissileSettings guidedMissile` — both `[System.Serializable]`
+plain classes (still fully Inspector-editable as a foldout), each read
+exclusively by their one corresponding helper (`MarauderBossShockwave.cs`/
+`MarauderBossAttacks.cs`). Pattern Barrage's own fields stayed flat on
+`MarauderBoss` directly — extracting it wasn't needed once these two
+groups alone brought the file under the cap. `MarauderBossAggro` (below)
+was the other, larger extraction from the same pass.
 
 ### Solid-body collision (ships + boss)
 
@@ -269,7 +290,9 @@ and every AI-driven `Teammate_*`, since `AIController` drives movement
 through the same `SetMoveDirection`/`HandleMovement` path) resolves its
 candidate position each `FixedUpdate` against every other ship
 (`PlayerAbility.allies`, already wired on all 4 ships) and against the boss
-(a new `PlayerController.boss` field, wired on all 4 ships) before the
+(`PlayerController.bossObject`, wired on all 4 ships — `MonoBehaviour`-typed
+and cast to `IBoss` internally, see `../../architecture.md`'s
+"Boss-type-agnostic orchestration: IBoss") before the
 existing viewport clamp. `ShipCollisionUtil.ResolveBoxOverlap()` does an
 exact axis-aligned box-vs-box push-out along whichever axis has the
 shallower penetration — ships and the boss never rotate, so this is exact,
@@ -323,19 +346,23 @@ simplification, not a balance change.
 ### Shockwave
 
 Punishes standing too close, not just touching the body: every `Update()`,
-`CheckShockwave()` (off its own `shockwaveCooldown`, 3s) scans `targets[]`
-for any active target within `shockwaveRadius` (1.7 — the boss's own
-half-extent, 0.8, plus roughly 1.5 ship-widths [0.9] from its edge). If one
-is found, it starts `ShockwaveRoutine()`: waits `shockwaveTelegraphTime`
-(0.3s), **re-checks the radius** after the wait (a ship that retreats
-during the telegraph escapes it), then for every target still inside, deals
-`Mathf.RoundToInt(bulletDamage * shockwaveDamageMultiplier)` (1 × 3 = 3 by
-default) and calls the target's `PlayerController.AddRecoil(pushDir *
-shockwaveKnockback)` — reusing the same decaying-velocity recoil system
-built for Attacker's Big Shot, so it folds into `HandleMovement()`'s
-position formula and respects the viewport clamp for free.
+`CheckShockwave()` (off its own `shockwaveSettings.cooldown`, 3s) scans
+`targets[]` for any active target within `shockwaveSettings.radius` (1.7 —
+the boss's own half-extent, 0.8, plus roughly 1.5 ship-widths [0.9] from
+its edge). If one is found, it starts `ShockwaveRoutine()`: waits
+`shockwaveSettings.telegraphTime` (0.3s), **re-checks the radius** after
+the wait (a ship that retreats during the telegraph escapes it), then for
+every target still inside, deals `Mathf.RoundToInt(bulletDamage *
+shockwaveSettings.damageMultiplier)` (1 × 3 = 3 by default) and calls the
+target's `PlayerController.AddRecoil(pushDir * shockwaveSettings.knockback)`
+— reusing the same decaying-velocity recoil system built for Attacker's Big
+Shot, so it folds into `HandleMovement()`'s position formula and respects
+the viewport clamp for free. All of these live on `MarauderBossShockwaveSettings`
+(`public MarauderBossShockwaveSettings shockwaveSettings` on `MarauderBoss`)
+rather than as flat fields — see "Settings grouped into nested classes"
+above.
 
-`shockwaveKnockback` (33) is an *impulse*, not a distance —
+`shockwaveSettings.knockback` (33) is an *impulse*, not a distance —
 `AddRecoil()` adds it to `PlayerController.recoilVelocity`, which decays
 exponentially every `FixedUpdate` (`Vector2.Lerp(recoilVelocity,
 Vector2.zero, recoilDamping * Time.fixedDeltaTime)`, `recoilDamping` 8).
@@ -344,33 +371,36 @@ displacement works out to roughly `impulse × 0.105` — so `33` gives ~3.5
 units of actual push (~5.8 ship-widths, ~62% of the 5.625-unit playable
 width).
 
-**Visual**: a world-space ring at `shockwaveRadius`, built the same
-procedural-`LineRenderer` way as `PlayerAbility.cs`'s Medic aura ring — dim
-and always visible so the danger zone reads before it ever triggers
-(`shockwaveRingColor`), pulses to a bright warning color
-(`shockwaveRingTelegraphColor`) at `shockwaveTelegraphPulseSpeed` during the
-telegraph wind-up, then flashes a distinct impact color
-(`shockwaveRingImpactColor`) for `shockwaveImpactFlashDuration` on the exact
-frame it hits. `CreateShockwaveRing()` builds it once in `Awake()`;
-`UpdateShockwaveRing()` runs every `Update()`, re-centering it on the boss's
-live (erratically-moving) position.
+**Visual**: a world-space ring at `shockwaveSettings.radius`, built the
+same procedural-`LineRenderer` way as `PlayerAbility.cs`'s Medic aura ring
+— dim and always visible so the danger zone reads before it ever triggers
+(`shockwaveSettings.ringColor`), pulses to a bright warning color
+(`shockwaveSettings.ringTelegraphColor`) at `shockwaveSettings.telegraphPulseSpeed`
+during the telegraph wind-up, then flashes a distinct impact color
+(`shockwaveSettings.ringImpactColor`) for `shockwaveSettings.impactFlashDuration`
+on the exact frame it hits. `CreateRing()` builds it once in `Awake()`;
+`UpdateRing()` runs every `Update()`, re-centering it on the boss's live
+(erratically-moving) position.
 
 ### Guided missile
 
 A homing shot that calls out a specific role rather than whoever currently
-holds aggro. Every `guidedMissileInterval` (5s), `CheckGuidedMissile()`
+holds aggro. Every `guidedMissile.interval` (5s), `CheckGuidedMissile()`
 gathers active `targets[]` entries whose `PlayerRoleComponent.role` is in
-`guidedMissileTargetRoles` (`{ Medic, Attacker }` by default — Role Select
+`guidedMissile.targetRoles` (`{ Medic, Attacker }` by default — Role Select
 always assigns all 4 roles exactly once, so both are always present among
 the 4 ships, human or AI), picks one at random, and starts
 `GuidedMissileRoutine(target)`: sets `GuidedMissileTargetRole` immediately
 (driving `BossPanelUI`'s warning during the wind-up, not just during
 flight, so Tank gets real reaction time), waits
-`guidedMissileTelegraphTime` (0.8s), then spawns a bullet via
-`Bullet.InitHoming(target.transform, guidedMissileTurnRate,
-guidedMissileSpeed, "Enemy")`. `GuidedMissileTargetRole` is held for
-`guidedMissileWarningLingerTime` (2s) after firing before clearing back to
-`null`, so the HUD warning doesn't vanish the instant the shot fires.
+`guidedMissile.telegraphTime` (0.8s), then spawns a bullet via
+`Bullet.InitHoming(target.transform, guidedMissile.turnRate,
+guidedMissile.speed, "Enemy")`. `GuidedMissileTargetRole` is held for
+`guidedMissile.warningLingerTime` (2s) after firing before clearing back to
+`null`, so the HUD warning doesn't vanish the instant the shot fires. All
+of these live on `MarauderBossGuidedMissileSettings` (`public
+MarauderBossGuidedMissileSettings guidedMissile` on `MarauderBoss`) — see
+"Settings grouped into nested classes" above.
 
 `Bullet.cs`'s `InitHoming(...)` is an alternate init path alongside the
 straight-line `Init(...)`: it re-aims `direction` toward the target's
@@ -483,7 +513,9 @@ Drives a CPU-controlled teammate every `Update()`:
   **Support**/**Attacker** just retry every frame, safe and cheap since
   `TryUseAbility()`'s own cooldown gate no-ops until ready.
 
-Key public fields: `boss` (drag the `Boss` instance), `weaveFrequency` (0.8),
+Key public fields: `bossObject` (drag the `Boss` instance; `MonoBehaviour`-typed
+and cast to `IBoss` where needed — see `../../architecture.md`'s
+"Boss-type-agnostic orchestration: IBoss"), `weaveFrequency` (0.8),
 `weaveSpeed` (1), `teammates[]`/`guardBias` (0.65)/`guardDeadzone` (0.2),
 `medicBias` (-0.3), `medicApproachThreshold` (0.55), `roamDeadzone` (0.3)/
 `roamInterval` (3), `attackerBias` (0.45)/`attackerPatrolAmplitude` (1.5)/
@@ -494,7 +526,7 @@ below).
 
 A private `EnforceBossDistance(Vector2 point)` pushes any candidate target
 point out to at least `minDistanceFromBoss` (1.9 — just outside
-`MarauderBoss.shockwaveRadius`'s 1.7, so default positioning doesn't self-trigger
+`MarauderBoss.shockwaveSettings.radius`'s 1.7, so default positioning doesn't self-trigger
 the shockwave) from `boss.transform.position`, falling back to
 `Vector2.up` if the point lands exactly on the boss. Applied to
 `BiasedPositionDirection()`'s and `AttackerPositionDirection()`'s computed
