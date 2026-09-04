@@ -253,6 +253,20 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   has no aggro/target system at all — Tank's Taunt does nothing against it
   (still flashes/shakes as feedback, just doesn't redirect anything). See
   [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md).
+- **Warden (Level 3's boss)** — a dual/triple-lane coverage fight: two
+  turret-arms (three from Phase 2 on) each independently pick a random
+  living ship and lock onto it, firing a continuous stream for a few
+  seconds before re-picking — the party has to cover multiple lanes at
+  once instead of funneling everything onto Tank. Tank's Taunt has a real
+  effect here, just not a redirect: it biases (doesn't force) the next few
+  re-picks toward whoever taunted. Body contact damage and a proximity
+  shockwave are both carried over unchanged from Marauder. Its own
+  signature mechanic, **Lockdown volley**, periodically fires a wide wall
+  of parallel bullets in from a random arena edge (top, left, or right)
+  with a couple of gaps in it — built specifically to reward standing in
+  it behind Tank's Shield Arc, which blocks whichever lanes cross its
+  width for free, rather than trying to dodge it. See
+  [systems/bosses/warden-boss.md](systems/bosses/warden-boss.md).
 
 ## What's NOT there yet
 
@@ -286,10 +300,10 @@ real networking last, then art/audio.
    role buttons (Attacker/Tank/Medic/Support — this is the role the human
    `Player` will use), then click **Start** once it's enabled. This loads
    `LevelSelect` — click a card (**Marauder**, **Halcyon**, or **Warden**;
-   Marauder and Halcyon both have real boss mechanics, Warden is still a
-   placeholder, see
-   [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md) and
-   [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md)) to load that
+   all three now have real boss mechanics, no placeholder remaining, see
+   [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md),
+   [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md), and
+   [systems/bosses/warden-boss.md](systems/bosses/warden-boss.md)) to load that
    level's scene, which auto-assigns the 3 remaining roles to 3 AI ships (any
    of the 4 you didn't pick, exactly once each). *(Opening `Level1`/
    `Level2`/`Level3` directly instead and pressing Play still works too,

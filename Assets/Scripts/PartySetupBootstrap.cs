@@ -164,5 +164,6 @@ public class PartySetupBootstrap : MonoBehaviour
         // affected every run that didn't open the scene directly.
         if (bossObject is MarauderBoss marauderBoss) marauderBoss.targets = spawned;
         if (halcyonStaticField != null) halcyonStaticField.ships = spawned;
+        if (bossObject is WardenBoss wardenBoss) wardenBoss.ships = spawned;
     }
 }

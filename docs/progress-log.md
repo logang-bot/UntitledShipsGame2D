@@ -941,3 +941,156 @@ pass), flagged here for a future session.
 - **Pre-existing gap, not caused by this session**: `Teammate_*`'s
   `OnTaunt` is missing a `CameraShake.Shake()` listener in every level
   scene — see the follow-up note above.
+
+## Session 37 — Warden (Level 3's Boss): Design + Implementation
+
+Picked up the next open item: Warden's design doc (`warden-boss.md`) was
+still a pitch with explicit open questions, not an implementation-ready
+spec. Ran a full brainstorming session with the user first (recorded as
+`docs/superpowers/specs/2026-09-04-warden-boss-design.md`) to resolve every
+open question before writing any code — identity (a dual/triple-lane
+coverage fight, the first fight with two genuinely simultaneous threats),
+how each arm picks its target (its own independent weighted random re-pick,
+not a per-arm aggro table and not Marauder's single-target model), whether
+Marauder's aggro/taunt survives underneath the arms (no — Taunt biases arm
+re-picks instead), which of Marauder's other mechanics carry over (body
+contact damage and the proximity shockwave, unchanged; minions, Pattern
+Barrage, and phase-based ambient fire beyond the arms all dropped), the
+arms' own shape (separate sibling child GameObjects, not logic inside one
+main component), Lockdown volley's exact geometry/telegraph/cooldown, and
+HP/tuning numbers.
+
+### Code architecture: the reusable-arm variant of the sibling-component pattern
+
+Follows Halcyon's established shape (see Session 36 above) — `WardenBoss.cs`
+stays small (HP/phases/contact damage/taunt-window only) with
+`WardenMovement.cs`/`WardenShockwave.cs`/`WardenLockdownVolley.cs` as
+independent sibling `MonoBehaviour`s on the same `Boss` GameObject.
+`WardenArm.cs` is a variant on that same idea rather than a new one: instead
+of one mechanic per sibling component, it's **one reusable component with
+multiple instances** — two (`armA`/`armB`) active from `BossCombat`, a third
+(`armC`) that exists in the scene from the start, starts **inactive**, and
+is permanently activated by `WardenBoss.OnPhase2` via
+`armC.gameObject.SetActive(true)` (the whole child GameObject, sprite tint
+included, not just a component-`enabled` flag — matching how every existing
+phase-2 escalation in this project, Marauder's fire-rate/spread and
+Halcyon's roam-speed/pulse-cooldown, is a one-way switch, not something that
+cycles). Warden is `IBoss`'s third implementer; no changes to the interface
+or its consumers were needed, since that generalization was already done
+for Halcyon.
+
+`WardenArm.PickWeighted` (the taunt-bias target-selection math) was split
+into a public static method taking the ship roster, a small `TauntBias`
+struct, and the random draw as an explicit parameter, rather than reading
+`Random.value` internally — the same "make the draw a parameter so it's
+testable without RNG flakiness" shape this project already uses elsewhere,
+and it's what let Task 10's live verification tally 8000 trials
+deterministically instead of relying on wall-clock RNG sampling.
+
+### Scene wiring (`Level3.unity`)
+
+Removed `Level3BossPlaceholder.prefab`'s `MarauderBoss`/`MinionSpawner` from
+the `Boss` GameObject and added `WardenBoss`/`WardenMovement`/
+`WardenShockwave`/`WardenLockdownVolley` in place, same one-off-per-level
+treatment every boss gets. Added three child GameObjects
+(`ArmA`/`ArmB`/`ArmC` at local `(-1.2,0,0)`/`(1.2,0,0)`/`(0,-1.2,0)`, each
+with a tinted `SpriteRenderer` — cyan/gold/magenta — plus a `WardenArm`),
+with `ArmC` starting inactive. `BossPanel` swapped from `BossPanelUI` to a
+new `WardenBossPanelUI`, reusing the existing HP/phase text objects by
+content and repurposing `BossWarningText`/`BossPatternBarrageWarningText`/
+`BossTargetText`/`BossShockwaveCooldownText`/
+`BossPatternBarrageCooldownText`/`BossGuidedMissileCooldownText` for the
+three arms' warning lines plus Shockwave/Lockdown's own cooldown/warning
+text, rather than adding new UI objects. `WardenBoss.ships` reuses a single
+array field (like `MarauderBoss.targets`) fed the live spawned roster by
+`PartySetupBootstrap`, rather than the design spec's suggested separate
+`wardenArms` array — same effect, less wiring — and this was built in from
+the start rather than discovered live as a bug, unlike the equivalent fix
+for both Marauder and Halcyon.
+
+One real difference from Halcyon's build surfaced during scene inspection:
+`Level3.unity`'s `LevelSequencer.bossObject`/`PartySetupBootstrap.bossObject`
+were already `null` going in, not pointing at the old `MarauderBoss` — this
+scene had apparently never been fully wired even to its own placeholder, so
+this pass was a first wiring rather than a re-wiring. All 4 ships' stale
+`TauntedBy` persistent listeners (pointing at the removed `MarauderBoss`
+component, silently inert but dangling) were found and replaced with fresh
+listeners onto `WardenBoss.TauntedBy`, same cleanup Halcyon's build
+required.
+
+### Verified
+
+Unity MCP bridge, edit-mode (zero console errors/warnings after every
+script change and after the full scene-wiring pass) and Play-mode (driven
+via `EditorApplication.Step()` for deterministic frame-by-frame control —
+see the environment note below). Confirmed through a full sequencing
+walk-through (`Intro` → `FreeMovement` → `MinionPhase1` → `BossEntrance` →
+`BossCombat`): every Warden mechanic starts disabled/`armC` inactive and the
+boss hidden/uncollidable exactly as far as `WaitingForClear`, then flips on
+exactly at `BossEntrance`/`BossCombat`. At `BossCombat`, both arms cycled
+through targets live (`WardenArm.CurrentTargetRole` observed changing
+`null → Support → null → Tank`) and the party's own auto-fire had already
+landed real damage on the boss (130 → 128 HP) with zero extra code,
+confirming `Bullet.cs`'s existing `WardenBoss` dispatch works end-to-end.
+
+Directly verified the taunt-bias math via an 8000-trial reflection-invoked
+tally of `WardenArm.PickWeightedTarget()`: a taunted Tank was picked 50.1%
+of the time (theoretical `3/(3+1+1+1) = 50%` at the default
+`tauntWeightMultiplier = 3`) versus the other three ships at ~16-17.5% each;
+with the taunt window forced expired, a re-tally came back uniform
+(24.7-25.2% across all four). Verified `WardenLockdownVolley` by forcing
+repeated volleys across all three edges: each fired exactly
+`wallBulletCount - wallGapCount = 10` bullets with a direction exactly
+matching `DirectionFor(edge)` (`Right → (-1,0)`, `Top → (0,-1)`, `Left →
+(1,0)`), 10/10 matched with zero mismatches. Froze a Tank at a wall-bullet's
+column and fired directly at it: the bullet was destroyed by the Shield Arc
+child collider roughly 0.7 units before reaching the ship's own body,
+confirming Shield Arc genuinely intercepts a Lockdown-volley bullet, not
+just an incidental hit. Verified Phase 2: landed the boss at exactly 60/130
+HP (below the 65 threshold), confirmed `IsPhase2` flipped `true`, `armC`
+activated exactly once (no duplicate activation on further damage), and
+`WardenLockdownVolley`'s live cooldown recomputed against
+`lockdownCooldownPhase2` (6s) instead of `lockdownCooldown` (9s). A full
+click-through from `LevelSelect`'s Warden card through to live `BossCombat`
+confirmed `WardenBossPanelUI`'s health/phase/arm-warning/cooldown text all
+track real combat state, zero console errors throughout.
+
+**Environment note**: hit the same Editor player-loop-stuck issue documented
+in Sessions 29/36 (`Time.frameCount` frozen despite `Application.isPlaying
+== true` and real time passing), worse than either prior account — the
+usual stop/restart/`refresh_unity` fix didn't clear it this time. Worked
+around entirely by driving the simulation with
+`UnityEditor.EditorApplication.Step()` (pause mode, one deterministic frame
+per call) instead of real-time waits, which turned out to give more
+reliable, reproducible verification than wall-clock waiting would have —
+worth flagging for whoever eventually debugs the MCP bridge/environment
+itself, since this workaround was heavier than expected.
+
+A test-setup wrinkle, not a code bug: the 3 teammates (low max HP by design)
+died to boss/minion fire during accelerated pre-boss/combat stepping more
+than once, requiring reflection-revival mid-verification — the same
+compressed-time-wipe outcome Session 36 already noted, not a Warden-specific
+issue. Also caught a testing-only overshoot: an initial `TakeDamage(200f)`
+aimed at landing exactly on the Phase 2 threshold instead dropped health
+below 0 in the same call, triggering `Die()` — caught before it took effect
+and recovered cleanly via `manage_editor stop` (Play-mode changes discard on
+Stop), then redone with a precisely-sized hit.
+
+An EditMode test-suite run as an extra safety net (not required, but cheap)
+found 6 pre-existing failures (`MarauderBossDamageTests`,
+`PlayerRoleStatsTests`) confirmed via git history to predate this session
+entirely and unrelated to Warden — no `.cs` files were touched by the
+scene-wiring pass, and all `WardenArmTargetingTests`/`WardenBossDamageTests`/
+`WardenLockdownVolleyTests` passed.
+
+### Still open
+
+- **Real human playtest** — same as every prior session's boss/mechanic
+  work, this fight has only been exercised via the Unity MCP bridge.
+- Warden's own numeric tuning (HP, arm timing, taunt bias multiplier,
+  Lockdown volley's geometry/cooldown) are first-pass placeholders like
+  every other balance value in this project, not validated against real
+  play.
+- **Pre-existing, out of scope**: 6 EditMode test failures
+  (`MarauderBossDamageTests`, `PlayerRoleStatsTests`) predate this session
+  and are unrelated to Warden's work — not investigated further here.

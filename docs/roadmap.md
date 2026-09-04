@@ -469,9 +469,9 @@ reference docs live under `systems/`.
   `PauseUI.Restart()`'s existing pattern. Build Settings renumbered
   (`MainMenu`0/`Lobby`1/`JoinLobby`2/`RoleSelect`3/`LevelSelect`4/
   `Level1`5/`Level2`6/`Level3`7); the previously-reserved index 5 for the
-  not-yet-built `DeckBuild.unity` moves to 8. Halcyon's actual boss
-  mechanics were separate, follow-up work — see the next item; Warden's are
-  still not-yet-started. See `systems/scene-flow.md`.
+  not-yet-built `DeckBuild.unity` moves to 8. Halcyon's and Warden's actual
+  boss mechanics were separate, follow-up work — see the next two items.
+  See `systems/scene-flow.md`.
 - **Halcyon (Level 2's boss)** — resolved via a brainstorming session (see
   `docs/superpowers/specs/2026-09-04-halcyon-boss-design.md`) and built:
   a pure positioning fight with no ambient bullets, replacing
@@ -486,6 +486,25 @@ reference docs live under `systems/`.
   can drive either boss type — a scoped exception to this project's
   "no interfaces" convention, see `architecture.md`'s "Boss-type-agnostic
   orchestration: IBoss". See `systems/bosses/halcyon-boss.md`.
+- **Warden (Level 3's boss)** — resolved via a brainstorming session (see
+  `docs/superpowers/specs/2026-09-04-warden-boss-design.md`) and built:
+  a dual/triple-lane coverage fight, replacing `Level3BossPlaceholder.prefab`.
+  Two turret-arms (`WardenArm.cs`, a reusable component with multiple
+  instances rather than a one-off mechanic), a third added permanently at
+  Phase 2, each independently re-locking onto a random living ship and
+  firing a continuous stream — biased (not overridden) toward whoever Tank
+  last taunted, verified live at ~50% pick rate for a taunted ship against
+  `tauntWeightMultiplier = 3` (vs. ~25% uniform baseline). Body contact
+  damage and a proximity shockwave are carried over unchanged from Marauder.
+  The fight's own signature mechanic, Lockdown volley
+  (`WardenLockdownVolley.cs`), fires a wide wall of parallel bullets from a
+  random arena edge specifically to give Tank's Shield Arc width a reason to
+  matter, verified live to be blockable by it. No aggro/threat table, no
+  minions, no Pattern Barrage — Warden's own repertoire is the arms +
+  Lockdown volley, full stop. Warden is `IBoss`'s third implementer — no
+  changes to the interface or its consumers were needed, since that
+  generalization was already done for Halcyon. See
+  `systems/bosses/warden-boss.md` and the design spec above.
 
 ## In Progress
 

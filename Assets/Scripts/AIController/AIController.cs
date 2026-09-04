@@ -201,6 +201,13 @@ public class AIController : MonoBehaviour
             // matching its documented no-op there.
             MarauderBoss marauderBoss = bossObject as MarauderBoss;
             if (marauderBoss != null && marauderBoss.CurrentTarget != gameObject) ability.TryUseAbility();
+
+            // Against Warden, Taunt has a real, always-beneficial effect (biases
+            // arm re-picks toward the Tank) with no "already holding aggro"
+            // concept to gate on - same "fire the instant it's off cooldown"
+            // placeholder trigger every other AI ability already uses by default.
+            WardenBoss wardenBoss = bossObject as WardenBoss;
+            if (wardenBoss != null) ability.TryUseAbility();
             return;
         }
         // Always requests whatever slot continues the rotation correctly, so
