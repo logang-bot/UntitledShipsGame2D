@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    // One system, several shapes, same idiom as Level1Boss.cs's Pattern Barrage - the shape is
+    // One system, several shapes, same idiom as MarauderBoss.cs's Pattern Barrage - the shape is
     // picked at random each wave (no no-repeat guard, unlike Pattern Barrage - simplest change
     // that satisfies "random order" here, since this is the only caller of formationOrder today).
     public enum WaveFormation { Random, Line, Cluster, VFormation }

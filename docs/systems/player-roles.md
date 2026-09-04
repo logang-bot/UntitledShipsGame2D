@@ -78,7 +78,7 @@ blocks re-activation until the current role's cooldown elapses.
 
 - **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. A
   persistent listener redirects the boss's target to the taunter
-  (`Level1Boss.TauntedBy(GameObject)` — see [level1-boss.md](level1-boss.md)'s "Aggro /
+  (`MarauderBoss.TauntedBy(GameObject)` — see [marauder-boss.md](bosses/marauder-boss.md)'s "Aggro /
   targeting"), alongside `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
   feedback.
 - **Tank — Shield Arc** (passive/always-on, independent of Taunt, not
@@ -171,7 +171,7 @@ the single source of truth for ability state so the HUD never duplicates
 cooldown math.
 
 `OnAbility(InputValue)` is a thin wrapper around a public, non-input entry
-point — `TryUseAbility()` — so `AIController.cs` (see [level1-boss.md](level1-boss.md))
+point — `TryUseAbility()` — so `AIController.cs` (see [marauder-boss.md](bosses/marauder-boss.md))
 can trigger a CPU teammate's ability directly, through the exact same
 cooldown gate and role-dispatch switch as the human player. The `Trigger*`
 methods stay private. `OnCombo1/2/3(InputValue)` follow the same pattern
@@ -236,8 +236,8 @@ MMO-raid "tank and spank" mechanic this project is explicitly modeled on
 
 `Enemy.cs` has **no targeting concept at all** — regular wave enemies move
 in a fixed sine-wave and fire on a timer regardless of who or where any
-player is. The real threat-table aggro system lives on `Level1Boss.cs` — see
-[level1-boss.md](level1-boss.md) for the full design (a plain
+player is. The real threat-table aggro system lives on `MarauderBoss.cs` — see
+[marauder-boss.md](bosses/marauder-boss.md) for the full design (a plain
 `Dictionary<GameObject, float>` of damage-dealt-per-target, no decay,
 `TauntedBy(GameObject)` spiking the caster above everyone else).
 
@@ -300,9 +300,11 @@ see above) ever sets them, and only ever via plain assignment.
 
 An in-game role picker: `RoleSelect.unity` (Build Settings index 3, reached
 via `MainMenu` → `Lobby` → `JoinLobby` → `RoleSelect` — see
-[scene-flow.md](scene-flow.md)) and `Gameplay.unity` (gameplay, index 4) — a
-real separate scene, not a same-scene overlay. `RoleSelect` also has a Back
-button (→ `JoinLobby` if the co-op join flow was used, `Lobby` otherwise).
+[scene-flow.md](scene-flow.md)), which now leads to `LevelSelect.unity`
+(index 4) and then whichever level scene is picked (`Level1`/`Level2`/
+`Level3`, indices 5/6/7) — each a real separate scene, not a same-scene
+overlay. `RoleSelect` also has a Back button (→ `JoinLobby` if the co-op
+join flow was used, `Lobby` otherwise).
 
 **`RoleSelect.unity` contents**: a single Screen Space - Overlay `Canvas`
 plus an `EventSystem` (`InputSystemUIInputModule`, matching the project's
@@ -349,7 +351,7 @@ aggro table all stay untouched by this feature.
   `enabled: true`) — never adds/removes either at runtime, only toggles
   `.enabled`, extending the project's existing "same component, two
   callers" dual-entry-point pattern (`../architecture.md`) to "which driver
-  is switched on" instead of "which driver exists." `Gameplay.unity`'s 4
+  is switched on" instead of "which driver exists." Each level scene's 4
   scene ships (`Player`/`Teammate_Tank`/`Teammate_Medic`/`Teammate_Support`)
   are now all real instances of this one prefab, with `Player`'s
   `PlayerInput`/`AIController` overridden to the human shape (`true`/
@@ -357,8 +359,8 @@ aggro table all stay untouched by this feature.
 - **`CoOpRoster.cs`** (new static carrier, same pattern as
   `PartyRoleAssignment.cs`/`GameModeSelection.cs`) — `public static
   List<JoinedPlayer> Players`, each entry holding `controlScheme`,
-  `devices[]` (paired at `JoinLobby`, still valid in `Gameplay` since
-  physical `InputDevice`s persist across scene loads), and `role` (filled
+  `devices[]` (paired at `JoinLobby`, still valid in whichever level scene
+  loads since physical `InputDevice`s persist across scene loads), and `role` (filled
   in by `RoleSelect`). `null` means the co-op flow wasn't used.
 - **`PartySetupBootstrap.cs`** (`[DefaultExecutionOrder(-1000)]`) —
   `Awake()` now checks `CoOpRoster.Players` **first**: if set and non-empty,
@@ -392,7 +394,7 @@ aggro table all stay untouched by this feature.
   assigns the remaining 3 `PlayerRole` enum values (in declaration order,
   skipping the human's pick) to `Teammate_Tank`/`Teammate_Medic`/
   `Teammate_Support`'s `PlayerRoleComponent.role`. If `HumanRole` is also
-  null (e.g. `Gameplay` opened directly, bypassing every menu scene), it
+  null (e.g. `Level1` opened directly, bypassing every menu scene), it
   no-ops, preserving the Inspector-only manual role assignment.
 - **`LevelSequencer.cs` fix (required, not optional)**: `SetShipsFrozen()`'s
   unfreeze branch used to unconditionally re-enable both `PlayerInput` and
@@ -425,14 +427,15 @@ aggro table all stay untouched by this feature.
   `PartyFrameManager` are fully role-agnostic, keyed by GameObject
   reference, never by name.
 - **`VictoryUI.cs`** (mirrors `GameOverUI.cs`) — a `VictoryPanel` under
-  `HUDCanvas`, shown as a listener on `Level1Boss.OnDefeated` (alongside
+  `HUDCanvas`, shown as a listener on `MarauderBoss.OnDefeated` (alongside
   `BossPanelUI.ShowDefeated()`) unless `GameOverPanel` is already showing
   (`gameOverPanelRoot` guard — the AI/other-human teammates can still
   defeat the boss after one human `Player` has already died, since only a
-  human's own death ends the test; see [level1-boss.md](level1-boss.md)'s
-  "Death handling"). `PlayAgain()` reloads `Gameplay` (roles preserved via
-  `PartyRoleAssignment.HumanRole`/`CoOpRoster.Players`, and co-op devices
-  re-pair fresh on the reload); `ChangeRoles()` loads `RoleSelect`.
+  human's own death ends the test; see [marauder-boss.md](bosses/marauder-boss.md)'s
+  "Death handling"). `PlayAgain()` reloads the active level scene (roles
+  preserved via `PartyRoleAssignment.HumanRole`/`CoOpRoster.Players`, and
+  co-op devices re-pair fresh on the reload); `ChangeRoles()` loads
+  `RoleSelect`.
   `GameOverPanel` has a matching "Change Roles" button
   (`GameOverUI.ChangeRoles()`) alongside its Restart, which also doubles
   as "play again, same party."
@@ -441,8 +444,8 @@ aggro table all stay untouched by this feature.
 
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
-| **PlayerRoleComponent**  | role: Attacker (`Ship.prefab` default — overwritten at runtime by the Role Select flow, see "Role Select scene" above; used as-is when `Gameplay` is opened directly) |
-| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/Level1Boss.TauntedBy(self)` (real aggro redirect, see [level1-boss.md](level1-boss.md)) — baked into `Ship.prefab` itself (self-referencing, so every instance gets correct per-ship listeners for free, unlike the pre-`Ship.prefab` setup where each `Teammate_*` needed the same 3 listeners wired by hand) |
+| **PlayerRoleComponent**  | role: Attacker (`Ship.prefab` default — overwritten at runtime by the Role Select flow, see "Role Select scene" above; used as-is when a level scene is opened directly) |
+| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/MarauderBoss.TauntedBy(self)` (real aggro redirect, see [marauder-boss.md](bosses/marauder-boss.md)) — baked into `Ship.prefab` itself (self-referencing, so every instance gets correct per-ship listeners for free, unlike the pre-`Ship.prefab` setup where each `Teammate_*` needed the same 3 listeners wired by hand) |
 
 ## Not yet built
 

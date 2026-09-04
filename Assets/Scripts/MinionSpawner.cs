@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Lives on the Level1Boss GameObject itself (not a separate referenced object like
-// EnemySpawner) - gets a free GetComponent<Level1Boss>() reference in Awake with
+// Lives on the MarauderBoss GameObject itself (not a separate referenced object like
+// EnemySpawner) - gets a free GetComponent<MarauderBoss>() reference in Awake with
 // no Inspector wiring, and is destroyed automatically the instant
-// Level1Boss.Die() destroys the GameObject, so no explicit spawner cleanup is
+// MarauderBoss.Die() destroys the GameObject, so no explicit spawner cleanup is
 // needed either.
 public class MinionSpawner : MonoBehaviour
 {
@@ -17,17 +17,17 @@ public class MinionSpawner : MonoBehaviour
     // rolled independently per spawn, so the mix isn't fixed to a slot.
     [Range(0f, 1f)] public float explosiveMinionChance = 0.3f;
 
-    private Level1Boss boss;
+    private MarauderBoss boss;
     private float nextSpawnTime;
     private bool spawnedLeftLast; // alternate flank sides so minions read as symmetric
 
     void Awake()
     {
-        boss = GetComponent<Level1Boss>();
+        boss = GetComponent<MarauderBoss>();
         if (boss != null) boss.OnDefeated.AddListener(DestroyAllMinions);
     }
 
-    // Fires when Level1Boss.OnEnable() flips this component on, right as the
+    // Fires when MarauderBoss.OnEnable() flips this component on, right as the
     // boss's entrance finishes - spawns both flank minions together so they
     // read as arriving "with" the boss, instead of one immediately and the
     // other up to spawnInterval seconds later with no warning (SpawnMinion()
@@ -66,7 +66,7 @@ public class MinionSpawner : MonoBehaviour
         }
     }
 
-    // Wired to Level1Boss.OnDefeated in Awake - no stray minions survive into the
+    // Wired to MarauderBoss.OnDefeated in Awake - no stray minions survive into the
     // Victory panel once the boss they flank is gone.
     void DestroyAllMinions()
     {

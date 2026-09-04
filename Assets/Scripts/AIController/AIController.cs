@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class AIController : MonoBehaviour
 {
-    public Level1Boss boss;
+    public MonoBehaviour bossObject; // must implement IBoss - MarauderBoss or HalcyonBoss
     public float weaveFrequency = 0.8f;
     public float weaveSpeed = 1f;
 
@@ -71,7 +71,7 @@ public class AIController : MonoBehaviour
     /// <summary>
     /// Applied to every role's computed target point (including Support's
     /// wander) so default positioning never sits inside the boss's body
-    /// contact / shockwave range. Set just outside Level1Boss.shockwaveRadius
+    /// contact / shockwave range. Set just outside MarauderBoss.shockwaveRadius
     /// so normal positioning doesn't self-trigger the shockwave. Tank's
     /// guardBias still leans hard toward the boss for physical blocking -
     /// blocking only requires standing between the boss and the ally it's
@@ -196,7 +196,18 @@ public class AIController : MonoBehaviour
     {
         if (role.role == PlayerRole.Tank)
         {
-            if (boss != null && boss.CurrentTarget != gameObject) ability.TryUseAbility();
+            // Only MarauderBoss has an aggro table to check against - a Tank
+            // never auto-taunts against a boss with no aggro (e.g. Halcyon),
+            // matching its documented no-op there.
+            MarauderBoss marauderBoss = bossObject as MarauderBoss;
+            if (marauderBoss != null && marauderBoss.CurrentTarget != gameObject) ability.TryUseAbility();
+
+            // Against Warden, Taunt has a real, always-beneficial effect (biases
+            // arm re-picks toward the Tank) with no "already holding aggro"
+            // concept to gate on - same "fire the instant it's off cooldown"
+            // placeholder trigger every other AI ability already uses by default.
+            WardenBoss wardenBoss = bossObject as WardenBoss;
+            if (wardenBoss != null) ability.TryUseAbility();
             return;
         }
         // Always requests whatever slot continues the rotation correctly, so
