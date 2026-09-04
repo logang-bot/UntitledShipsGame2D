@@ -139,7 +139,7 @@ explicit-wiring style (no `FindObjectOfType`).
 In `Awake()`, loops over both arrays, computing a display name per slot
 before calling `Initialize`: whichever ship has no `AIController` component
 (present on all 3 `Teammate_*`, absent from `Player` — the same signal
-[level1-boss.md](level1-boss.md) uses for this distinction) is the human and shows
+[marauder-boss.md](bosses/marauder-boss.md) uses for this distinction) is the human and shows
 `"Player 1"`; every other slot shows `"CPU " + n`, numbered in array order
 (so `"CPU 1"`/`"CPU 2"`/`"CPU 3"` for whichever 3 GameObjects aren't the
 human, independent of their current role). Using `AIController` presence
@@ -167,7 +167,7 @@ Key public fields: `players[]`, `partyFrames[]`.
 
 `dpsText` (`DpsText`, directly below `FireRateText` in `InfoColumn`) shows
 this ship's **real** damage-per-second dealt to the boss —
-`Level1Boss.GetDamageDealt(ship) / Level1Boss.CombatElapsed`, read via
+`MarauderBoss.GetDamageDealt(ship) / MarauderBoss.CombatElapsed`, read via
 `PlayerController.boss` (already wired for contact-damage collision, so no
 extra Inspector reference was needed). It is **null-guarded** in `Update()`,
 matching `shieldText`, so a `PartyFrame` instance predating the line keeps
@@ -219,9 +219,9 @@ are sprite-less colored rects. Repaints are throttled to `refreshInterval`
 (0.2s) rather than running every frame, since reformatting four rows of text
 per frame is pure string garbage for no readability gain.
 
-**Data source:** `Level1Boss.GetDamageDealt(GameObject)` and
-`Level1Boss.CombatElapsed` (see
-[level1-boss.md](level1-boss.md)'s "Damage tracking"). The DPS denominator is
+**Data source:** `MarauderBoss.GetDamageDealt(GameObject)` and
+`MarauderBoss.CombatElapsed` (see
+[marauder-boss.md](bosses/marauder-boss.md)'s "Damage tracking"). The DPS denominator is
 time since boss combat began, not since the scene loaded.
 
 When the boss dies its GameObject is destroyed, so the meter freezes on the
@@ -265,13 +265,13 @@ is no `RightSidebar` wrapper):
   details.
 - **BossPanel** — the boss's real HP bar, phase, current target,
   guided-missile warning, and shockwave/guided-missile cooldowns, driven by
-  `BossPanelUI.cs`. Full reference: [level1-boss.md](level1-boss.md).
+  `BossPanelUI.cs`. Full reference: [marauder-boss.md](bosses/marauder-boss.md).
 - **GameOverPanel** — full-rect dark overlay + "Game Over" text + Restart/
   Change Roles buttons, `GameOverUI.cs` attached. Hidden by default (shown
   on `PlayerHealth.OnDeath`). Lives here rather than `GameplayCanvas`
   because it needs to cover the pillarbox bars too. See
   [combat.md](combat.md#gameoverpanel) for the death/restart flow.
-- **VictoryPanel** — mirrors `GameOverPanel`, shown on `Level1Boss.OnDefeated`
+- **VictoryPanel** — mirrors `GameOverPanel`, shown on `MarauderBoss.OnDefeated`
   via `VictoryUI.cs`. See [player-roles.md](player-roles.md)'s "Role Select
   scene".
 
@@ -279,7 +279,7 @@ is no `RightSidebar` wrapper):
 `VictoryUI.gameOverPanelRoot` is dragged to `GameOverPanel` — a
 mutual-exclusion guard so the 3 CPU teammates defeating the boss after the
 human `Player` has already died (they keep fighting; only the human's death
-ends the test, see [level1-boss.md](level1-boss.md)'s "Death handling") can't pop
+ends the test, see [marauder-boss.md](bosses/marauder-boss.md)'s "Death handling") can't pop
 `VictoryPanel` on top of an already-showing `GameOverPanel`, or vice versa.
 Each `Show()` early-returns before activating its own panel if the other's
 is already active — a true no-op, not a flash-then-hide. Boss combat itself

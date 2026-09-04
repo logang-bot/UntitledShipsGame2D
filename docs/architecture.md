@@ -41,7 +41,7 @@ Where a component needs to notify others without knowing who's listening,
 the pattern is a `UnityEvent` wired as an Inspector **persistent**
 listener — not a code-added `AddListener` — matching how `Button.OnClick()`
 is normally wired. Examples: `PlayerHealth.OnDeath`/`OnDamaged`,
-`PlayerAbility.OnTaunt`, `Level1Boss.OnPhase2`/`OnDefeated`.
+`PlayerAbility.OnTaunt`, `MarauderBoss.OnPhase2`/`OnDefeated`.
 
 **One documented exception**: `PartyFrameUI`'s ability-click handler is
 wired via code (`onClick.AddListener(...)`), because a `PartyFrame` prefab
@@ -86,8 +86,8 @@ teammates.
 
 `PartyRoleAssignment` is a plain `public static class` holding a nullable
 `PlayerRole? HumanRole`, used to carry the human player's role choice from
-`RoleSelect.unity` into `Gameplay.unity` across a `SceneManager.LoadScene`
-call. It's explicitly a plain static rather than a singleton
+`RoleSelect.unity` into whichever level scene gets picked, across a
+`SceneManager.LoadScene` call. It's explicitly a plain static rather than a singleton
 `MonoBehaviour` with `DontDestroyOnLoad` — no persistent GameObject to
 manage, and it resets cleanly to `null` on a domain reload.
 
@@ -128,7 +128,7 @@ pattern.
 `LevelSequencer` (see `systems/level-sequencing.md`) owns a level's whole
 pre-fight-to-boss timeline as one linear coroutine, calling public methods
 on other components (`EnemySpawner.StartSpawning()`/`StopSpawning()`,
-toggling `Level1Boss`'s `enabled`/`GameObject.SetActive`) to gate when each
+toggling `MarauderBoss`'s `enabled`/`GameObject.SetActive`) to gate when each
 system runs. This is new *coordination-shape* — nothing else in the
 codebase owns a multi-phase timeline spanning several other components —
 but it doesn't violate any convention above: it's still a plain
@@ -168,7 +168,7 @@ them — each is noted with where it already showed up in practice.
   it's set isn't recorded as a real override, so changing the prefab's
   default later can silently flip that instance too.
 - **Float/int inconsistency in damage types.** `Bullet.damage`/
-  `Enemy.TakeDamage`/`Level1Boss.TakeDamage` are `float`, but
+  `Enemy.TakeDamage`/`MarauderBoss.TakeDamage` are `float`, but
   `PlayerHealth.TakeDamage(int)` stayed `int`. This already caused a real
   bug: `Minion`'s first-pass fractional damage defaults (0.4/0.5) silently
   rounded to zero via `Mathf.RoundToInt`'s round-half-to-even behavior,

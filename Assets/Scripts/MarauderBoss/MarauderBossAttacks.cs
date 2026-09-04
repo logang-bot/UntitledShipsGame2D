@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Level1BossAttacks
+public class MarauderBossAttacks
 {
     public enum BulletPattern { Fan, Ring, Spiral }
 
-    private readonly Level1Boss boss;
+    private readonly MarauderBoss boss;
     private float nextGuidedMissileTime;
     private float nextPatternBarrageTime;
     private BulletPattern? lastPattern;
 
-    public Level1BossAttacks(Level1Boss boss)
+    public MarauderBossAttacks(MarauderBoss boss)
     {
         this.boss = boss;
     }
@@ -135,7 +135,7 @@ public class Level1BossAttacks
     /// <summary>
     /// Re-aims after the telegraph wait, not at activation time - the target
     /// may have moved (or died) during the wind-up, same re-check-after-
-    /// telegraph idiom Level1BossShockwave's ShockwaveRoutine uses.
+    /// telegraph idiom MarauderBossShockwave's ShockwaveRoutine uses.
     /// </summary>
     private Vector2 ComputeAimDirection()
     {

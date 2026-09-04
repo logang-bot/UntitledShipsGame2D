@@ -26,7 +26,7 @@ public TextMeshProUGUI nameText;
 private PlayerAbility playerAbility;
     private bool isDead;
     // The ship's own root GameObject - kept so DPS can be looked up as
-    // Level1Boss.GetDamageDealt(shipObject), the same key TakeDamage()
+    // MarauderBoss.GetDamageDealt(shipObject), the same key TakeDamage()
     // records it under (see PlayerController.SpawnBullet's `gameObject`
     // passed as the bullet's source).
     private GameObject shipObject;
@@ -105,11 +105,11 @@ void Update()
         // theoretical "every normal shot lands" ceiling - that number never
         // moves for combo/Big Shot hits, since those bypass fireDamage
         // entirely (see PlayerAbilityAttacker.TryComboAttack/Trigger).
-        // Level1Boss.GetDamageDealt/CombatElapsed is the same source of
+        // MarauderBoss.GetDamageDealt/CombatElapsed is the same source of
         // truth DpsMeterUI's Recount-style panel reads.
         if (dpsText != null)
         {
-            Level1Boss boss = playerController.boss;
+            MarauderBoss boss = playerController.boss;
             float dps = (boss != null && boss.CombatElapsed > 0f)
                 ? boss.GetDamageDealt(shipObject) / boss.CombatElapsed
                 : 0f;

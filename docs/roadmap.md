@@ -79,19 +79,19 @@ reference docs live under `systems/`.
   with the human `Player` plus 3 **CPU-controlled AI teammates**
   (`AIController.cs`) covering Tank/Medic/Support. Validates the project's
   core design bet — MMO-raid-style role coordination — before any networking
-  exists. Full writeup: `systems/level1-boss.md`.
+  exists. Full writeup: `systems/bosses/marauder-boss.md`.
 
 - **Finish the HUD** — `PartyFrame_1..4` (all instances of
   `Assets/Prefabs/PartyFrame.prefab`) show every player's/teammate's
   role-tinted avatar, live health/move-speed/fire-rate/ability stats, driven
   by an array-based `PartyFrameManager.cs`. `BossPanel` now shows the boss's
   real HP bar, phase, and current-target role, driven by `BossPanelUI.cs`.
-  See `systems/hud-layout.md` and `systems/level1-boss.md`.
+  See `systems/hud-layout.md` and `systems/bosses/marauder-boss.md`.
 
 - **Shrink ship sprites** — `Player`/`Teammate_*` ship scale reduced from
   `1.0` to `0.6` (the `Boss` stays at its larger `1.6` scale so it still
   reads as the central target) — done as part of tuning the boss fight, and
-  leaves room for minions planned around the boss. See `systems/level1-boss.md`.
+  leaves room for minions planned around the boss. See `systems/bosses/marauder-boss.md`.
 
 - **Shield stat + Tank AI positioning** — a second, health-like `shield`
   pool per role (`PlayerHealth.maxShield`/`CurrentShield`, absorbs damage
@@ -102,14 +102,14 @@ reference docs live under `systems/`.
   home). A shield bar was added to the party frame. (Tank later also got a
   Shield Arc — a wider, functional blocking mechanic — see "Fixed per-role
   stats overhaul + ability rework" below.) Full writeup:
-  `systems/level1-boss.md`'s "Tank guard-point positioning / physical blocking".
+  `systems/bosses/marauder-boss.md`'s "Tank guard-point positioning / physical blocking".
 
 - **Boss HP / player damage tuning** — `Boss.maxHealth` doubled (30 → 60)
   and every role's player-dealt fire damage cut 40% (regular fire `1` →
   `0.6`, Attacker's Big Shot `3` → `1.8`); `Bullet.damage` and
   `Enemy.TakeDamage`/`Boss.TakeDamage` changed `int` → `float` to allow the
   fractional values. Boss/enemy-dealt damage is unchanged. See
-  `systems/level1-boss.md`'s "Tuning" section.
+  `systems/bosses/marauder-boss.md`'s "Tuning" section.
 
 - **Medic AI positioning + proximity aura** — Medic teammates default to
   hanging back from the boss (`AIController.BiasedPositionDirection()`,
@@ -129,7 +129,7 @@ reference docs live under `systems/`.
   off cooldown," no need-awareness) — the first version (fire below the
   Medic's *own* HP threshold) turned out to almost never trigger, since
   hanging back means Medic rarely takes damage itself; flagged in code and
-  docs for a smarter, need-aware rework. Full writeup: `systems/level1-boss.md`'s
+  docs for a smarter, need-aware rework. Full writeup: `systems/bosses/marauder-boss.md`'s
   "Medic positioning + aura", `systems/player-roles.md`'s
   "PlayerAbility.cs".
 
@@ -141,7 +141,7 @@ reference docs live under `systems/`.
   Support's fire-rate/damage catch-up via a `fireRateMultiplier`/
   `damageMultiplier` stat pair — that mechanism was fully replaced by the
   fixed-stats overhaul immediately below; Support's cadence/damage are now
-  just direct numbers in the table there.) See `systems/level1-boss.md`'s "Support
+  just direct numbers in the table there.) See `systems/bosses/marauder-boss.md`'s "Support
   roaming positioning".
 
 - **Fixed per-role stats overhaul + ability rework** — replaced the entire
@@ -166,7 +166,7 @@ reference docs live under `systems/`.
   `GetComponentInParent<PlayerHealth>()`, so a hit on this child collider
   still routes to the ship's own health pool). `Boss.maxHealth` also went
   ×1.5 (60 → 90) to give this larger rework enough playtest runway. See
-  `systems/player-roles.md` (full mechanics) and `systems/level1-boss.md` (boss
+  `systems/player-roles.md` (full mechanics) and `systems/bosses/marauder-boss.md` (boss
   HP tuning, cross-references).
 
 - **AI teammate behavior (Attacker)** — `AIController.AttackerPositionDirection()`:
@@ -182,7 +182,7 @@ reference docs live under `systems/`.
   firing ("retry the instant it's off cooldown") needed no change — it
   already worked this way. Completes Tank/Medic/Support/Attacker positioning;
   Tank, Medic, and Support were done in Sessions 12/13/15. See
-  `systems/level1-boss.md`'s "Attacker patrol positioning".
+  `systems/bosses/marauder-boss.md`'s "Attacker patrol positioning".
 
 - **Role Select scene + Victory screen** — a new `RoleSelect.unity` scene
   (Build Settings index 0, entry point) lets the human pick one of the 4
@@ -218,7 +218,7 @@ reference docs live under `systems/`.
   into the new contact/shockwave range — this also fixed a previously-
   documented degenerate case where AI positioning could collapse onto the
   boss once allies died. Resolves this item's "Future work" design
-  questions from `systems/level1-boss.md` (erratic repositioning, telegraphed
+  questions from `systems/bosses/marauder-boss.md` (erratic repositioning, telegraphed
   heavier attacks, curved bullet trajectories); the guided missile
   knowingly loosens (doesn't break) Tank's straight-line-blocking guarantee,
   a confirmed trade-off, not an oversight. A visible world-space ring at
@@ -230,7 +230,7 @@ reference docs live under `systems/`.
   progress-log-archive.md) verified for Attacker's Big Shot) after the
   original knockback proved barely
   noticeable, and added live shockwave/guided-missile cooldown countdowns to
-  `BossPanel` (`"Ready"` at 0). See `systems/level1-boss.md`'s "Movement and
+  `BossPanel` (`"Ready"` at 0). See `systems/bosses/marauder-boss.md`'s "Movement and
   firing", "Body contact damage", "Shockwave", "Guided missile", "Boss
   avoidance", and "BossPanelUI.cs" sections.
 
@@ -249,7 +249,7 @@ reference docs live under `systems/`.
   damage" hazard was reworked to detect off this same overlap check instead
   of a Unity trigger callback (which stopped being reachable once overlap
   is actively prevented) — same cooldown-gated damage as before. See
-  `systems/level1-boss.md`'s "Solid-body collision (ships + boss)".
+  `systems/bosses/marauder-boss.md`'s "Solid-body collision (ships + boss)".
 
 - **Pattern Barrage (geometric bullet spread patterns)** — a new standalone
   boss attack, layered on top of the existing Phase 1/2 fire (unchanged) the
@@ -273,7 +273,7 @@ reference docs live under `systems/`.
   and angle math confirmed for all three shapes, the no-repeat rule held over
   30 consecutive draws, `CheckPatternBarrage()` correctly no-ops with no
   target, and `BossPanelUI`'s new warning/cooldown text tracks live state.
-  See `systems/level1-boss.md`'s "Pattern Barrage".
+  See `systems/bosses/marauder-boss.md`'s "Pattern Barrage".
 
 - **Bullet-dodging + manual ability triggering** — the two halves of this
   roadmap item shipped together. AI teammates now steer away from
@@ -288,7 +288,7 @@ reference docs live under `systems/`.
   human's own frame, interactable state driven by the same
   `CooldownRemaining` the status text already reads. Neither half needed
   any change to `PlayerAbility.cs`'s ability logic itself. See
-  `systems/level1-boss.md`'s "Bullet-dodging" and `systems/player-roles.md`'s
+  `systems/bosses/marauder-boss.md`'s "Bullet-dodging" and `systems/player-roles.md`'s
   "PlayerAbility.cs" (manual triggering) for the full writeups.
 
 - **Minions around the boss** — a new `MinionSpawner.cs` (on the `Boss`
@@ -317,7 +317,7 @@ reference docs live under `systems/`.
   30%) and visually tinted orange, bursts into a ring of 8 more `Bullet`
   fragments on **any** death — bullet-killed or kamikaze alike — reusing
   `Boss.FireRing()`'s exact "evenly-spaced ring, random start offset" idiom
-  with zero changes needed to `Bullet.cs` itself. See `systems/level1-boss.md`'s
+  with zero changes needed to `Bullet.cs` itself. See `systems/bosses/marauder-boss.md`'s
   "Minion.cs / MinionSpawner.cs" (including its "Kamikaze contact +
   Explosive minions" subsection).
 
@@ -325,7 +325,7 @@ reference docs live under `systems/`.
   options (`Random`, `Line`, `Cluster`, `VFormation`; originally a fixed escalating order, changed
   to random as part of the Level 1 rework below), each paired with one of
   3 `Enemy.cs` movement patterns (`SineWave`, `ZigZag`, `StraightDive`) via `MovementPatternFor()`.
-  Follows the same "one system, several shapes" idiom as `Level1Boss.cs`'s Pattern Barrage. See
+  Follows the same "one system, several shapes" idiom as `MarauderBoss.cs`'s Pattern Barrage. See
   `systems/combat.md`'s `Enemy.cs`/`EnemySpawner.cs` sections. Was the last open item under
   "Player-vs-boss dynamics" — that sub-phase is now fully implemented.
 - **Explosive wave enemies** — `Enemy.cs` gained `Minion.cs`'s `Explosive`-type fragment-burst
@@ -431,10 +431,46 @@ reference docs live under `systems/`.
   in the left HUD sidebar, boss damage only, built procedurally. Ships with
   the aggro-roster fix below, since both need the live party roster. See
   `systems/hud-layout.md`.
-- Aggro roster fix: `PartySetupBootstrap` now points `Level1Boss.targets` at
+- Aggro roster fix: `PartySetupBootstrap` now points `MarauderBoss.targets` at
   the ships it actually spawned. Aggro, boss targeting, and Tank's taunt were
-  all inert on the normal (Join Lobby) route into Gameplay before this. See
-  `systems/level1-boss.md`.
+  all inert on the normal (Join Lobby) route into Level1 before this. See
+  `systems/bosses/marauder-boss.md`.
+- **Rename: `Level1Boss` → `MarauderBoss`** — the boss the two upcoming
+  encounters (Halcyon, Warden) are named alongside. Full code rename (the
+  `Level1Boss/` script folder, class, `Level1Boss.prefab`, every
+  Inspector-wired field/`GetComponent<>()` reference across
+  `LevelSequencer`/`PartySetupBootstrap`/`BossPanelUI`/`PlayerController`/
+  `AIController`/`Bullet`/`MinionSpawner`/`Minion`/`DpsMeterUI`/
+  `PartyFrameUI`, and `Level1BossDamageTests`), done through the Unity
+  Editor's own rename so every `.meta` GUID stayed intact — same approach as
+  the original `Boss` → `Level1Boss` rename this one follows. Only the
+  script/class/prefab carry the name; the in-scene `Boss` GameObject stays
+  generic, same convention as before. `docs/systems/level1-boss.md` is now
+  `systems/bosses/marauder-boss.md`. See `systems/bosses/marauder-boss.md`.
+- **Level select screen + per-level scenes** — `RoleSelect`'s Start button now
+  leads to a new `LevelSelect.unity` (three cards: Marauder / Halcyon /
+  Warden, name + flavor line, one click loads that level) instead of a level
+  scene directly, via a new `LevelSelection.cs` static carrier
+  (`GameModeSelection.cs`'s exact pattern). Each level is its own dedicated
+  scene — a single shared scene (toggling which boss GameObject is active)
+  was considered and rejected: it makes accidentally running two bosses at
+  once possible, and concentrates scene-corruption/merge-conflict risk
+  across all three instead of scoping it per level. `Gameplay.unity` (the
+  original scene) was renamed to `Level1.unity` for consistency with the
+  `Level2`/`Level3` scenes this added; `Level2.unity`/`Level3.unity` are
+  duplicates of its full structure, each with its own placeholder boss
+  prefab (`Level2BossPlaceholder.prefab`/`Level3BossPlaceholder.prefab`,
+  copies of `MarauderBoss.prefab`) so a future Marauder tuning pass can't
+  bleed into them — real Halcyon/Warden mechanics replace these placeholders
+  later. Also fixed a latent bug this surfaced: `VictoryUI.PlayAgain()`
+  hardcoded `SceneManager.LoadScene("Gameplay")`, which would have sent a
+  player who just beat Level 2/3 back to Level 1; now reloads
+  `SceneManager.GetActiveScene().buildIndex`, matching `GameOverUI.Restart()`/
+  `PauseUI.Restart()`'s existing pattern. Build Settings renumbered
+  (`MainMenu`0/`Lobby`1/`JoinLobby`2/`RoleSelect`3/`LevelSelect`4/
+  `Level1`5/`Level2`6/`Level3`7); the previously-reserved index 5 for the
+  not-yet-built `DeckBuild.unity` moves to 8. Halcyon/Warden's actual boss
+  mechanics are separate, not-yet-started work. See `systems/scene-flow.md`.
 
 ## In Progress
 
@@ -464,10 +500,12 @@ is independently testable and the one before it de-risks the next.
   Inspector. No loadout screen yet.
 - **Starter card set** — ~20 cards, five per role plus Neutral, split Passive
   and Active.
-- **`DeckBuild.unity` loadout scene** — appended at Build Settings index 5,
-  between `RoleSelect` and `Gameplay` in flow order; single/multi picker
-  mirroring `RoleSelect`; `PartyDeckAssignment` static carrying the result
-  across the scene load.
+- **`DeckBuild.unity` loadout scene** — appended at whatever the next
+  available Build Settings index is when it's built (currently 8, since
+  `LevelSelect`/`Level1`/`Level2`/`Level3` now occupy 4-7), between
+  `RoleSelect` and whichever level scene is chosen in flow order;
+  single/multi picker mirroring `RoleSelect`; `PartyDeckAssignment` static
+  carrying the result across the scene load.
 - **AI decks** — `AIController` playing cards through `PlayerCards.TryPlayCard()`,
   so a solo party fights the same fight a full party does.
 - **Boss spell cards** — named, timed, individually-HP-barred attack phases

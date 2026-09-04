@@ -2,7 +2,7 @@
 
 Shooting, projectiles, damage, health, and enemy waves. See
 [movement.md](movement.md) for ship movement and the fixed-orientation
-design decision that firing direction depends on, and [level1-boss.md](level1-boss.md)
+design decision that firing direction depends on, and [marauder-boss.md](bosses/marauder-boss.md)
 for the boss encounter built on top of this system (boss HP/phases, aggro,
 CPU teammates).
 
@@ -52,7 +52,7 @@ folded into the same position formula before clamping runs.
 
 `OnMove(InputValue)`/`OnFire(InputValue)` are thin wrappers around public,
 non-input entry points — `SetMoveDirection(Vector2)` and `SetFiring(bool)`
-— so `AIController.cs` (see [level1-boss.md](level1-boss.md)) can drive a CPU-controlled
+— so `AIController.cs` (see [marauder-boss.md](bosses/marauder-boss.md)) can drive a CPU-controlled
 teammate's movement/firing directly, without constructing a fake
 `InputValue` (which is only valid inside a real input callback).
 
@@ -88,7 +88,7 @@ code.
 
 `InitHoming(Transform target, float turnRate, float spd, string ownerTag,
 GameObject ownerObj = null)` is an alternate init path used by the boss's
-guided missile (see [level1-boss.md](level1-boss.md)): it re-aims `direction` toward the
+guided missile (see [marauder-boss.md](bosses/marauder-boss.md)): it re-aims `direction` toward the
 target's current position every frame via `Vector3.RotateTowards`, capped
 by `turnRate` (degrees/second), instead of the fixed-at-spawn direction
 `Init()` uses. If the target dies/deactivates mid-flight, the bullet just
@@ -107,10 +107,10 @@ collider still resolves to its own `PlayerHealth` first, since
 ownerTag, GameObject ownerObject = null)` — lets player-fired bullets pass
 their shooter as `ownerObject`, so `OnTriggerEnter2D`'s
 player-bullet-vs-`Enemy`-tag branch — in addition to its
-`Enemy.TakeDamage(damage)` call — also checks for a `Level1Boss` component and
+`Enemy.TakeDamage(damage)` call — also checks for a `MarauderBoss` component and
 calls `boss.TakeDamage(damage, ownerObject)`, attributing the hit to its
-shooter for the boss's aggro system. See [level1-boss.md](level1-boss.md). Both
-`Enemy.TakeDamage`/`Level1Boss.TakeDamage` take a `float amount` — each rounds
+shooter for the boss's aggro system. See [marauder-boss.md](bosses/marauder-boss.md). Both
+`Enemy.TakeDamage`/`MarauderBoss.TakeDamage` take a `float amount` — each rounds
 (`Mathf.RoundToInt`) only at the point it subtracts from its own `int`
 health pool, so no fractional HP appears anywhere. The enemy-bullet-vs-
 `PlayerHealth` branch does the same rounding at its call site, since
@@ -142,7 +142,7 @@ is the symmetric inverse of `TakeDamage(int)` — adds HP, clamped at
 `maxHealth`; `RestoreShield(int)` is the shield equivalent (clamps at
 `maxShield`). Both are called every tick, on any ally within range, by
 Medic's passive proximity aura (`PlayerAbility.TickAura()` — see
-[player-roles.md](player-roles.md) and [level1-boss.md](level1-boss.md)), not on self. No
+[player-roles.md](player-roles.md) and [marauder-boss.md](bosses/marauder-boss.md)), not on self. No
 event fires on either call since `PartyFrameUI` already polls
 `CurrentHealth`/`CurrentShield` every frame, so a heal/shield-restore shows
 up live for free. **No passive shield regen anywhere** — shield only ever
@@ -167,11 +167,11 @@ Purely event-driven, no `Update()`. `Awake()` hides `panelRoot` so it's
 invisible during normal play. `Show()` is wired as a listener on `Player`'s
 `PlayerHealth.OnDeath` — reveals the panel, unless `VictoryPanel` is already
 showing (`victoryPanelRoot` guard — the 3 CPU teammates can still defeat the
-boss after the human dies, see [level1-boss.md](level1-boss.md)'s "Death handling" for the
+boss after the human dies, see [marauder-boss.md](bosses/marauder-boss.md)'s "Death handling" for the
 mutual-exclusion guard with `VictoryUI.cs`). `Restart()` is wired to the
 panel's Restart `Button.OnClick()` — calls
 `SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex)`, reloading
-`Gameplay` from scratch so every stateful script (`PlayerHealth`,
+the active level scene from scratch so every stateful script (`PlayerHealth`,
 `EnemySpawner`, `PartyFrameManager`, ...) resets itself via its own
 `Awake`/`Start`, with no hand-written reset logic needed. `ChangeRoles()`
 loads `RoleSelect` instead (see [player-roles.md](player-roles.md)'s "Role
@@ -189,7 +189,7 @@ GameObject (see [player-roles.md](player-roles.md)).
 Flashes the ship's sprite on a non-fatal hit. Wired as a listener on
 `PlayerHealth.OnDamaged`, and also on `PlayerAbility.OnTaunt` as Tank-ability
 feedback (see [player-roles.md](player-roles.md)), alongside the real
-`Level1Boss.TauntedBy()` aggro-redirect listener (see [level1-boss.md](level1-boss.md)).
+`MarauderBoss.TauntedBy()` aggro-redirect listener (see [marauder-boss.md](bosses/marauder-boss.md)).
 `Flash()` restarts the coroutine (`StopCoroutine` + `StartCoroutine`) so
 rapid hits re-flash at full brightness instead of stacking or blending. A
 `Flash(Color)` overload lets other systems (Medic's heal) use a distinct
@@ -231,7 +231,7 @@ below for why), tag `Enemy`, an `EnemyBullet` prefab reference.
 Periodic downward fire (staggered per-instance via random initial delay),
 takes damage via `TakeDamage(float)`, self-destructs at 0 HP or when
 off-screen. **Kamikaze contact damage** — same shape as
-`Minion.ApplyContactDamage` (see [level1-boss.md](level1-boss.md)): a ship
+`Minion.ApplyContactDamage` (see [marauder-boss.md](bosses/marauder-boss.md)): a ship
 overlapping an `Enemy` (via `PlayerController.ResolveShipCollisions()`,
 same manual-overlap idiom used for allies/boss/minions, not a Unity
 trigger callback) takes `contactDamage` (1) once and the `Enemy` dies
@@ -247,7 +247,7 @@ in `Start()`. Movement is one of three shapes selected by the public
 `movementPattern` field (nested `MovementPattern` enum: `SineWave`, `ZigZag`,
 `StraightDive`), set externally by `EnemySpawner.cs` right after
 `Instantiate()` — before `Start()` runs next frame, the same safe
-assign-before-`Start()` ordering `Level1Boss.SpawnBullet()` already relies on for
+assign-before-`Start()` ordering `MarauderBoss.SpawnBullet()` already relies on for
 `Bullet.damage`. Defaults to `SineWave`, so any stray direct-prefab spawn
 that skips the spawner behaves exactly as it always has:
 
@@ -264,13 +264,13 @@ that skips the spawner behaves exactly as it always has:
 
 **Static registry** — `public static readonly List<Enemy> Active`,
 populated in `Awake()`/depopulated in `OnDestroy()`, same pattern as
-`Bullet.Active`/`Minion.Active` (see [level1-boss.md](level1-boss.md)).
+`Bullet.Active`/`Minion.Active` (see [marauder-boss.md](bosses/marauder-boss.md)).
 Added so `LevelSequencer` can detect "zero enemies on screen" before
 starting the boss's entrance — see
 [level-sequencing.md](level-sequencing.md).
 
 **Explosive death** — ported from `Minion.cs`'s `MinionType`/fragment-burst
-mechanic (see [level1-boss.md](level1-boss.md)'s "Minion.cs /
+mechanic (see [marauder-boss.md](bosses/marauder-boss.md)'s "Minion.cs /
 MinionSpawner.cs"), same idiom: a nested `EnemyType` enum (`Standard`,
 `Explosive`), and a public `Init(MovementPattern, EnemyType)` — replacing
 `EnemySpawner`'s old bare `movementPattern = ...` field assignment — that
@@ -288,7 +288,7 @@ kamikaze (`ApplyContactDamage`) paths already funnel through this same
 method. Each fragment's `SpriteRenderer` is also tinted to
 `explosiveTintColor` right after `Init()`, so it visually reads as a piece
 of the enemy that exploded rather than a plain bullet (same tweak applied
-to `Minion.cs`'s fragments — see [level1-boss.md](level1-boss.md)). A `Standard` enemy's `Die()` is unaffected (no burst).
+to `Minion.cs`'s fragments — see [marauder-boss.md](bosses/marauder-boss.md)). A `Standard` enemy's `Die()` is unaffected (no burst).
 
 Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`,
 `movementPattern`, `zigzagInterval`, `zigzagSpeed`, `diveSpeedMultiplier`,
@@ -315,7 +315,7 @@ spawn half its enemies) are called externally by `LevelSequencer` instead.
 Each wave picks a **formation** (nested `WaveFormation` enum: `Random`,
 `Line`, `Cluster`, `VFormation`) from the public `formationOrder` array, at
 random (`formationOrder[Random.Range(0, formationOrder.Length)]`) — no
-no-repeat guard, unlike `Level1Boss.cs`'s Pattern Barrage random-no-repeat
+no-repeat guard, unlike `MarauderBoss.cs`'s Pattern Barrage random-no-repeat
 pick; this is the only caller of `formationOrder` today, so the plain
 random pick was the simplest change that satisfies "random order." Each
 formation pairs one spawn shape with one `Enemy.MovementPattern`

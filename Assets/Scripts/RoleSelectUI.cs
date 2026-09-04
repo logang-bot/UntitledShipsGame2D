@@ -40,9 +40,9 @@ public class RoleSelectUI : MonoBehaviour
         if (!selectedRole.HasValue) return;
 
         // Exactly 1 human joined through JoinLobby still needs to carry a
-        // paired device into Gameplay via CoOpRoster - only a true
-        // direct-scene-open (CoOpRoster.Players == null) uses the older
-        // PartyRoleAssignment single-field carrier.
+        // paired device into whichever level scene gets picked via
+        // CoOpRoster - only a true direct-scene-open (CoOpRoster.Players ==
+        // null) uses the older PartyRoleAssignment single-field carrier.
         if (CoOpRoster.Players != null && CoOpRoster.Players.Count == 1)
         {
             JoinedPlayer entry = CoOpRoster.Players[0];
@@ -53,7 +53,7 @@ public class RoleSelectUI : MonoBehaviour
         {
             PartyRoleAssignment.HumanRole = selectedRole.Value;
         }
-        SceneManager.LoadScene("Gameplay");
+        SceneManager.LoadScene("LevelSelect");
     }
 
     public void Back()

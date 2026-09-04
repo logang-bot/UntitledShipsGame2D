@@ -1,17 +1,17 @@
 using System.Collections;
 using UnityEngine;
 
-public class Level1BossShockwave
+public class MarauderBossShockwave
 {
     private const int RingSegments = 32;
 
-    private readonly Level1Boss boss;
+    private readonly MarauderBoss boss;
     private LineRenderer ring;
     private bool isTelegraphing;
     private float impactFlashUntil;
     private float nextCheckTime;
 
-    public Level1BossShockwave(Level1Boss boss)
+    public MarauderBossShockwave(MarauderBoss boss)
     {
         this.boss = boss;
     }

@@ -3,7 +3,7 @@ using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 
-// Covers Level1Boss's damage-tracking table (the data behind DpsMeterUI) and
+// Covers MarauderBoss's damage-tracking table (the data behind DpsMeterUI) and
 // the aggro/target invariants it has to stay separate from.
 //
 // Same harness approach as PlayerHealthTests: AddComponent<T>() in this
@@ -11,11 +11,11 @@ using UnityEngine;
 // explicitly by reflection. OnEnable() is deliberately NOT invoked - it calls
 // StartCoroutine, which has no meaning outside Play mode. That's why
 // CombatElapsed is only asserted in its pre-combat state here.
-public class Level1BossDamageTests
+public class MarauderBossDamageTests
 {
-    private static readonly MethodInfo AwakeMethod = typeof(Level1Boss)
+    private static readonly MethodInfo AwakeMethod = typeof(MarauderBoss)
         .GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
-    private static readonly MethodInfo PickTargetMethod = typeof(Level1Boss)
+    private static readonly MethodInfo PickTargetMethod = typeof(MarauderBoss)
         .GetMethod("PickTarget", BindingFlags.NonPublic | BindingFlags.Instance);
 
     private readonly List<GameObject> created = new List<GameObject>();
@@ -27,17 +27,17 @@ public class Level1BossDamageTests
         return go;
     }
 
-    private Level1Boss CreateBoss(params GameObject[] targets)
+    private MarauderBoss CreateBoss(params GameObject[] targets)
     {
         GameObject go = new GameObject("TestBoss");
         created.Add(go);
-        Level1Boss boss = go.AddComponent<Level1Boss>();
+        MarauderBoss boss = go.AddComponent<MarauderBoss>();
         boss.targets = targets;
         AwakeMethod.Invoke(boss, null);
         return boss;
     }
 
-    private static void PickTarget(Level1Boss boss)
+    private static void PickTarget(MarauderBoss boss)
     {
         PickTargetMethod.Invoke(boss, null);
     }
@@ -59,7 +59,7 @@ public class Level1BossDamageTests
     {
         GameObject a = Ship("A");
         GameObject b = Ship("B");
-        Level1Boss boss = CreateBoss(a, b);
+        MarauderBoss boss = CreateBoss(a, b);
 
         Assert.AreEqual(0f, boss.GetDamageDealt(a));
         Assert.AreEqual(0f, boss.GetDamageDealt(b));
@@ -68,7 +68,7 @@ public class Level1BossDamageTests
     [Test]
     public void GetDamageDealt_NullSource_ReturnsZero()
     {
-        Level1Boss boss = CreateBoss(Ship("A"));
+        MarauderBoss boss = CreateBoss(Ship("A"));
 
         Assert.AreEqual(0f, boss.GetDamageDealt(null));
     }
@@ -76,7 +76,7 @@ public class Level1BossDamageTests
     [Test]
     public void GetDamageDealt_UnknownSource_ReturnsZeroRatherThanThrowing()
     {
-        Level1Boss boss = CreateBoss(Ship("A"));
+        MarauderBoss boss = CreateBoss(Ship("A"));
 
         Assert.AreEqual(0f, boss.GetDamageDealt(Ship("NeverDealtAnything")));
     }
@@ -88,7 +88,7 @@ public class Level1BossDamageTests
     {
         GameObject a = Ship("A");
         GameObject b = Ship("B");
-        Level1Boss boss = CreateBoss(a, b);
+        MarauderBoss boss = CreateBoss(a, b);
 
         boss.TakeDamage(2f, a);
         boss.TakeDamage(3f, a);
@@ -105,7 +105,7 @@ public class Level1BossDamageTests
         // pool rounds, but the meter must not - three Medic shots should read
         // as 2.1, not 2.
         GameObject medic = Ship("Medic");
-        Level1Boss boss = CreateBoss(medic);
+        MarauderBoss boss = CreateBoss(medic);
 
         boss.TakeDamage(0.7f, medic);
         boss.TakeDamage(0.7f, medic);
@@ -122,7 +122,7 @@ public class Level1BossDamageTests
         // targets[] shows up on the meter instead of silently vanishing.
         GameObject known = Ship("Known");
         GameObject stranger = Ship("Stranger");
-        Level1Boss boss = CreateBoss(known);
+        MarauderBoss boss = CreateBoss(known);
 
         boss.TakeDamage(4f, stranger);
 
@@ -132,7 +132,7 @@ public class Level1BossDamageTests
     [Test]
     public void TakeDamage_NullSource_DoesNotThrow_AndStillCostsHealth()
     {
-        Level1Boss boss = CreateBoss(Ship("A"));
+        MarauderBoss boss = CreateBoss(Ship("A"));
         int before = boss.CurrentHealth;
 
         Assert.DoesNotThrow(() => boss.TakeDamage(3f, null));
@@ -150,7 +150,7 @@ public class Level1BossDamageTests
         // top damage dealer in the party.
         GameObject attacker = Ship("Attacker");
         GameObject tank = Ship("Tank");
-        Level1Boss boss = CreateBoss(attacker, tank);
+        MarauderBoss boss = CreateBoss(attacker, tank);
 
         boss.TakeDamage(20f, attacker);
         boss.TakeDamage(3f, tank);
@@ -170,7 +170,7 @@ public class Level1BossDamageTests
         // have broken taunt itself.
         GameObject attacker = Ship("Attacker");
         GameObject tank = Ship("Tank");
-        Level1Boss boss = CreateBoss(attacker, tank);
+        MarauderBoss boss = CreateBoss(attacker, tank);
 
         boss.TakeDamage(20f, attacker);
         PickTarget(boss);
@@ -193,7 +193,7 @@ public class Level1BossDamageTests
         // whatever Awake() picked and never able to retarget.
         GameObject active = Ship("Active");
         GameObject inactive = Ship("Inactive");
-        Level1Boss boss = CreateBoss(active, inactive);
+        MarauderBoss boss = CreateBoss(active, inactive);
 
         boss.TakeDamage(50f, inactive);
         inactive.SetActive(false);
@@ -211,7 +211,7 @@ public class Level1BossDamageTests
         // The clock starts in OnEnable (when LevelSequencer hands over to boss
         // combat), so it must read exactly 0 beforehand - DpsMeterUI divides by
         // it and relies on this to avoid a divide-by-zero.
-        Level1Boss boss = CreateBoss(Ship("A"));
+        MarauderBoss boss = CreateBoss(Ship("A"));
 
         Assert.AreEqual(0f, boss.CombatElapsed);
     }

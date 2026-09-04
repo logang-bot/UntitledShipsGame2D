@@ -14,7 +14,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   see "Local co-op" below) or **Online** — Online is a disabled placeholder
   button, since there's no Nakama backend yet. Role Select (now index 3)
   gained a Back button (to `JoinLobby` or `Lobby`). Mid-run, pressing
-  **Escape** (or a gamepad's **Start**) in `Gameplay` pauses (freezes the
+  **Escape** (or a gamepad's **Start**) during a level scene pauses (freezes the
   game via `Time.timeScale`, shows Resume/Restart/Change Roles/Quit to Main
   Menu) — disabled while Game Over/Victory is already showing, and will
   auto-disable once Online mode is real. See
@@ -75,14 +75,18 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   9:16 portrait aspect ratio and adapts automatically: full-width on
   narrow/phone-like aspects, pillarboxed with HUD sidebar space on wider
   desktop aspects. See [systems/hud-layout.md](systems/hud-layout.md).
-- **Role Select + Victory screens** — `RoleSelect.unity` shows either the
-  original single 4-button picker (0-1 players joined at `JoinLobby` — pick
-  one of the 4 roles and press Start) or, with 2+ local co-op players
-  joined, a row-per-player picker (see "Local co-op" above); whichever roles
-  nobody picked auto-fill with AI. Defeating the boss shows a `VictoryPanel`
-  (mirrors Game Over) offering "Play Again" (same party, same roles/devices)
-  or "Change Roles" (back to Role Select); Game Over has a matching "Change
-  Roles" button alongside its Restart. See
+- **Role Select + Level Select + Victory screens** — `RoleSelect.unity` shows
+  either the original single 4-button picker (0-1 players joined at
+  `JoinLobby` — pick one of the 4 roles and press Start) or, with 2+ local
+  co-op players joined, a row-per-player picker (see "Local co-op" above);
+  whichever roles nobody picked auto-fill with AI. Start now leads to
+  `LevelSelect.unity`, a 3-card picker (**Marauder** / **Halcyon** / **Warden**
+  — see [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)) that loads the
+  chosen level's own scene. Defeating the boss shows a `VictoryPanel`
+  (mirrors Game Over) offering "Play Again" (same level, same party/roles/
+  devices) or "Change Roles" (back to Role Select); Game Over has a matching
+  "Change Roles" button alongside its Restart. See
+  [systems/scene-flow.md](systems/scene-flow.md) and
   [systems/player-roles.md](systems/player-roles.md)'s "Role Select scene".
 - **Level 1 sequencing** — the fight is now a scripted opening, not an
   instant drop-in. The 4 ships start below the visible screen and glide up
@@ -121,7 +125,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   the same shape twice in a row), with `BossPanel` naming the incoming shape
   during the wind-up and showing its own cooldown countdown. AI teammates
   keep a minimum distance from the boss by default so they don't wander into
-  the contact/shockwave range. See [systems/level1-boss.md](systems/level1-boss.md)'s
+  the contact/shockwave range. See [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s
   "Movement and firing", "Body contact damage", "Shockwave", "Guided
   missile", "Pattern Barrage", and "BossPanelUI.cs" sections. 3 CPU-controlled AI teammates
   (`Teammate_Tank`/`Teammate_Medic`/`Teammate_Support`) fight alongside the
@@ -141,7 +145,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   balanced mid-distance (not as close as Tank, not as far back as Medic) —
   since ships never rotate and shots only ever fire straight up, tracking
   the boss's X is what keeps its shots actually landing as the boss moves
-  (see [systems/level1-boss.md](systems/level1-boss.md)'s "Attacker patrol positioning").
+  (see [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s "Attacker patrol positioning").
   *(Written for the single-human default; with 2+ local co-op players
   joined — see "Local co-op" above — the same per-role behavior applies to
   whichever roles end up AI-controlled, and `Teammate_Tank`/`_Medic`/
@@ -156,14 +160,14 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   the boss's live HP bar, phase, current target, guided-missile warning,
   pattern-barrage warning, and shockwave/guided-missile/pattern-barrage
   cooldowns. See
-  [systems/level1-boss.md](systems/level1-boss.md).
+  [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md).
 - **Solid-body collision** — no two ships (human or AI) can occupy the same
   space, and no ship can occupy the boss's body either; each ship resolves
   its own position against every other ship and the boss every frame
   (`ShipCollisionUtil.cs`, an exact box-vs-box push-out, not a physics
   simulation). Touching the boss still deals contact damage — detection now
   comes from this same overlap check instead of a physics trigger callback.
-  See [systems/level1-boss.md](systems/level1-boss.md)'s "Solid-body collision".
+  See [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s "Solid-body collision".
 - **Bullet-dodging + manual ability triggering** — the 3 AI teammates now
   steer away from incoming enemy fire that's on an imminent collision
   course (a sideways step out of the bullet's path, blended into whatever
@@ -173,14 +177,14 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   (bottom of its party frame) to force that teammate's ability to fire
   right now, subject to its own cooldown — the human's own frame has no
   such button, since **E** already does this for the human. See
-  [systems/level1-boss.md](systems/level1-boss.md)'s "Bullet-dodging" and
+  [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s "Bullet-dodging" and
   [systems/player-roles.md](systems/player-roles.md)'s "PlayerAbility.cs".
 - **Minions around the boss** — up to 2 smaller enemy ships flank the boss
   at once, tracking its position and always firing at whoever currently
   holds the boss's own aggro (so Tank taunt redirects them too). They start
   spawning the instant boss combat begins — not any earlier, and not during
   the boss's own entrance glide (`MinionSpawner` only enables once
-  `Level1Boss` does; see
+  `MarauderBoss` does; see
   [systems/level-sequencing.md](systems/level-sequencing.md)'s "Boss
   visibility/collision") — and keep spawning throughout the whole
   fight. They're solid (ships push off them) and **kamikaze** — touching one
@@ -191,7 +195,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   orange — killing one any way (contact or shot down) bursts it into a ring
   of 8 fragments that fly outward and can hit any nearby ship, including the
   one that killed it, so shooting one from a distance isn't automatically
-  safe. See [systems/level1-boss.md](systems/level1-boss.md)'s "Minion.cs /
+  safe. See [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s "Minion.cs /
   MinionSpawner.cs".
 
 - **Enemy spawn pattern variety** — the minion wave system (`EnemySpawner.cs`) picks a formation
@@ -210,7 +214,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 - **DPS on the party frame** — each frame now shows a live `DPS:` line below
   Fire Rate, driven by real damage dealt to the boss
-  (`Level1Boss.GetDamageDealt(ship) / CombatElapsed`), not the theoretical
+  (`MarauderBoss.GetDamageDealt(ship) / CombatElapsed`), not the theoretical
   `fireDamage x shotsPerSecond` ceiling — switched once the Attacker combo
   landed, since combo/Big Shot hits bypass `fireDamage` and never moved the
   old number. See [systems/hud-layout.md](systems/hud-layout.md)'s "DPS line".
@@ -226,7 +230,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   its own panel, rows, and bars on `Start()`. See
   [systems/hud-layout.md](systems/hud-layout.md)'s "DpsMeterUI.cs".
 - **Aggro now works on the normal route into the game** — previously
-  `Level1Boss` built its aggro table from the four Inspector-wired
+  `MarauderBoss` built its aggro table from the four Inspector-wired
   `targets[]` objects, which the co-op spawner deactivates and replaces with
   freshly-spawned ships. So on any run that went through Join Lobby (i.e.
   the normal flow, including a single player), no ship was in the aggro
@@ -234,7 +238,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   disabled marker for the entire fight, and Tank's taunt silently did
   nothing. `PartySetupBootstrap` now assigns `boss.targets = spawned`
   alongside the roster assignments it already made. See
-  [systems/level1-boss.md](systems/level1-boss.md)'s "Aggro roster comes from
+  [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s "Aggro roster comes from
   `targets[]`".
 
 ## What's NOT there yet
@@ -243,11 +247,12 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   machines) — Lobby's **Online** option is a disabled placeholder until
   Nakama networking lands. Local co-op (multiple humans on *one* machine) is
   implemented — see the "Local co-op" bullet above.
-- Five scenes now exist: `MainMenu.unity` (0), `Lobby.unity` (1),
-  `JoinLobby.unity` (2), `RoleSelect.unity` (3), `Gameplay.unity` (4) — see
+- Eight scenes now exist: `MainMenu.unity` (0), `Lobby.unity` (1),
+  `JoinLobby.unity` (2), `RoleSelect.unity` (3), `LevelSelect.unity` (4),
+  `Level1.unity` (5), `Level2.unity` (6), `Level3.unity` (7) — see
   [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
-  are same-scene UI overlays within `Gameplay`, not separate scenes (see
-  [systems/combat.md](systems/combat.md)).
+  are same-scene UI overlays within whichever level scene is active, not
+  separate scenes (see [systems/combat.md](systems/combat.md)).
 - No real art — the avatar slot and every ship are placeholder colored
   squares, no audio.
 
@@ -267,21 +272,25 @@ real networking last, then art/audio.
    Mouse), then click **Continue** to load `RoleSelect`. Click one of the 4
    role buttons (Attacker/Tank/Medic/Support — this is the role the human
    `Player` will use), then click **Start** once it's enabled. This loads
-   `Gameplay` and auto-assigns the 3 remaining roles to 3 AI ships (any of
-   the 4 you didn't pick, exactly once each). *(Opening `Gameplay` directly
-   instead and pressing Play still works too, bypassing every menu scene
-   entirely, and falls back to whatever roles are currently hand-set on
-   `Player`/`Teammate_*` in the Inspector — useful for quick iteration. A
-   Back button on Lobby/JoinLobby/Role Select lets you step back a screen at
-   a time instead.)*
+   `LevelSelect` — click a card (**Marauder**, **Halcyon**, or **Warden**;
+   only Marauder has real boss mechanics right now, see
+   [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)) to load that
+   level's scene, which auto-assigns the 3 remaining roles to 3 AI ships (any
+   of the 4 you didn't pick, exactly once each). *(Opening `Level1`/
+   `Level2`/`Level3` directly instead and pressing Play still works too,
+   bypassing every menu scene entirely, and falls back to whatever roles are
+   currently hand-set on `Player`/`Teammate_*` in the Inspector — useful for
+   quick iteration. A Back button on Lobby/JoinLobby/Role Select/Level Select
+   lets you step back a screen at a time instead.)*
 3. *(Optional, local co-op)* At `JoinLobby`, connect one or more gamepads and
    press a button on each to join additional players (up to 4 total) — each
    claims its own slot, shown live. Click **Continue** once everyone's
    joined; with 2+ players, `RoleSelect` shows a row per player instead of
    the single picker — move each row's highlight with that player's own
    dpad/stick or WASD and confirm with South/Enter to lock a role (no two
-   rows can lock the same one). Click **Start** once every row is locked.
-   Any role nobody picked is filled by AI, same as the single-player flow.
+   rows can lock the same one). Click **Start** once every row is locked,
+   then pick a level at `LevelSelect` as above. Any role nobody picked is
+   filled by AI, same as the single-player flow.
 4. Watch the opening sequence play out automatically: all 4 ships glide up
    from below the screen into their starting line (~4s, no input works
    yet), then control hands over fully for ~4s of free movement before

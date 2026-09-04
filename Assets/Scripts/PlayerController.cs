@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
     public float recoilDamping = 8f;
 
     [Header("Collision")]
-    public Level1Boss boss;
+    public MarauderBoss boss;
 
     private Rigidbody2D rb;
     private Camera cam;

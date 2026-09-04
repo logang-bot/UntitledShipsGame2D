@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Level1Boss : MonoBehaviour
+public class MarauderBoss : MonoBehaviour
 {
     [Header("Health / Phases")]
     public int maxHealth = 150; // was 90 - bumped again now the boss stands still and fires less, so the fight still takes real time
@@ -12,18 +12,18 @@ public class Level1Boss : MonoBehaviour
     [Header("Movement — pattern")]
     // Off for now while the attacker-combo rotation is being tuned - a
     // stationary boss is a stable target to test damage rotation against.
-    // Level1BossMovement itself is untouched, so this is a one-line revert.
+    // MarauderBossMovement itself is untouched, so this is a one-line revert.
     public bool enableMovementPattern = false;
     // Scripted movement, not AI: hops in random order between the fixed
     // vertices of an "M" shape via real eased travel (never a snap/teleport)
-    // - see Level1BossMovement. Loops unchanged across both phases.
+    // - see MarauderBossMovement. Loops unchanged across both phases.
     public float sideOffsetX = 2.2f;
     // Per-hop travel duration is randomized within this range every hop -
     // the low end can be fast enough to read as a sudden dart between points.
     public float patternMoveDurationMin = 0.4f;
     public float patternMoveDurationMax = 2f;
     // How long the boss sits still at a vertex before hopping to the next
-    // one, randomized within this range each time - see Level1BossMovement.
+    // one, randomized within this range each time - see MarauderBossMovement.
     public float cycleGapMin = 0.5f;
     public float cycleGapMax = 2.5f;
     public float maxAdvanceFraction = 0.4f; // "2/5 of the screen" - fraction of playable height below homeY the boss may advance into
@@ -58,7 +58,7 @@ public class Level1Boss : MonoBehaviour
     // Always-visible dim ring at shockwaveRadius so the danger zone reads
     // before it ever triggers; pulses to a bright warning color during the
     // telegraph wind-up, then flashes on the frame it actually hits. See
-    // Level1BossShockwave for the LineRenderer setup.
+    // MarauderBossShockwave for the LineRenderer setup.
     public Color shockwaveRingColor = new Color(1f, 0.4f, 0.1f, 0.25f);
     public Color shockwaveRingTelegraphColor = new Color(1f, 0.15f, 0.1f, 0.85f);
     public Color shockwaveRingImpactColor = new Color(1f, 0.9f, 0.3f, 1f);
@@ -77,7 +77,7 @@ public class Level1Boss : MonoBehaviour
 
     [Header("Pattern Barrage")]
     // One attack, three shapes - randomly picked each activation, never the
-    // same shape twice in a row (see Level1BossAttacks.PickPattern()).
+    // same shape twice in a row (see MarauderBossAttacks.PickPattern()).
     public float patternBarrageCooldown = 7f;
     public float patternBarrageTelegraphTime = 0.7f;
     public int fanBulletCount = 5;
@@ -102,7 +102,7 @@ public class Level1Boss : MonoBehaviour
     public bool IsPhase2 { get; private set; }
     public GameObject CurrentTarget { get; private set; }
     public PlayerRole? GuidedMissileTargetRole => attacks.GuidedMissileTargetRole;
-    public Level1BossAttacks.BulletPattern? PatternBarrageActivePattern => attacks.PatternBarrageActivePattern;
+    public MarauderBossAttacks.BulletPattern? PatternBarrageActivePattern => attacks.PatternBarrageActivePattern;
     public float ShockwaveCooldownRemaining => shockwave.CooldownRemaining;
     public float GuidedMissileCooldownRemaining => attacks.GuidedMissileCooldownRemaining;
     public float PatternBarrageCooldownRemaining => attacks.PatternBarrageCooldownRemaining;
@@ -119,9 +119,9 @@ public class Level1Boss : MonoBehaviour
     private SpriteRenderer sr;
     private Collider2D col;
     private MinionSpawner minionSpawner;
-    private Level1BossMovement movement;
-    private Level1BossShockwave shockwave;
-    private Level1BossAttacks attacks;
+    private MarauderBossMovement movement;
+    private MarauderBossShockwave shockwave;
+    private MarauderBossAttacks attacks;
 
     void Awake()
     {
@@ -141,9 +141,9 @@ public class Level1Boss : MonoBehaviour
 
     private void CreateHelpers()
     {
-        movement = new Level1BossMovement(this);
-        shockwave = new Level1BossShockwave(this);
-        attacks = new Level1BossAttacks(this);
+        movement = new MarauderBossMovement(this);
+        shockwave = new MarauderBossShockwave(this);
+        attacks = new MarauderBossAttacks(this);
         shockwave.CreateRing();
     }
 

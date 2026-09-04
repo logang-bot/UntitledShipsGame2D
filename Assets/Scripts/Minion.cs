@@ -5,7 +5,7 @@ public class Minion : MonoBehaviour
 {
     // Lets PlayerController resolve ship/minion collisions without a
     // fixed-size array - minions are spawned/destroyed at runtime by
-    // MinionSpawner, unlike the hand-placed Player/Teammate_*/Level1Boss. Same
+    // MinionSpawner, unlike the hand-placed Player/Teammate_*/MarauderBoss. Same
     // pattern as Bullet.Active.
     public static readonly List<Minion> Active = new List<Minion>();
 
@@ -49,7 +49,7 @@ public class Minion : MonoBehaviour
 
     public Vector2 HalfExtents { get; private set; }
 
-    private Level1Boss boss;
+    private MarauderBoss boss;
     private Vector2 flankOffset;
     private float wobblePhase;
     private float nextFireTime;
@@ -70,7 +70,7 @@ public class Minion : MonoBehaviour
     // and its type. Type has to flow in here rather than being set directly
     // on the field post-Instantiate, since Awake() (which would need it for
     // the tint below) already ran by then.
-    public void Init(Level1Boss owner, Vector2 offset, MinionType minionType = MinionType.Standard)
+    public void Init(MarauderBoss owner, Vector2 offset, MinionType minionType = MinionType.Standard)
     {
         boss = owner;
         flankOffset = offset;
@@ -126,7 +126,7 @@ public class Minion : MonoBehaviour
 
     // Called by a ship's own PlayerController.ResolveShipCollisions() the
     // moment its overlap-resolution math detects it overlapping this minion -
-    // same shape as Level1Boss.ApplyContactDamage, except this minion doesn't
+    // same shape as MarauderBoss.ApplyContactDamage, except this minion doesn't
     // survive the hit (kamikaze).
     public void ApplyContactDamage(GameObject ship)
     {
@@ -149,7 +149,7 @@ public class Minion : MonoBehaviour
     }
 
     // Same "evenly-spaced ring, random start offset" idiom as
-    // Level1Boss.FireRing() - a fragment is just another enemy-owned Bullet, so
+    // MarauderBoss.FireRing() - a fragment is just another enemy-owned Bullet, so
     // Bullet.cs needs zero changes for these to damage ships correctly.
     void SpawnFragments()
     {

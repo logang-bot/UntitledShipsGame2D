@@ -3,7 +3,7 @@
 Owns the pre-fight-to-boss timeline for a level: ships glide in, free
 movement, minions spawn and fight for a while, the boss glides in once the
 screen is clear, then boss combat begins (with minions returning at phase
-2). See [level1-boss.md](level1-boss.md) for the boss itself and
+2). See [marauder-boss.md](bosses/marauder-boss.md) for the boss itself and
 [combat.md](combat.md) for `EnemySpawner.cs`'s wave-formation minion
 system this reuses.
 
@@ -13,13 +13,15 @@ Orchestrator Per Level" for why this is a new coordination *shape* without
 actually breaking any of this project's existing conventions (still a
 plain `MonoBehaviour`, still Inspector-wired, no singleton/
 `FindObjectOfType`). Kept intentionally minimal: one script, no generic
-framework. Named generically (not `Level1`-prefixed) since `Gameplay.unity`
-is meant to be reused by future levels — only the boss (`Level1Boss`) and
+framework. Named generically (not `Level1`-prefixed) since it's duplicated
+as-is into each level's own scene (`Level1`/`Level2`/`Level3`) — only the
+boss instance and
 this component's own Inspector-tuned durations are Level-1-specific.
 
 ## LevelSequencer.cs
 
-**Attached to:** a standalone `LevelSequencer` GameObject in `Gameplay`.
+**Attached to:** a standalone `LevelSequencer` GameObject in each level
+scene (`Level1`/`Level2`/`Level3`).
 **Requires:** `ships[]` (drag `Player` + all 3 `Teammate_*`), `enemySpawner`
 (drag `Spawner`), `level1Boss` (drag the `Boss` instance).
 
@@ -47,32 +49,32 @@ read-only as `CurrentState` for inspection. `Start()` runs one coroutine
    (see "Boss visibility/collision" below) — is made visible/collidable
    again here. Its scene-placed position is read as `home`, then it's
    teleported above the top of the viewport and lerped back down to `home`.
-   `Level1Boss`'s component stays disabled throughout the glide, so it does
+   `MarauderBoss`'s component stays disabled throughout the glide, so it does
    nothing but move — no firing, no aggro, no movement pattern.
 6. **BossCombat** — ships unfreeze, `level1Boss.enabled = true`. This fires
-   `Level1Boss.OnEnable()`, which captures its current position as its own
+   `MarauderBoss.OnEnable()`, which captures its current position as its own
    `home` and starts its movement-pattern coroutine (see
-   [level1-boss.md](level1-boss.md)'s "Movement and firing"). The sequence
+   [marauder-boss.md](bosses/marauder-boss.md)'s "Movement and firing"). The sequence
    coroutine ends here — everything past this point is ordinary boss
    combat, unowned by `LevelSequencer`.
 
-**Phase 2 minions need no sequencer state at all.** `Level1Boss.OnPhase2` has
+**Phase 2 minions need no sequencer state at all.** `MarauderBoss.OnPhase2` has
 a persistent `UnityEvent` listener straight to `enemySpawner.StartSpawning()`,
 wired in the Inspector — same "decoupled notification" shape as
-`Level1Boss.OnDefeated`'s own listeners (see
-[level1-boss.md](level1-boss.md)). Minions return in the same
+`MarauderBoss.OnDefeated`'s own listeners (see
+[marauder-boss.md](bosses/marauder-boss.md)). Minions return in the same
 random-formation waves as phase 1, running concurrently with ongoing boss
 combat, with zero additional code.
 
 ### Boss visibility/collision (Start / BossEntrance)
 
 `LevelSequencer.Start()` calls `level1Boss.SetVisible(false)` — a method on
-`Level1Boss` (see [level1-boss.md](level1-boss.md)) that disables its
+`MarauderBoss` (see [marauder-boss.md](bosses/marauder-boss.md)) that disables its
 `SpriteRenderer`, its `Collider2D`, and the shockwave ring's child
 GameObject, all together. It does **not** call `SetActive(false)` on the
 whole `Boss` GameObject, and the choice not to matters:
 
-- **First attempt** disabled only the `Level1Boss` component. That left the
+- **First attempt** disabled only the `MarauderBoss` component. That left the
   `SpriteRenderer` visible and the `Collider2D` live at the boss's home
   position the entire pre-boss sequence — visibly sitting there before its
   own phase started, and (since both it and wave `Enemy` instances were
@@ -90,25 +92,25 @@ whole `Boss` GameObject, and the choice not to matters:
   `Collider2D` (not just the sprite) also matters on its own: leaving it
   enabled let player bullets hit and damage the invisible boss via
   `Bullet.cs`'s normal trigger-based detection — caught live
-  (`Level1Boss.CurrentHealth` had already dropped below `maxHealth` seconds
+  (`MarauderBoss.CurrentHealth` had already dropped below `maxHealth` seconds
   into the level, well before the entrance).
 
 `MinionSpawner` itself is **not** toggled by `SetVisible` — a follow-up fix
-(Session 30) moved it to `Level1Boss.OnEnable()` instead, gated on actual
+(Session 30) moved it to `MarauderBoss.OnEnable()` instead, gated on actual
 combat start rather than mere visibility. `SetVisible(false)` fires at the
 *start* of the entrance glide, while ships are still frozen for several
 more seconds; enabling `MinionSpawner` there too let kamikaze minions spawn
 and overlap ships that couldn't react yet (`PlayerController.enabled ==
 false` during the freeze means `FixedUpdate`/`ResolveShipCollisions` never
 runs) — contact would silently do nothing even though the overlap was
-plainly visible. `Level1Boss.OnEnable()` fires later, exactly when
+plainly visible. `MarauderBoss.OnEnable()` fires later, exactly when
 `LevelSequencer` sets `level1Boss.enabled = true` at `BossCombat` — by
 which point `SetShipsFrozen(false)` has already run, so ships can always
 react to any minion that exists. See
-[level1-boss.md](level1-boss.md)'s "Minion.cs / MinionSpawner.cs".
+[marauder-boss.md](bosses/marauder-boss.md)'s "Minion.cs / MinionSpawner.cs".
 
 **Awake-order gotcha**: `SetVisible` is called from `LevelSequencer.Start()`,
-not `Awake()`. `Level1Boss.Awake()` is what caches the `SpriteRenderer`
+not `Awake()`. `MarauderBoss.Awake()` is what caches the `SpriteRenderer`
 reference `SetVisible` needs — but Unity doesn't guarantee one object's
 `Awake()` runs before another's, only that *every* `Awake()` finishes
 before *any* `Start()`. Calling it from `LevelSequencer.Awake()` worked or
@@ -152,7 +154,7 @@ Key public fields: `ships[]`, `enemySpawner`, `level1Boss`, `introDuration`
 
 ### LevelSequencer
 
-Standalone empty GameObject in `Gameplay`.
+Standalone empty GameObject in each level scene.
 
 | Component | Key inspector values |
 | --- | --- |
@@ -169,5 +171,5 @@ the screen.
   levels/sequencers back to back, or for per-level data (boss reference,
   durations) living anywhere other than this component's own Inspector
   values in each level's scene.
-- No third minion phase or any behavior past `Level1Boss.OnDefeated` — see
-  [level1-boss.md](level1-boss.md)'s "Not yet built".
+- No third minion phase or any behavior past `MarauderBoss.OnDefeated` — see
+  [marauder-boss.md](bosses/marauder-boss.md)'s "Not yet built".

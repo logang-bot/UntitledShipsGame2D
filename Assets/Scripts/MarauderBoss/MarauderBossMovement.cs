@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class Level1BossMovement
+public class MarauderBossMovement
 {
-    private readonly Level1Boss boss;
+    private readonly MarauderBoss boss;
     private readonly Camera cam;
     private readonly float homeY;
     private Vector3 home;
 
-    public Level1BossMovement(Level1Boss boss)
+    public MarauderBossMovement(MarauderBoss boss)
     {
         this.boss = boss;
         cam = Camera.main;

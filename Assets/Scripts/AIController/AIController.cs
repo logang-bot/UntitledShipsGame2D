@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class AIController : MonoBehaviour
 {
-    public Level1Boss boss;
+    public MarauderBoss boss;
     public float weaveFrequency = 0.8f;
     public float weaveSpeed = 1f;
 
@@ -71,7 +71,7 @@ public class AIController : MonoBehaviour
     /// <summary>
     /// Applied to every role's computed target point (including Support's
     /// wander) so default positioning never sits inside the boss's body
-    /// contact / shockwave range. Set just outside Level1Boss.shockwaveRadius
+    /// contact / shockwave range. Set just outside MarauderBoss.shockwaveRadius
     /// so normal positioning doesn't self-trigger the shockwave. Tank's
     /// guardBias still leans hard toward the boss for physical blocking -
     /// blocking only requires standing between the boss and the ally it's

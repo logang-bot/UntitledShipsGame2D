@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     public static readonly List<Enemy> Active = new List<Enemy>();
 
     // Set externally by EnemySpawner right after Instantiate, before Start() runs next frame -
-    // same safe assign-before-Start ordering Level1Boss.SpawnBullet() relies on for b.damage.
+    // same safe assign-before-Start ordering MarauderBoss.SpawnBullet() relies on for b.damage.
     // Defaults to SineWave so a stray direct-prefab spawn (no spawner involved) behaves exactly
     // as it always has.
     public enum MovementPattern { SineWave, ZigZag, StraightDive }
