@@ -81,22 +81,34 @@ Researched to confirm this isn't a re-tread of an existing game:
 
 ## Architecture Principles
 
-1. **Prove gameplay is fun before investing in infrastructure.** Build order is:
+1. **Prove gameplay is fun before investing in infrastructure.** Build order was:
    local single-player prototype → full basic mechanics → player-vs-boss mechanics
    (single boss, one role mechanic) validated with CPU-controlled AI teammates
-   filling the non-human roles → then the bullet-hell/deck layer (grazing, energy,
-   cards) on top of that proven fight → only then real (human) networking, which
-   upgrades those AI teammates to real players → only then final art. See
-   `roadmap.md` for the current status against this order. The deck layer sits
-   deliberately *after* the boss fight is proven fun: if the fight isn't fun
-   without cards, cards won't rescue it, and if it is, cards have something worth
-   modifying.
-2. **Server-authoritative for boss encounters.** Clients send input, server (Nakama)
-   resolves combat — required so a 4-player boss fight's state can't desync or be
-   cheated.
+   filling the non-human roles → then real (human) networking, which upgrades
+   those AI teammates to real players, **in parallel with** the bullet-hell/
+   deck layer (grazing, energy, cards) once a second developer picked that up
+   separately — networking no longer waits on it, since there's no technical
+   dependency between them → only then final art. See `roadmap.md` for the
+   current status against this order and `systems/networking.md` for the
+   networking pass itself. The deck layer still sits deliberately *after* the
+   boss fight was proven fun (it was, before either networking or the deck
+   layer started): if the fight isn't fun without cards, cards won't rescue
+   it, and if it is, cards have something worth modifying.
+2. **Server-authoritative for boss encounters — the eventual target.** Clients
+   send input, server (Nakama) resolves combat — required so a 4-player boss
+   fight's state can't desync or be cheated. The first online-play pass
+   (`systems/networking.md`) is **host-authoritative** instead, as a
+   deliberate interim step (chosen to avoid reimplementing boss logic in a
+   second language while proving the online experience out first): one
+   connected player's client is the sole simulator, not the Nakama server
+   itself. Real server-authoritative resolution is still the target and is
+   listed as explicit follow-up work in `roadmap.md`.
 3. **Offline mode = the same authoritative simulation, run locally.** The
    combat/boss-AI logic layer should not care whether it's driven by network
    messages or local input, so offline isn't a separate mode to bolt on later.
+   Holds for the host-authoritative pass too: the host's own client is that
+   "same simulation," just also relaying to others instead of running fully
+   offline.
 4. For how these principles show up as concrete code conventions in the
    current codebase (script organization, communication patterns, etc.),
    see `architecture.md`.

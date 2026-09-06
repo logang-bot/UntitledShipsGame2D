@@ -11,17 +11,31 @@ public class RoleSelectUI : MonoBehaviour
 {
     public GameObject singlePickerPanel;
     public GameObject multiPickerPanel;
+    public GameObject networkPickerPanel;
     public Button startButton;
 
     private PlayerRole? selectedRole;
 
     void Awake()
     {
-        startButton.interactable = false;
+        if (NetworkSession.Players != null) { ActivateNetworkPanel(); return; }
+        ActivateLocalPanel();
+    }
 
+    void ActivateNetworkPanel()
+    {
+        if (singlePickerPanel != null) singlePickerPanel.SetActive(false);
+        if (multiPickerPanel != null) multiPickerPanel.SetActive(false);
+        if (networkPickerPanel != null) networkPickerPanel.SetActive(true);
+    }
+
+    void ActivateLocalPanel()
+    {
+        startButton.interactable = false;
         bool useMulti = CoOpRoster.Players != null && CoOpRoster.Players.Count >= 2;
         if (singlePickerPanel != null) singlePickerPanel.SetActive(!useMulti);
         if (multiPickerPanel != null) multiPickerPanel.SetActive(useMulti);
+        if (networkPickerPanel != null) networkPickerPanel.SetActive(false);
     }
 
     public void SelectAttacker() { SelectRole(PlayerRole.Attacker); }
@@ -60,7 +74,9 @@ public class RoleSelectUI : MonoBehaviour
     {
         // JoinLobby precedes RoleSelect now whenever the co-op flow was
         // used; a direct-open (CoOpRoster.Players == null) still has
-        // somewhere sane to go back to.
+        // somewhere sane to go back to. The online flow goes back to
+        // OnlineJoin instead, its own equivalent of JoinLobby.
+        if (NetworkSession.Players != null) { SceneManager.LoadScene("OnlineJoin"); return; }
         SceneManager.LoadScene(CoOpRoster.Players != null ? "JoinLobby" : "Lobby");
     }
 }

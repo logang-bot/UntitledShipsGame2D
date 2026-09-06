@@ -1,7 +1,10 @@
 # Scene Flow
 
-Five scenes now exist, in this order (Build Settings index in parens):
-`MainMenu` (0) → `Lobby` (1) → `JoinLobby` (2) → `RoleSelect` (3) →
+Six scenes now exist (Build Settings index in parens): `MainMenu` (0) →
+`Lobby` (1), which branches on Local/Online — `JoinLobby` (2, local co-op
+device join) or `OnlineJoin` (6, Nakama create/join-by-code/quick match,
+appended last since it was added after `Gameplay` — see
+[networking.md](networking.md)) — both leading into `RoleSelect` (3) →
 `Gameplay` (4). Game Over/Victory/Pause stay same-scene UI overlays inside
 `Gameplay`, not separate scenes — see [combat.md](combat.md) for Game
 Over/Victory and "Pause overlay" below.
@@ -22,11 +25,11 @@ observable when testing in-editor).
 Two mode buttons plus a Back button: `Local` → sets
 `GameModeSelection.Mode = GameMode.Local`, then loads `JoinLobby` (the co-op
 device-join screen, see below — previously loaded `RoleSelect` directly,
-before local co-op existed). `Online` → `interactable = false`, set in
-`Awake()` — there's no Nakama backend yet (see `roadmap.md`'s "Nakama
-networking"), so it's a placeholder until then, same "disable until ready"
-idiom `RoleSelectUI.Awake()` already uses for its own Start button. `Back` →
-loads `MainMenu`.
+before local co-op existed). `Online` → `LobbyUI.SelectOnline()` sets
+`GameModeSelection.Mode = GameMode.Online` and loads `OnlineJoin` — live as
+of the Nakama networking work, no longer a disabled placeholder; see
+[networking.md](networking.md) for the online join/role-select flow.
+`Back` → loads `MainMenu`.
 
 `GameModeSelection.cs` is a plain `public static class` holding
 `GameMode? Mode` (`GameMode` enum: `Local`/`Online`) — built on exactly the
@@ -76,11 +79,13 @@ uses.
 
 `RoleSelect.unity` is no longer the entry point now that
 `MainMenu`/`Lobby`/`JoinLobby` exist ahead of it, so its `Back` button now
-loads `JoinLobby` when `CoOpRoster.Players != null` (the co-op flow was
-used) or `Lobby` otherwise (direct-open fallback). `RoleSelectUI.Awake()`
-also now picks between two child panels based on how many players joined —
-see [player-roles.md](player-roles.md)'s "Role Select scene" for the full
-single-vs-multi-picker mechanics.
+loads `OnlineJoin` when `NetworkSession.Players != null`, `JoinLobby` when
+`CoOpRoster.Players != null` (the co-op flow was used), or `Lobby` otherwise
+(direct-open fallback). `RoleSelectUI.Awake()` now picks between **three**
+child panels — network takes priority, then the local co-op single-vs-multi
+split — see [player-roles.md](player-roles.md)'s "Role Select scene" for the
+single-vs-multi-picker mechanics and [networking.md](networking.md) for the
+third, `NetworkPickerPanel`.
 
 ## Pause overlay (PauseUI.cs)
 
@@ -150,17 +155,20 @@ itself is attached to.
 | `MainMenu` | `Canvas` (`MainMenuUI`), `EventSystem`, `Main Camera` |
 | `Lobby` | `Canvas` (`LobbyUI`, `onlineButton` → `OnlineButton`), `EventSystem`, `Main Camera` |
 | `JoinLobby` | `Canvas` (`JoinLobbyUI`, 4 slot-text rows, `ContinueButton`/`BackButton`), `PlayerInputManager`, `EventSystem`, `Main Camera` |
-| `RoleSelect` | `Canvas` (`RoleSelectUI`, `singlePickerPanel` → `SinglePickerPanel` [original 4 role buttons + Start], `multiPickerPanel` → `MultiPickerPanel` [`RoleSelectMultiUI`, `RolePickerRow.prefab` instances]) plus `BackButton` |
-| `Gameplay` | `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`, both the legacy fixed-4-object fallback fields and the new dynamic co-op spawner fields — see [player-roles.md](player-roles.md)) |
+| `RoleSelect` | `Canvas` (`RoleSelectUI`, `singlePickerPanel` → `SinglePickerPanel` [original 4 role buttons + Start], `multiPickerPanel` → `MultiPickerPanel` [`RoleSelectMultiUI`, `RolePickerRow.prefab` instances], `networkPickerPanel` → `NetworkPickerPanel` [`NetworkRoleSelectUI`, see [networking.md](networking.md)]) plus `BackButton` |
+| `OnlineJoin` | `Canvas` (`OnlineJoinUI`, `MatchCodeInput` [`TMP_InputField`], `CreateMatchButton`/`JoinByCodeButton`/`QuickMatchButton`/`BackButton`), `EventSystem`, `Main Camera` — see [networking.md](networking.md) |
+| `Gameplay` | `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`, the legacy fixed-4-object fallback fields, the local co-op dynamic spawner fields, and the online match spawner fields — see [player-roles.md](player-roles.md) and [networking.md](networking.md)); `HostStateBroadcaster`/`RemoteStateReceiver` (both disabled by default, online-only — see [networking.md](networking.md)) |
 
 ## Not yet built
 
-- Online mode has no real backend — Lobby's `Online` button is a disabled
-  placeholder until Nakama networking lands (see `roadmap.md`'s "Nakama
-  networking").
+- No real Nakama authoritative match handler — online play is
+  host-authoritative/relayed (see [networking.md](networking.md)), and only
+  against a self-hosted LAN server so far, not the Fly.io production
+  deployment `overview.md` describes.
 - No Settings/Credits/Level Select screens — not yet needed (no audio system,
   only one level exists).
 - No `DeckBuild.unity` — the deck loadout screen is designed but not built.
   It will sit between `RoleSelect` and `Gameplay` in flow order while being
-  appended at Build Settings index **5**, so `Gameplay` stays at 4 and
-  nothing renumbers. See [cards.md](cards.md)'s "Deck loadout scene".
+  appended at Build Settings index **6** (bumped from the originally-planned
+  5 — `OnlineJoin.unity` claimed that slot first), so `Gameplay` stays at 4
+  and nothing renumbers. See [cards.md](cards.md)'s "Deck loadout scene".

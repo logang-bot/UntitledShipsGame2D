@@ -50,6 +50,8 @@ GameObject:
   - component: {fileID: 3711523712533982648}
   - component: {fileID: 6478665696923355503}
   - component: {fileID: 523717138145725323}
+  - component: {fileID: 7936583271596531218}
+  - component: {fileID: 3133047857839357594}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Player
@@ -432,6 +434,16 @@ MonoBehaviour:
   bigShotWidthMultiplier: 3
   bigShotDamageMultiplier: 2
   recoilForce: 6
+  comboAttackCooldown: 0.5
+  comboStepDamageMultipliers:
+  - 1
+  - 1.3
+  - 1.8
+  comboStepWidthMultipliers:
+  - 1
+  - 1.5
+  - 2.5
+  comboBreakDamageMultiplier: 0.5
   shieldArcWidthMultiplier: 3
   shieldArcHeight: 0.4
   shieldArcYOffset: 0.3
@@ -472,3 +484,29 @@ MonoBehaviour:
   dodgeLookaheadTime: 0.6
   dodgeMissDistance: 0.6
   dodgeWeight: 1
+--- !u!114 &7936583271596531218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039737173953149718}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4361934d3d8b2545905b790c7076ecd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::NetworkInputReceiver
+  ownerUserId: 
+--- !u!114 &3133047857839357594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039737173953149718}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e476b6a48ba8f3d498041324af0e2e58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::NetworkInputSender
+  controlsAsset: {fileID: 0}

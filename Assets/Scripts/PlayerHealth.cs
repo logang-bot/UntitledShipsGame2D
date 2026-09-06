@@ -31,6 +31,17 @@ public class PlayerHealth : MonoBehaviour
         currentShield = maxShield;
     }
 
+    // Overwrites health/shield directly from a host-broadcast
+    // ShipStateSnapshot on a remote client - bypasses TakeDamage/Heal's
+    // die/event logic entirely, since the host already resolved those.
+    // Triggering local damage-flash/death-overlay feedback from synced
+    // state is a later-phase follow-up, not handled here yet.
+    public void ApplySyncedState(int health, int shield)
+    {
+        currentHealth = health;
+        currentShield = shield;
+    }
+
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
