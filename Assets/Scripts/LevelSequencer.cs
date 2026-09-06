@@ -37,15 +37,19 @@ public class LevelSequencer : MonoBehaviour
     // Intro/BossEntrance) - see SetShipsFrozen().
     public static bool ShipsFrozen { get; private set; }
 
+    private enum ShipDriver { Human, AI, NetworkReceiver }
+
     private Vector3[] shipHomes;
     private PlayerInput[] shipInputs;
     private AIController[] shipAI;
+    private NetworkInputReceiver[] shipNetworkReceiver;
     // Which driver each ship should return to on unfreeze. Every ship now
-    // carries both PlayerInput and AIController (see Ship.prefab), so
-    // "not null" no longer tells human from AI - captured once here, right
-    // after PartySetupBootstrap ([DefaultExecutionOrder(-1000)]) has already
-    // configured each ship's real driver for this run, human or AI.
-    private bool[] shipIsHuman;
+    // carries PlayerInput/AIController/NetworkInputReceiver (see
+    // Ship.prefab), so "not null" no longer tells them apart - captured once
+    // here, right after PartySetupBootstrap ([DefaultExecutionOrder(-1000)])
+    // or NetworkPartySpawner has already configured each ship's real driver
+    // for this run.
+    private ShipDriver[] shipDriverKind;
     private Camera cam;
 
     void Awake()
@@ -55,18 +59,38 @@ public class LevelSequencer : MonoBehaviour
         shipHomes = new Vector3[ships.Length];
         shipInputs = new PlayerInput[ships.Length];
         shipAI = new AIController[ships.Length];
-        shipIsHuman = new bool[ships.Length];
-        for (int i = 0; i < ships.Length; i++)
-        {
-            shipHomes[i] = ships[i].transform.position;
-            shipInputs[i] = ships[i].GetComponent<PlayerInput>();
-            shipAI[i] = ships[i].GetComponent<AIController>();
-            shipIsHuman[i] = shipInputs[i] != null && shipInputs[i].enabled;
-        }
+        shipNetworkReceiver = new NetworkInputReceiver[ships.Length];
+        shipDriverKind = new ShipDriver[ships.Length];
+        for (int i = 0; i < ships.Length; i++) CacheShipDriver(i);
+    }
+
+    void CacheShipDriver(int i)
+    {
+        shipHomes[i] = ships[i].transform.position;
+        shipInputs[i] = ships[i].GetComponent<PlayerInput>();
+        shipAI[i] = ships[i].GetComponent<AIController>();
+        shipNetworkReceiver[i] = ships[i].GetComponent<NetworkInputReceiver>();
+        shipDriverKind[i] = DetermineDriverKind(i);
+    }
+
+    ShipDriver DetermineDriverKind(int i)
+    {
+        if (shipNetworkReceiver[i] != null && shipNetworkReceiver[i].enabled) return ShipDriver.NetworkReceiver;
+        if (shipInputs[i] != null && shipInputs[i].enabled) return ShipDriver.Human;
+        return ShipDriver.AI;
     }
 
     void Start()
     {
+        // An online match's non-host client never runs this timeline at all
+        // - EnemySpawner/Level1Boss/MinionSpawner all stay dormant until
+        // something calls StartSpawning()/enables them, and this coroutine
+        // is the only thing that ever does that, so gating this one entry
+        // point is sufficient (see NetworkPartySpawner for the rest of the
+        // host/client split). The host runs the real sequence exactly like
+        // local/offline play.
+        if (IsNonHostClient()) return;
+
         // Hidden until its own entrance begins - leaving it visible would
         // show it sitting at its home position the whole time. Only the
         // sprite/ring are hidden (SetVisible), not the whole GameObject:
@@ -81,6 +105,9 @@ public class LevelSequencer : MonoBehaviour
         level1Boss.SetVisible(false);
         StartCoroutine(RunSequence());
     }
+
+    bool IsNonHostClient() =>
+        NetworkSession.Players != null && NetworkSession.Players.Count > 0 && !NetworkSession.IsHost;
 
     IEnumerator RunSequence()
     {
@@ -167,13 +194,10 @@ public class LevelSequencer : MonoBehaviour
         for (int i = 0; i < ships.Length; i++)
         {
             PlayerController pc = ships[i];
-            PlayerInput pi = shipInputs[i];
-            AIController ai = shipAI[i];
 
             if (frozen)
             {
-                if (pi != null) pi.enabled = false;
-                if (ai != null) ai.enabled = false;
+                FreezeDrivers(i);
                 pc.SetMoveDirection(Vector2.zero);
                 pc.SetFiring(false);
                 pc.ResetVelocity(); // so the next unfreeze ramps up from rest, not leftover velocity
@@ -182,13 +206,26 @@ public class LevelSequencer : MonoBehaviour
             else
             {
                 pc.enabled = true;
-                // Restore each ship to its own real driver (human or AI),
-                // not both - every ship carries both components now, so
-                // unconditionally re-enabling both would hand AI control to
-                // a human ship (and vice versa) the instant a freeze ends.
-                if (pi != null) pi.enabled = shipIsHuman[i];
-                if (ai != null) ai.enabled = !shipIsHuman[i];
+                RestoreDriver(i);
             }
         }
+    }
+
+    void FreezeDrivers(int i)
+    {
+        if (shipInputs[i] != null) shipInputs[i].enabled = false;
+        if (shipAI[i] != null) shipAI[i].enabled = false;
+        if (shipNetworkReceiver[i] != null) shipNetworkReceiver[i].enabled = false;
+    }
+
+    // Restores each ship to its own real driver, not all three - every ship
+    // carries all three components now, so unconditionally re-enabling more
+    // than one would hand control to the wrong driver the instant a freeze
+    // ends.
+    void RestoreDriver(int i)
+    {
+        if (shipInputs[i] != null) shipInputs[i].enabled = shipDriverKind[i] == ShipDriver.Human;
+        if (shipAI[i] != null) shipAI[i].enabled = shipDriverKind[i] == ShipDriver.AI;
+        if (shipNetworkReceiver[i] != null) shipNetworkReceiver[i].enabled = shipDriverKind[i] == ShipDriver.NetworkReceiver;
     }
 }

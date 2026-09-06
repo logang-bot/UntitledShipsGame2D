@@ -91,17 +91,20 @@ call. It's explicitly a plain static rather than a singleton
 `MonoBehaviour` with `DontDestroyOnLoad` — no persistent GameObject to
 manage, and it resets cleanly to `null` on a domain reload.
 
-## Dual Entry-Point Pattern: AI vs. Human Control
+## Dual Entry-Point Pattern: AI vs. Human vs. Network Control
 
 The project uses Unity's New Input System exclusively for human input, but
 every input-driven component also exposes parallel public, non-input entry
 points: `PlayerController.SetMoveDirection()`/`SetFiring()`,
-`PlayerAbility.TryUseAbility()`. `AIController` calls these same methods
-directly to drive an AI teammate, so a teammate is mechanically identical
-to a human-controlled ship in every way except how its input is produced.
-This "same component, two callers" approach was chosen over an
-`IController`/strategy abstraction — simpler at the current scale of one
-input path plus one AI path.
+`PlayerAbility.TryUseAbility()`/`TryComboAttack()`. `AIController` calls
+these same methods directly to drive an AI teammate, so a teammate is
+mechanically identical to a human-controlled ship in every way except how
+its input is produced. This "same component, several callers" approach was
+chosen over an `IController`/strategy abstraction — simpler at this
+project's scale. Nakama networking (see `systems/networking.md`) added a
+**third** caller, `NetworkInputReceiver`, fed by network messages on the
+host for a remote-owned ship — proof the pattern scales past the two
+callers it was originally named for.
 
 ## Non-Destructive Buff Pattern
 
@@ -177,9 +180,13 @@ them — each is noted with where it already showed up in practice.
   static in-code tables, so every balance pass requires a recompile rather
   than an asset edit. Acceptable while values are still pre-playtesting
   placeholders; worth reconsidering once real tuning cadence increases.
-- **Networking incompatibility — the significant one.** `overview.md`
-  commits to eventual server-authoritative multiplayer. Drag-and-drop
-  Inspector references and static cross-scene classes (`PartyRoleAssignment`)
-  fundamentally don't work across a network boundary — this part of the
-  current architecture will need real rework, not just extension, once
-  networking work starts.
+- **Networking is host-authoritative, not server-authoritative — a
+  deliberate, documented gap, not a discovery.** `overview.md` commits to
+  eventual server-authoritative multiplayer; the first online-play pass
+  (`systems/networking.md`) chose a Nakama-relayed, host-authoritative model
+  instead, explicitly so it could reuse Inspector-wired references and the
+  existing static cross-scene carriers (`PartyRoleAssignment`,
+  `CoOpRoster`, and now `NetworkSession`) rather than reworking them —
+  those genuinely don't survive a network boundary, so a real
+  authoritative-server migration will still need to address that, but it's
+  scoped as explicit future work, not blocking this pass.

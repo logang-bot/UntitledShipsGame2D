@@ -131,12 +131,16 @@ one.
 ## Deck loadout scene
 
 A new `DeckBuild.unity` sits between `RoleSelect` and `Gameplay` in the
-flow, and is appended at **Build Settings index 5** — appending rather than
+flow, and is appended at **Build Settings index 6** — appending rather than
 inserting avoids renumbering `Gameplay` (4) and everything before it. Flow
 order and build order don't have to match; only index 0 is meaningful.
+(Originally planned for index 5, but `OnlineJoin.unity` — the Nakama
+networking lobby, see `roadmap.md`'s "Networking (Nakama)" — claimed that
+slot first via the same append-only convention; bump to 6 if anything else
+appends between now and then.)
 
 ```
-MainMenu(0) → Lobby(1) → JoinLobby(2) → RoleSelect(3) → DeckBuild(5) → Gameplay(4)
+MainMenu(0) → Lobby(1) → JoinLobby(2) → RoleSelect(3) → DeckBuild(6) → Gameplay(4)
 ```
 
 It mirrors `RoleSelect`'s existing single/multi split: one picker for a solo

@@ -22,8 +22,13 @@ Per-system reference: what each script does, what it's attached to, and how
 the scene is wired.
 
 - [systems/scene-flow.md](systems/scene-flow.md) — Main Menu → Lobby → Join
-  Lobby → Role Select → Gameplay scene flow, `GameModeSelection`
+  Lobby/Online Join → Role Select → Gameplay scene flow, `GameModeSelection`
   (Local/Online), local co-op device joining, and the Pause overlay.
+- [systems/networking.md](systems/networking.md) — online co-op over a
+  self-hosted Nakama server: host-authoritative relay model, the
+  `NetworkInputSender`/`Receiver` seam, state-snapshot sync, and the online
+  lobby/role-select flow. See [nakama-local-setup/](nakama-local-setup/) for
+  the separate server-hosting steps.
 - [systems/movement.md](systems/movement.md) — ship movement, fixed
   orientation decision.
 - [systems/combat.md](systems/combat.md) — shooting, bullets, health, enemy

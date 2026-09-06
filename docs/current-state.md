@@ -11,13 +11,15 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - **Main Menu / Lobby / Join / Pause** — the game now boots into
   `MainMenu.unity` (Build Settings index 0): Play → `Lobby`, Quit. Lobby
   offers **Local** (proceeds to `JoinLobby`, a co-op device-join screen —
-  see "Local co-op" below) or **Online** — Online is a disabled placeholder
-  button, since there's no Nakama backend yet. Role Select (now index 3)
-  gained a Back button (to `JoinLobby` or `Lobby`). Mid-run, pressing
-  **Escape** (or a gamepad's **Start**) in `Gameplay` pauses (freezes the
-  game via `Time.timeScale`, shows Resume/Restart/Change Roles/Quit to Main
-  Menu) — disabled while Game Over/Victory is already showing, and will
-  auto-disable once Online mode is real. See
+  see "Local co-op" below) or **Online** (proceeds to `OnlineJoin`, a Nakama
+  create/join-by-code/quick-match screen — see "Online co-op" below; no
+  longer a disabled placeholder). Role Select (now index 3) gained a Back
+  button (to `OnlineJoin`, `JoinLobby`, or `Lobby`, whichever flow is
+  active). Mid-run, pressing **Escape** (or a gamepad's **Start**) in
+  `Gameplay` pauses (freezes the game via `Time.timeScale`, shows
+  Resume/Restart/Change Roles/Quit to Main Menu) — disabled while Game
+  Over/Victory is already showing, and auto-disabled for online play
+  (pausing a host-authoritative match for everyone isn't meaningful). See
   [systems/scene-flow.md](systems/scene-flow.md).
 - **Local co-op (up to 4 players, one machine)** — `Lobby`'s Local button
   leads to `JoinLobby.unity`: press any key/click (keyboard+mouse) or any
@@ -30,6 +32,21 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   is filled by AI, same as always. See
   [systems/player-roles.md](systems/player-roles.md)'s "Local co-op /
   dynamic player count".
+- **Online co-op (up to 4 players, separate machines, host-authoritative)**
+  — `Lobby`'s Online button leads to `OnlineJoin.unity`: Create Match (shows
+  a code to share), Join by Code, or Quick Match (Nakama's matchmaker).
+  `RoleSelect` then shows a network picker — each connected player locks
+  their own role independently, reflected live to everyone; only the host
+  sees a Start button, and starting sends everyone to `Gameplay` together.
+  One player's client (whoever created the match) runs the entire
+  simulation exactly as local/offline play does; everyone else's clients
+  render that host's broadcast state. Requires a self-hosted Nakama server
+  reachable on the LAN — see
+  [../nakama-local-setup/README.md](../nakama-local-setup/README.md) for
+  hosting steps and [systems/networking.md](systems/networking.md) for the
+  full design, known limitations, and what isn't replicated to remote
+  clients yet (wave enemies/minions, boss attack telegraph warnings —
+  cosmetic gaps only).
 - **Ship movement** — a single player ship strafes left/right/up/down within
   a fixed portrait viewport. The ship has a fixed orientation (no rotation,
   Galaga-style) and always fires straight up. See
@@ -239,22 +256,32 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's NOT there yet
 
-- No networked/authoritative multiplayer (multiple humans across *separate*
-  machines) — Lobby's **Online** option is a disabled placeholder until
-  Nakama networking lands. Local co-op (multiple humans on *one* machine) is
-  implemented — see the "Local co-op" bullet above.
-- Five scenes now exist: `MainMenu.unity` (0), `Lobby.unity` (1),
-  `JoinLobby.unity` (2), `RoleSelect.unity` (3), `Gameplay.unity` (4) — see
-  [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
+- No *authoritative-server* multiplayer yet — online play (multiple humans
+  across separate machines) is implemented, but **host-authoritative**: one
+  connected player's own client runs the whole simulation, Nakama just
+  relays messages. This is a deliberate first pass, not the final model —
+  see [systems/networking.md](systems/networking.md) for the reasoning and
+  its explicitly-deferred limitations (a modified host can cheat; no host
+  migration; no client-side prediction). Local co-op (multiple humans on
+  *one* machine) is implemented separately — see "Local co-op" above.
+- Online play has only been run against a self-hosted LAN Nakama server, not
+  the Fly.io production deployment `overview.md` describes.
+- Wave enemies/minions and boss attack telegraph warnings aren't visually
+  replicated to a remote (non-host) client yet — cosmetic gap only, their
+  damage/kills are still fully host-resolved.
+- Six scenes now exist: `MainMenu.unity` (0), `Lobby.unity` (1),
+  `JoinLobby.unity` (2), `RoleSelect.unity` (3), `Gameplay.unity` (4),
+  `OnlineJoin.unity` (6, appended after Nakama networking landed — see
+  [systems/scene-flow.md](systems/scene-flow.md)). Game Over/Victory/Pause
   are same-scene UI overlays within `Gameplay`, not separate scenes (see
   [systems/combat.md](systems/combat.md)).
 - No real art — the avatar slot and every ship are placeholder colored
   squares, no audio.
 
 See [roadmap.md](roadmap.md)'s "Development priority order" for the
-authoritative build sequence: full basic mechanics first, then
-player-vs-boss dynamics validated with CPU-controlled AI teammates, then
-real networking last, then art/audio.
+authoritative build sequence and why networking moved up ahead of the
+bullet-hell/deck layer (a different developer is building that in
+parallel).
 
 ## How to test it
 
@@ -262,7 +289,8 @@ real networking last, then art/audio.
    the open scene — it's Build Settings index 0, so this is also what a real
    build boots into.
 2. Press **Play**, click **Play** on the Main Menu to load `Lobby`, then
-   click **Local** (Online is a disabled placeholder for now) to load
+   click **Local** (see "Online co-op" above for the Nakama flow instead,
+   which needs a running server) to load
    `JoinLobby`. Press any key or click to join as Player 1 (Keyboard &
    Mouse), then click **Continue** to load `RoleSelect`. Click one of the 4
    role buttons (Attacker/Tank/Medic/Support — this is the role the human
@@ -377,5 +405,62 @@ real networking last, then art/audio.
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`
    so this previews without even pressing Play.
+
+## How to test it — Online
+
+Same starting point as above (`MainMenu`, Build Settings index 0 — this is
+still the one entry point for both local and online play), but this path
+needs a running Nakama server first and involves two machines (or two
+Editor/build instances on the same machine, both pointed at `127.0.0.1`).
+Full design/limitations: [systems/networking.md](systems/networking.md).
+Server hosting steps: [../nakama-local-setup/README.md](../nakama-local-setup/README.md).
+
+1. **Start the Nakama server** on one machine, following
+   [nakama-local-setup/README.md](../nakama-local-setup/README.md)
+   (`docker compose up` in the folder with its `docker-compose.yml`). Note
+   that machine's LAN IP (`ipconfig`) if the other player is on a different
+   machine.
+2. **Point each Unity instance's `NakamaConnection` at the server** — select
+   the `NakamaConnection` GameObject (in `MainMenu.unity`, persists via
+   `DontDestroyOnLoad`) and set `host` to `127.0.0.1` on the machine running
+   the server, or that machine's LAN IP on every other machine. `scheme`
+   (`http`), `port` (`7350`), and `serverKey` (`defaultkey`) can stay
+   default for LAN testing.
+3. **Every machine**: Play from `MainMenu` → click **Play** to load `Lobby`
+   → click **Online** (not Local) to load `OnlineJoin`. It shows
+   "Connecting...", then "Connected." once `NakamaConnection` authenticates
+   against the server from step 1.
+4. **One player creates the match**: click **Create Match**. `OnlineJoinUI`
+   shows the resulting match code — read it off that machine's screen (or
+   the `NetworkSession.MatchId` value) and share it with the other
+   player(s) (Discord, verbally, whatever — there's no in-game chat).
+   Loads everyone who joins straight to `RoleSelect` on success.
+5. **Every other player joins that match**: at `OnlineJoin`, type the shared
+   code into the input field and click **Join by Code** (or click **Quick
+   Match** instead of a code, on both sides, to use Nakama's matchmaker —
+   pairs players automatically rather than sharing a code, useful once
+   there's a real pool of people to match against).
+6. **`RoleSelect`**: each player picks a role independently on their own
+   screen — the four role buttons grey out for a role someone else already
+   locked, live, across everyone's screens. Only the player who created the
+   match (the **host**) sees a **Start** button; nobody else needs to do
+   anything once they've picked. Any role nobody picked is auto-filled with
+   AI, exactly like local play. The host clicking **Start** sends everyone
+   to `Gameplay` together.
+7. **In `Gameplay`**: plays out exactly like the local walkthrough above
+   (steps 4-9) — the host's machine is quietly running the entire
+   simulation underneath (boss AI, collision, damage) and broadcasting the
+   result; every other machine is just rendering it and sending its own
+   player's input back. A few things intentionally look different on a
+   **non-host** client only, both documented, cosmetic gaps in
+   [systems/networking.md](systems/networking.md): wave enemies/minions and
+   the boss's attack-telegraph warnings (`BossPanel`'s shockwave/guided-
+   missile/pattern-barrage callouts) don't render there yet, and your own
+   ship's movement will feel a little delayed (network round-trip) since
+   there's no local prediction in this first pass. Damage, kills, phase
+   transitions, and victory/defeat are all correct on every screen.
+8. **If the host disconnects**, the match simply ends for everyone — there's
+   no host migration yet. Reconnect by going through `Lobby → Online` again
+   and creating a fresh match.
 
 There's no build/executable yet — testing happens in the Unity Editor.

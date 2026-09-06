@@ -446,7 +446,9 @@ aggro table all stay untouched by this feature.
 
 ## Not yet built
 
-- Networked/authoritative multiplayer (multiple humans across *separate*
-  machines) — see `roadmap.md`'s "Nakama networking." Local co-op (multiple
-  humans on one machine) is implemented — see "Local co-op / dynamic player
-  count" above.
+- A true Nakama *authoritative* server (multiple humans across separate
+  machines resolved server-side) — see `systems/networking.md`. Host-
+  authoritative online co-op (relayed through Nakama, one player's client
+  runs the simulation) and local co-op (multiple humans on one machine) are
+  both implemented — see "Local co-op / dynamic player count" above and
+  `systems/networking.md` for online.

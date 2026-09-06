@@ -9,12 +9,12 @@ using UnityEngine.InputSystem;
 // first Awake/Start (each of those reads role exactly once, at startup, and
 // never re-applies it later).
 //
-// Two branches: the original fixed-4-scene-object path (CoOpRoster.Players
-// unset - direct scene open, or a single human via PartyRoleAssignment) is
-// left completely untouched as the fallback; a new dynamic branch spawns a
-// Ship.prefab instance per role slot when the co-op join flow (JoinLobby ->
-// RoleSelect) was actually used. See docs/systems/player-roles.md's "Co-op
-// roster" section for the full design writeup.
+// Three branches, checked in order: an online match (NetworkSession.Players)
+// delegates to NetworkPartySpawner (its own file - see there for why); the
+// local co-op join flow (CoOpRoster.Players) spawns dynamically below; the
+// original fixed-4-scene-object path (PartyRoleAssignment, or neither set)
+// is the untouched legacy fallback. See docs/systems/player-roles.md's
+// "Co-op roster" section for the co-op design writeup.
 [DefaultExecutionOrder(-1000)]
 public class PartySetupBootstrap : MonoBehaviour
 {
@@ -28,19 +28,42 @@ public class PartySetupBootstrap : MonoBehaviour
     public PartyFrameManager partyFrameManager;
     public Level1Boss boss;
 
+    [Header("Online match spawner")]
+    public InputActionAsset networkControlsAsset; // PlayerControls.inputactions, for NetworkInputSender
+    public HostStateBroadcaster hostStateBroadcaster;
+    public RemoteStateReceiver remoteStateReceiver;
+
     void Awake()
     {
-        if (CoOpRoster.Players != null && CoOpRoster.Players.Count > 0)
-        {
-            SpawnDynamicParty();
-            return;
-        }
+        if (TrySpawnNetworkParty()) return;
+        if (TrySpawnDynamicParty()) return;
+        SpawnLegacyParty();
+    }
 
+    bool TrySpawnNetworkParty()
+    {
+        if (NetworkSession.Players == null || NetworkSession.Players.Count == 0) return false;
+        new NetworkPartySpawner(this).Spawn();
+        return true;
+    }
+
+    bool TrySpawnDynamicParty()
+    {
+        if (CoOpRoster.Players == null || CoOpRoster.Players.Count == 0) return false;
+        SpawnDynamicParty();
+        return true;
+    }
+
+    void SpawnLegacyParty()
+    {
         if (!PartyRoleAssignment.HumanRole.HasValue) return;
-
         PlayerRole humanRole = PartyRoleAssignment.HumanRole.Value;
         player.role = humanRole;
+        AssignRemainingRolesToTeammates(humanRole);
+    }
 
+    void AssignRemainingRolesToTeammates(PlayerRole humanRole)
+    {
         int teammateIndex = 0;
         foreach (PlayerRole candidate in System.Enum.GetValues(typeof(PlayerRole)))
         {
@@ -60,9 +83,7 @@ public class PartySetupBootstrap : MonoBehaviour
     // instead of duplicating scene setup.
     private void SpawnDynamicParty()
     {
-        PlayerRoleComponent[] markers = new PlayerRoleComponent[] { player, teammates[0], teammates[1], teammates[2] };
-        Vector3[] positions = markers.Select(m => m.transform.position).ToArray();
-        foreach (PlayerRoleComponent marker in markers) marker.gameObject.SetActive(false);
+        Vector3[] positions = CaptureMarkerPositions();
 
         List<PlayerRole> takenRoles = CoOpRoster.Players.Where(p => p.role.HasValue).Select(p => p.role.Value).ToList();
         Queue<PlayerRole> aiRoles = new Queue<PlayerRole>(
@@ -120,6 +141,26 @@ public class PartySetupBootstrap : MonoBehaviour
             slot++;
         }
 
+        WireSpawnedParty(spawned);
+    }
+
+    // Shared by SpawnDynamicParty() above and NetworkPartySpawner: reads
+    // each legacy marker's position, then deactivates it, so both spawn
+    // paths use the same authored set of spawn points without duplicating
+    // scene setup.
+    internal Vector3[] CaptureMarkerPositions()
+    {
+        PlayerRoleComponent[] markers = new PlayerRoleComponent[] { player, teammates[0], teammates[1], teammates[2] };
+        Vector3[] positions = markers.Select(m => m.transform.position).ToArray();
+        foreach (PlayerRoleComponent marker in markers) marker.gameObject.SetActive(false);
+        return positions;
+    }
+
+    // Shared tail of both spawn paths: wires allies[]/boss/teammates[] on
+    // every spawned ship and points levelSequencer/partyFrameManager/boss at
+    // the real spawned set instead of the deactivated legacy markers.
+    internal void WireSpawnedParty(GameObject[] spawned)
+    {
         Transform[] allAllies = spawned.Select(go => go.transform).ToArray();
         List<Transform> aiOnly = new List<Transform>();
         List<PlayerController> controllers = new List<PlayerController>();

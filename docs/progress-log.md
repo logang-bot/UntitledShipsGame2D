@@ -752,3 +752,140 @@ above were fixed).
   as-is this session (still substantively accurate per-role regardless of
   the human/AI split) rather than rewritten line-by-line; worth a pass if it
   reads as confusing against the new co-op reality.
+
+## Session 36 — Nakama Networking (Host-Authoritative, LAN), Phases A–D
+
+Jumped `roadmap.md`'s stated order: networking was planned to start only
+after the bullet-hell/deck layer, but the user is having a different
+developer build that layer in parallel, so there's no technical reason for
+networking to keep waiting on it. Brainstormed the approach before writing
+any code (per this project's usual process) and landed on two decisions up
+front that shaped everything else:
+
+- **Host-authoritative/relayed, not a true Nakama authoritative match
+  handler.** This is cooperative PvE — a cheating host can only ruin their
+  own party's fight, not gain advantage over an opponent, so the stakes are
+  much lower than competitive PvP. Host-authoritative reuses the entire
+  existing C# simulation as-is instead of reimplementing boss AI/combat in
+  Go/Lua/TS a second time, while a second developer is also actively
+  changing that same C# logic for the deck layer. Documented as a
+  deliberate, deferred limitation (a modified host can cheat), not an
+  oversight.
+- **Both requested match-join methods**: create/share a code, and Nakama's
+  built-in matchmaker.
+
+Built in 4 phases, each compiled and test-verified via the Unity MCP bridge
+before moving on (`refresh_unity` + `run_tests` + targeted `execute_code`
+checks — no live two-machine session was available this session, so every
+verification is single-Editor-instance: compile cleanliness, the full
+EditMode suite staying green throughout, and runtime checks like calling
+`Level1Boss.TakeDamage()`/`TauntedBy()` live in Play mode to confirm the
+aggro-system refactor still worked).
+
+### The seam: a third caller of the existing dual-entry-point pattern
+
+`architecture.md`'s "Dual Entry-Point Pattern" already let `AIController`
+drive a ship through `PlayerController.SetMoveDirection()`/`SetFiring()`
+and `PlayerAbility.TryUseAbility()`, the same methods a human's `PlayerInput`
+triggers. `NetworkInputReceiver` (host-side, one per remote-owned ship) is a
+third caller, fed by network messages — meaning **no existing gameplay
+script's core logic needed to change**. The host runs the entire current
+simulation untouched; remote clients become thin renderers.
+
+### Phase A — connection + input model
+
+Added the official `com.heroiclabs.nakama-unity` UPM package (confirmed via
+Unity's live reflection API which methods/types actually exist, rather than
+trusting training data — caught that `Object.GetInstanceID()` is a hard
+compile *error* as of this Unity version, not just deprecated; switched to
+`GetEntityId()`/`EntityId.ToULong()` everywhere an id was needed).
+`NakamaConnection.cs` is the one new deliberate exception to "no singletons"
+in this codebase — a live socket needs exactly one owner; lives in
+`MainMenu.unity`, `DontDestroyOnLoad`. `PlayerInputCommand.cs` is the
+primitive that didn't exist before: today's input is continuous polling
+with nothing serializable to send over a wire.
+
+**Real bug avoided, not just fixed**: `NetworkInputReceiver`/
+`NetworkInputSender`/`HostStateBroadcaster`/`RemoteStateReceiver` all
+default to `enabled = false` on `Ship.prefab`/in `Gameplay.unity`, and
+critically do their Nakama-touching setup in `OnEnable()`, not `Awake()` —
+`Awake()` runs even on a component that starts disabled, so touching
+`NakamaConnection.Instance` there would have thrown a `NullReferenceException`
+in *every* offline and local-co-op session, not just online ones. Caught
+during design, before it ever shipped, by tracing through what actually
+runs when a component starts disabled.
+
+### Phase B — movement + shooting sync
+
+Expected to need a `NetworkAuthorityGate` component; didn't. Traced
+`EnemySpawner`/`Level1Boss`/`MinionSpawner` and confirmed none of them
+self-start — `LevelSequencer.RunSequence()` is the only thing that ever
+calls `EnemySpawner.StartSpawning()` or enables `Level1Boss` (which enables
+`MinionSpawner` itself). So gating just `LevelSequencer.Start()` to skip the
+whole coroutine on a non-host client was sufficient. Its freeze/unfreeze
+driver-restoration (`shipIsHuman`, a bool from the local co-op session) was
+generalized to a 3-way `ShipDriver { Human, AI, NetworkReceiver }` enum so a
+host's own freeze/unfreeze during the intro/boss-entrance correctly restores
+network-driven ships too.
+
+### Phase C — full combat/boss parity, plus a file-size fix
+
+Revised the original plan mid-flight: rather than discrete bullet spawn/
+despawn event messages, `HostStateBroadcaster` just includes every
+currently-active `Bullet.Active` entry in the same periodic snapshot ships
+and boss ride on, and `RemoteStateReceiver` reconciles declaratively each
+tick (spawn a visual for an unseen id, drop one no longer present) — simpler
+than an event protocol and can't desync from one dropped message. Explicit,
+documented scope cut: wave enemies/minions and boss attack telegraph
+warnings aren't visually replicated to remote clients yet (their damage/
+kills are still fully host-resolved, so this is cosmetic, not a correctness
+gap) — full dynamic-entity sync is enough work to deserve its own future
+pass rather than being crammed in here.
+
+Adding `Level1Boss.ApplySyncedState()` pushed `Level1Boss.cs` over this
+project's file-size cap (it was already oversized before this session).
+Extracted the aggro/threat-table/contact-damage bookkeeping into
+`Level1BossAggro.cs` and the fire/bullet-spawn logic into
+`Level1BossCombat.cs` — both plain instantiated helpers, the exact same
+composition pattern `Level1BossMovement`/`Level1BossShockwave`/
+`Level1BossAttacks` already used, not a new convention.
+
+### Phase D — online lobby & role-select
+
+Duplicated `JoinLobby.unity` into `OnlineJoin.unity` (kept its Canvas/
+EventSystem/Camera shape, dropped `PlayerInputManager`) rather than
+building a scene from nothing, and added a **third** panel to the existing
+`RoleSelect.unity` (`NetworkPickerPanel`) rather than a whole separate
+scene — duplicated `SinglePickerPanel`'s 4-button layout. `OnlineJoin.unity`
+landed at Build Settings index 6, not the 5 `cards.md` had already reserved
+for `DeckBuild.unity` — bumped that doc's plan to 6 since nothing existed
+there yet to actually collide with the other developer's in-progress work.
+
+**MCP/Editor tooling gotchas worth remembering**: `manage_components
+set_property` on a `Button`'s `onClick` doesn't accept an arbitrary
+persistent-listener object — the correct path is calling
+`UnityEditor.Events.UnityEventTools.AddPersistentListener`/
+`AddIntPersistentListener`/`AddVoidPersistentListener` directly via the MCP
+bridge's code-execution tool, against the live `Button.onClick`. Also,
+`GameObject.Find` only searches *active* objects, so wiring an
+inactive-by-default panel (`NetworkPickerPanel` starts inactive, like
+`MultiPickerPanel`) needs a live component reference instead of a path
+lookup.
+
+### Also produced
+
+- `docs/nakama-local-setup/` (`README.md`, `docker-compose.yml`,
+  `troubleshooting.md`) — LAN hosting steps, deliberately kept separate from
+  the Unity-side implementation.
+- `docs/systems/networking.md` — the full technical reference for
+  everything above.
+
+### What's not verified yet
+
+Everything above compiles clean and passes the full EditMode suite, and
+individual pieces were runtime-checked in Play mode via the MCP bridge, but
+**no live two-machine session has happened** — that needs the user's Nakama
+server actually running. Also not done: a real Nakama authoritative match
+handler (the host-authoritative gap is documented, not fixed), host
+migration, client-side prediction, and the wave-enemy/minion/telegraph
+replication gap noted above.

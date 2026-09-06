@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -106,15 +105,8 @@ public class Level1Boss : MonoBehaviour
     public float ShockwaveCooldownRemaining => shockwave.CooldownRemaining;
     public float GuidedMissileCooldownRemaining => attacks.GuidedMissileCooldownRemaining;
     public float PatternBarrageCooldownRemaining => attacks.PatternBarrageCooldownRemaining;
+    public float CombatElapsed => aggroSystem.CombatElapsed;
 
-    private readonly Dictionary<GameObject, float> aggro = new Dictionary<GameObject, float>();
-    private readonly Dictionary<GameObject, float> lastContactDamageTime = new Dictionary<GameObject, float>();
-    // Raw cumulative damage per source, deliberately kept separate from
-    // `aggro` above: TauntedBy() overwrites a taunter's aggro with
-    // (highest + tauntBonus), which would corrupt these numbers the moment
-    // Tank pressed E. Aggro is a threat value; this is a damage stat.
-    private readonly Dictionary<GameObject, float> damageDealt = new Dictionary<GameObject, float>();
-    private float combatStartTime;
     private float nextFireTime;
     private SpriteRenderer sr;
     private Collider2D col;
@@ -122,13 +114,15 @@ public class Level1Boss : MonoBehaviour
     private Level1BossMovement movement;
     private Level1BossShockwave shockwave;
     private Level1BossAttacks attacks;
+    private Level1BossAggro aggroSystem;
+    private Level1BossCombat combat;
 
     void Awake()
     {
         CurrentHealth = maxHealth;
         CacheComponents();
         CreateHelpers();
-        InitAggro();
+        CurrentTarget = aggroSystem.InitialTarget();
     }
 
     private void CacheComponents()
@@ -144,18 +138,9 @@ public class Level1Boss : MonoBehaviour
         movement = new Level1BossMovement(this);
         shockwave = new Level1BossShockwave(this);
         attacks = new Level1BossAttacks(this);
+        aggroSystem = new Level1BossAggro(this);
+        combat = new Level1BossCombat(this);
         shockwave.CreateRing();
-    }
-
-    private void InitAggro()
-    {
-        foreach (GameObject t in targets)
-        {
-            if (t == null) continue;
-            aggro[t] = 0f;
-            damageDealt[t] = 0f;
-        }
-        CurrentTarget = targets.Length > 0 ? targets[0] : null;
     }
 
     /// <summary>
@@ -182,12 +167,7 @@ public class Level1Boss : MonoBehaviour
     {
         if (minionSpawner != null) minionSpawner.enabled = enableMinions;
         if (enableMovementPattern) movement.OnEnable();
-
-        // LevelSequencer enables this component exactly when BossCombat
-        // starts, which is the only moment ships can both act and damage the
-        // boss - so it's the correct zero for a DPS denominator. Guarded so a
-        // re-enable can't restart the fight clock mid-run.
-        if (combatStartTime <= 0f) combatStartTime = Time.time;
+        aggroSystem.MarkCombatStarted();
 
         float graceUntil = Time.time + postEntranceGracePeriod;
         nextFireTime = graceUntil;
@@ -213,85 +193,28 @@ public class Level1Boss : MonoBehaviour
         if (CurrentTarget == null || Time.time < nextFireTime) return;
 
         nextFireTime = Time.time + interval;
-        Fire();
+        combat.Fire();
     }
 
     void PickTarget()
     {
-        CurrentTarget = FindHighestAggroTarget();
+        CurrentTarget = aggroSystem.PickTarget(CurrentTarget);
     }
 
-    private GameObject FindHighestAggroTarget()
-    {
-        float bestAggro;
-        if (CurrentTarget == null || !aggro.TryGetValue(CurrentTarget, out bestAggro)) bestAggro = -1f;
-
-        GameObject best = CurrentTarget;
-        foreach (GameObject t in targets)
-        {
-            if (t == null || !t.activeInHierarchy) continue;
-            float candidateAggro;
-            if (!aggro.TryGetValue(t, out candidateAggro)) continue;
-            if (candidateAggro > bestAggro)
-            {
-                bestAggro = candidateAggro;
-                best = t;
-            }
-        }
-        return best;
-    }
-
-    void Fire()
-    {
-        if (bulletPrefab == null || CurrentTarget == null) return;
-
-        Vector2 dir = (CurrentTarget.transform.position - transform.position).normalized;
-        SpawnBullet(dir);
-
-        if (IsPhase2)
-        {
-            SpawnBullet(Quaternion.Euler(0, 0, spreadAngle) * dir);
-            SpawnBullet(Quaternion.Euler(0, 0, -spreadAngle) * dir);
-        }
-    }
-
-    public void SpawnBullet(Vector2 dir)
-    {
-        GameObject bulletObj = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-        Bullet b = bulletObj.GetComponent<Bullet>();
-        b.damage = bulletDamage;
-        b.Init(dir, bulletSpeed, "Enemy");
-    }
+    public void SpawnBullet(Vector2 dir) => combat.SpawnBullet(dir);
 
     /// <summary>
     /// Called by each ship's own PlayerController.ResolveShipCollisions() when
     /// its overlap-resolution math detects it overlapping the boss. `ship` is
     /// always a ship's own root GameObject, so GetComponent is correct here.
     /// </summary>
-    public void ApplyContactDamage(GameObject ship)
-    {
-        if (ship == null) return;
-        PlayerHealth health = ship.GetComponent<PlayerHealth>();
-        if (health == null) return;
-
-        if (lastContactDamageTime.TryGetValue(ship, out float t) && Time.time - t < contactDamageCooldown) return;
-
-        lastContactDamageTime[ship] = Time.time;
-        health.TakeDamage(Mathf.RoundToInt(bulletDamage * bodyContactDamageMultiplier));
-    }
+    public void ApplyContactDamage(GameObject ship) =>
+        aggroSystem.ApplyContactDamage(ship, bulletDamage * bodyContactDamageMultiplier, contactDamageCooldown);
 
     public void TakeDamage(float amount, GameObject source)
     {
         CurrentHealth -= Mathf.RoundToInt(amount);
-        if (source != null)
-        {
-            if (aggro.ContainsKey(source)) aggro[source] += amount;
-            // TryGetValue rather than ContainsKey-gating, so damage from a
-            // source that never made it into targets[] still shows up on the
-            // meter instead of silently vanishing.
-            damageDealt.TryGetValue(source, out float dealtSoFar);
-            damageDealt[source] = dealtSoFar + amount;
-        }
+        aggroSystem.RegisterDamage(amount, source);
 
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2)
         {
@@ -302,33 +225,30 @@ public class Level1Boss : MonoBehaviour
         if (CurrentHealth <= 0) Die();
     }
 
-    public void TauntedBy(GameObject taunter)
+    // Reflects a host-broadcast BossStateSnapshot onto a remote client's own
+    // (otherwise-idle - Update() never runs there, see LevelSequencer) copy
+    // of this boss, firing OnPhase2 on the same transition edge the host's
+    // own TakeDamage() would - existing listeners (BossPanelUI, VictoryUI)
+    // work unchanged. Defeat is handled separately via Die() below.
+    public void ApplySyncedState(int health, bool phase2, GameObject target)
     {
-        if (!aggro.ContainsKey(taunter)) return;
-
-        float highest = 0f;
-        foreach (KeyValuePair<GameObject, float> kv in aggro) highest = Mathf.Max(highest, kv.Value);
-        aggro[taunter] = highest + tauntBonus;
+        CurrentHealth = health;
+        CurrentTarget = target;
+        if (phase2 && !IsPhase2) { IsPhase2 = true; OnPhase2?.Invoke(); }
     }
 
-    void Die()
+    public void TauntedBy(GameObject taunter) => aggroSystem.TauntedBy(taunter);
+
+    // Public (not private) so RemoteStateReceiver can call it directly when
+    // a host-broadcast BossStateSnapshot's `active` flag goes false.
+    public void Die()
     {
         OnDefeated?.Invoke();
         Destroy(gameObject);
     }
 
-    // Seconds of real boss combat so far - the DPS denominator. Stays 0
-    // until the fight actually starts, so DpsMeterUI can avoid dividing by
-    // an elapsed time that hasn't begun.
-    public float CombatElapsed => combatStartTime > 0f ? Time.time - combatStartTime : 0f;
-
     // Total damage this source has dealt to the boss. Read by DpsMeterUI
     // per-ship rather than exposing the dictionary, so nothing outside can
     // mutate it and iterating costs no allocation.
-    public float GetDamageDealt(GameObject source)
-    {
-        if (source == null) return 0f;
-        damageDealt.TryGetValue(source, out float dealt);
-        return dealt;
-    }
+    public float GetDamageDealt(GameObject source) => aggroSystem.GetDamageDealt(source);
 }

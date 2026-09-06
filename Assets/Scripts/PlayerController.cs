@@ -60,6 +60,11 @@ public class PlayerController : MonoBehaviour
     // whenever a buff is up, or if a field was hand-tweaked in the Inspector.
     public float CurrentDps => fireDamage * shotsPerSecond * fireRateBuffMultiplier;
 
+    // Read by HostStateBroadcaster for the cosmetic firing flag in
+    // ShipStateSnapshot - remote clients don't run this ship's own Fire()/
+    // bullet-spawn logic, only reflect whether it's currently held down.
+    public bool IsFiring => isFiring;
+
 void Start()
     {
         rb = GetComponent<Rigidbody2D>();

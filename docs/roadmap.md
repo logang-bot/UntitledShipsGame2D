@@ -12,14 +12,19 @@ reference docs live under `systems/`.
    prove the raid-style boss fight using AI-controlled teammates for the
    non-human roles, so role-coordination can be shown to be fun with a
    single human player, before any networking exists.
-3. **Bullet-hell + deck layer** — the merged `tohou_deck` half: small hitbox,
+3. **Networking (Nakama).** Originally planned to start only after the
+   bullet-hell/deck layer, since the CPU-AI boss loop needed to be proven
+   fun first — that condition is satisfied (see step 2, fully implemented).
+   Moved ahead of the deck layer in practice because a different developer
+   is building that layer in parallel, so there's no technical reason for
+   networking to wait on it. A first pass — host-authoritative, LAN-only —
+   is now implemented; see `systems/networking.md` and the "Implemented"
+   section below for what's done vs. still explicitly deferred (a real
+   Nakama authoritative server, host migration, client-side prediction).
+4. **Bullet-hell + deck layer** — the merged `tohou_deck` half: small hitbox,
    focus mode, grazing/energy, then cards and the loadout screen, then boss
-   spell cards. Deliberately *after* step 2: cards modify a fight that has
-   already been shown to be fun, they don't substitute for one. See
-   `systems/cards.md`.
-4. **Networking (Nakama) — last.** Only starts once the CPU-AI boss loop is
-   proven fun. This is what upgrades the AI-controlled teammates to real
-   human players, not a separate feature bolted on afterward.
+   spell cards. Being built by a different developer in parallel with step
+   3 above. See `systems/cards.md`.
 5. **Art & audio — final pass**, once everything above works with
    placeholder assets.
 
@@ -372,8 +377,10 @@ reference docs live under `systems/`.
   Build Settings index 0, `MainMenuUI.cs`) is now the real entry point: Play
   → `Lobby`, Quit. `Lobby.unity` (index 1, `LobbyUI.cs`) lets the player pick
   **Local** (proceeds into the existing single-human + 3-AI-teammate flow,
-  unchanged) or **Online** — Online stays a disabled placeholder button since
-  there's no Nakama backend yet. A new `GameModeSelection.cs` static carrier
+  unchanged) or **Online** — Online stayed a disabled placeholder button at
+  the time this scaffolding shipped, since there was no Nakama backend yet;
+  live as of the "Nakama networking" bullet further down this section. A new
+  `GameModeSelection.cs` static carrier
   (`GameMode? Mode`, `Local`/`Online`) records the choice, built on the exact
   same pattern as `PartyRoleAssignment.cs` (survives `SceneManager.LoadScene`
   within a session, resets to `null` on domain reload, treated as "allowed"/
@@ -435,6 +442,38 @@ reference docs live under `systems/`.
   the ships it actually spawned. Aggro, boss targeting, and Tank's taunt were
   all inert on the normal (Join Lobby) route into Gameplay before this. See
   `systems/level1-boss.md`.
+- **Nakama networking (host-authoritative, LAN) — jumped ahead of the deck
+  layer**, since a different developer is building that in parallel and
+  there's no technical dependency forcing networking to wait. Online co-op
+  for up to 4 players across separate machines, relayed through a
+  self-hosted Nakama server: one connected player's client (the match
+  creator) runs the entire existing simulation unchanged, everyone else's
+  clients render its broadcast state — chosen over a true Nakama
+  authoritative match handler specifically to avoid reimplementing boss AI/
+  combat in a second language while the deck layer is also actively
+  changing that same C# logic. Extends the existing "dual entry-point"
+  pattern (`architecture.md`) with a third caller, `NetworkInputReceiver`,
+  so no gameplay script's core logic changed. New: `NakamaConnection.cs`
+  (the one deliberate singleton exception), `NetworkSession.cs` (roster
+  carrier, same pattern as `CoOpRoster.cs`), `PlayerInputCommand.cs` (the
+  serializable per-tick input primitive that didn't exist before),
+  `NetworkInputSender.cs`/`NetworkInputReceiver.cs`, `NetworkPartySpawner.cs`
+  (third `PartySetupBootstrap` branch), `HostStateBroadcaster.cs`/
+  `RemoteStateReceiver.cs` (periodic ship/boss/bullet state snapshots,
+  bullets reconciled declaratively rather than via spawn/despawn events),
+  `OnlineJoin.unity` (new scene: create/join-by-code/quick-match, both join
+  methods), a third `RoleSelect.unity` panel (`NetworkRoleSelectUI.cs`).
+  `Level1Boss.cs` split into `Level1BossAggro.cs`/`Level1BossCombat.cs`
+  (file-size fallout of adding network-sync support). **Known, deliberately
+  deferred limitations**: a modified host can fake damage/HP against its
+  own party (fix: migrate specific state to a real Nakama authoritative
+  handler later); no host migration on disconnect; no client-side
+  prediction; wave enemies/minions and boss attack telegraph warnings aren't
+  visually replicated to remote clients yet (cosmetic only — damage/kills
+  stay host-resolved either way). Local-network testing only so far, not
+  the Fly.io production deployment `overview.md` describes. Full design:
+  `systems/networking.md`. Server hosting steps (separate from this
+  Unity-side work): `nakama-local-setup/`.
 
 ## In Progress
 
@@ -464,24 +503,38 @@ is independently testable and the one before it de-risks the next.
   Inspector. No loadout screen yet.
 - **Starter card set** — ~20 cards, five per role plus Neutral, split Passive
   and Active.
-- **`DeckBuild.unity` loadout scene** — appended at Build Settings index 5,
-  between `RoleSelect` and `Gameplay` in flow order; single/multi picker
-  mirroring `RoleSelect`; `PartyDeckAssignment` static carrying the result
-  across the scene load.
+- **`DeckBuild.unity` loadout scene** — appended at Build Settings index 6
+  (bumped from the originally-planned 5 — `OnlineJoin.unity` claimed that
+  slot first once networking moved ahead of this layer, see below), between
+  `RoleSelect` and `Gameplay` in flow order; single/multi picker mirroring
+  `RoleSelect`; `PartyDeckAssignment` static carrying the result across the
+  scene load.
 - **AI decks** — `AIController` playing cards through `PlayerCards.TryPlayCard()`,
   so a solo party fights the same fight a full party does.
 - **Boss spell cards** — named, timed, individually-HP-barred attack phases
   inside the existing HP-threshold phases, announced on `BossPanel`.
 
-### Networking (last)
+### Networking follow-ups
 
-- **Nakama networking** — self-hosted on Fly.io, authoritative combat/boss
-  state, matchmaking for 1–4 players. Offline/host mode using the same
-  simulation layer. Only starts once the CPU-AI boss loop above is proven
-  fun; this is what upgrades AI-controlled teammates to real human players.
-  `Lobby.unity`'s Online button (see "Scene scaffolding" above) is already
-  in place as a disabled placeholder — this item is what wires it up for
-  real and gives it somewhere (a real lobby/matchmaking flow) to lead to.
+The host-authoritative first pass is done — see "Implemented" above and
+`systems/networking.md`. What's left, in roughly the order it'd make sense
+to tackle:
+
+- **Real Nakama authoritative match handler** — migrate specific state
+  (starting with boss HP/damage resolution) into a Go/Lua/TS match handler
+  running on the server, closing the "modified host can cheat" gap.
+  Deliberately deferred until host-authoritative play is proven fun over
+  a real LAN session.
+- **Fly.io production deployment** — the current server setup
+  (`nakama-local-setup/`) is local-network only.
+- **Host migration** — currently the match simply ends if the host
+  disconnects.
+- **Client-side prediction/reconciliation** — currently a remote client
+  feels its own ship's input with round-trip latency; revisit if that
+  doesn't feel good even on a LAN.
+- **Replicate wave enemies/minions and boss attack telegraphs to remote
+  clients** — cosmetic only today (damage/kills are already host-resolved
+  correctly), but a real gap in what a non-host player actually sees.
 
 ### Art & audio (final pass)
 
