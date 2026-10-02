@@ -23,7 +23,12 @@ public void Show()
 
     public void PlayAgain()
     {
-        SceneManager.LoadScene("Gameplay");
+        // Reload whichever level scene is actually active, not a hardcoded
+        // name - that would silently send a player who just beat Level 2/3
+        // back to Level 1 instead of replaying the level they were on. See
+        // GameOverUI.Restart()/PauseUI.Restart(), which already use this
+        // pattern.
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void ChangeRoles()

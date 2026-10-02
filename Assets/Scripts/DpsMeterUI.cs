@@ -19,7 +19,7 @@ using UnityEngine.UI;
 // scene's Boss into `boss`. Everything else builds itself on Start().
 public class DpsMeterUI : MonoBehaviour
 {
-    public Level1Boss boss; // direct scene reference, same pattern as BossPanelUI.boss
+    public MarauderBoss boss; // direct scene reference, same pattern as BossPanelUI.boss
 
     [Header("Layout")]
     public float titleHeight = 20f;
@@ -81,7 +81,7 @@ public class DpsMeterUI : MonoBehaviour
     {
         if (!built || frozen) return;
 
-        // Level1Boss.Die() destroys its GameObject, so this goes null the
+        // MarauderBoss.Die() destroys its GameObject, so this goes null the
         // moment the fight is won. Freeze on the last painted values rather
         // than blanking the meter - the end-of-fight numbers are the whole
         // point of having one.
