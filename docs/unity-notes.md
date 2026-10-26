@@ -130,7 +130,7 @@ Concretely: `Teammate_Tank` was duplicated twice (`Teammate_Medic`,
 `Assets/Prefabs/Teammate.prefab`. The two duplicates stayed plain
 GameObjects with matching-at-the-time values, not prefab instances — a
 later edit to the prefab's defaults (e.g. tuning `fireRate`/scale, see
-`systems/level1-boss.md`) only propagated to `Teammate_Tank`; the other two needed
+`systems/bosses/marauder-boss.md`) only propagated to `Teammate_Tank`; the other two needed
 the same edit applied directly. If several near-identical objects need to
 stay in sync going forward, prefab-ize (or instantiate from an existing
 prefab) *before* duplicating, not after.
@@ -142,7 +142,7 @@ An orthographic `Camera`'s visible world-space Y range is roughly
 on top of that. Placing an object outside this range produces **no error
 and no warning** — every script/event/component can be wired perfectly and
 the object is simply invisible. Hit this positioning the `Boss` at `y=6`
-against a Size-5 camera (`systems/level1-boss.md`) — every field checked out fine
+against a Size-5 camera (`systems/bosses/marauder-boss.md`) — every field checked out fine
 until an actual screenshot was taken. When something should be visible but
 isn't and nothing is throwing, check world position against the camera's
 actual visible bounds before suspecting the logic.

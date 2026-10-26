@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Level1BossAttacks
+public class MarauderBossAttacks
 {
     public enum BulletPattern { Fan, Ring, Spiral }
 
-    private readonly Level1Boss boss;
+    private readonly MarauderBoss boss;
     private float nextGuidedMissileTime;
     private float nextPatternBarrageTime;
     private BulletPattern? lastPattern;
 
-    public Level1BossAttacks(Level1Boss boss)
+    public MarauderBossAttacks(MarauderBoss boss)
     {
         this.boss = boss;
     }
@@ -34,7 +34,7 @@ public class Level1BossAttacks
         List<GameObject> eligible = GetGuidedMissileEligibleTargets();
         if (eligible.Count == 0) return;
 
-        nextGuidedMissileTime = Time.time + boss.guidedMissileInterval;
+        nextGuidedMissileTime = Time.time + boss.guidedMissile.interval;
         GameObject chosen = eligible[Random.Range(0, eligible.Count)];
         boss.StartCoroutine(GuidedMissileRoutine(chosen));
     }
@@ -47,7 +47,7 @@ public class Level1BossAttacks
             if (t == null || !t.activeInHierarchy) continue;
             PlayerRoleComponent roleComponent = t.GetComponent<PlayerRoleComponent>();
             if (roleComponent == null) continue;
-            foreach (PlayerRole candidateRole in boss.guidedMissileTargetRoles)
+            foreach (PlayerRole candidateRole in boss.guidedMissile.targetRoles)
             {
                 if (roleComponent.role == candidateRole)
                 {
@@ -64,14 +64,14 @@ public class Level1BossAttacks
         PlayerRoleComponent targetRole = target != null ? target.GetComponent<PlayerRoleComponent>() : null;
         GuidedMissileTargetRole = targetRole != null ? (PlayerRole?)targetRole.role : null;
 
-        yield return new WaitForSeconds(boss.guidedMissileTelegraphTime);
+        yield return new WaitForSeconds(boss.guidedMissile.telegraphTime);
 
         if (target != null && target.activeInHierarchy && boss.bulletPrefab != null)
         {
             SpawnGuidedMissile(target.transform);
         }
 
-        yield return new WaitForSeconds(boss.guidedMissileWarningLingerTime);
+        yield return new WaitForSeconds(boss.guidedMissile.warningLingerTime);
         GuidedMissileTargetRole = null;
     }
 
@@ -80,7 +80,7 @@ public class Level1BossAttacks
         GameObject bulletObj = Object.Instantiate(boss.bulletPrefab, boss.transform.position, Quaternion.identity);
         Bullet b = bulletObj.GetComponent<Bullet>();
         b.damage = boss.bulletDamage;
-        b.InitHoming(target, boss.guidedMissileTurnRate, boss.guidedMissileSpeed, "Enemy");
+        b.InitHoming(target, boss.guidedMissile.turnRate, boss.guidedMissile.speed, "Enemy");
     }
 
     public void CheckPatternBarrage()
@@ -135,7 +135,7 @@ public class Level1BossAttacks
     /// <summary>
     /// Re-aims after the telegraph wait, not at activation time - the target
     /// may have moved (or died) during the wind-up, same re-check-after-
-    /// telegraph idiom Level1BossShockwave's ShockwaveRoutine uses.
+    /// telegraph idiom MarauderBossShockwave's ShockwaveRoutine uses.
     /// </summary>
     private Vector2 ComputeAimDirection()
     {

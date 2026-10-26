@@ -130,14 +130,15 @@ one.
 
 ## Deck loadout scene
 
-A new `DeckBuild.unity` sits between `RoleSelect` and `Gameplay` in the
-flow, and is appended at **Build Settings index 5** — appending rather than
-inserting avoids renumbering `Gameplay` (4) and everything before it. Flow
-order and build order don't have to match; only index 0 is meaningful.
-
-```
-MainMenu(0) → Lobby(1) → JoinLobby(2) → RoleSelect(3) → DeckBuild(5) → Gameplay(4)
-```
+A new `DeckBuild.unity` sits between `RoleSelect` and whichever level scene
+is chosen, in the flow, and is appended at whatever the next available
+Build Settings index is when it's built (currently **8**, since
+`LevelSelect`/`Level2`/`Level3` now occupy 4/6/7 — see
+[scene-flow.md](scene-flow.md)) — appending rather than inserting avoids
+renumbering every scene before it. Flow order and build order don't have to
+match; only index 0 is meaningful. Its exact position relative to
+`LevelSelect` (before or after level-picking) is a decision for whenever
+this scene is actually built, not settled here.
 
 It mirrors `RoleSelect`'s existing single/multi split: one picker for a solo
 human, a row per player for 2+ local co-op, each driven by that player's own
@@ -163,8 +164,8 @@ the first pass uses a **static in-code card library**, not a
   existing static registry — do **not** add a `FindObjectsByType` scan) and
   energy award.
 - `PartyDeckAssignment.cs` — plain `public static class` carrying each
-  player's chosen deck from `DeckBuild` into `Gameplay`, exactly as
-  `PartyRoleAssignment` carries the role choice today.
+  player's chosen deck from `DeckBuild` into whichever level scene is
+  chosen, exactly as `PartyRoleAssignment` carries the role choice today.
 
 One class per file, no exceptions — see
 [../architecture.md](../architecture.md)'s "Script Organization" for the bug
@@ -199,7 +200,7 @@ have a clickable ability line; three more rows each would swamp the sidebar.
 
 The Touhou half needs the boss to change too, not just the player. Level 1's
 boss already has HP-threshold phases plus telegraphed Fan / Ring / Spiral
-barrages (see [level1-boss.md](level1-boss.md)) — which is most of a Touhou
+barrages (see [marauder-boss.md](bosses/marauder-boss.md)) — which is most of a Touhou
 spell card already.
 
 The merge formalizes it: a **spell card** is a named, timed boss attack

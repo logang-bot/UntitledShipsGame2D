@@ -67,8 +67,12 @@ void OnTriggerEnter2D(Collider2D other)
         {
             Enemy enemy = other.GetComponent<Enemy>();
             if (enemy != null) enemy.TakeDamage(damage);
-            Level1Boss boss = other.GetComponent<Level1Boss>();
+            MarauderBoss boss = other.GetComponent<MarauderBoss>();
             if (boss != null) boss.TakeDamage(damage, ownerObject);
+            HalcyonBoss halcyonBoss = other.GetComponent<HalcyonBoss>();
+            if (halcyonBoss != null) halcyonBoss.TakeDamage(damage);
+            WardenBoss wardenBoss = other.GetComponent<WardenBoss>();
+            if (wardenBoss != null) wardenBoss.TakeDamage(damage);
             Minion minion = other.GetComponent<Minion>();
             if (minion != null) minion.TakeDamage(damage);
             Destroy(gameObject);
