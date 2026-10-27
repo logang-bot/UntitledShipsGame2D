@@ -16,12 +16,15 @@ reference docs live under `systems/`.
    focus mode, grazing/energy, then cards and the loadout screen, then boss
    spell cards. Deliberately *after* step 2: cards modify a fight that has
    already been shown to be fun, they don't substitute for one. See
-   `systems/cards.md`.
+   `systems/cards.md`. **Owner: another developer** (from Session 49).
 4. **Networking (Nakama) — last.** Only starts once the CPU-AI boss loop is
    proven fun. This is what upgrades the AI-controlled teammates to real
    human players, not a separate feature bolted on afterward.
 5. **Art & audio — final pass**, once everything above works with
-   placeholder assets.
+   placeholder assets. **Exception (Session 49): art starts now, in
+   parallel with step 3.** Each asset replaces a placeholder that already
+   works, so it never blocks gameplay. See `art-roadmap.md`. Audio is still
+   last.
 
 ## Implemented
 
@@ -555,10 +558,21 @@ is independently testable and the one before it de-risks the next.
   in place as a disabled placeholder — this item is what wires it up for
   real and gives it somewhere (a real lobby/matchmaking flow) to lead to.
 
-### Art & audio (final pass)
+### Art & audio
 
-- **Art pipeline** — Blender-rendered sprites with normal maps, URP 2D
-  `Sprite-Lit-Default` shader + `Light2D` + `Shadow Caster 2D` for dynamic lighting.
-  Role-based color variants via material emission swaps.
+- **Art** — started early, in parallel with phase 3. Its phased plan lives
+  in [art-roadmap.md](art-roadmap.md):
+  - foundations;
+  - a pipeline test with one ship;
+  - the four role ships plus roll;
+  - effects;
+  - powers (black hole);
+  - bosses;
+  - anime cut-ins;
+  - HUD and menus last.
+
+  Pipeline: Blender-modeled, pre-rendered sprites (color + normal map + glow
+  mask), URP 2D `Sprite-Lit-Default` + `Light2D`, and Shape Blaster-inspired
+  neon effects.
 
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.

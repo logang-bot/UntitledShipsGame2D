@@ -76,7 +76,7 @@ Researched to confirm this isn't a re-tread of an existing game:
 | Project template       | Universal 2D (URP)                                                                        | Faster iteration than 3D for testing gameplay feel; 2D Lights/Bloom still deliver a strong neon look                                                                                                                                                                 |
 | Networking backend     | Nakama (self-hosted, Go-based) on Fly.io                                                  | Open-source, authoritative server (required for boss-fight integrity), matchmaking + leaderboards built in, reuses existing Go/Fly.io experience                                                                                                                     |
 | Input                  | Unity's New Input System (not legacy Input Manager)                                       | Actively developed; `PlayerInput`'s device-pairing is what local co-op (multiple players, multiple devices, one machine) is built on — implemented, see `roadmap.md`'s "Local co-op / dynamic player count". Uses a custom `PlayerControls` Input Actions asset (not Unity's auto-generated default) for full control over action names. |
-| Art pipeline (planned) | Blender-rendered sprites with normal maps → Unity URP 2D `Sprite-Lit-Default` + `Light2D` | Gets dynamic lighting/shadows reacting to ship geometry without hand-painting normal maps; Blender already produces this as a free byproduct of the 3D model                                                                                                         |
+| Art pipeline (in progress) | Blender-modeled, pre-rendered sprites (color + normal map + glow mask) → Unity URP 2D `Sprite-Lit-Default` + `Light2D`; Shape Blaster-inspired neon effects; anime cut-ins via VRoid → Blender | Dynamic lighting reacts to ship geometry without hand-painting normal maps, since Blender renders them for free. A roll animation is just extra rendered frames. Phones only ever see images. See `art-roadmap.md` |
 | Audio (planned)        | FMOD                                                                                      | Adaptive music for boss phase transitions (intensify at HP thresholds)                                                                                                                                                                                               |
 
 ## Architecture Principles
@@ -87,7 +87,10 @@ Researched to confirm this isn't a re-tread of an existing game:
    filling the non-human roles → then the bullet-hell/deck layer (grazing, energy,
    cards) on top of that proven fight → only then real (human) networking, which
    upgrades those AI teammates to real players → only then final art. See
-   `roadmap.md` for the current status against this order. The deck layer sits
+   `roadmap.md` for the current status against this order. **Exception
+   (Session 49):** the art starts early, in parallel with phase 3 (which
+   another developer owns), as replacements for working placeholders. See
+   `art-roadmap.md`. The deck layer sits
    deliberately *after* the boss fight is proven fun: if the fight isn't fun
    without cards, cards won't rescue it, and if it is, cards have something worth
    modifying.

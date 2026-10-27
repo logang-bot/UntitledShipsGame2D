@@ -1094,3 +1094,63 @@ scene-wiring pass, and all `WardenArmTargetingTests`/`WardenBossDamageTests`/
 - **Pre-existing, out of scope**: 6 EditMode test failures
   (`MarauderBossDamageTests`, `PlayerRoleStatsTests`) predate this session
   and are unrelated to Warden's work — not investigated further here.
+
+## Session 49 — Art Roadmap and Art Decisions
+
+The phase 3 mechanics (small hitbox, focus mode, grazing, energy, cards)
+now belong to **another developer**. You're starting the art in parallel.
+That's a deliberate exception to "art last", and it's safe because every
+asset replaces a placeholder that already works. The plan is the new
+[art-roadmap.md](art-roadmap.md).
+
+### Decisions and why
+
+- **Blender, pre-rendered sprites** (color + normal map + glow mask per
+  frame). Why:
+  - You want detailed ships, not plain geometric shapes.
+  - A roll animation, where the ship spins on its own axis, is just 16–24
+    extra rendered frames. Hand-drawing every angle would be very costly.
+  - Normal maps let Unity's existing 2D lights light flat images from any
+    direction, without an image per lighting case.
+- **Pre-rendered rather than imported 3D models.** Why:
+  - Unity stays in its current 2D setup (2D Renderer, `Sprite-Lit-Default`
+    already on the ships, a Global Light 2D per level).
+  - Phones only see images.
+  - The Blender model stays the real asset, so imported 3D models remain
+    possible later without remodeling.
+- **Effects style from the Tuts+ "Neon Vector Shooter" (Shape Blaster).**
+  You shared a screenshot. Its look comes from bloom, additive particles
+  stretched by speed, a warping spring-mass background grid, and black
+  holes (orbiting particle spray plus gravity plus grid pull). Black-hole
+  powers are an explicit goal. Since this is a bullet hell, a readability
+  rule was added: enemy bullets keep one fixed, top-layer look, and effects
+  stay behind them.
+- **Anime ability cut-ins** (Genshin/ZZZ feel): VRoid Studio → Blender
+  (VRM add-on, toon shading), pre-rendered to an animation in a HUD card.
+  It's the beginner-friendly path to anime-3D characters. Note that
+  hand-modeling anime characters is among the hardest 3D skills.
+- **One project for PC and mobile**, with per-platform quality tiers.
+  - A separate mobile project was considered and rejected: every fix
+    twice, and it would break crossplay. Blender isn't what makes a game
+    heavy; texture size, lights, bloom, particle counts and live 3D are.
+  - Even without crossplay, a sibling project only pays off if mobile
+    becomes a different game.
+
+### Updated docs
+
+- `AGENTS.md`:
+  - Tech-stack art bullet.
+  - Working agreement: phase 2 done, phase 3 owner, art in parallel.
+  - Decisions log rows: work split, art pipeline, effects style, cut-ins,
+    mobile.
+  - The art open question narrowed.
+- `overview.md`: the art pipeline row, plus an exception note on
+  Architecture principle 1.
+- `roadmap.md`: the phase 3 owner, art starting in parallel, and the Art &
+  audio section pointing to `art-roadmap.md`.
+- `README.md`: an index entry.
+
+### Found while checking
+
+Git LFS is installed (3.6.1), but no file types are tracked yet. The art
+roadmap says to set it up before the first art commit.
