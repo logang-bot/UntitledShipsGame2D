@@ -41,6 +41,10 @@
 *.ttf binary
 *.otf binary
 
+# Git LFS — large binary art. Add more types here before committing them
+# (see docs/art-roadmap.md's "Git LFS").
+*.glb filter=lfs diff=lfs merge=lfs -text
+
 # Unity uses YAML merge markers on .unity/.prefab files; keep diffs readable
 # rather than treating them as opaque binary blobs (default behavior already
 # does this via the text rules above — this section is just documentation).

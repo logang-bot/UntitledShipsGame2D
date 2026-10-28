@@ -1209,3 +1209,20 @@ from `warden-fixes`.
 - **Standalone Claude Design closes by December 14, 2026.** The SVGs and
   GLBs get exported into the repo in art Phase 1.
 - Unity's Vector Graphics module is already in `Packages/manifest.json`.
+
+### Later in the session: the 3D models are planned, and saved
+
+- **You confirmed the design's 3D models will be used.** Phase 2b (the
+  bake inside Unity) is now planned work, not a fallback gated on a
+  playtest. 2D still goes first, to replace the placeholders fast and prove
+  the import, glow and tint setup the bake reuses.
+- **The four GLBs are saved** in `ArtSource/Ships/` (`aegis-04`, `nova-11`,
+  `lumen-02`, `echo-07`, 150–310 KB each). They were generated in Node with
+  three.js 0.184's `GLTFExporter`, the same exporter as the design page's
+  download button, from the design's `ships3d.js`. Each was loaded back to
+  check it: 27–51 meshes, 1–4 neon edge-line objects and 8–12 named
+  materials per ship.
+- **`ships3d.js` itself isn't kept.** The GLBs are the asset, and Blender
+  or the bake script can edit them directly.
+- **Git LFS is enabled** in the repo and tracks `*.glb`. The other art types
+  get added before their first commit.

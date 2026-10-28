@@ -18,20 +18,20 @@ Two rules keep the parallel work safe:
 | Topic | Decision | Why |
 | --- | --- | --- |
 | Ships and bosses | **2D neon vector sprites first**, from the "Ship Designs" project in Claude Design. Each ship is an SVG, imported into Unity as a sprite. | At real in-game size (about 65 px tall on a 1080p desktop, 115 px on a 1080×1920 phone) what reads is the silhouette and the glowing trim, which the 2D set already has. It's the cheapest route, and it fits the current URP 2D setup. |
-| A 3D look, if wanted later | **Optional upgrade.** The same project has 3D versions of all four ships, built from simple shapes in code and downloadable as GLB. They'd be **pre-rendered inside Unity** by an editor script, not in Blender. | The models already exist, so nothing needs modeling. Unity can render the frames itself. Only taken if the 2D ships look flat in motion. |
-| Blender | **Optional, not a foundation.** Only for refining a 3D model or rendering a cleaner normal map, if the 3D upgrade happens. | It was the biggest learning cost in the old plan, and none of the current designs need it. |
+| The 3D look | **Planned (Phase 2b).** The same project has 3D versions of all four ships, saved in the repo as GLBs (`ArtSource/Ships/`). They're **pre-rendered inside Unity** by an editor script, not in Blender, and replace the 2D sprites. | The models already exist, so nothing needs modeling. Unity can render the frames itself, including the roll frames. |
+| Blender | **Optional, not a foundation.** Only for refining a 3D model or rendering a cleaner normal map. | It was the biggest learning cost in the old plan, and none of the current designs need it. |
 | How they're lit | URP **2D Renderer**, `Sprite-Lit-Default`, `Light2D`, with bloom doing most of the glow | Already in place: `Assets/Settings/Renderer2D.asset`, ships use `Sprite-Lit-Default`, each level has a Global Light 2D. Normal maps are optional for flat line art. |
 | Effects and powers | Neon style inspired by the Tuts+ "Neon Vector Shooter" (Shape Blaster): bloom, additive particles stretched by speed, a warping background grid, black-hole-style powers | The effects are what sell the neon look. They're independent of how the ships are made. |
 | Anime ability cut-ins | **Decided at the start of Phase 6**, between two routes, neither needing Blender: **2D illustrated** characters animated in Unity, or **VRoid → Unity** through UniVRM and its toon shader (MToon). | 2D matches 2D ships, and it's how Touhou's own spell-card cut-ins work. VRoid → Unity keeps the anime-3D look while skipping Blender entirely. |
 | Mobile | **One project** with per-platform quality settings | No duplicated code, and it keeps crossplay possible. Sprites cost a phone the same however they were made. |
 | Priority | Ships, bosses, effects and powers first; HUD and menus later | |
 
-**Why 2D first and not the 3D models.** At their real size the 3D ships'
-fine detail (surface details, turret barrels, sensor dishes) shrinks to 1–2
-pixels and reads as noise. What 3D really adds is banking/roll and lighting
-that reacts to explosions. Both are nice, but neither is what makes a ship
-readable. Shipping 2D first replaces the placeholders in days. The 3D path
-stays open without redoing anything.
+**Why 2D first, then 3D.** The 2D sprites replace the placeholders in days
+and prove the import, glow and tint setup. The 3D bake then reuses that
+setup, so it only swaps the images. At their real size the 3D ships' fine
+detail (surface details, turret barrels, sensor dishes) shrinks to 1–2
+pixels, so the bake should be judged at in-game size. What 3D really adds
+is banking/roll and lighting that reacts to explosions.
 
 ## Source designs
 
@@ -41,7 +41,7 @@ The ship designs live in the Claude Design project "Ship Designs"
 | File | What it holds |
 | --- | --- |
 | `Ship Designs.dc.html` | The four ships as 2D SVG line art (set 1a), with 96/48/32 px scale previews, and the 3D set (1b) embedded |
-| `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download |
+| `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download. **Saved:** `ArtSource/Ships/aegis-04.glb`, `nova-11.glb`, `lumen-02.glb`, `echo-07.glb` |
 | `Neon Fleet HUD.dc.html` | A HUD design, kept for Phase 7 |
 
 | Role | Ship | Shape | Design color |
@@ -51,9 +51,11 @@ The ship designs live in the Claude Design project "Ship Designs"
 | Medic | LUMEN-02 | Hexagon hull, cross, dashed halo ring | Lime `#B6FF3C` |
 | Support | ECHO-07 | Diamond hull, gyro rings, side masts | Purple `#A855F7` |
 
-**Standalone Claude Design closes by December 14, 2026.** Export the four
-SVGs and the four GLBs into the repo (see "Asset organization") in Phase 1,
-so the source of truth stays in git.
+**Standalone Claude Design closes by December 14, 2026.** The four GLBs are
+already in the repo. The four SVGs still need exporting, in Phase 1, before
+that date. Each GLB keeps its parts and materials named (for example
+`shield_emitter`, `halo_ring`, `gyro_a`, `aegis_cyan`), so the animated parts
+and the emissive trim can be picked out at bake time.
 
 ## Art direction (style guide seed)
 
@@ -106,7 +108,8 @@ a **mobile check**.
 ### Phase 1: Pipeline test with one ship (Attacker)
 
 - **Make:**
-  - **Export** the four SVGs and four GLBs from Claude Design into the repo.
+  - **Export** the four SVGs from Claude Design into the repo (the GLBs are
+    already in `ArtSource/Ships/`).
   - **Split each SVG into two layers:** the dark hull and the neon strokes.
     The strokes become the glow (a separate sprite or a mask), so the hull
     stays dark while the glow takes the role color and drives bloom.
@@ -148,16 +151,19 @@ a **mobile check**.
 - **Check:** the white hit flash (`PlayerDamageFlash`) still reads clearly
   on the new sprites.
 - **Done when:** all four ships are in-game and look alive in motion.
-- **Decision gate, the 3D upgrade:** after a playtest, do the ships look flat
-  in motion? Only if yes, add **Phase 2b**.
 - **Mobile check:** four ships on screen with bloom on.
 
-### Phase 2b (optional): 3D bake inside Unity
+### Phase 2b: 3D bake inside Unity
 
-Only if the Phase 2 gate says the 2D ships look flat.
+The planned replacement for the 2D ships, using the saved GLBs. The 2D
+sprites stay as the fallback, and as the reference for how the ships must
+read at in-game size.
 
 - **Make:**
-  - Import the GLBs into a separate bake scene, not a gameplay scene.
+  - Import the GLBs into a separate bake scene, not a gameplay scene. Unity
+    needs a glTF importer package for this (Unity's glTFast,
+    `com.unity.cloud.gltfast`). Check that it brings in the neon edge lines,
+    which are stored as line primitives.
   - An editor script with an orthographic top-down camera that renders each
     ship into a `RenderTexture` and saves PNGs:
     - a color image and a glow mask (emissive parts only);
@@ -207,8 +213,9 @@ Only if the Phase 2 gate says the 2D ships look flat.
 
 - **Make:**
   - **Marauder**, **Halcyon** and **Warden**, designed in the same 2D neon
-    style and brought in through the Phase 1 pipeline at a larger size. If
-    Phase 2b happened, they follow the 3D route instead.
+    style and brought in through the Phase 1 pipeline at a larger size.
+    Once 3D models exist for them, they follow the Phase 2b bake like the
+    ships.
   - **Warden's arms** as separate sprites, which matches their existing child
     GameObjects (`ArmA`/`ArmB`/`ArmC`). The arms' "down" look replaces the
     gray tint `WardenArmHealth` applies today.
@@ -269,22 +276,24 @@ fonts, icons, and card art for the deck layer, once its design settles.
   `Assets/Art/VFX`, `Assets/Art/Backgrounds` and `Assets/Art/CutIns`. The
   ship SVGs go straight into `Assets/Art/Ships`, since Unity imports them.
 - Sources Unity shouldn't import live in a top-level `ArtSource/` folder
-  **outside** `Assets/`: the design GLBs, any `.blend` files, raw renders
-  and cut-in source art.
+  **outside** `Assets/`: the design GLBs (`ArtSource/Ships/`), any `.blend`
+  files, raw renders and cut-in source art. The Phase 2b bake scene loads
+  the GLBs from there, or a copy goes into `Assets/` only for the bake.
 
-### Git LFS (set up before the first art commit)
+### Git LFS
 
-Git LFS is installed, but no file types are tracked yet. `.gitattributes`
-only marks `*.png` as binary. Before committing art:
-- add LFS tracking for `*.png`, `*.psd`, `*.glb`, `*.blend`, `*.mp4` and
-  `*.webm`. SVGs are text and stay in plain git;
+LFS is enabled in this repo and tracks `*.glb`. Before committing other
+art:
+- add LFS tracking for `*.png`, `*.psd`, `*.blend`, `*.mp4` and `*.webm`.
+  SVGs are text and stay in plain git;
 - check that the remote (GitHub) LFS quota is enough.
 
 ## Open questions
 
 - **Role colors:** the code's red/blue/green/yellow or the designs'
   orange/cyan/lime/purple. Settled in Phase 1.
-- **The 3D upgrade:** taken only if the Phase 2 gate says so.
+- **How much of the 3D bake survives at in-game size,** and whether it
+  needs a normal map for real-time lighting.
 - **Cut-in route:** 2D illustrated or VRoid → Unity, decided at the start of
   Phase 6. Commissioning an artist later could raise the quality of either.
 - **Final per-boss bullet and glow palettes.**

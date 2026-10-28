@@ -52,7 +52,7 @@ on desktop.
 - **Audio (planned):** FMOD, adaptive to boss phase.
 - **Art (in progress, parallel to phase 3):** 2D neon vector sprites (SVGs
   from the Claude Design "Ship Designs" project) into URP 2D
-  `Sprite-Lit-Default` + `Light2D` + bloom; an optional 3D look baked inside
+  `Sprite-Lit-Default` + `Light2D` + bloom, then a planned 3D look baked inside
   Unity from the designs' GLB models; Shape Blaster-inspired neon effects;
   anime ability cut-ins as 2D illustrations or VRoid → Unity (route decided
   later). Blender is optional. See [docs/art-roadmap.md](docs/art-roadmap.md).
@@ -96,7 +96,7 @@ For the full reasoning behind each of these, see
 | Run structure | Pre-fight loadout screen | Simplest path to validating whether cards are fun; roguelike runs / meta-progression deferred |
 | Card economy | Energy earned by grazing | The mechanic that fuses bullet-hell skill with the deck layer |
 | Work split | Phase 3 (hitbox/focus/grazing/cards) by another developer; art in parallel | Art replaces working placeholders, so it never blocks gameplay |
-| Art pipeline | **2D neon vector sprites first** (SVG → Unity); optional 3D upgrade baked **inside Unity** from existing GLB models; Blender optional | At in-game size (~65–115 px) the silhouette and glowing trim are what read; 3D detail becomes noise. Replaces the earlier Blender pre-render plan (Session 50) |
+| Art pipeline | **2D neon vector sprites first** (SVG → Unity), then the design GLB models (`ArtSource/Ships/`) baked to sprites **inside Unity**; Blender optional | 2D replaces the placeholders fast and proves the import/glow/tint setup; the 3D bake reuses it. Replaces the earlier Blender pre-render plan (Session 50) |
 | Effects style | Neon, inspired by Tuts+ "Neon Vector Shooter" (Shape Blaster) | Bloom, additive stretched particles, warping grid, black-hole powers; enemy bullets must stay readable over effects |
 | Ability cut-ins | 2D illustrated, or VRoid → Unity (UniVRM + MToon); picked at the start of art Phase 6 | Neither route needs Blender. 2D matches the ships and Touhou's spell-card cut-ins; VRoid → Unity keeps the anime-3D look |
 | Mobile | One project, per-platform quality tiers | No duplicated code; keeps crossplay possible. A sibling project was considered and rejected |
@@ -110,8 +110,8 @@ For the full reasoning behind each of these, see
 - How cards are acquired/unlocked over time (the loadout screen assumes a
   pool exists; where it comes from is deferred).
 - Number and structure of bosses/stages beyond Level 1.
-- Role colors (code vs. designs), the cut-in route, whether to take the 3D
-  upgrade, final art palettes, and audio direction. The art pipeline
+- Role colors (code vs. designs), the cut-in route, how well the 3D bake
+  reads at in-game size, final art palettes, and audio direction. The art pipeline
   itself is decided; see
   [docs/art-roadmap.md](docs/art-roadmap.md)'s "Open questions".
 - Steam integration approach (Steamworks.NET vs. other), achievements,

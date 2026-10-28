@@ -565,7 +565,7 @@ is independently testable and the one before it de-risks the next.
   - foundations;
   - a pipeline test with one ship;
   - the four role ships plus motion;
-  - an optional 3D bake inside Unity;
+  - a 3D bake inside Unity from the design GLB models;
   - effects;
   - powers (black hole);
   - bosses;
