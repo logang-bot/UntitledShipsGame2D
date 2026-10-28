@@ -1,0 +1,416 @@
+fileFormatVersion: 2
+guid: ca9cc6d11e329294ea6be5023b27b059
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -229685175520597708
+    second: halcyon_bg_4_city_near_0
+  - first:
+      213: -1210362604093822625
+    second: halcyon_bg_4_city_near_1
+  - first:
+      213: 6135233672369126957
+    second: halcyon_bg_4_city_near_2
+  - first:
+      213: -6488689897440942464
+    second: halcyon_bg_4_city_near_3
+  - first:
+      213: -6871749383166690075
+    second: halcyon_bg_4_city_near_4
+  - first:
+      213: -1034087549752473799
+    second: halcyon_bg_4_city_near_5
+  - first:
+      213: 8890360797647056512
+    second: halcyon_bg_4_city_near_6
+  - first:
+      213: 6153855867412480339
+    second: halcyon_bg_4_city_near_7
+  - first:
+      213: 2436444294201066721
+    second: halcyon_bg_4_city_near_8
+  - first:
+      213: -3539246361148096253
+    second: halcyon_bg_4_city_near_9
+  - first:
+      213: -6844801615486709327
+    second: halcyon_bg_4_city_near_10
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1436
+        width: 1075
+        height: 484
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 439ebeebc8effccf0800000000000000
+      internalID: -229685175520597708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 948
+        width: 1080
+        height: 719
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f592295df9de33fe0800000000000000
+      internalID: -1210362604093822625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_2
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 716
+        width: 198
+        height: 231
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2eb397e48ab42550800000000000000
+      internalID: 6135233672369126957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_3
+      rect:
+        serializedVersion: 2
+        x: 877
+        y: 716
+        width: 198
+        height: 231
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 086ed55baea83f5a0800000000000000
+      internalID: -6488689897440942464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_4
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 485
+        width: 194
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ecf6d61854a2a0a0800000000000000
+      internalID: -6871749383166690075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_5
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 270
+        width: 155
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93789523ade26a1f0800000000000000
+      internalID: -1034087549752473799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_6
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 236
+        width: 198
+        height: 231
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08eafc4da08e06b70800000000000000
+      internalID: 8890360797647056512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_7
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 0
+        width: 198
+        height: 227
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35103109e43e66550800000000000000
+      internalID: 6153855867412480339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_8
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 5
+        width: 194
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e4c1ee3d2dffc120800000000000000
+      internalID: 2436444294201066721
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_9
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 0
+        width: 460
+        height: 227
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3018c2faf2212eec0800000000000000
+      internalID: -3539246361148096253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_4_city_near_10
+      rect:
+        serializedVersion: 2
+        x: 899
+        y: 30
+        width: 155
+        height: 163
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b115ee22316201a0800000000000000
+      internalID: -6844801615486709327
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      halcyon_bg_4_city_near_0: -229685175520597708
+      halcyon_bg_4_city_near_1: -1210362604093822625
+      halcyon_bg_4_city_near_10: -6844801615486709327
+      halcyon_bg_4_city_near_2: 6135233672369126957
+      halcyon_bg_4_city_near_3: -6488689897440942464
+      halcyon_bg_4_city_near_4: -6871749383166690075
+      halcyon_bg_4_city_near_5: -1034087549752473799
+      halcyon_bg_4_city_near_6: 8890360797647056512
+      halcyon_bg_4_city_near_7: 6153855867412480339
+      halcyon_bg_4_city_near_8: 2436444294201066721
+      halcyon_bg_4_city_near_9: -3539246361148096253
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

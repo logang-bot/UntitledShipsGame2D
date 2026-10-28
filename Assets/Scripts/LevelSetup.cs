@@ -18,6 +18,7 @@ public class LevelSetup : MonoBehaviour
     void Awake()
     {
         BossEntry entry = PickEntry(bosses, LevelSelection.SelectedLevel ?? editorDefaultLevel);
+        SpawnBackground(entry);
         MonoBehaviour boss = Instantiate(entry.bossPrefab);
         levelSequencer.bossObject = boss;
         partySetup.Setup(boss);
@@ -29,6 +30,14 @@ public class LevelSetup : MonoBehaviour
     public static BossEntry PickEntry(BossEntry[] entries, Level level)
     {
         return Array.Find(entries, entry => entry.level == level);
+    }
+
+    private static void SpawnBackground(BossEntry entry)
+    {
+        if (entry.backgroundPrefab != null)
+        {
+            Instantiate(entry.backgroundPrefab);
+        }
     }
 
     private static void ForwardBossEvents(MonoBehaviour boss, BossEntry entry)

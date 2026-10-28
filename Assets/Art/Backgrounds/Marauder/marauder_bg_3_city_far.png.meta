@@ -1,0 +1,3848 @@
+fileFormatVersion: 2
+guid: 4130281cc803e294ebae08894f4f96ee
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8046841506462431821
+    second: marauder_bg_3_city_far_0
+  - first:
+      213: 7171595433396826586
+    second: marauder_bg_3_city_far_1
+  - first:
+      213: 4562309656290925363
+    second: marauder_bg_3_city_far_2
+  - first:
+      213: 8390026724116511628
+    second: marauder_bg_3_city_far_3
+  - first:
+      213: -6524348645552875786
+    second: marauder_bg_3_city_far_4
+  - first:
+      213: -8943167694572394507
+    second: marauder_bg_3_city_far_5
+  - first:
+      213: 799897162119068536
+    second: marauder_bg_3_city_far_6
+  - first:
+      213: -5733845255148382620
+    second: marauder_bg_3_city_far_7
+  - first:
+      213: 2422459904172942960
+    second: marauder_bg_3_city_far_8
+  - first:
+      213: 8484398765861391771
+    second: marauder_bg_3_city_far_9
+  - first:
+      213: -5083140110092651702
+    second: marauder_bg_3_city_far_10
+  - first:
+      213: 277919143689254366
+    second: marauder_bg_3_city_far_11
+  - first:
+      213: -4247312141406636798
+    second: marauder_bg_3_city_far_12
+  - first:
+      213: -1208395691374804015
+    second: marauder_bg_3_city_far_13
+  - first:
+      213: -2476626669789579325
+    second: marauder_bg_3_city_far_14
+  - first:
+      213: 8196144151790245295
+    second: marauder_bg_3_city_far_15
+  - first:
+      213: 1381251881616311920
+    second: marauder_bg_3_city_far_16
+  - first:
+      213: -5054574793703154615
+    second: marauder_bg_3_city_far_17
+  - first:
+      213: 5726491628750518402
+    second: marauder_bg_3_city_far_18
+  - first:
+      213: -6570291610725998950
+    second: marauder_bg_3_city_far_19
+  - first:
+      213: -1701319832874655562
+    second: marauder_bg_3_city_far_20
+  - first:
+      213: -5415185053613817345
+    second: marauder_bg_3_city_far_21
+  - first:
+      213: 6904805849121562219
+    second: marauder_bg_3_city_far_22
+  - first:
+      213: -1959611922361468505
+    second: marauder_bg_3_city_far_23
+  - first:
+      213: -3362713838781855170
+    second: marauder_bg_3_city_far_24
+  - first:
+      213: -7738164717689134251
+    second: marauder_bg_3_city_far_25
+  - first:
+      213: -6921855839056419476
+    second: marauder_bg_3_city_far_26
+  - first:
+      213: 4636212943246674263
+    second: marauder_bg_3_city_far_27
+  - first:
+      213: 6526202595248299487
+    second: marauder_bg_3_city_far_28
+  - first:
+      213: 5982793344954780886
+    second: marauder_bg_3_city_far_29
+  - first:
+      213: 3291650513255598571
+    second: marauder_bg_3_city_far_30
+  - first:
+      213: -4729491847626285928
+    second: marauder_bg_3_city_far_31
+  - first:
+      213: 3740979510131562170
+    second: marauder_bg_3_city_far_32
+  - first:
+      213: 6208365309598851429
+    second: marauder_bg_3_city_far_33
+  - first:
+      213: 950989580583359378
+    second: marauder_bg_3_city_far_34
+  - first:
+      213: 4355591486899476290
+    second: marauder_bg_3_city_far_35
+  - first:
+      213: -2279370183546909239
+    second: marauder_bg_3_city_far_36
+  - first:
+      213: 8218424877253732515
+    second: marauder_bg_3_city_far_37
+  - first:
+      213: -6210573931719472876
+    second: marauder_bg_3_city_far_38
+  - first:
+      213: 1802945966426279212
+    second: marauder_bg_3_city_far_39
+  - first:
+      213: 6801563281027521369
+    second: marauder_bg_3_city_far_40
+  - first:
+      213: 7563523967818116241
+    second: marauder_bg_3_city_far_41
+  - first:
+      213: -1834572777201410519
+    second: marauder_bg_3_city_far_42
+  - first:
+      213: -2823614680382595079
+    second: marauder_bg_3_city_far_43
+  - first:
+      213: -6248337301130869141
+    second: marauder_bg_3_city_far_44
+  - first:
+      213: 166948196215138101
+    second: marauder_bg_3_city_far_45
+  - first:
+      213: 2498597466712851849
+    second: marauder_bg_3_city_far_46
+  - first:
+      213: -212654296920064614
+    second: marauder_bg_3_city_far_47
+  - first:
+      213: -1033021657985506680
+    second: marauder_bg_3_city_far_48
+  - first:
+      213: 435442812386927320
+    second: marauder_bg_3_city_far_49
+  - first:
+      213: 2507303413296841171
+    second: marauder_bg_3_city_far_50
+  - first:
+      213: -1290630877158007050
+    second: marauder_bg_3_city_far_51
+  - first:
+      213: -4912544332559744262
+    second: marauder_bg_3_city_far_52
+  - first:
+      213: 2186526613118453895
+    second: marauder_bg_3_city_far_53
+  - first:
+      213: -49331400528314301
+    second: marauder_bg_3_city_far_54
+  - first:
+      213: -1224498719406569117
+    second: marauder_bg_3_city_far_55
+  - first:
+      213: 9117001547272534203
+    second: marauder_bg_3_city_far_56
+  - first:
+      213: 1328239150955505383
+    second: marauder_bg_3_city_far_57
+  - first:
+      213: -6851737572071032310
+    second: marauder_bg_3_city_far_58
+  - first:
+      213: -3626798974088797057
+    second: marauder_bg_3_city_far_59
+  - first:
+      213: -7737166929873129761
+    second: marauder_bg_3_city_far_60
+  - first:
+      213: 2138929015289794550
+    second: marauder_bg_3_city_far_61
+  - first:
+      213: -3132560482472667953
+    second: marauder_bg_3_city_far_62
+  - first:
+      213: 7939100491430707585
+    second: marauder_bg_3_city_far_63
+  - first:
+      213: 3929658724220262989
+    second: marauder_bg_3_city_far_64
+  - first:
+      213: 2167051474940456947
+    second: marauder_bg_3_city_far_65
+  - first:
+      213: 5651874579611848687
+    second: marauder_bg_3_city_far_66
+  - first:
+      213: 4940080008626848049
+    second: marauder_bg_3_city_far_67
+  - first:
+      213: -5705054271810007853
+    second: marauder_bg_3_city_far_68
+  - first:
+      213: 2593696258514125099
+    second: marauder_bg_3_city_far_69
+  - first:
+      213: -1673944004959122740
+    second: marauder_bg_3_city_far_70
+  - first:
+      213: 1569451527701910948
+    second: marauder_bg_3_city_far_71
+  - first:
+      213: 5050639709487739790
+    second: marauder_bg_3_city_far_72
+  - first:
+      213: 6487377065146010292
+    second: marauder_bg_3_city_far_73
+  - first:
+      213: -5931643836587494041
+    second: marauder_bg_3_city_far_74
+  - first:
+      213: -2069757197521192554
+    second: marauder_bg_3_city_far_75
+  - first:
+      213: 5396463952895864994
+    second: marauder_bg_3_city_far_76
+  - first:
+      213: 599407447094801484
+    second: marauder_bg_3_city_far_77
+  - first:
+      213: 674686771606707088
+    second: marauder_bg_3_city_far_78
+  - first:
+      213: -3146526588306143238
+    second: marauder_bg_3_city_far_79
+  - first:
+      213: -1983467445763576409
+    second: marauder_bg_3_city_far_80
+  - first:
+      213: -3073004712786957985
+    second: marauder_bg_3_city_far_81
+  - first:
+      213: 4318556061179023973
+    second: marauder_bg_3_city_far_82
+  - first:
+      213: 8087940931138949417
+    second: marauder_bg_3_city_far_83
+  - first:
+      213: -158838778026744634
+    second: marauder_bg_3_city_far_84
+  - first:
+      213: 7600593173637469587
+    second: marauder_bg_3_city_far_85
+  - first:
+      213: -5792379516252324334
+    second: marauder_bg_3_city_far_86
+  - first:
+      213: -8906325178355308537
+    second: marauder_bg_3_city_far_87
+  - first:
+      213: -8397452343283266615
+    second: marauder_bg_3_city_far_88
+  - first:
+      213: -6739551070394136653
+    second: marauder_bg_3_city_far_89
+  - first:
+      213: -7750502292117688131
+    second: marauder_bg_3_city_far_90
+  - first:
+      213: -3070643439227146988
+    second: marauder_bg_3_city_far_91
+  - first:
+      213: -6148532739872485407
+    second: marauder_bg_3_city_far_92
+  - first:
+      213: -6988886386048629512
+    second: marauder_bg_3_city_far_93
+  - first:
+      213: 5215641514017490114
+    second: marauder_bg_3_city_far_94
+  - first:
+      213: -4000768891579879960
+    second: marauder_bg_3_city_far_95
+  - first:
+      213: 3327314613000498268
+    second: marauder_bg_3_city_far_96
+  - first:
+      213: 7779002377383149651
+    second: marauder_bg_3_city_far_97
+  - first:
+      213: 8033824197158046704
+    second: marauder_bg_3_city_far_98
+  - first:
+      213: -8941938917250766736
+    second: marauder_bg_3_city_far_99
+  - first:
+      213: -6948108439793091642
+    second: marauder_bg_3_city_far_100
+  - first:
+      213: -5351133519061043993
+    second: marauder_bg_3_city_far_101
+  - first:
+      213: -3008139241163773873
+    second: marauder_bg_3_city_far_102
+  - first:
+      213: 5794153492822478412
+    second: marauder_bg_3_city_far_103
+  - first:
+      213: 5463412968819817334
+    second: marauder_bg_3_city_far_104
+  - first:
+      213: -5834483542725259797
+    second: marauder_bg_3_city_far_105
+  - first:
+      213: -586375184952955890
+    second: marauder_bg_3_city_far_106
+  - first:
+      213: -7254086495910670618
+    second: marauder_bg_3_city_far_107
+  - first:
+      213: -3941773429644481880
+    second: marauder_bg_3_city_far_108
+  - first:
+      213: 3744122943015106673
+    second: marauder_bg_3_city_far_109
+  - first:
+      213: 7652774961814238652
+    second: marauder_bg_3_city_far_110
+  - first:
+      213: -1885378035072781198
+    second: marauder_bg_3_city_far_111
+  - first:
+      213: 4325948681337699650
+    second: marauder_bg_3_city_far_112
+  - first:
+      213: 1307838937950156112
+    second: marauder_bg_3_city_far_113
+  - first:
+      213: 4648083514747993635
+    second: marauder_bg_3_city_far_114
+  - first:
+      213: -610847618621371634
+    second: marauder_bg_3_city_far_115
+  - first:
+      213: 1464816444794559033
+    second: marauder_bg_3_city_far_116
+  - first:
+      213: 7520805772517598019
+    second: marauder_bg_3_city_far_117
+  - first:
+      213: 8230442241848316196
+    second: marauder_bg_3_city_far_118
+  - first:
+      213: -605582374822781941
+    second: marauder_bg_3_city_far_119
+  - first:
+      213: 4507007048834439508
+    second: marauder_bg_3_city_far_120
+  - first:
+      213: 4223120143781176722
+    second: marauder_bg_3_city_far_121
+  - first:
+      213: -5554509220317165583
+    second: marauder_bg_3_city_far_122
+  - first:
+      213: -2714200043601072274
+    second: marauder_bg_3_city_far_123
+  - first:
+      213: -8508429635756760697
+    second: marauder_bg_3_city_far_124
+  - first:
+      213: -8700298608998668206
+    second: marauder_bg_3_city_far_125
+  - first:
+      213: 2930856335074941412
+    second: marauder_bg_3_city_far_126
+  - first:
+      213: 4736895155661982816
+    second: marauder_bg_3_city_far_127
+  - first:
+      213: -3057008274890632437
+    second: marauder_bg_3_city_far_128
+  - first:
+      213: 3592250278122902625
+    second: marauder_bg_3_city_far_129
+  - first:
+      213: 4733885649405686005
+    second: marauder_bg_3_city_far_130
+  - first:
+      213: -3542339555867735835
+    second: marauder_bg_3_city_far_131
+  - first:
+      213: -5405059919661673448
+    second: marauder_bg_3_city_far_132
+  - first:
+      213: 8761070116061455874
+    second: marauder_bg_3_city_far_133
+  - first:
+      213: 3839198804627326982
+    second: marauder_bg_3_city_far_134
+  - first:
+      213: -5517715964276978439
+    second: marauder_bg_3_city_far_135
+  - first:
+      213: 3754337928512132003
+    second: marauder_bg_3_city_far_136
+  - first:
+      213: 1220600395083337774
+    second: marauder_bg_3_city_far_137
+  - first:
+      213: 4975687520162040306
+    second: marauder_bg_3_city_far_138
+  - first:
+      213: -9004915659369585604
+    second: marauder_bg_3_city_far_139
+  - first:
+      213: -4812941265680465147
+    second: marauder_bg_3_city_far_140
+  - first:
+      213: -950874979139203020
+    second: marauder_bg_3_city_far_141
+  - first:
+      213: 418974627390612129
+    second: marauder_bg_3_city_far_142
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_0
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b5007ba840e35090800000000000000
+      internalID: -8046841506462431821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_1
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad17e68cc00a68360800000000000000
+      internalID: 7171595433396826586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_2
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 33b1e82d574905f30800000000000000
+      internalID: 4562309656290925363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_3
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 1857
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8bbff27adc5f6470800000000000000
+      internalID: 8390026724116511628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_4
+      rect:
+        serializedVersion: 2
+        x: 337
+        y: 1813
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f6150f697bd475a0800000000000000
+      internalID: -6524348645552875786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_5
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f7634e5d5c73e380800000000000000
+      internalID: -8943167694572394507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_6
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87b33fc1b3ec91b00800000000000000
+      internalID: 799897162119068536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_7
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46652d1ae1a4d60b0800000000000000
+      internalID: -5733845255148382620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_8
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 076ead6b27e4e9120800000000000000
+      internalID: 2422459904172942960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_9
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9d4eeba9b3aeb570800000000000000
+      internalID: 8484398765861391771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_10
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a433362600f0579b0800000000000000
+      internalID: -5083140110092651702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_11
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed5f0eb1dfd5bd300800000000000000
+      internalID: 277919143689254366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_12
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 205f0415c148e05c0800000000000000
+      internalID: -4247312141406636798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_13
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d30e73658aea3fe0800000000000000
+      internalID: -1208395691374804015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_14
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 1737
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c7fee16a2141add0800000000000000
+      internalID: -2476626669789579325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_15
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 1693
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa55a575ead8eb170800000000000000
+      internalID: 8196144151790245295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_16
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0768415a4413b2310800000000000000
+      internalID: 1381251881616311920
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_17
+      rect:
+        serializedVersion: 2
+        x: 877
+        y: 1737
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94c1ea2610b8ad9b0800000000000000
+      internalID: -5054574793703154615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_18
+      rect:
+        serializedVersion: 2
+        x: 918
+        y: 1693
+        width: 43
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2883ceccbc5987f40800000000000000
+      internalID: 5726491628750518402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_19
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9e92f74792a1d4a0800000000000000
+      internalID: -6570291610725998950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_20
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b0ed2040a2b368e0800000000000000
+      internalID: -1701319832874655562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_21
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff1085672e569d4b0800000000000000
+      internalID: -5415185053613817345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_22
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6e1ee7265cc2df50800000000000000
+      internalID: 6904805849121562219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_23
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a9360ec65f0ec4e0800000000000000
+      internalID: -1959611922361468505
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_24
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 1617
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3a0e1e749d3551d0800000000000000
+      internalID: -3362713838781855170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_25
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 1573
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 553ada410348c9490800000000000000
+      internalID: -7738164717689134251
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_26
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c652496b9c0a0ff90800000000000000
+      internalID: -6921855839056419476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_27
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 1453
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7594941bb13275040800000000000000
+      internalID: 4636212943246674263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_28
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1442
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fddd10edeaab19a50800000000000000
+      internalID: 6526202595248299487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_29
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1442
+        width: 105
+        height: 113
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dcc99a59d6270350800000000000000
+      internalID: 5982793344954780886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_30
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1442
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be9055fa3ba4ead20800000000000000
+      internalID: 3291650513255598571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_31
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 1434
+        width: 109
+        height: 120
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89c1126f8387d5eb0800000000000000
+      internalID: -4729491847626285928
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_32
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 1442
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab6186d3b01aae330800000000000000
+      internalID: 3740979510131562170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_33
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1442
+        width: 104
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5616f721b5b882650800000000000000
+      internalID: 6208365309598851429
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_34
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1442
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 293d4c72cf7923d00800000000000000
+      internalID: 950989580583359378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_35
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1442
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 247db53616b227c30800000000000000
+      internalID: 4355591486899476290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_36
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 1442
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cdc11a05ec0e50e0800000000000000
+      internalID: -2279370183546909239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_37
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a821fdf1e5bd0270800000000000000
+      internalID: 8218424877253732515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_38
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4194f840aeb9fc9a0800000000000000
+      internalID: -6210573931719472876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_39
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2dcf06ddc9550910800000000000000
+      internalID: 1802945966426279212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_40
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95b5cf294c1046e50800000000000000
+      internalID: 6801563281027521369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_41
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 19ca3f7b9f807f860800000000000000
+      internalID: 7563523967818116241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_42
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92ede4477c94a86e0800000000000000
+      internalID: -1834572777201410519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_43
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ff9739886180d8d0800000000000000
+      internalID: -2823614680382595079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_44
+      rect:
+        serializedVersion: 2
+        x: 985
+        y: 1377
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b66854964527949a0800000000000000
+      internalID: -6248337301130869141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_45
+      rect:
+        serializedVersion: 2
+        x: 985
+        y: 1333
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 537ab4bff7e115200800000000000000
+      internalID: 166948196215138101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_46
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9854c18682dcca220800000000000000
+      internalID: 2498597466712851849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_47
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 1257
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9d7e1c2b008c0df0800000000000000
+      internalID: -212654296920064614
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_48
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 1213
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8822d767648f9a1f0800000000000000
+      internalID: -1033021657985506680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_49
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d2e1584ee00b0600800000000000000
+      internalID: 435442812386927320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_50
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d1cead8b2bbbc220800000000000000
+      internalID: 2507303413296841171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_51
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fe98d62e02c61ee0800000000000000
+      internalID: -1290630877158007050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_52
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af20b6215f223dbb0800000000000000
+      internalID: -4912544332559744262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_53
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7880dd2be5a185e10800000000000000
+      internalID: 2186526613118453895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_54
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 340cc334a5db05ff0800000000000000
+      internalID: -49331400528314301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_55
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 369c9d107e4b10fe0800000000000000
+      internalID: -1224498719406569117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_56
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 1213
+        width: 92
+        height: 104
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb8bdd17a98168e70800000000000000
+      internalID: 9117001547272534203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_57
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 1080
+        width: 100
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e62871787ade6210800000000000000
+      internalID: 1328239150955505383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_58
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0a3282fafcb9e0a0800000000000000
+      internalID: -6851737572071032310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_59
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f74afa57c850badc0800000000000000
+      internalID: -3626798974088797057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_60
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fde2309abaf00a490800000000000000
+      internalID: -7737166929873129761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_61
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ffcf1c5b900fad10800000000000000
+      internalID: 2138929015289794550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_62
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc45ac496d8e684d0800000000000000
+      internalID: -3132560482472667953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_63
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1814bd375d95d2e60800000000000000
+      internalID: 7939100491430707585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_64
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4ad9a91ac3f88630800000000000000
+      internalID: 3929658724220262989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_65
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ffefcdb5d9e21e10800000000000000
+      internalID: 2167051474940456947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_66
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fef03d83cfd7f6e40800000000000000
+      internalID: 5651874579611848687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_67
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 960
+        width: 100
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 131463c1890be8440800000000000000
+      internalID: 4940080008626848049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_68
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 962
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dc8070dd5393d0b0800000000000000
+      internalID: -5705054271810007853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_69
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 962
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b218eff4109aef320800000000000000
+      internalID: 2593696258514125099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_70
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 962
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cca4482ebc4f4c8e0800000000000000
+      internalID: -1673944004959122740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_71
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 1017
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a5ddd069dfc7c510800000000000000
+      internalID: 1569451527701910948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_72
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 973
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e83bf7c6e0a771640800000000000000
+      internalID: 5050639709487739790
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_73
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 962
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ba4b04b11bc70a50800000000000000
+      internalID: 6487377065146010292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_74
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 962
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 765311a9b519eada0800000000000000
+      internalID: -5931643836587494041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_75
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 962
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 699f07e7bceb643e0800000000000000
+      internalID: -2069757197521192554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_76
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 842
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a0fe8b9f5714ea40800000000000000
+      internalID: 5396463952895864994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_77
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 842
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c443fc7b5e5815800800000000000000
+      internalID: 599407447094801484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_78
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 842
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09bd54c4b08fc5900800000000000000
+      internalID: 674686771606707088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_79
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 853
+        width: 44
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af7c0bb2dba4554d0800000000000000
+      internalID: -3146526588306143238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_80
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 842
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ade5bfedde4974e0800000000000000
+      internalID: -1983467445763576409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_81
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 897
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f596b35ce7e7a55d0800000000000000
+      internalID: -3073004712786957985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_82
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 853
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5629f216bd79eeb30800000000000000
+      internalID: 4318556061179023973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_83
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 842
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92111e4dc632e3070800000000000000
+      internalID: 8087940931138949417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_84
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 842
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c4a82319f0bbcdf0800000000000000
+      internalID: -158838778026744634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_85
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 722
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3959be4c83bba7960800000000000000
+      internalID: 7600593173637469587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_86
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 722
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21ef781f4855d9fa0800000000000000
+      internalID: -5792379516252324334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_87
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 722
+        width: 206
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 708a3022070666480800000000000000
+      internalID: -8906325178355308537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_88
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 777
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cb445cd591467b80800000000000000
+      internalID: -8397452343283266615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_89
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 733
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b7cd87520e4872a0800000000000000
+      internalID: -6739551070394136653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_90
+      rect:
+        serializedVersion: 2
+        x: 877
+        y: 777
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db0797faa3fa07490800000000000000
+      internalID: -7750502292117688131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_91
+      rect:
+        serializedVersion: 2
+        x: 918
+        y: 733
+        width: 43
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41d6bfc9f02e265d0800000000000000
+      internalID: -3070643439227146988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_92
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 722
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ef8a06ac060caaa0800000000000000
+      internalID: -6148532739872485407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_93
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f402005cdc720f90800000000000000
+      internalID: -6988886386048629512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_94
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 602
+        width: 98
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c40bc6c25ea16840800000000000000
+      internalID: 5215641514017490114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_95
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8eda2fcd3e96a78c0800000000000000
+      internalID: -4000768891579879960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_96
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 613
+        width: 43
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5c6cdbf20ffc2e20800000000000000
+      internalID: 3327314613000498268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_97
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35087d2827194fb60800000000000000
+      internalID: 7779002377383149651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_98
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fb0b83da80ed7f60800000000000000
+      internalID: 8033824197158046704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_99
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 078e6026ee9d7e380800000000000000
+      internalID: -8941938917250766736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_100
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cb3d39cf2c539f90800000000000000
+      internalID: -6948108439793091642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_101
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e43eaa7a64fcb5b0800000000000000
+      internalID: -5351133519061043993
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_102
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 482
+        width: 102
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4825874c41f046d0800000000000000
+      internalID: -3008139241163773873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_103
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4ec5c927e7f86050800000000000000
+      internalID: 5794153492822478412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_104
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 537
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67b74c31621f1db40800000000000000
+      internalID: 5463412968819817334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_105
+      rect:
+        serializedVersion: 2
+        x: 661
+        y: 493
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bed8ffb5120c70fa0800000000000000
+      internalID: -5834483542725259797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_106
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0c66c340e6ccd7f0800000000000000
+      internalID: -586375184952955890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_107
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ee494904ce445b90800000000000000
+      internalID: -7254086495910670618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_108
+      rect:
+        serializedVersion: 2
+        x: 985
+        y: 537
+        width: 44
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aaa7fc33f10c49c0800000000000000
+      internalID: -3941773429644481880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_109
+      rect:
+        serializedVersion: 2
+        x: 985
+        y: 493
+        width: 44
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1783ecdbafbc5f330800000000000000
+      internalID: 3744122943015106673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_110
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb5f0f8184e143a60800000000000000
+      internalID: 7652774961814238652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_111
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 417
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 274b9209aaac5d5e0800000000000000
+      internalID: -1885378035072781198
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_112
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 373
+        width: 44
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24df3b3e76bd80c30800000000000000
+      internalID: 4325948681337699650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_113
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05571f7b590662210800000000000000
+      internalID: 1307838937950156112
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_114
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32e37ee745f418040800000000000000
+      internalID: 4648083514747993635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_115
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0b0e28c355d587f0800000000000000
+      internalID: -610847618621371634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_116
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 417
+        width: 84
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93a512dabc2145410800000000000000
+      internalID: 1464816444794559033
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_117
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 373
+        width: 44
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3436e9fc0054f5860800000000000000
+      internalID: 7520805772517598019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_118
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4211db9bc97683270800000000000000
+      internalID: 8230442241848316196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_119
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0c5372e90a8897f0800000000000000
+      internalID: -605582374822781941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_120
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45955f1280b1c8e30800000000000000
+      internalID: 4507007048834439508
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_121
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 295afdd45698b9a30800000000000000
+      internalID: 4223120143781176722
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_122
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f70d5d0b4b6ae2b0800000000000000
+      internalID: -5554509220317165583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_123
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6feec7d079355ad0800000000000000
+      internalID: -2714200043601072274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_124
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 781ef4c635cfbe980800000000000000
+      internalID: -8508429635756760697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_125
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2582fc2e284524780800000000000000
+      internalID: -8700298608998668206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_126
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 242
+        width: 102
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e958d3fe4e7ca820800000000000000
+      internalID: 2930856335074941412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_127
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 122
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06c40830c05dcb140800000000000000
+      internalID: 4736895155661982816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_128
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 122
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b03d6b3bb235395d0800000000000000
+      internalID: -3057008274890632437
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_129
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 122
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16450db689c3ad130800000000000000
+      internalID: 3592250278122902625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_130
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 122
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f0352cbae322b140800000000000000
+      internalID: 4733885649405686005
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_131
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 122
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e840ba21f417dec0800000000000000
+      internalID: -3542339555867735835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_132
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 122
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8145ddae3ae5df4b0800000000000000
+      internalID: -5405059919661673448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_133
+      rect:
+        serializedVersion: 2
+        x: 877
+        y: 133
+        width: 84
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20622283ad2959970800000000000000
+      internalID: 8761070116061455874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_134
+      rect:
+        serializedVersion: 2
+        x: 918
+        y: 177
+        width: 43
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6088aebc8f2974530800000000000000
+      internalID: 3839198804627326982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_135
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fcc4c980922d63b0800000000000000
+      internalID: -5517715964276978439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_136
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a3ddb364761a1430800000000000000
+      internalID: 3754337928512132003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_137
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e20d4a1a79170f010800000000000000
+      internalID: 1220600395083337774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_138
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f94a90ff613d0540800000000000000
+      internalID: 4975687520162040306
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_139
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c346ceafaec180380800000000000000
+      internalID: -9004915659369585604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_140
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5030c4e3b6ff43db0800000000000000
+      internalID: -4812941265680465147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_141
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 430d9929e30ddc2f0800000000000000
+      internalID: -950874979139203020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_3_city_far_142
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1a2e48b243f70d500800000000000000
+      internalID: 418974627390612129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      marauder_bg_3_city_far_0: -8046841506462431821
+      marauder_bg_3_city_far_1: 7171595433396826586
+      marauder_bg_3_city_far_10: -5083140110092651702
+      marauder_bg_3_city_far_100: -6948108439793091642
+      marauder_bg_3_city_far_101: -5351133519061043993
+      marauder_bg_3_city_far_102: -3008139241163773873
+      marauder_bg_3_city_far_103: 5794153492822478412
+      marauder_bg_3_city_far_104: 5463412968819817334
+      marauder_bg_3_city_far_105: -5834483542725259797
+      marauder_bg_3_city_far_106: -586375184952955890
+      marauder_bg_3_city_far_107: -7254086495910670618
+      marauder_bg_3_city_far_108: -3941773429644481880
+      marauder_bg_3_city_far_109: 3744122943015106673
+      marauder_bg_3_city_far_11: 277919143689254366
+      marauder_bg_3_city_far_110: 7652774961814238652
+      marauder_bg_3_city_far_111: -1885378035072781198
+      marauder_bg_3_city_far_112: 4325948681337699650
+      marauder_bg_3_city_far_113: 1307838937950156112
+      marauder_bg_3_city_far_114: 4648083514747993635
+      marauder_bg_3_city_far_115: -610847618621371634
+      marauder_bg_3_city_far_116: 1464816444794559033
+      marauder_bg_3_city_far_117: 7520805772517598019
+      marauder_bg_3_city_far_118: 8230442241848316196
+      marauder_bg_3_city_far_119: -605582374822781941
+      marauder_bg_3_city_far_12: -4247312141406636798
+      marauder_bg_3_city_far_120: 4507007048834439508
+      marauder_bg_3_city_far_121: 4223120143781176722
+      marauder_bg_3_city_far_122: -5554509220317165583
+      marauder_bg_3_city_far_123: -2714200043601072274
+      marauder_bg_3_city_far_124: -8508429635756760697
+      marauder_bg_3_city_far_125: -8700298608998668206
+      marauder_bg_3_city_far_126: 2930856335074941412
+      marauder_bg_3_city_far_127: 4736895155661982816
+      marauder_bg_3_city_far_128: -3057008274890632437
+      marauder_bg_3_city_far_129: 3592250278122902625
+      marauder_bg_3_city_far_13: -1208395691374804015
+      marauder_bg_3_city_far_130: 4733885649405686005
+      marauder_bg_3_city_far_131: -3542339555867735835
+      marauder_bg_3_city_far_132: -5405059919661673448
+      marauder_bg_3_city_far_133: 8761070116061455874
+      marauder_bg_3_city_far_134: 3839198804627326982
+      marauder_bg_3_city_far_135: -5517715964276978439
+      marauder_bg_3_city_far_136: 3754337928512132003
+      marauder_bg_3_city_far_137: 1220600395083337774
+      marauder_bg_3_city_far_138: 4975687520162040306
+      marauder_bg_3_city_far_139: -9004915659369585604
+      marauder_bg_3_city_far_14: -2476626669789579325
+      marauder_bg_3_city_far_140: -4812941265680465147
+      marauder_bg_3_city_far_141: -950874979139203020
+      marauder_bg_3_city_far_142: 418974627390612129
+      marauder_bg_3_city_far_15: 8196144151790245295
+      marauder_bg_3_city_far_16: 1381251881616311920
+      marauder_bg_3_city_far_17: -5054574793703154615
+      marauder_bg_3_city_far_18: 5726491628750518402
+      marauder_bg_3_city_far_19: -6570291610725998950
+      marauder_bg_3_city_far_2: 4562309656290925363
+      marauder_bg_3_city_far_20: -1701319832874655562
+      marauder_bg_3_city_far_21: -5415185053613817345
+      marauder_bg_3_city_far_22: 6904805849121562219
+      marauder_bg_3_city_far_23: -1959611922361468505
+      marauder_bg_3_city_far_24: -3362713838781855170
+      marauder_bg_3_city_far_25: -7738164717689134251
+      marauder_bg_3_city_far_26: -6921855839056419476
+      marauder_bg_3_city_far_27: 4636212943246674263
+      marauder_bg_3_city_far_28: 6526202595248299487
+      marauder_bg_3_city_far_29: 5982793344954780886
+      marauder_bg_3_city_far_3: 8390026724116511628
+      marauder_bg_3_city_far_30: 3291650513255598571
+      marauder_bg_3_city_far_31: -4729491847626285928
+      marauder_bg_3_city_far_32: 3740979510131562170
+      marauder_bg_3_city_far_33: 6208365309598851429
+      marauder_bg_3_city_far_34: 950989580583359378
+      marauder_bg_3_city_far_35: 4355591486899476290
+      marauder_bg_3_city_far_36: -2279370183546909239
+      marauder_bg_3_city_far_37: 8218424877253732515
+      marauder_bg_3_city_far_38: -6210573931719472876
+      marauder_bg_3_city_far_39: 1802945966426279212
+      marauder_bg_3_city_far_4: -6524348645552875786
+      marauder_bg_3_city_far_40: 6801563281027521369
+      marauder_bg_3_city_far_41: 7563523967818116241
+      marauder_bg_3_city_far_42: -1834572777201410519
+      marauder_bg_3_city_far_43: -2823614680382595079
+      marauder_bg_3_city_far_44: -6248337301130869141
+      marauder_bg_3_city_far_45: 166948196215138101
+      marauder_bg_3_city_far_46: 2498597466712851849
+      marauder_bg_3_city_far_47: -212654296920064614
+      marauder_bg_3_city_far_48: -1033021657985506680
+      marauder_bg_3_city_far_49: 435442812386927320
+      marauder_bg_3_city_far_5: -8943167694572394507
+      marauder_bg_3_city_far_50: 2507303413296841171
+      marauder_bg_3_city_far_51: -1290630877158007050
+      marauder_bg_3_city_far_52: -4912544332559744262
+      marauder_bg_3_city_far_53: 2186526613118453895
+      marauder_bg_3_city_far_54: -49331400528314301
+      marauder_bg_3_city_far_55: -1224498719406569117
+      marauder_bg_3_city_far_56: 9117001547272534203
+      marauder_bg_3_city_far_57: 1328239150955505383
+      marauder_bg_3_city_far_58: -6851737572071032310
+      marauder_bg_3_city_far_59: -3626798974088797057
+      marauder_bg_3_city_far_6: 799897162119068536
+      marauder_bg_3_city_far_60: -7737166929873129761
+      marauder_bg_3_city_far_61: 2138929015289794550
+      marauder_bg_3_city_far_62: -3132560482472667953
+      marauder_bg_3_city_far_63: 7939100491430707585
+      marauder_bg_3_city_far_64: 3929658724220262989
+      marauder_bg_3_city_far_65: 2167051474940456947
+      marauder_bg_3_city_far_66: 5651874579611848687
+      marauder_bg_3_city_far_67: 4940080008626848049
+      marauder_bg_3_city_far_68: -5705054271810007853
+      marauder_bg_3_city_far_69: 2593696258514125099
+      marauder_bg_3_city_far_7: -5733845255148382620
+      marauder_bg_3_city_far_70: -1673944004959122740
+      marauder_bg_3_city_far_71: 1569451527701910948
+      marauder_bg_3_city_far_72: 5050639709487739790
+      marauder_bg_3_city_far_73: 6487377065146010292
+      marauder_bg_3_city_far_74: -5931643836587494041
+      marauder_bg_3_city_far_75: -2069757197521192554
+      marauder_bg_3_city_far_76: 5396463952895864994
+      marauder_bg_3_city_far_77: 599407447094801484
+      marauder_bg_3_city_far_78: 674686771606707088
+      marauder_bg_3_city_far_79: -3146526588306143238
+      marauder_bg_3_city_far_8: 2422459904172942960
+      marauder_bg_3_city_far_80: -1983467445763576409
+      marauder_bg_3_city_far_81: -3073004712786957985
+      marauder_bg_3_city_far_82: 4318556061179023973
+      marauder_bg_3_city_far_83: 8087940931138949417
+      marauder_bg_3_city_far_84: -158838778026744634
+      marauder_bg_3_city_far_85: 7600593173637469587
+      marauder_bg_3_city_far_86: -5792379516252324334
+      marauder_bg_3_city_far_87: -8906325178355308537
+      marauder_bg_3_city_far_88: -8397452343283266615
+      marauder_bg_3_city_far_89: -6739551070394136653
+      marauder_bg_3_city_far_9: 8484398765861391771
+      marauder_bg_3_city_far_90: -7750502292117688131
+      marauder_bg_3_city_far_91: -3070643439227146988
+      marauder_bg_3_city_far_92: -6148532739872485407
+      marauder_bg_3_city_far_93: -6988886386048629512
+      marauder_bg_3_city_far_94: 5215641514017490114
+      marauder_bg_3_city_far_95: -4000768891579879960
+      marauder_bg_3_city_far_96: 3327314613000498268
+      marauder_bg_3_city_far_97: 7779002377383149651
+      marauder_bg_3_city_far_98: 8033824197158046704
+      marauder_bg_3_city_far_99: -8941938917250766736
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

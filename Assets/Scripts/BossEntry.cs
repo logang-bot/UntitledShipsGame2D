@@ -7,11 +7,13 @@ using UnityEngine.Events;
 // wired in the Inspector to scene objects the prefab can't reference:
 // onSpawned to that boss's panel (activate + Bind), onDefeated to the
 // panel and VictoryUI, onPhase2 to anything a phase change starts.
+// backgroundPrefab is that boss's parallax background (optional).
 [Serializable]
 public class BossEntry
 {
     public Level level;
     public MonoBehaviour bossPrefab;
+    public GameObject backgroundPrefab;
     public UnityEvent<GameObject> onSpawned;
     public UnityEvent onPhase2;
     public UnityEvent onDefeated;

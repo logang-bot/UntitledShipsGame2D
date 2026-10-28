@@ -1,0 +1,3640 @@
+fileFormatVersion: 2
+guid: 3d2c2d24ba2487248923050b09a91e38
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1598010185050999798
+    second: warden_bg_3_city_far_0
+  - first:
+      213: 8358131893730024343
+    second: warden_bg_3_city_far_1
+  - first:
+      213: -3301551817090455738
+    second: warden_bg_3_city_far_2
+  - first:
+      213: -8724796671802651534
+    second: warden_bg_3_city_far_3
+  - first:
+      213: -2500059912065108046
+    second: warden_bg_3_city_far_4
+  - first:
+      213: -1234689573479642779
+    second: warden_bg_3_city_far_5
+  - first:
+      213: -6212966004671923545
+    second: warden_bg_3_city_far_6
+  - first:
+      213: 6223481863896959162
+    second: warden_bg_3_city_far_7
+  - first:
+      213: -1028985534144064559
+    second: warden_bg_3_city_far_8
+  - first:
+      213: -527006953301926830
+    second: warden_bg_3_city_far_9
+  - first:
+      213: -2411002603676158711
+    second: warden_bg_3_city_far_10
+  - first:
+      213: -3598073401217708392
+    second: warden_bg_3_city_far_11
+  - first:
+      213: 2118017207978679426
+    second: warden_bg_3_city_far_12
+  - first:
+      213: 6553912443847342289
+    second: warden_bg_3_city_far_13
+  - first:
+      213: 704490687161589953
+    second: warden_bg_3_city_far_14
+  - first:
+      213: -888524913679527939
+    second: warden_bg_3_city_far_15
+  - first:
+      213: 163298219156222937
+    second: warden_bg_3_city_far_16
+  - first:
+      213: -910471008135002110
+    second: warden_bg_3_city_far_17
+  - first:
+      213: -1510616828110667819
+    second: warden_bg_3_city_far_18
+  - first:
+      213: 6211537160456371648
+    second: warden_bg_3_city_far_19
+  - first:
+      213: 7317805281105775175
+    second: warden_bg_3_city_far_20
+  - first:
+      213: -3897945800993270494
+    second: warden_bg_3_city_far_21
+  - first:
+      213: 7124598196436086569
+    second: warden_bg_3_city_far_22
+  - first:
+      213: 6415095174021936243
+    second: warden_bg_3_city_far_23
+  - first:
+      213: -2821097978058789915
+    second: warden_bg_3_city_far_24
+  - first:
+      213: 4138313792529696454
+    second: warden_bg_3_city_far_25
+  - first:
+      213: -1056544673359855742
+    second: warden_bg_3_city_far_26
+  - first:
+      213: 3973401508795817269
+    second: warden_bg_3_city_far_27
+  - first:
+      213: -784732878814495377
+    second: warden_bg_3_city_far_28
+  - first:
+      213: -8966299735196646803
+    second: warden_bg_3_city_far_29
+  - first:
+      213: -9057977295488136129
+    second: warden_bg_3_city_far_30
+  - first:
+      213: 7787255146931363337
+    second: warden_bg_3_city_far_31
+  - first:
+      213: -648937816640898353
+    second: warden_bg_3_city_far_32
+  - first:
+      213: -5677465649199655992
+    second: warden_bg_3_city_far_33
+  - first:
+      213: -740470916249721423
+    second: warden_bg_3_city_far_34
+  - first:
+      213: 3822953634610305569
+    second: warden_bg_3_city_far_35
+  - first:
+      213: -8135730295945791249
+    second: warden_bg_3_city_far_36
+  - first:
+      213: -5398964986256810899
+    second: warden_bg_3_city_far_37
+  - first:
+      213: -3664314981981080889
+    second: warden_bg_3_city_far_38
+  - first:
+      213: 498912517700561832
+    second: warden_bg_3_city_far_39
+  - first:
+      213: 3619043262047322822
+    second: warden_bg_3_city_far_40
+  - first:
+      213: 3455087693649253837
+    second: warden_bg_3_city_far_41
+  - first:
+      213: 558601190285119086
+    second: warden_bg_3_city_far_42
+  - first:
+      213: 2315632862026068705
+    second: warden_bg_3_city_far_43
+  - first:
+      213: -5094860883933303817
+    second: warden_bg_3_city_far_44
+  - first:
+      213: 1503319745925774079
+    second: warden_bg_3_city_far_45
+  - first:
+      213: -4438948794392451131
+    second: warden_bg_3_city_far_46
+  - first:
+      213: 3216977874139113607
+    second: warden_bg_3_city_far_47
+  - first:
+      213: -8829856099542201944
+    second: warden_bg_3_city_far_48
+  - first:
+      213: 1282239347527236380
+    second: warden_bg_3_city_far_49
+  - first:
+      213: -8291794565119544581
+    second: warden_bg_3_city_far_50
+  - first:
+      213: -6803531266693300519
+    second: warden_bg_3_city_far_51
+  - first:
+      213: 5992100623014031955
+    second: warden_bg_3_city_far_52
+  - first:
+      213: 6868003826319693221
+    second: warden_bg_3_city_far_53
+  - first:
+      213: -1682592290515084064
+    second: warden_bg_3_city_far_54
+  - first:
+      213: 3966566440279612612
+    second: warden_bg_3_city_far_55
+  - first:
+      213: -1571156202877686455
+    second: warden_bg_3_city_far_56
+  - first:
+      213: 6353360468252781916
+    second: warden_bg_3_city_far_57
+  - first:
+      213: 404154282135392276
+    second: warden_bg_3_city_far_58
+  - first:
+      213: 8891706183720737715
+    second: warden_bg_3_city_far_59
+  - first:
+      213: -5779748186587531190
+    second: warden_bg_3_city_far_60
+  - first:
+      213: 5025111891815158311
+    second: warden_bg_3_city_far_61
+  - first:
+      213: -8619661113653547612
+    second: warden_bg_3_city_far_62
+  - first:
+      213: -7612801725276291980
+    second: warden_bg_3_city_far_63
+  - first:
+      213: 1077882868355224434
+    second: warden_bg_3_city_far_64
+  - first:
+      213: 4842791347940385819
+    second: warden_bg_3_city_far_65
+  - first:
+      213: 8640652336327977148
+    second: warden_bg_3_city_far_66
+  - first:
+      213: -1939572473429768417
+    second: warden_bg_3_city_far_67
+  - first:
+      213: -4083873252357143291
+    second: warden_bg_3_city_far_68
+  - first:
+      213: 5800832581471531520
+    second: warden_bg_3_city_far_69
+  - first:
+      213: 2763874573542662052
+    second: warden_bg_3_city_far_70
+  - first:
+      213: 218002653813745597
+    second: warden_bg_3_city_far_71
+  - first:
+      213: 8593076161382745570
+    second: warden_bg_3_city_far_72
+  - first:
+      213: -3239203305327902294
+    second: warden_bg_3_city_far_73
+  - first:
+      213: -6264251648598463199
+    second: warden_bg_3_city_far_74
+  - first:
+      213: 8920933639698798747
+    second: warden_bg_3_city_far_75
+  - first:
+      213: -3313515904196160431
+    second: warden_bg_3_city_far_76
+  - first:
+      213: 3731852729969565418
+    second: warden_bg_3_city_far_77
+  - first:
+      213: 8162373450746716744
+    second: warden_bg_3_city_far_78
+  - first:
+      213: 8004317027964209025
+    second: warden_bg_3_city_far_79
+  - first:
+      213: 4278769873053780117
+    second: warden_bg_3_city_far_80
+  - first:
+      213: 8936941768364088283
+    second: warden_bg_3_city_far_81
+  - first:
+      213: -2353954459697460818
+    second: warden_bg_3_city_far_82
+  - first:
+      213: -6306922980923480678
+    second: warden_bg_3_city_far_83
+  - first:
+      213: -269179302257834123
+    second: warden_bg_3_city_far_84
+  - first:
+      213: -2462799841133109674
+    second: warden_bg_3_city_far_85
+  - first:
+      213: -434453782100654982
+    second: warden_bg_3_city_far_86
+  - first:
+      213: -6307246356114201700
+    second: warden_bg_3_city_far_87
+  - first:
+      213: 5778797494624823081
+    second: warden_bg_3_city_far_88
+  - first:
+      213: 8498157647181166866
+    second: warden_bg_3_city_far_89
+  - first:
+      213: 6371255723652420397
+    second: warden_bg_3_city_far_90
+  - first:
+      213: 4996361025922178261
+    second: warden_bg_3_city_far_91
+  - first:
+      213: 5939688666740666667
+    second: warden_bg_3_city_far_92
+  - first:
+      213: -4213925490442369180
+    second: warden_bg_3_city_far_93
+  - first:
+      213: -3230095803734975692
+    second: warden_bg_3_city_far_94
+  - first:
+      213: 607583174029013006
+    second: warden_bg_3_city_far_95
+  - first:
+      213: 4615959895480187621
+    second: warden_bg_3_city_far_96
+  - first:
+      213: -4494368032315051331
+    second: warden_bg_3_city_far_97
+  - first:
+      213: -7954633027696800821
+    second: warden_bg_3_city_far_98
+  - first:
+      213: 6961431744657526788
+    second: warden_bg_3_city_far_99
+  - first:
+      213: -5324210089767995318
+    second: warden_bg_3_city_far_100
+  - first:
+      213: 3645875889589972669
+    second: warden_bg_3_city_far_101
+  - first:
+      213: -7343294848504730870
+    second: warden_bg_3_city_far_102
+  - first:
+      213: 7885772524075623236
+    second: warden_bg_3_city_far_103
+  - first:
+      213: 4426790991651767174
+    second: warden_bg_3_city_far_104
+  - first:
+      213: -1499057869384029200
+    second: warden_bg_3_city_far_105
+  - first:
+      213: -6792120583905784388
+    second: warden_bg_3_city_far_106
+  - first:
+      213: -4218556147711530201
+    second: warden_bg_3_city_far_107
+  - first:
+      213: 6753352363392232007
+    second: warden_bg_3_city_far_108
+  - first:
+      213: -5589098011713497140
+    second: warden_bg_3_city_far_109
+  - first:
+      213: -1290746621815121701
+    second: warden_bg_3_city_far_110
+  - first:
+      213: 1714058574621780878
+    second: warden_bg_3_city_far_111
+  - first:
+      213: 2545335909195599581
+    second: warden_bg_3_city_far_112
+  - first:
+      213: -7301490304945880043
+    second: warden_bg_3_city_far_113
+  - first:
+      213: 1357396234908454447
+    second: warden_bg_3_city_far_114
+  - first:
+      213: 3967456930169791498
+    second: warden_bg_3_city_far_115
+  - first:
+      213: -8229715149195040751
+    second: warden_bg_3_city_far_116
+  - first:
+      213: -5817215720042394808
+    second: warden_bg_3_city_far_117
+  - first:
+      213: -1906292707716258943
+    second: warden_bg_3_city_far_118
+  - first:
+      213: -2890394429350083309
+    second: warden_bg_3_city_far_119
+  - first:
+      213: -3065071420469800915
+    second: warden_bg_3_city_far_120
+  - first:
+      213: -6311903371544331530
+    second: warden_bg_3_city_far_121
+  - first:
+      213: 1552504366493121750
+    second: warden_bg_3_city_far_122
+  - first:
+      213: -2350612183643123178
+    second: warden_bg_3_city_far_123
+  - first:
+      213: 1196383748191755706
+    second: warden_bg_3_city_far_124
+  - first:
+      213: 4126620524237196839
+    second: warden_bg_3_city_far_125
+  - first:
+      213: -7553106605625633189
+    second: warden_bg_3_city_far_126
+  - first:
+      213: 3035243587486720948
+    second: warden_bg_3_city_far_127
+  - first:
+      213: 4870336130395245396
+    second: warden_bg_3_city_far_128
+  - first:
+      213: -9147623827783009622
+    second: warden_bg_3_city_far_129
+  - first:
+      213: -3946574882522390211
+    second: warden_bg_3_city_far_130
+  - first:
+      213: -2321936900480537832
+    second: warden_bg_3_city_far_131
+  - first:
+      213: -30656228784651036
+    second: warden_bg_3_city_far_132
+  - first:
+      213: 24240671184608887
+    second: warden_bg_3_city_far_133
+  - first:
+      213: 8468499709205187013
+    second: warden_bg_3_city_far_134
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_0
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fbcb63fbc54d2610800000000000000
+      internalID: 1598010185050999798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_1
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79b14af8cac0ef370800000000000000
+      internalID: 8358131893730024343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_2
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64727ce5d188e22d0800000000000000
+      internalID: -3301551817090455738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_3
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27c41b727ab4be680800000000000000
+      internalID: -8724796671802651534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_4
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b73a2081c00e4dd0800000000000000
+      internalID: -2500059912065108046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_5
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5690ed4ef508ddee0800000000000000
+      internalID: -1234689573479642779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_6
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 1825
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7aab3f1265c17c9a0800000000000000
+      internalID: -6212966004671923545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_7
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1802
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab80aa328cf3e5650800000000000000
+      internalID: 6223481863896959162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_8
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 1826
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d3d356cb1f48b1f0800000000000000
+      internalID: -1028985534144064559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_9
+      rect:
+        serializedVersion: 2
+        x: 987
+        y: 1826
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25c174ad7f1bfa8f0800000000000000
+      internalID: -527006953301926830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_10
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 905375fe7e56a8ed0800000000000000
+      internalID: -2411002603676158711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_11
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89e03a41e43111ec0800000000000000
+      internalID: -3598073401217708392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_12
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 1706
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28cdbbdcd65b46d10800000000000000
+      internalID: 2118017207978679426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_13
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d87880c4ac24fa50800000000000000
+      internalID: 6553912443847342289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_14
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 1681
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c066d32c8ad6c900800000000000000
+      internalID: 704490687161589953
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_15
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 1706
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dff0c027c435ba3f0800000000000000
+      internalID: -888524913679527939
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_16
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d3b2497dd6244200800000000000000
+      internalID: 163298219156222937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_17
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 1681
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20842d5217b5d53f0800000000000000
+      internalID: -910471008135002110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_18
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 1682
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5df7cb89ff5390be0800000000000000
+      internalID: -1510616828110667819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_19
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 1586
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cdf3262320d33650800000000000000
+      internalID: 6211537160456371648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_20
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 1586
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74a89cbb1211e8560800000000000000
+      internalID: 7317805281105775175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_21
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 225121a32f6b7e9c0800000000000000
+      internalID: -3897945800993270494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_22
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92f26f9df48afd260800000000000000
+      internalID: 7124598196436086569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_23
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37476e7721ff60950800000000000000
+      internalID: 6415095174021936243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_24
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ebab35f55279d8d0800000000000000
+      internalID: -2821097978058789915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_25
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1562
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c605d4f77e3e6930800000000000000
+      internalID: 4138313792529696454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_26
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 1585
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28ffd07a7366651f0800000000000000
+      internalID: -1056544673359855742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_27
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 1441
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53d96c9ce9b542730800000000000000
+      internalID: 3973401508795817269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_28
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 1466
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6d31baba911c15f0800000000000000
+      internalID: -784732878814495377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_29
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 1441
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d62cce575ed419380800000000000000
+      internalID: -8966299735196646803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_30
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 1466
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3c40e614a99b4280800000000000000
+      internalID: -9057977295488136129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_31
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 1466
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90e1d282c43e11c60800000000000000
+      internalID: 7787255146931363337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_32
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1442
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fca3dc57e728ef6f0800000000000000
+      internalID: -648937816640898353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_33
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1442
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c3d8f292179531b0800000000000000
+      internalID: -5677465649199655992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_34
+      rect:
+        serializedVersion: 2
+        x: 973
+        y: 1441
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b56d66ff9159b5f0800000000000000
+      internalID: -740470916249721423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_35
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12a5cb7631cdd0530800000000000000
+      internalID: 3822953634610305569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_36
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe874c99664181f80800000000000000
+      internalID: -8135730295945791249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_37
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 1321
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6c146f23f50315b0800000000000000
+      internalID: -5398964986256810899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_38
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c230e130fcb52dc0800000000000000
+      internalID: -3664314981981080889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_39
+      rect:
+        serializedVersion: 2
+        x: 546
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aba98f9a4e7ce600800000000000000
+      internalID: 498912517700561832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_40
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 1321
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c20a1d1cac693230800000000000000
+      internalID: 3619043262047322822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_41
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc599c793ffe2ff20800000000000000
+      internalID: 3455087693649253837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_42
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 1346
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6e0e0ea2dc80c700800000000000000
+      internalID: 558601190285119086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_43
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 1322
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e2f84bb1d7c22020800000000000000
+      internalID: 2315632862026068705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_44
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 1226
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fb6f11150b6b49b0800000000000000
+      internalID: -5094860883933303817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_45
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffa7cbf085ddcd410800000000000000
+      internalID: 1503319745925774079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_46
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c7e61e079fa562c0800000000000000
+      internalID: -4438948794392451131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_47
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 1201
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7886a5e055005ac20800000000000000
+      internalID: 3216977874139113607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_48
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 1226
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a988f8f8ac067580800000000000000
+      internalID: -8829856099542201944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_49
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1bb36a94ed6bc110800000000000000
+      internalID: 1282239347527236380
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_50
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 1202
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf2f88b56c0adec80800000000000000
+      internalID: -8291794565119544581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_51
+      rect:
+        serializedVersion: 2
+        x: 973
+        y: 1201
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9de7b7e0c500591a0800000000000000
+      internalID: -6803531266693300519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_52
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 352f525e4c7382350800000000000000
+      internalID: 5992100623014031955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_53
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 1105
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a51fcf771d005f50800000000000000
+      internalID: 6868003826319693221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_54
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 1082
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ec990ef93b36a8e0800000000000000
+      internalID: -1682592290515084064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_55
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 1105
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cc1ad269231c0730800000000000000
+      internalID: 3966566440279612612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_56
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 1105
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94de2d002c1223ae0800000000000000
+      internalID: -1571156202877686455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_57
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 1106
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5d67303fabab2850800000000000000
+      internalID: 6353360468252781916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_58
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 1106
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4101225ad28db9500800000000000000
+      internalID: 404154282135392276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_59
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 1106
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3bb91dfe9afa56b70800000000000000
+      internalID: 8891706183720737715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_60
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 1106
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a48fd3f85a53acfa0800000000000000
+      internalID: -5779748186587531190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_61
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 986
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 722db3434a8ccb540800000000000000
+      internalID: 5025111891815158311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_62
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 962
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4adae64d2efc06880800000000000000
+      internalID: -8619661113653547612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_63
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 961
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47cfc6b4a25e95690800000000000000
+      internalID: -7612801725276291980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_64
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 985
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 273dac502c865fe00800000000000000
+      internalID: 1077882868355224434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_65
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 962
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b14625f921d053340800000000000000
+      internalID: 4842791347940385819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_66
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 986
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb86a7e0583c9e770800000000000000
+      internalID: 8640652336327977148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_67
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 986
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f17c7199c114515e0800000000000000
+      internalID: -1939572473429768417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_68
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 985
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 505888d0aea2357c0800000000000000
+      internalID: -4083873252357143291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_69
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 866
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0027f1caf72b08050800000000000000
+      internalID: 5800832581471531520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_70
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 866
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4af9ebfe7414b5620800000000000000
+      internalID: 2763874573542662052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_71
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 866
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db729a43240860300800000000000000
+      internalID: 218002653813745597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_72
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 866
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e5881f9d3db04770800000000000000
+      internalID: 8593076161382745570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_73
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 841
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa1c8ae71c90c03d0800000000000000
+      internalID: -3239203305327902294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_74
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 842
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12d22a5a058e019a0800000000000000
+      internalID: -6264251648598463199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_75
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 842
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b98541351e58dcb70800000000000000
+      internalID: 8920933639698798747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_76
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 721
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 154d7c447d60402d0800000000000000
+      internalID: -3313515904196160431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_77
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 746
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aee58e329443ac330800000000000000
+      internalID: 3731852729969565418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_78
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 722
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84266d74863964170800000000000000
+      internalID: 8162373450746716744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_79
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 722
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 187ca61adeb051f60800000000000000
+      internalID: 8004317027964209025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_80
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 746
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5988307978e316b30800000000000000
+      internalID: 4278769873053780117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_81
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 721
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdb51b93035660c70800000000000000
+      internalID: 8936941768364088283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_82
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 721
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea9494404e2155fd0800000000000000
+      internalID: -2353954459697460818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_83
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 721
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a95ee40e6fe4978a0800000000000000
+      internalID: -6306922980923480678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_84
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 722
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 577c80cc9dea34cf0800000000000000
+      internalID: -269179302257834123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_85
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65e5f5cc79062ddd0800000000000000
+      internalID: -2462799841133109674
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_86
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a74c096469288f9f0800000000000000
+      internalID: -434453782100654982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_87
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 626
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c93afe83bd82878a0800000000000000
+      internalID: -6307246356114201700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_88
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 927a70834b9623050800000000000000
+      internalID: 5778797494624823081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_89
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 219b08dda558fe570800000000000000
+      internalID: 8498157647181166866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_90
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 626
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d231a75035f3b6850800000000000000
+      internalID: 6371255723652420397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_91
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 602
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dc92b791e3a65540800000000000000
+      internalID: 4996361025922178261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_92
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 601
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b21bd716f530e6250800000000000000
+      internalID: 5939688666740666667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_93
+      rect:
+        serializedVersion: 2
+        x: 987
+        y: 626
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4670830c7112585c0800000000000000
+      internalID: -4213925490442369180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_94
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 506
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43b95e3faf46c23d0800000000000000
+      internalID: -3230095803734975692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_95
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e00f08b7da19e6800800000000000000
+      internalID: 607583174029013006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_96
+      rect:
+        serializedVersion: 2
+        x: 541
+        y: 481
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5eabb8b811f2f0040800000000000000
+      internalID: 4615959895480187621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_97
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 506
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db27df7361cc0a1c0800000000000000
+      internalID: -4494368032315051331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_98
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcbca8128677b9190800000000000000
+      internalID: -7954633027696800821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_99
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 400907cd949fb9060800000000000000
+      internalID: 6961431744657526788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_100
+      rect:
+        serializedVersion: 2
+        x: 978
+        y: 482
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a48f3d9d12b9c16b0800000000000000
+      internalID: -5324210089767995318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_101
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbeeb2e0ec0c89230800000000000000
+      internalID: 3645875889589972669
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_102
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 361
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0b6be1ed30671a90800000000000000
+      internalID: -7343294848504730870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_103
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 361
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 443201d7454ef6d60800000000000000
+      internalID: 7885772524075623236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_104
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6838d48e3fe1f6d30800000000000000
+      internalID: 4426790991651767174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_105
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 361
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fb6c956fc6423be0800000000000000
+      internalID: -1499057869384029200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_106
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 361
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cbd4daca05a8db1a0800000000000000
+      internalID: -6792120583905784388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_107
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 386
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72b2d96d88da475c0800000000000000
+      internalID: -4218556147711530201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_108
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 362
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74ae907913ab8bd50800000000000000
+      internalID: 6753352363392232007
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_109
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc799fc78f88f62b0800000000000000
+      internalID: -5589098011713497140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_110
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd89caf39c8561ee0800000000000000
+      internalID: -1290746621815121701
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_111
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8b2b80313f89c710800000000000000
+      internalID: 1714058574621780878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_112
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 266
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dde46ad0689d25320800000000000000
+      internalID: 2545335909195599581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_113
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 266
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5140ebaa045ebaa90800000000000000
+      internalID: -7301490304945880043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_114
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 265
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2ecb211fa076d210800000000000000
+      internalID: 1357396234908454447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_115
+      rect:
+        serializedVersion: 2
+        x: 667
+        y: 265
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a04ae68be0d3f0730800000000000000
+      internalID: 3967456930169791498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_116
+      rect:
+        serializedVersion: 2
+        x: 762
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1182499bcad2acd80800000000000000
+      internalID: -8229715149195040751
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_117
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 242
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84b0e01af19154fa0800000000000000
+      internalID: -5817215720042394808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_118
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 265
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 183a7aed1ec7b85e0800000000000000
+      internalID: -1906292707716258943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_119
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 121
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31502d9949143e7d0800000000000000
+      internalID: -2890394429350083309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_120
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 122
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2012b358cda675d0800000000000000
+      internalID: -3065071420469800915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_121
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 145
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fa7282535d9768a0800000000000000
+      internalID: -6311903371544331530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_122
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 146
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dcb01dee7a9b8510800000000000000
+      internalID: 1552504366493121750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_123
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 121
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6121f3d4ca2f06fd0800000000000000
+      internalID: -2350612183643123178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_124
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 145
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abd15062ea86a9010800000000000000
+      internalID: 1196383748191755706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_125
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 121
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72e8ef5c083b44930800000000000000
+      internalID: 4126620524237196839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_126
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 121
+        width: 106
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b56170d6f89fd2790800000000000000
+      internalID: -7553106605625633189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_127
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 26
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b3adee16f95f1a20800000000000000
+      internalID: 3035243587486720948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_128
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 25
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45b85fc08e8e69340800000000000000
+      internalID: 4870336130395245396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_129
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaa3816489c1d0180800000000000000
+      internalID: -9147623827783009622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_130
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 26
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3126cfdd03fa39c0800000000000000
+      internalID: -3946574882522390211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_131
+      rect:
+        serializedVersion: 2
+        x: 438
+        y: 2
+        width: 98
+        height: 112
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81b6cffe0b2d6cfd0800000000000000
+      internalID: -2321936900480537832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_132
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 25
+        width: 70
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e443258256139ff0800000000000000
+      internalID: -30656228784651036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_133
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 26
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77e531313ce165000800000000000000
+      internalID: 24240671184608887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_bg_3_city_far_134
+      rect:
+        serializedVersion: 2
+        x: 987
+        y: 26
+        width: 80
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c98ca31e97268570800000000000000
+      internalID: 8468499709205187013
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      warden_bg_3_city_far_0: 1598010185050999798
+      warden_bg_3_city_far_1: 8358131893730024343
+      warden_bg_3_city_far_10: -2411002603676158711
+      warden_bg_3_city_far_100: -5324210089767995318
+      warden_bg_3_city_far_101: 3645875889589972669
+      warden_bg_3_city_far_102: -7343294848504730870
+      warden_bg_3_city_far_103: 7885772524075623236
+      warden_bg_3_city_far_104: 4426790991651767174
+      warden_bg_3_city_far_105: -1499057869384029200
+      warden_bg_3_city_far_106: -6792120583905784388
+      warden_bg_3_city_far_107: -4218556147711530201
+      warden_bg_3_city_far_108: 6753352363392232007
+      warden_bg_3_city_far_109: -5589098011713497140
+      warden_bg_3_city_far_11: -3598073401217708392
+      warden_bg_3_city_far_110: -1290746621815121701
+      warden_bg_3_city_far_111: 1714058574621780878
+      warden_bg_3_city_far_112: 2545335909195599581
+      warden_bg_3_city_far_113: -7301490304945880043
+      warden_bg_3_city_far_114: 1357396234908454447
+      warden_bg_3_city_far_115: 3967456930169791498
+      warden_bg_3_city_far_116: -8229715149195040751
+      warden_bg_3_city_far_117: -5817215720042394808
+      warden_bg_3_city_far_118: -1906292707716258943
+      warden_bg_3_city_far_119: -2890394429350083309
+      warden_bg_3_city_far_12: 2118017207978679426
+      warden_bg_3_city_far_120: -3065071420469800915
+      warden_bg_3_city_far_121: -6311903371544331530
+      warden_bg_3_city_far_122: 1552504366493121750
+      warden_bg_3_city_far_123: -2350612183643123178
+      warden_bg_3_city_far_124: 1196383748191755706
+      warden_bg_3_city_far_125: 4126620524237196839
+      warden_bg_3_city_far_126: -7553106605625633189
+      warden_bg_3_city_far_127: 3035243587486720948
+      warden_bg_3_city_far_128: 4870336130395245396
+      warden_bg_3_city_far_129: -9147623827783009622
+      warden_bg_3_city_far_13: 6553912443847342289
+      warden_bg_3_city_far_130: -3946574882522390211
+      warden_bg_3_city_far_131: -2321936900480537832
+      warden_bg_3_city_far_132: -30656228784651036
+      warden_bg_3_city_far_133: 24240671184608887
+      warden_bg_3_city_far_134: 8468499709205187013
+      warden_bg_3_city_far_14: 704490687161589953
+      warden_bg_3_city_far_15: -888524913679527939
+      warden_bg_3_city_far_16: 163298219156222937
+      warden_bg_3_city_far_17: -910471008135002110
+      warden_bg_3_city_far_18: -1510616828110667819
+      warden_bg_3_city_far_19: 6211537160456371648
+      warden_bg_3_city_far_2: -3301551817090455738
+      warden_bg_3_city_far_20: 7317805281105775175
+      warden_bg_3_city_far_21: -3897945800993270494
+      warden_bg_3_city_far_22: 7124598196436086569
+      warden_bg_3_city_far_23: 6415095174021936243
+      warden_bg_3_city_far_24: -2821097978058789915
+      warden_bg_3_city_far_25: 4138313792529696454
+      warden_bg_3_city_far_26: -1056544673359855742
+      warden_bg_3_city_far_27: 3973401508795817269
+      warden_bg_3_city_far_28: -784732878814495377
+      warden_bg_3_city_far_29: -8966299735196646803
+      warden_bg_3_city_far_3: -8724796671802651534
+      warden_bg_3_city_far_30: -9057977295488136129
+      warden_bg_3_city_far_31: 7787255146931363337
+      warden_bg_3_city_far_32: -648937816640898353
+      warden_bg_3_city_far_33: -5677465649199655992
+      warden_bg_3_city_far_34: -740470916249721423
+      warden_bg_3_city_far_35: 3822953634610305569
+      warden_bg_3_city_far_36: -8135730295945791249
+      warden_bg_3_city_far_37: -5398964986256810899
+      warden_bg_3_city_far_38: -3664314981981080889
+      warden_bg_3_city_far_39: 498912517700561832
+      warden_bg_3_city_far_4: -2500059912065108046
+      warden_bg_3_city_far_40: 3619043262047322822
+      warden_bg_3_city_far_41: 3455087693649253837
+      warden_bg_3_city_far_42: 558601190285119086
+      warden_bg_3_city_far_43: 2315632862026068705
+      warden_bg_3_city_far_44: -5094860883933303817
+      warden_bg_3_city_far_45: 1503319745925774079
+      warden_bg_3_city_far_46: -4438948794392451131
+      warden_bg_3_city_far_47: 3216977874139113607
+      warden_bg_3_city_far_48: -8829856099542201944
+      warden_bg_3_city_far_49: 1282239347527236380
+      warden_bg_3_city_far_5: -1234689573479642779
+      warden_bg_3_city_far_50: -8291794565119544581
+      warden_bg_3_city_far_51: -6803531266693300519
+      warden_bg_3_city_far_52: 5992100623014031955
+      warden_bg_3_city_far_53: 6868003826319693221
+      warden_bg_3_city_far_54: -1682592290515084064
+      warden_bg_3_city_far_55: 3966566440279612612
+      warden_bg_3_city_far_56: -1571156202877686455
+      warden_bg_3_city_far_57: 6353360468252781916
+      warden_bg_3_city_far_58: 404154282135392276
+      warden_bg_3_city_far_59: 8891706183720737715
+      warden_bg_3_city_far_6: -6212966004671923545
+      warden_bg_3_city_far_60: -5779748186587531190
+      warden_bg_3_city_far_61: 5025111891815158311
+      warden_bg_3_city_far_62: -8619661113653547612
+      warden_bg_3_city_far_63: -7612801725276291980
+      warden_bg_3_city_far_64: 1077882868355224434
+      warden_bg_3_city_far_65: 4842791347940385819
+      warden_bg_3_city_far_66: 8640652336327977148
+      warden_bg_3_city_far_67: -1939572473429768417
+      warden_bg_3_city_far_68: -4083873252357143291
+      warden_bg_3_city_far_69: 5800832581471531520
+      warden_bg_3_city_far_7: 6223481863896959162
+      warden_bg_3_city_far_70: 2763874573542662052
+      warden_bg_3_city_far_71: 218002653813745597
+      warden_bg_3_city_far_72: 8593076161382745570
+      warden_bg_3_city_far_73: -3239203305327902294
+      warden_bg_3_city_far_74: -6264251648598463199
+      warden_bg_3_city_far_75: 8920933639698798747
+      warden_bg_3_city_far_76: -3313515904196160431
+      warden_bg_3_city_far_77: 3731852729969565418
+      warden_bg_3_city_far_78: 8162373450746716744
+      warden_bg_3_city_far_79: 8004317027964209025
+      warden_bg_3_city_far_8: -1028985534144064559
+      warden_bg_3_city_far_80: 4278769873053780117
+      warden_bg_3_city_far_81: 8936941768364088283
+      warden_bg_3_city_far_82: -2353954459697460818
+      warden_bg_3_city_far_83: -6306922980923480678
+      warden_bg_3_city_far_84: -269179302257834123
+      warden_bg_3_city_far_85: -2462799841133109674
+      warden_bg_3_city_far_86: -434453782100654982
+      warden_bg_3_city_far_87: -6307246356114201700
+      warden_bg_3_city_far_88: 5778797494624823081
+      warden_bg_3_city_far_89: 8498157647181166866
+      warden_bg_3_city_far_9: -527006953301926830
+      warden_bg_3_city_far_90: 6371255723652420397
+      warden_bg_3_city_far_91: 4996361025922178261
+      warden_bg_3_city_far_92: 5939688666740666667
+      warden_bg_3_city_far_93: -4213925490442369180
+      warden_bg_3_city_far_94: -3230095803734975692
+      warden_bg_3_city_far_95: 607583174029013006
+      warden_bg_3_city_far_96: 4615959895480187621
+      warden_bg_3_city_far_97: -4494368032315051331
+      warden_bg_3_city_far_98: -7954633027696800821
+      warden_bg_3_city_far_99: 6961431744657526788
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
