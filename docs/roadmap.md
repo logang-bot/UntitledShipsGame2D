@@ -570,7 +570,9 @@ is independently testable and the one before it de-risks the next.
   - powers (black hole);
   - bosses;
   - anime cut-ins;
-  - HUD and menus last.
+  - the pre-level screens (main menu through level select) on a shared UI
+    kit;
+  - the in-level HUD last.
 
   Pipeline: 2D neon vector sprites (SVG) from the Claude Design "Ship
   Designs" project, URP 2D `Sprite-Lit-Default` + `Light2D` + bloom, and

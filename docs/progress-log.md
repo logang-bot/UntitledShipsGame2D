@@ -1226,3 +1226,21 @@ from `warden-fixes`.
   or the bake script can edit them directly.
 - **Git LFS is enabled** in the repo and tracks `*.glb`. The other art types
   get added before their first commit.
+
+### Later in the session: the pre-level screens join the art plan
+
+- **New art Phase 7, "Pre-level screens":** `MainMenu`, `Lobby`,
+  `JoinLobby`, `RoleSelect` and `LevelSelect`. They work today as plain
+  buttons and text, so this is a restyle with almost no code change. The
+  only touchpoints are a device icon in `JoinLobbyUI` and the ship sprite on
+  the `RoleSelect` cards.
+- **A shared UI kit** comes first in that phase, built from the
+  `Neon Fleet HUD` design (dark panels, neon role frames, Chakra Petch and
+  JetBrains Mono, both free Google Fonts). The HUD reuses it later.
+- **No designs exist yet** for these screens. The design project only
+  covers the in-level HUD and the ships, so Phase 7 starts with mockups.
+- The old "Later" phase is now **Phase 8: In-level HUD and later**, and it
+  covers the Pause, Game Over and Victory overlays too, since those live
+  inside the level scenes.
+- The future loadout (deck) screen, between `RoleSelect` and `LevelSelect`,
+  is noted as the phase 3 developer's, but on the same UI kit.

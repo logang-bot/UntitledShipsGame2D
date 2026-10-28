@@ -14,7 +14,8 @@
   1-27 (pre-boss fundamentals through the boss-encounter arc and the Level 1
   rework), moved out for length.
 - [art-roadmap.md](art-roadmap.md) — the phased art plan (2D neon
-  vector sprites, then a 3D bake, neon effects and powers, anime cut-ins, mobile
+  vector sprites, then a 3D bake, neon effects and powers, anime cut-ins,
+  menus and HUD on a shared UI kit, mobile
   quality tiers). It runs in parallel with the gameplay work.
 - [architecture.md](architecture.md) — concrete code-level conventions:
   script organization, communication patterns, deliberate omissions.

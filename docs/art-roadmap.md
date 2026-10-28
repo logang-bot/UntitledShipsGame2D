@@ -24,7 +24,8 @@ Two rules keep the parallel work safe:
 | Effects and powers | Neon style inspired by the Tuts+ "Neon Vector Shooter" (Shape Blaster): bloom, additive particles stretched by speed, a warping background grid, black-hole-style powers | The effects are what sell the neon look. They're independent of how the ships are made. |
 | Anime ability cut-ins | **Decided at the start of Phase 6**, between two routes, neither needing Blender: **2D illustrated** characters animated in Unity, or **VRoid → Unity** through UniVRM and its toon shader (MToon). | 2D matches 2D ships, and it's how Touhou's own spell-card cut-ins work. VRoid → Unity keeps the anime-3D look while skipping Blender entirely. |
 | Mobile | **One project** with per-platform quality settings | No duplicated code, and it keeps crossplay possible. Sprites cost a phone the same however they were made. |
-| Priority | Ships, bosses, effects and powers first; HUD and menus later | |
+| Priority | Ships, bosses, effects and powers first; then the pre-level screens (main menu through level select); then the in-level HUD | The screens before the level show the ships and bosses, so they come after those exist. |
+| Screens and HUD style | One shared **UI kit** built from the `Neon Fleet HUD` design: dark panels, neon role-colored frames, **Chakra Petch** and **JetBrains Mono** fonts. Every menu and the HUD use it. | One look across all screens, built once. Both fonts are free Google Fonts (SIL Open Font License), usable in Unity through TextMesh Pro. |
 
 **Why 2D first, then 3D.** The 2D sprites replace the placeholders in days
 and prove the import, glow and tint setup. The 3D bake then reuses that
@@ -42,7 +43,7 @@ The ship designs live in the Claude Design project "Ship Designs"
 | --- | --- |
 | `Ship Designs.dc.html` | The four ships as 2D SVG line art (set 1a), with 96/48/32 px scale previews, and the 3D set (1b) embedded |
 | `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download. **Saved:** `ArtSource/Ships/aegis-04.glb`, `nova-11.glb`, `lumen-02.glb`, `echo-07.glb` |
-| `Neon Fleet HUD.dc.html` | A HUD design, kept for Phase 7 |
+| `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the UI kit (Phase 7) and the HUD (Phase 8). There are **no designs yet** for the screens before a level. |
 
 | Role | Ship | Shape | Design color |
 | --- | --- | --- | --- |
@@ -252,10 +253,60 @@ read at in-game size.
 - **Mobile check:** image or video size and memory, or the cost of a live
   model if that route is picked.
 
-### Phase 7: Later
+### Phase 7: Pre-level screens
 
-The HUD and party frames (starting from the `Neon Fleet HUD` design), menus,
-fonts, icons, and card art for the deck layer, once its design settles.
+The screens a player passes through before a fight, in build order (see
+[systems/scene-flow.md](systems/scene-flow.md)). Today they're plain Unity
+UI buttons and text that work, so this is a restyle, not new behavior.
+
+| Screen | What it does today | What the art adds |
+| --- | --- | --- |
+| `MainMenu` | Play, Quit | The game's title/logo, and a live background: the Phase 3 warping grid with the four ships idling |
+| `Lobby` | Local, Online (disabled until Nakama), Back | Two large mode cards. Online shows a clear "coming later" state, not just a grayed button |
+| `JoinLobby` | Four slot rows (`Slot N: Empty` / the device's control scheme), Continue once someone joins | Four slot cards with a "press any button to join" prompt and a device icon (keyboard or gamepad) per joined player |
+| `RoleSelect` | Single-player (`RoleSelectUI`) and multi-player (`RoleSelectMultiUI`) pickers | One card per role: the role's ship, its color, its stats and its signature ability. Unpicked roles show the HUD design's CPU frame (dashed, dimmer) |
+| `LevelSelect` | One button per level, Back | One card per boss (Marauder, Halcyon, Warden) with its art, name and level number |
+
+- **Design first:** mockups of all five screens in the `Neon Fleet HUD`
+  style, before building anything. Standalone Claude Design closes by
+  December 14, 2026, so new mockups are made in Claude's Design artifacts
+  instead.
+- **Learn:** Unity UI (the uGUI `Canvas` the screens already use), 9-slice
+  sprites for panels and frames, TextMesh Pro font assets, and simple UI
+  animation (fades, slides, button hover/press states).
+- **Make:**
+  - **The UI kit**, reused by every screen and later the HUD:
+    - panel, card and button sprites (9-sliced) with normal, hover, pressed
+      and disabled states;
+    - the human and CPU slot frames;
+    - the two fonts as TextMesh Pro assets;
+    - device icons (keyboard, gamepad) and role icons.
+  - The five screens restyled with the kit, one at a time, in build order.
+  - **Transitions** between screens: a short fade or slide, so the flow
+    feels like one piece.
+- **Depends on:** the Phase 2 ship sprites (`MainMenu`, `RoleSelect`) and
+  the Phase 5 boss art (`LevelSelect`). Until those exist, the cards use
+  the current placeholders, and the art drops in later without changing
+  the layout.
+- **Code touchpoint:** mostly none, since the scripts only reference
+  buttons and text. Two small changes: `JoinLobbyUI` writes the slot text
+  as a string and would need to show a device icon instead, and the
+  `RoleSelect` cards need each role's ship sprite.
+- **Coordinate:** a **loadout (deck) screen** will sit between `RoleSelect`
+  and `LevelSelect` once the deck layer exists. Its layout and card visuals
+  belong to the phase 3 developer, but it should use the same UI kit.
+- **Done when:** the whole flow from `MainMenu` to the first level plays in
+  the new style, works with mouse, keyboard and gamepad, and has no
+  placeholder UI left.
+- **Mobile check:** the screens fit 9:16 portrait, buttons are large enough
+  to tap, and nothing sits under the phone's notch or rounded corners.
+
+### Phase 8: In-level HUD and later
+
+- **The in-level HUD:** the squad rail and party frames, the boss panel, the
+  DPS meter, and the Pause, Game Over and Victory overlays, from the
+  `Neon Fleet HUD` design and with the Phase 7 UI kit.
+- **Later:** card art for the deck layer, once its design settles.
 
 ## Cross-cutting
 
@@ -297,6 +348,10 @@ art:
 - **Cut-in route:** 2D illustrated or VRoid → Unity, decided at the start of
   Phase 6. Commissioning an artist later could raise the quality of either.
 - **Final per-boss bullet and glow palettes.**
+- **Screens on desktop:** do the menus fill the whole window, or stay
+  inside the 9:16 playfield frame with the sidebars like the levels?
+  Decided with the Phase 7 mockups.
+- **The game's title and logo,** needed for `MainMenu`.
 - **The roll mechanic:** purely visual, or does it give i-frames? That's the
   phase 3 developer's call.
 - **Audio direction** (FMOD is planned) is out of scope for this roadmap.
