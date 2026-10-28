@@ -49,12 +49,12 @@ below) creates ships via `Instantiate()`/`PlayerInput.Instantiate()`, which
 run the new object's `Awake()` **synchronously before returning** — before
 the spawner's own code gets a chance to set `.role` on the result. Unity
 does *not* run a freshly-instantiated object's `Start()` synchronously,
-though, so every role-dependent side effect (`PlayerRoleComponent`'s sprite
-tint, `PlayerHealth`'s `maxHealth`/`maxShield`, `PlayerAbility`'s aura
+though, so every role-dependent side effect (`ShipVisual`'s role model, `PlayerHealth`'s `maxHealth`/`maxShield`, `PlayerAbility`'s aura
 ring/shield arc construction and initial cooldown) was moved from `Awake()`
 into `Start()` to guarantee it always sees the real, assigned role — a
 behavior-preserving change for the legacy scene-placed path too, since
-`PartySetupBootstrap`'s `[DefaultExecutionOrder(-1000)]` `Awake()` already
+`LevelSetup`'s `[DefaultExecutionOrder(-1000)]` `Awake()` (which calls
+`PartySetupBootstrap.Setup`) already
 ran (and already set `.role`) well before any object's `Start()` fires
 either way.
 
@@ -362,9 +362,14 @@ aggro table all stay untouched by this feature.
   `devices[]` (paired at `JoinLobby`, still valid in whichever level scene
   loads since physical `InputDevice`s persist across scene loads), and `role` (filled
   in by `RoleSelect`). `null` means the co-op flow wasn't used.
-- **`PartySetupBootstrap.cs`** (`[DefaultExecutionOrder(-1000)]`) —
-  `Awake()` now checks `CoOpRoster.Players` **first**: if set and non-empty,
-  runs `SpawnDynamicParty()` instead of the legacy branch below. The 4
+- **`PartySetupBootstrap.cs`** — `Setup(boss)`, called by `LevelSetup`'s
+  `[DefaultExecutionOrder(-1000)]` `Awake()` (Session 51; it used to be its
+  own `Awake()`), checks `CoOpRoster.Players` **first**: if set and
+  non-empty, spawns the party through `PartyShipSpawner` instead of the
+  legacy branch below. Either way it then hands the ships to
+  `PartyBossWiring.Wire(ships, boss)`, which sets each ship's `bossObject`,
+  adds the runtime `OnTaunt` → `BossEvents.Taunt` listener and fills the
+  boss's ship roster. The 4
   original scene ships are reused purely as position markers (read
   `.transform.position`, then `SetActive(false)`) so both branches share one
   authored set of spawn points. For each joined human:

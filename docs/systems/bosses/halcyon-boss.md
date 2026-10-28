@@ -10,6 +10,14 @@ via a brainstorming session recorded in
 [docs/superpowers/specs/2026-09-04-halcyon-boss-design.md](../../superpowers/specs/2026-09-04-halcyon-boss-design.md);
 this doc describes the built system.
 
+> **Session 51:** this boss is now its own prefab, `Assets/Prefabs/HalcyonBoss.prefab`
+> (inactive root at its home position), spawned into the one shared
+> `Level.unity` by `LevelSetup` only when its level is picked. Its panel is
+> `HUDCanvas/BossPanel_Halcyon`, bound at spawn. Ship rosters, taunt and the
+> defeat/Victory wiring are set at runtime (see
+> [scene-flow.md](../scene-flow.md)'s "Level setup"). Notes below about
+> per-level scenes describe how the boss was originally built.
+
 ## At a Glance
 
 - **Identity:** a mobility check — the first fight where standing still
@@ -25,7 +33,7 @@ this doc describes the built system.
   time to land hits) · [Static Field pulse](#halcyonstaticfieldcs) (the
   fight's real damage source — punishes ships clustering near the boss and
   near each other).
-- **Level summary:** reached via `LevelSelect` → `Level2.unity`, which runs
+- **Level summary:** reached via `LevelSelect` → Level 2 (the shared `Level.unity`), which runs
   the same shared `LevelSequencer` timeline every level uses (see
   [level-sequencing.md](../level-sequencing.md)) — no sequencing changes,
   only the boss instance and its own components differ from Marauder.

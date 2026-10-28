@@ -1244,3 +1244,70 @@ from `warden-fixes`.
   inside the level scenes.
 - The future loadout (deck) screen, between `RoleSelect` and `LevelSelect`,
   is noted as the phase 3 developer's, but on the same UI kit.
+
+## Session 51 — Role Colors, One Shared Level Scene, 3D Ships in Game
+
+Three changes, on `art-first-draft`.
+
+### Role colors
+
+The roles now use the ship-design palette: Attacker `#FF8A3D`, Tank
+`#00E5FF`, Medic `#B6FF3C`, Support `#A855F7`. It's set in
+`PlayerRoleStats` and in the serialized copies on `Ship.prefab` (aura ring,
+heal flash, shield arc) and the RoleSelect buttons. `RoleStats` lost its
+6-parameter constructor in favor of object initializers, to meet the
+project's parameter cap. The code defaults for those colors in
+`PlayerAbility.cs` are now stale (the prefab values win); that file is 302
+lines and wasn't touched, to avoid forcing its split.
+
+### One `Level` scene instead of three
+
+- **Why:** `Level1`/`Level2`/`Level3.unity` were `Ctrl+D` copies that had
+  already drifted. **Beating Halcyon or Warden never showed Victory**: their
+  `OnDefeated` listeners pointed at a component the scene had removed.
+  Co-op-spawned ships' taunt also still targeted the old `Boss` type. The
+  documented reasons for separate scenes (two bosses at once, merge risk)
+  don't hold once each boss is a prefab and only the picked one is spawned.
+- **What:**
+  - `Level1.unity` became `Level.unity`; `Level2`/`Level3.unity` are gone.
+  - The bosses are `MarauderBoss.prefab`, `HalcyonBoss.prefab` (was
+    `Level2BossPlaceholder`) and `WardenBoss.prefab` (was
+    `Level3BossPlaceholder`, now with its arms), each saved inactive.
+  - New `LevelSetup` (`[DefaultExecutionOrder(-1000)]`, moved from
+    `PartySetupBootstrap`) with one `BossEntry` per level; new `BossEvents`
+    and `PartyBossWiring`; `PartySetupBootstrap` split out
+    `PartyShipSpawner`. The three boss panels live side by side in the HUD
+    and get a `Bind(GameObject)`. `BossPanelUI`'s long `Update` was split
+    into helpers.
+- **Verified in play mode:** each level spawns exactly its own boss and
+  panel; Marauder, Halcyon and Warden all get the 4 ships; the Tank's taunt
+  reaches Marauder and Warden (a no-op on Halcyon, as before); forcing each
+  boss's defeat shows "DEFEATED" and the Victory screen for Halcyon and
+  Warden too; no console errors.
+
+### 3D ships
+
+- glTFast 6.20.0 installed; the GLBs moved from `ArtSource/Ships/` to
+  `Assets/Art/Ships/Models/`.
+- `ShipMesh.shader`: URP's `Mesh2D-Lit` ignores mesh normals, so this unlit
+  shader does its own fixed-direction Lambert plus HDR emission and a
+  `_FlashColor` for hits.
+- 24 materials from the design colors, and one prefab per ship with
+  spinning halo/gyros and pulsing cores.
+- `Ship.prefab`: the white-square sprite is gone. `ShipVisual` spawns the
+  role's model under a `Visual` child (rotated to face the camera, scale
+  0.07, pushed behind z=0 so enemy bullets draw on top); `ShipBank` rolls
+  it while moving sideways; `PlayerDamageFlash` flashes the model.
+- Bloom: a Global Volume in `Level.unity`, and post-processing on the main
+  camera.
+- **Still open:** the playfield camera background is light blue, which hides
+  most of the bloom; the neon look needs a dark background. Ship scale,
+  light direction and hull brightness need tuning against it. No phone
+  test yet.
+
+### Tests
+
+New EditMode tests: `BossEventsTests`, `LevelSetupTests`, `ShipBankTests`.
+All 63 EditMode tests ran: 57 pass. The 6 failures are the known
+pre-existing ones (`PlayerRoleStatsTests` ×4 on moveSpeed,
+`MarauderBossDamageTests` ×2).

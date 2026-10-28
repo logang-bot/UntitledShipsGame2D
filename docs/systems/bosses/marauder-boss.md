@@ -5,11 +5,9 @@ taunt redirects, and 3 CPU-controlled AI teammates covering the roles the
 human isn't playing. This is the project's core design bet
 (`../../overview.md`) — MMO-raid-style role coordination — reached before any
 networking exists, per `../../roadmap.md`'s priority order. The boss's own
-component/script/prefab are named `MarauderBoss` (not just `Boss`) — this is
-Level 1's own dedicated scene, `Level1.unity`, one of three separate level
-scenes (`Level1`/`Level2`/`Level3`, one per boss — a shared-scene design was
-considered and rejected, see `../../roadmap.md`) that each reuse the same
-`LevelSequencer` script — see [level-sequencing.md](../level-sequencing.md) for the
+component/script/prefab are named `MarauderBoss` (not just `Boss`). It
+fights in the shared `Level` scene that every level uses, driven by the
+same `LevelSequencer` script — see [level-sequencing.md](../level-sequencing.md) for the
 intro/minion-phase/boss-entrance timeline this boss now fights inside of,
 owned by a separate `LevelSequencer`, and [scene-flow.md](../scene-flow.md) for
 how a player reaches this level via `LevelSelect`.
@@ -34,7 +32,7 @@ how a player reaches this level via `LevelSelect`.
   [minions](#minioncs--minionspawnercs) (kamikaze flanking adds, some
   Explosive) · [aggro/taunt](#aggro--targeting) (threat table, Tank
   redirects it).
-- **Level summary:** reached via `LevelSelect` → `Level1.unity`, which
+- **Level summary:** reached via `LevelSelect` → Level 1 (the shared `Level.unity`), which
   runs the shared `LevelSequencer` timeline (see
   [level-sequencing.md](../level-sequencing.md)): ships glide in
   (`Intro`), free movement, ~2 minutes of wave-enemy minion phases
@@ -46,9 +44,9 @@ how a player reaches this level via `LevelSelect`.
 
 ## MarauderBoss.cs
 
-**Attached to:** `Boss` GameObject (`Assets/Prefabs/MarauderBoss.prefab`, one
-instance placed directly in `Level1.unity` — not spawned; a boss is a one-off,
-not a wave, so it doesn't go through `EnemySpawner.cs`). The GameObject
+**Attached to:** the root of `Assets/Prefabs/MarauderBoss.prefab`, spawned
+once by `LevelSetup` when Level 1 is picked (a boss is a one-off, not a
+wave, so it doesn't go through `EnemySpawner.cs`). The GameObject
 itself keeps the generic name `Boss`; only the script/class/prefab carry
 the `MarauderBoss` name. `LevelSequencer` calls the new `public
 SetVisible(bool)` to hide the boss's `SpriteRenderer`/`Collider2D`/

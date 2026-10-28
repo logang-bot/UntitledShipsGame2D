@@ -17,22 +17,22 @@ Two rules keep the parallel work safe:
 
 | Topic | Decision | Why |
 | --- | --- | --- |
-| Ships and bosses | **2D neon vector sprites first**, from the "Ship Designs" project in Claude Design. Each ship is an SVG, imported into Unity as a sprite. | At real in-game size (about 65 px tall on a 1080p desktop, 115 px on a 1080×1920 phone) what reads is the silhouette and the glowing trim, which the 2D set already has. It's the cheapest route, and it fits the current URP 2D setup. |
-| The 3D look | **Planned (Phase 2b).** The same project has 3D versions of all four ships, saved in the repo as GLBs (`ArtSource/Ships/`). They're **pre-rendered inside Unity** by an editor script, not in Blender, and replace the 2D sprites. | The models already exist, so nothing needs modeling. Unity can render the frames itself, including the roll frames. |
-| Blender | **Optional, not a foundation.** Only for refining a 3D model or rendering a cleaner normal map. | It was the biggest learning cost in the old plan, and none of the current designs need it. |
-| How they're lit | URP **2D Renderer**, `Sprite-Lit-Default`, `Light2D`, with bloom doing most of the glow | Already in place: `Assets/Settings/Renderer2D.asset`, ships use `Sprite-Lit-Default`, each level has a Global Light 2D. Normal maps are optional for flat line art. |
+| Player ships | **Live 3D models** (Session 51): the four "Ship Designs" GLBs (`Assets/Art/Ships/Models/`), imported with glTFast and rendered as meshes under the URP 2D Renderer. | The models already existed, so nothing needed modeling, and live meshes give banking and animated parts (halo, gyros, reactor core) for free. Chosen over baking them to sprites first. |
+| Bosses | Same route once 3D models exist for them; the 2D SVG route stays available if a boss is drawn instead. | |
+| Baking to sprites | **Not planned; a possible phone optimization.** If the live meshes cost too much on low-end phones, an editor script can render them to sprite frames later. | Gameplay code never sees how a ship is drawn, so swapping is local to the ship visual. |
+| Blender | **Optional, not a foundation.** Only for refining a 3D model. | It was the biggest learning cost in the old plan, and none of the current designs need it. |
+| How they're lit | Ships: a custom unlit `ShipMesh.shader` (fixed-direction Lambert from mesh normals, plus HDR emission for the neon). Everything else: URP **2D Renderer**, `Sprite-Lit-Default`, `Light2D`. Bloom does most of the glow. | URP's `Mesh2D-Lit` lights meshes only through normal-map textures and ignores mesh normals, so the models would look flat. |
 | Effects and powers | Neon style inspired by the Tuts+ "Neon Vector Shooter" (Shape Blaster): bloom, additive particles stretched by speed, a warping background grid, black-hole-style powers | The effects are what sell the neon look. They're independent of how the ships are made. |
 | Anime ability cut-ins | **Decided at the start of Phase 6**, between two routes, neither needing Blender: **2D illustrated** characters animated in Unity, or **VRoid → Unity** through UniVRM and its toon shader (MToon). | 2D matches 2D ships, and it's how Touhou's own spell-card cut-ins work. VRoid → Unity keeps the anime-3D look while skipping Blender entirely. |
 | Mobile | **One project** with per-platform quality settings | No duplicated code, and it keeps crossplay possible. Sprites cost a phone the same however they were made. |
 | Priority | Ships, bosses, effects and powers first; then the pre-level screens (main menu through level select); then the in-level HUD | The screens before the level show the ships and bosses, so they come after those exist. |
 | Screens and HUD style | One shared **UI kit** built from the `Neon Fleet HUD` design: dark panels, neon role-colored frames, **Chakra Petch** and **JetBrains Mono** fonts. Every menu and the HUD use it. | One look across all screens, built once. Both fonts are free Google Fonts (SIL Open Font License), usable in Unity through TextMesh Pro. |
 
-**Why 2D first, then 3D.** The 2D sprites replace the placeholders in days
-and prove the import, glow and tint setup. The 3D bake then reuses that
-setup, so it only swaps the images. At their real size the 3D ships' fine
-detail (surface details, turret barrels, sensor dishes) shrinks to 1–2
-pixels, so the bake should be judged at in-game size. What 3D really adds
-is banking/roll and lighting that reacts to explosions.
+**Readability at real size.** At in-game size (about 65 px tall on a 1080p
+desktop, 115 px on a 1080×1920 phone) the 3D ships' fine detail (surface
+details, turret barrels, sensor dishes) shrinks to 1–2 pixels. What reads
+is the silhouette and the glowing trim, so judge any ship change at
+in-game size, not zoomed in.
 
 ## Source designs
 
@@ -42,7 +42,7 @@ The ship designs live in the Claude Design project "Ship Designs"
 | File | What it holds |
 | --- | --- |
 | `Ship Designs.dc.html` | The four ships as 2D SVG line art (set 1a), with 96/48/32 px scale previews, and the 3D set (1b) embedded |
-| `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download. **Saved:** `ArtSource/Ships/aegis-04.glb`, `nova-11.glb`, `lumen-02.glb`, `echo-07.glb` |
+| `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download. **Saved and in use:** `Assets/Art/Ships/Models/aegis-04.glb`, `nova-11.glb`, `lumen-02.glb`, `echo-07.glb` |
 | `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the UI kit (Phase 7) and the HUD (Phase 8). There are **no designs yet** for the screens before a level. |
 
 | Role | Ship | Shape | Design color |
@@ -53,21 +53,21 @@ The ship designs live in the Claude Design project "Ship Designs"
 | Support | ECHO-07 | Diamond hull, gyro rings, side masts | Purple `#A855F7` |
 
 **Standalone Claude Design closes by December 14, 2026.** The four GLBs are
-already in the repo. The four SVGs still need exporting, in Phase 1, before
-that date. Each GLB keeps its parts and materials named (for example
-`shield_emitter`, `halo_ring`, `gyro_a`, `aegis_cyan`), so the animated parts
-and the emissive trim can be picked out at bake time.
+in the repo. The four SVGs aren't needed for the ships any more, but are
+worth exporting before that date as icon or menu source. Each GLB keeps its
+parts and materials named (for example `shield_emitter`, `halo_ring`,
+`gyro_a`, `aegis_cyan`), which is how the materials and animated parts were
+assigned.
 
 ## Art direction (style guide seed)
 
 - A dark background, with neon emissive accents on dark hulls. Bloom does
   most of the glowing.
-- **Role colors:** the designs and the code disagree, and Phase 1 settles it.
-  The code (`PlayerRoleStats` in `Assets/Scripts/PlayerRole.cs`) uses
-  Attacker red, Tank blue, Medic green, Support yellow. The designs use
-  Attacker orange, Tank cyan, Medic lime, Support purple. Whichever wins
-  also drives the HUD, since `PartyFrameUI` and `DpsMeterUI` tint with the
-  same `tintColor`.
+- **Role colors** follow the designs (Session 51): Attacker orange, Tank
+  cyan, Medic lime, Support purple, in `PlayerRoleStats.tintColor`
+  (`Assets/Scripts/PlayerRole.cs`). That also drives the HUD (`PartyFrameUI`,
+  `DpsMeterUI`); the ability rings on `Ship.prefab` and the RoleSelect
+  buttons carry the same values.
 - Ships must read clearly at their real in-game size, about 0.6 world units.
   Test detail at that size, not zoomed in.
 - References:
@@ -94,88 +94,45 @@ Players must always be able to read enemy bullets through the effects:
 Each phase lists what to **learn**, what to **make**, when it's **done**, and
 a **mobile check**.
 
-### Phase 0: Foundations
+### Phases 0–2: The four role ships (done, Session 51)
 
-- **Learn:** the URP 2D Renderer, `Sprite-Lit-Default`, `Light2D`, a Global
-  Volume with **Bloom**, sprite import settings, and Unity's built-in Vector
-  Graphics importer for SVGs (`com.unity.modules.vectorgraphics`, already in
-  `Packages/manifest.json`).
-- **Make:** one design SVG imported as a sprite into a test scene, with a
-  Global Volume and bloom.
-- **Done when:** the ship sprite shows up at in-game size and its neon trim
-  glows under bloom.
-- **Mobile check:** run the test scene on a phone.
+Built straight from the 3D models instead of the planned 2D sprites first.
 
-### Phase 1: Pipeline test with one ship (Attacker)
-
-- **Make:**
-  - **Export** the four SVGs from Claude Design into the repo (the GLBs are
-    already in `ArtSource/Ships/`).
-  - **Split each SVG into two layers:** the dark hull and the neon strokes.
-    The strokes become the glow (a separate sprite or a mask), so the hull
-    stays dark while the glow takes the role color and drives bloom.
-  - **Unity import settings:**
-    - SVGs imported as **textured sprites** (not vector meshes), rendered at
-      2–4× in-game size for crisp downscaling, and atlas-friendly;
-    - PPU and pivot;
-    - the glow through an approach that works with bloom: an HDR-colored
-      child sprite, or a small Shader Graph sprite shader with emission.
-      Decided here.
-  - The Attacker sprite swapped onto the ship, with its collider checked
-    against the new outline.
-- **Decide:** the role colors (see "Art direction").
-- **Code touchpoint:** `PlayerRoleComponent.Start()` tints the *whole*
-  sprite with the role color, and `PlayerDamageFlash` reverts to that tint.
-  Multi-color art needs either one sprite per role or a tint applied only to
-  the glow layer. With these designs, each role has its own ship, so the
-  hull is drawn per role and only the glow needs the tint. That's a small
-  code change, decided here.
-- **Done when:** the Attacker is glowing in a real level.
-- **Mobile check:** an Android build of that level.
-
-### Phase 2: The four role ships plus motion
-
-- **Make:**
-  - Ships for Attacker, Tank, Medic and Support, through the Phase 1
-    pipeline.
-  - **Motion, done in Unity instead of rendered frames:**
-    - banking: a slight horizontal squash toward the movement direction,
-      plus a few hand-tweaked frames if that isn't enough;
-    - engine flames that flicker and stretch with speed;
-    - the animated parts from the designs as separate child sprites: the
-      Tank's shield pulse, the Medic's halo spin, the Support's gyro.
+- **In place:**
+  - glTFast (`com.unity.cloud.gltfast` 6.20.0) imports the GLBs from
+    `Assets/Art/Ships/Models/`.
+  - `Assets/Art/Ships/ShipMesh.shader` and 24 materials in
+    `Assets/Art/Ships/Materials/`: shared hull/plate/dark, per-ship neon and
+    accent (HDR emission), glass, additive engine plumes, and one material
+    per edge-line color.
+  - One prefab per ship in `Assets/Art/Ships/Prefabs/` (`Nova11`,
+    `Aegis04`, `Lumen02`, `Echo07`), with `ShipPartSpinner` on Lumen's
+    `halo_ring` and Echo's gyros, and `ShipPartPulse` on the Aegis and Echo
+    cores.
+  - `Ship.prefab`: no `SpriteRenderer` any more. A `Visual` child holds the
+    model's rotation (face the camera, nose up), scale (0.07) and z offset
+    (0.5, so the whole model sits behind z=0 and enemy bullets draw over it).
+    `ShipVisual` spawns the role's prefab in `Start` and drives the hit
+    flash through `_FlashColor`; `ShipBank` rolls the model up to 35° while
+    the ship moves sideways. The `BoxCollider2D` is unchanged, so gameplay is
+    too.
+  - A Global Volume with Bloom (threshold 1) in `Level.unity`.
+- **Still open from these phases:**
+  - **A dark background.** The playfield camera is still light blue, which
+    hides most of the bloom; the neon look needs the dark background from
+    the style guide.
+  - Tune the ship scale, light direction, hull brightness and bloom against
+    that background, at in-game size.
+  - Engine flames that react to speed, and the Tank shield-emitter pulse
+    (the design pulses its glow, which needs per-renderer emission).
+  - Visuals for the Tank's **Shield Arc** and the Medic's **aura ring**
+    (still `LineRenderer`s); the designs show a dashed arc and ring.
   - Whether a roll also gives invulnerability frames is a gameplay decision
     for the phase 3 developer.
-  - Visuals for the Tank's **Shield Arc** and the Medic's **aura ring**.
-    Both are currently `LineRenderer`s on the ships. The designs already
-    show them as a dashed arc and a dashed ring.
-- **Check:** the white hit flash (`PlayerDamageFlash`) still reads clearly
-  on the new sprites.
-- **Done when:** all four ships are in-game and look alive in motion.
-- **Mobile check:** four ships on screen with bloom on.
-
-### Phase 2b: 3D bake inside Unity
-
-The planned replacement for the 2D ships, using the saved GLBs. The 2D
-sprites stay as the fallback, and as the reference for how the ships must
-read at in-game size.
-
-- **Make:**
-  - Import the GLBs into a separate bake scene, not a gameplay scene. Unity
-    needs a glTF importer package for this (Unity's glTFast,
-    `com.unity.cloud.gltfast`). Check that it brings in the neon edge lines,
-    which are stored as line primitives.
-  - An editor script with an orthographic top-down camera that renders each
-    ship into a `RenderTexture` and saves PNGs:
-    - a color image and a glow mask (emissive parts only);
-    - **roll frames:** 16–24 angles, as a sprite animation;
-    - a normal map, through a small normal-output shader, if real-time
-      lighting is wanted.
-  - The baked frames swapped in, in place of the 2D sprites. Gameplay code
-    doesn't change.
-- **Blender** comes in only if a model needs refining, or Unity's normal
-  pass isn't good enough.
-- **Done when:** the baked ships replace the 2D ones and roll smoothly.
+- **Mobile check (not done yet):** four ships on screen with bloom on, on a
+  real phone. Each ship is 30–55 meshes. If it's too heavy, bake the
+  models to sprites (see "Baking to sprites" above) or merge each ship's
+  static meshes.
 
 ### Phase 3: Effects foundation
 
@@ -213,10 +170,10 @@ read at in-game size.
 ### Phase 5: Bosses
 
 - **Make:**
-  - **Marauder**, **Halcyon** and **Warden**, designed in the same 2D neon
-    style and brought in through the Phase 1 pipeline at a larger size.
-    Once 3D models exist for them, they follow the Phase 2b bake like the
-    ships.
+  - **Marauder**, **Halcyon** and **Warden**, designed in the same neon
+    style. 3D models follow the ships' live-model route (glTFast +
+    `ShipMesh.shader` + a visual child on each boss prefab); a drawn boss
+    goes in as a sprite.
   - **Warden's arms** as separate sprites, which matches their existing child
     GameObjects (`ArmA`/`ArmB`/`ArmC`). The arms' "down" look replaces the
     gray tint `WardenArmHealth` applies today.
@@ -284,14 +241,16 @@ UI buttons and text that work, so this is a restyle, not new behavior.
   - The five screens restyled with the kit, one at a time, in build order.
   - **Transitions** between screens: a short fade or slide, so the flow
     feels like one piece.
-- **Depends on:** the Phase 2 ship sprites (`MainMenu`, `RoleSelect`) and
-  the Phase 5 boss art (`LevelSelect`). Until those exist, the cards use
+- **Depends on:** the ship models (done; shown in menus either live under
+  a UI camera or as rendered portraits) and the Phase 5 boss art
+  (`LevelSelect`). Until those exist, the cards use
   the current placeholders, and the art drops in later without changing
   the layout.
 - **Code touchpoint:** mostly none, since the scripts only reference
   buttons and text. Two small changes: `JoinLobbyUI` writes the slot text
   as a string and would need to show a device icon instead, and the
-  `RoleSelect` cards need each role's ship sprite.
+  `RoleSelect` cards need each role's ship (its model or a rendered
+  portrait of it).
 - **Coordinate:** a **loadout (deck) screen** will sit between `RoleSelect`
   and `LevelSelect` once the deck layer exists. Its layout and card visuals
   belong to the phase 3 developer, but it should use the same UI kit.
@@ -323,13 +282,13 @@ UI buttons and text that work, so this is a restyle, not new behavior.
 
 ### Asset organization
 
-- Unity assets live in `Assets/Art/Ships`, `Assets/Art/Bosses`,
-  `Assets/Art/VFX`, `Assets/Art/Backgrounds` and `Assets/Art/CutIns`. The
-  ship SVGs go straight into `Assets/Art/Ships`, since Unity imports them.
+- Unity assets live in `Assets/Art/Ships` (`Models/`, `Materials/`,
+  `Prefabs/`, `ShipMesh.shader`), `Assets/Art/Bosses`, `Assets/Art/VFX`,
+  `Assets/Art/Backgrounds` and `Assets/Art/CutIns`. The ship GLBs live in
+  `Assets/` because the game renders them directly.
 - Sources Unity shouldn't import live in a top-level `ArtSource/` folder
-  **outside** `Assets/`: the design GLBs (`ArtSource/Ships/`), any `.blend`
-  files, raw renders and cut-in source art. The Phase 2b bake scene loads
-  the GLBs from there, or a copy goes into `Assets/` only for the bake.
+  **outside** `Assets/`: any `.blend` files, raw renders and cut-in source
+  art.
 
 ### Git LFS
 
@@ -341,10 +300,10 @@ art:
 
 ## Open questions
 
-- **Role colors:** the code's red/blue/green/yellow or the designs'
-  orange/cyan/lime/purple. Settled in Phase 1.
-- **How much of the 3D bake survives at in-game size,** and whether it
-  needs a normal map for real-time lighting.
+- **Live models on phones:** whether four live ships (30–55 meshes each)
+  plus bloom hold up on low-end phones, or need baking or mesh merging.
+- **Explosion lighting on ships:** `ShipMesh.shader` uses a fixed light
+  direction; reacting to `Light2D`s would need extra shader work.
 - **Cut-in route:** 2D illustrated or VRoid → Unity, decided at the start of
   Phase 6. Commissioning an artist later could raise the quality of either.
 - **Final per-boss bullet and glow palettes.**

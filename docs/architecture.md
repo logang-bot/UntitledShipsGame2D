@@ -79,12 +79,19 @@ listener — not a code-added `AddListener` — matching how `Button.OnClick()`
 is normally wired. Examples: `PlayerHealth.OnDeath`/`OnDamaged`,
 `PlayerAbility.OnTaunt`, `MarauderBoss.OnPhase2`/`OnDefeated`.
 
-**One documented exception**: `PartyFrameUI`'s ability-click handler is
-wired via code (`onClick.AddListener(...)`), because a `PartyFrame` prefab
-instance only learns which ship's `PlayerAbility` it owns at runtime
-(inside `Initialize()`) — there's no concrete target to drag into an
-Inspector slot at prefab-authoring time. Every other event listener in the
-project uses the persistent-listener convention.
+**Documented exceptions**, all for the same reason — the target only
+exists at runtime, so there's nothing to drag into an Inspector slot:
+- `PartyFrameUI`'s ability-click handler (`onClick.AddListener(...)`): a
+  `PartyFrame` prefab instance only learns which ship's `PlayerAbility` it
+  owns inside `Initialize()`.
+- The level's boss is spawned from a prefab by `LevelSetup` (Session 51),
+  so `LevelSetup` forwards its `OnPhase2`/`OnDefeated` to the matching
+  `BossEntry`'s events, and `PartyBossWiring` adds each ship's
+  `OnTaunt` → `BossEvents.Taunt` listener. The `BossEntry` events
+  themselves are ordinary Inspector persistent listeners.
+
+Every other event listener in the project uses the persistent-listener
+convention.
 
 ## Deliberately Absent: Singletons / Service Locator / FindObjectOfType
 
@@ -152,9 +159,12 @@ used to require to avoid double-applying a buff.
 ## Execution Order
 
 `[DefaultExecutionOrder(-1000)]` is used exactly once in the codebase, on
-`PartySetupBootstrap`, to guarantee it assigns each ship's role before any
-other script's default-order `Awake()` (which reads that role to set
-health, tint, or build role-specific structures) runs. This is a
+`LevelSetup` (it moved there from `PartySetupBootstrap` in Session 51), to
+guarantee the level's boss is spawned and every ship's role and boss
+wiring are assigned before any other script's default-order `Awake()`
+(which reads them to set health or build role-specific structures) runs.
+`LevelSetup` calls `PartySetupBootstrap.Setup(boss)` itself, so one
+ordering point covers both. This is a
 deliberately rare tool — reach for it only when `Awake()` ordering
 correctness genuinely can't be achieved another way, not as a general
 pattern.
@@ -172,8 +182,17 @@ but it doesn't violate any convention above: it's still a plain
 `bossObject` are dragged in, not resolved via `FindObjectOfType`), and
 still holds no singleton/static instance. Kept deliberately minimal — one
 script, no generic "level framework" — and named generically (not
-`Level1`-prefixed) since it's meant to be reused by future levels' own
-scenes with their own boss/timing values.
+`Level1`-prefixed) since it drives every level in the one shared `Level`
+scene. Its `bossObject` is the one field set at runtime (by `LevelSetup`)
+rather than dragged in.
+
+## One Level Scene, One Prefab Per Boss
+
+All levels play in `Level.unity`; `LevelSetup` instantiates only the
+picked level's boss prefab (Session 51). `BossEvents` is the one place
+that switches on the concrete boss type, the same concrete-cast idiom
+`AIController` uses for its per-boss taunt rules, so the boss scripts
+themselves didn't change. See `systems/scene-flow.md`'s "Level setup".
 
 ## No Assembly Definitions
 

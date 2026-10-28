@@ -16,6 +16,14 @@ brainstorming session recorded in
 [docs/superpowers/specs/2026-09-04-warden-boss-design.md](../../superpowers/specs/2026-09-04-warden-boss-design.md);
 this doc describes the built system.
 
+> **Session 51:** this boss is now its own prefab, `Assets/Prefabs/WardenBoss.prefab`
+> (inactive root at its home position), spawned into the one shared
+> `Level.unity` by `LevelSetup` only when its level is picked. Its panel is
+> `HUDCanvas/BossPanel_Warden`, bound at spawn. Ship rosters, taunt and the
+> defeat/Victory wiring are set at runtime (see
+> [scene-flow.md](../scene-flow.md)'s "Level setup"). Notes below about
+> per-level scenes describe how the boss was originally built.
+
 ## At a Glance
 
 - **Identity:** a coverage/coordination check — Marauder's aggro table
@@ -34,7 +42,7 @@ this doc describes the built system.
   volley](#wardenlockdownvolleycs) (the fight's signature mechanic — a wide
   wall of parallel bullets from a random arena edge, built to be blocked by
   Tank's Shield Arc, not dodged).
-- **Level summary:** reached via `LevelSelect` → `Level3.unity`, which runs
+- **Level summary:** reached via `LevelSelect` → Level 3 (the shared `Level.unity`), which runs
   the same shared `LevelSequencer` timeline every level uses (see
   [level-sequencing.md](../level-sequencing.md)) — no sequencing changes,
   only the boss instance and its own components differ from Marauder.

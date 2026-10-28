@@ -508,6 +508,30 @@ reference docs live under `systems/`.
   changes to the interface or its consumers were needed, since that
   generalization was already done for Halcyon. See
   `systems/bosses/warden-boss.md` and the design spec above.
+- **One shared `Level` scene (Session 51)** — reverses the per-level-scene
+  decision above. `Level1`/`Level2`/`Level3.unity` were `Ctrl+D` copies that
+  had already drifted: beating Halcyon or Warden never showed Victory,
+  because their `OnDefeated` listeners pointed at a removed component. Now
+  `Level1.unity` became `Level.unity`, each boss is its own prefab
+  (`MarauderBoss`/`HalcyonBoss`/`WardenBoss.prefab`, inactive root), and a
+  new `LevelSetup` (the project's only `[DefaultExecutionOrder(-1000)]`)
+  instantiates only the boss `LevelSelection` picked, then runs
+  `PartySetupBootstrap.Setup(boss)`. The two original objections no longer
+  hold: two bosses can't coexist when only one is ever instantiated, and
+  boss edits live in per-boss prefabs, not the shared scene. Per-level
+  scene wiring moved to `BossEntry` rows on `LevelSetup` (panel activate +
+  `Bind`, `onPhase2`, `onDefeated` → panel + Victory for all three), and
+  `BossEvents` is the one place that switches on boss type.
+  `PartySetupBootstrap` was split into `PartyShipSpawner` and
+  `PartyBossWiring`; the latter also fixes co-op-spawned ships' taunt,
+  which still targeted the old `Boss` type. Build Settings: `Level` is
+  index 5. See `systems/scene-flow.md`'s "Level setup".
+- **Role colors from the ship designs + 3D ship models (Session 51)** —
+  roles use the design palette (Attacker `#FF8A3D`, Tank `#00E5FF`, Medic
+  `#B6FF3C`, Support `#A855F7`). The four player ships render their GLB
+  design models live (glTFast), through `ShipVisual`, `ShipBank` and a
+  custom `ShipMesh.shader`, with Bloom on in `Level`. See
+  `art-roadmap.md`.
 
 ## In Progress
 
@@ -538,9 +562,9 @@ is independently testable and the one before it de-risks the next.
 - **Starter card set** — ~20 cards, five per role plus Neutral, split Passive
   and Active.
 - **`DeckBuild.unity` loadout scene** — appended at whatever the next
-  available Build Settings index is when it's built (currently 8, since
-  `LevelSelect`/`Level1`/`Level2`/`Level3` now occupy 4-7), between
-  `RoleSelect` and whichever level scene is chosen in flow order;
+  available Build Settings index is when it's built (currently 6, since
+  `LevelSelect`/`Level` occupy 4-5), between `RoleSelect` and `Level` in
+  flow order;
   single/multi picker mirroring `RoleSelect`; `PartyDeckAssignment` static
   carrying the result across the scene load.
 - **AI decks** — `AIController` playing cards through `PlayerCards.TryPlayCard()`,
@@ -564,8 +588,7 @@ is independently testable and the one before it de-risks the next.
   in [art-roadmap.md](art-roadmap.md):
   - foundations;
   - a pipeline test with one ship;
-  - the four role ships plus motion;
-  - a 3D bake inside Unity from the design GLB models;
+  - the four role ships as live 3D models (done: Session 51), plus motion;
   - effects;
   - powers (black hole);
   - bosses;
@@ -574,8 +597,8 @@ is independently testable and the one before it de-risks the next.
     kit;
   - the in-level HUD last.
 
-  Pipeline: 2D neon vector sprites (SVG) from the Claude Design "Ship
-  Designs" project, URP 2D `Sprite-Lit-Default` + `Light2D` + bloom, and
+  Pipeline: the Claude Design "Ship Designs" GLB models rendered live
+  (glTFast + `ShipMesh.shader`) under the URP 2D Renderer, plus bloom and
   Shape Blaster-inspired neon effects. Blender is optional.
 
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.
