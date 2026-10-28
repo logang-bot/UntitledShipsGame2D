@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class BossPanelUI : MonoBehaviour
 {
-    public MarauderBoss boss; // direct scene reference - BossPanel is scene-bound, not a reusable prefab
+    public MarauderBoss boss; // set by Bind() when LevelSetup spawns the boss
     public Image healthBarFill;
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI phaseText;
@@ -15,58 +15,44 @@ public class BossPanelUI : MonoBehaviour
     public TextMeshProUGUI patternBarrageWarningText;
     public TextMeshProUGUI patternBarrageCooldownText;
 
+    public void Bind(GameObject bossObject)
+    {
+        boss = bossObject.GetComponent<MarauderBoss>();
+    }
+
     void Update()
     {
         if (boss == null) return;
+        UpdateHealth();
+        targetText.text = $"Target: {TargetRoleLabel()}";
+        SetText(warningText, boss.GuidedMissileTargetRole.HasValue ? $"Guided missile: {boss.GuidedMissileTargetRole.Value}" : "");
+        SetText(shockwaveCooldownText, FormatCooldown("Shockwave", boss.ShockwaveCooldownRemaining));
+        SetText(guidedMissileCooldownText, FormatCooldown("Guided Missile", boss.GuidedMissileCooldownRemaining));
+        SetText(patternBarrageWarningText, boss.PatternBarrageActivePattern.HasValue ? $"Incoming: {boss.PatternBarrageActivePattern.Value} Barrage" : "");
+        SetText(patternBarrageCooldownText, FormatCooldown("Pattern Barrage", boss.PatternBarrageCooldownRemaining));
+    }
 
+    private void UpdateHealth()
+    {
         healthBarFill.fillAmount = (float)boss.CurrentHealth / boss.maxHealth;
         healthText.text = $"HP: {boss.CurrentHealth}/{boss.maxHealth}";
         phaseText.text = boss.IsPhase2 ? "Phase 2" : "Phase 1";
+    }
 
-        if (boss.CurrentTarget != null)
-        {
-            PlayerRoleComponent targetRole = boss.CurrentTarget.GetComponent<PlayerRoleComponent>();
-            targetText.text = targetRole != null ? $"Target: {targetRole.role}" : "Target: --";
-        }
-        else
-        {
-            targetText.text = "Target: --";
-        }
+    private string TargetRoleLabel()
+    {
+        PlayerRoleComponent targetRole = boss.CurrentTarget != null ? boss.CurrentTarget.GetComponent<PlayerRoleComponent>() : null;
+        return targetRole != null ? targetRole.role.ToString() : "--";
+    }
 
-        if (warningText != null)
-        {
-            warningText.text = boss.GuidedMissileTargetRole.HasValue
-                ? $"Guided missile: {boss.GuidedMissileTargetRole.Value}"
-                : "";
-        }
+    private static void SetText(TextMeshProUGUI text, string value)
+    {
+        if (text != null) text.text = value;
+    }
 
-        if (shockwaveCooldownText != null)
-        {
-            shockwaveCooldownText.text = boss.ShockwaveCooldownRemaining > 0f
-                ? $"Shockwave: {boss.ShockwaveCooldownRemaining:0.0}s"
-                : "Shockwave: Ready";
-        }
-
-        if (guidedMissileCooldownText != null)
-        {
-            guidedMissileCooldownText.text = boss.GuidedMissileCooldownRemaining > 0f
-                ? $"Guided Missile: {boss.GuidedMissileCooldownRemaining:0.0}s"
-                : "Guided Missile: Ready";
-        }
-
-        if (patternBarrageWarningText != null)
-        {
-            patternBarrageWarningText.text = boss.PatternBarrageActivePattern.HasValue
-                ? $"Incoming: {boss.PatternBarrageActivePattern.Value} Barrage"
-                : "";
-        }
-
-        if (patternBarrageCooldownText != null)
-        {
-            patternBarrageCooldownText.text = boss.PatternBarrageCooldownRemaining > 0f
-                ? $"Pattern Barrage: {boss.PatternBarrageCooldownRemaining:0.0}s"
-                : "Pattern Barrage: Ready";
-        }
+    private static string FormatCooldown(string label, float remaining)
+    {
+        return remaining > 0f ? $"{label}: {remaining:0.0}s" : $"{label}: Ready";
     }
 
     public void ShowDefeated()

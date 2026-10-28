@@ -12,14 +12,17 @@ GameObject:
   - component: {fileID: 7342040337403757580}
   - component: {fileID: 2542918792098575779}
   - component: {fileID: 6576846442655130558}
-  - component: {fileID: 387983663104001652}
+  - component: {fileID: 2013047928882908572}
+  - component: {fileID: 7844891732896676537}
+  - component: {fileID: 8502070881579550053}
+  - component: {fileID: 2792558298515373865}
   m_Layer: 0
-  m_Name: Level3BossPlaceholder
+  m_Name: HalcyonBoss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1056681803579479942
 Transform:
   m_ObjectHideFlags: 0
@@ -29,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 1990896620938820717}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 6, z: 0}
+  m_LocalPosition: {x: 0, y: 4.2, z: 0}
   m_LocalScale: {x: 1.6, y: 1.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -168,7 +171,29 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &387983663104001652
+--- !u!114 &2013047928882908572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22ae904a300251a4bb04d0cb7cd80121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::HalcyonBoss
+  maxHealth: 110
+  OnPhase2:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDefeated:
+    m_PersistentCalls:
+      m_Calls: []
+  bulletDamage: 1
+  bodyContactDamageMultiplier: 2
+  contactDamageCooldown: 1
+--- !u!114 &7844891732896676537
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -177,65 +202,53 @@ MonoBehaviour:
   m_GameObject: {fileID: 1990896620938820717}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1403f7357878b14ca77c0f7678d708b, type: 3}
+  m_Script: {fileID: 11500000, guid: b1b7bd0a06d224541be90a6ef6d4ba02, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Boss
-  maxHealth: 90
-  OnPhase2:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDefeated:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BossPanelUI, Assembly-CSharp
-        m_MethodName: ShowDefeated
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  dashDecisionInterval: 1.5
-  dashProbability: 0.35
-  dashDistanceX: 1.2
-  dashDistanceY: 0.8
-  dashSpeed: 8
-  maxAdvanceFraction: 0.4
+  m_EditorClassIdentifier: UntitledShips.Runtime::HalcyonRoam
+  roamSpeed: 2.5
+  roamSpeedPhase2: 3.5
+  pauseMin: 0.3
+  pauseMax: 0.8
+  minWaypointDistance: 2
   screenPadding: {x: 0.8, y: 0.5}
-  bulletPrefab: {fileID: 2454154910025362242, guid: 948b73a827320324aa43963466632840, type: 3}
-  phase1FireInterval: 1.2
-  phase2FireInterval: 0.6
-  bulletSpeed: 6
-  spreadAngle: 15
-  bulletDamage: 1
-  bodyContactDamageMultiplier: 2
-  contactDamageCooldown: 1
-  shockwaveRadius: 1.7
-  shockwaveDamageMultiplier: 3
-  shockwaveKnockback: 33
-  shockwaveCooldown: 3
-  shockwaveTelegraphTime: 0.3
-  shockwaveRingColor: {r: 1, g: 0.4, b: 0.1, a: 0.25}
-  shockwaveRingTelegraphColor: {r: 1, g: 0.15, b: 0.1, a: 0.85}
-  shockwaveRingImpactColor: {r: 1, g: 0.9, b: 0.3, a: 1}
-  shockwaveRingWidth: 0.06
-  shockwaveRingTelegraphWidth: 0.14
-  shockwaveTelegraphPulseSpeed: 12
-  shockwaveImpactFlashDuration: 0.15
-  guidedMissileTargetRoles: 0200000000000000
-  guidedMissileInterval: 5
-  guidedMissileTelegraphTime: 0.8
-  guidedMissileTurnRate: 90
-  guidedMissileSpeed: 5
-  guidedMissileWarningLingerTime: 2
-  targets:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  tauntBonus: 100
-  enemySpawner: {fileID: 0}
+--- !u!114 &8502070881579550053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d26f8c3bf3f0afe48a579fb57ac53757, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::HalcyonSurge
+  cooldown: 8
+  telegraphTime: 1
+  activeTime: 2
+--- !u!114 &2792558298515373865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9a4eba2b0bd8c747808a76be0921257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::HalcyonStaticField
+  ships: []
+  pulseCooldown: 6
+  pulseCooldownPhase2: 4
+  bossRange: 1.8
+  clusterRange: 0.6
+  damageMultiplier: 3
+  telegraphTime: 0.3
+  impactFlashDuration: 0.15
+  ringColor: {r: 0.3, g: 0.6, b: 1, a: 0.25}
+  telegraphColor: {r: 0.5, g: 0.85, b: 1, a: 0.85}
+  impactColor: {r: 0.9, g: 0.95, b: 1, a: 1}
+  ringWidth: 0.06
+  telegraphWidth: 0.14
+  telegraphPulseSpeed: 12

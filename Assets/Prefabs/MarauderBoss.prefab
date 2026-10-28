@@ -13,13 +13,14 @@ GameObject:
   - component: {fileID: 2542918792098575779}
   - component: {fileID: 6576846442655130558}
   - component: {fileID: 387983663104001652}
+  - component: {fileID: 2333862066334353517}
   m_Layer: 0
   m_Name: MarauderBoss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1056681803579479942
 Transform:
   m_ObjectHideFlags: 0
@@ -29,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 1990896620938820717}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 6, z: 0}
+  m_LocalPosition: {x: 0, y: 4.2, z: 0}
   m_LocalScale: {x: 1.6, y: 1.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -175,7 +176,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1990896620938820717}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1403f7357878b14ca77c0f7678d708b, type: 3}
   m_Name: 
@@ -186,27 +187,18 @@ MonoBehaviour:
       m_Calls: []
   OnDefeated:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BossPanelUI, Assembly-CSharp
-        m_MethodName: ShowDefeated
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  dashDecisionInterval: 1.5
-  dashProbability: 0.35
-  dashDistanceX: 1.2
-  dashDistanceY: 0.8
-  dashSpeed: 8
+      m_Calls: []
+  enableMovementPattern: 0
+  sideOffsetX: 2.2
+  patternMoveDurationMin: 0.4
+  patternMoveDurationMax: 2
+  cycleGapMin: 0.5
+  cycleGapMax: 2.5
   maxAdvanceFraction: 0.4
+  mPatternNotchDepth: 0.5
   screenPadding: {x: 0.8, y: 0.5}
   bulletPrefab: {fileID: 2454154910025362242, guid: 948b73a827320324aa43963466632840, type: 3}
+  postEntranceGracePeriod: 1.5
   phase1FireInterval: 1.2
   phase2FireInterval: 0.6
   bulletSpeed: 6
@@ -214,28 +206,51 @@ MonoBehaviour:
   bulletDamage: 1
   bodyContactDamageMultiplier: 2
   contactDamageCooldown: 1
-  shockwaveRadius: 1.7
-  shockwaveDamageMultiplier: 3
-  shockwaveKnockback: 33
-  shockwaveCooldown: 3
-  shockwaveTelegraphTime: 0.3
-  shockwaveRingColor: {r: 1, g: 0.4, b: 0.1, a: 0.25}
-  shockwaveRingTelegraphColor: {r: 1, g: 0.15, b: 0.1, a: 0.85}
-  shockwaveRingImpactColor: {r: 1, g: 0.9, b: 0.3, a: 1}
-  shockwaveRingWidth: 0.06
-  shockwaveRingTelegraphWidth: 0.14
-  shockwaveTelegraphPulseSpeed: 12
-  shockwaveImpactFlashDuration: 0.15
-  guidedMissileTargetRoles: 0200000000000000
-  guidedMissileInterval: 5
-  guidedMissileTelegraphTime: 0.8
-  guidedMissileTurnRate: 90
-  guidedMissileSpeed: 5
-  guidedMissileWarningLingerTime: 2
-  targets:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  shockwaveSettings:
+    radius: 1.7
+    damageMultiplier: 3
+    knockback: 33
+    cooldown: 3
+    telegraphTime: 0.3
+    ringColor: {r: 1, g: 0.4, b: 0.1, a: 0.25}
+    ringTelegraphColor: {r: 1, g: 0.15, b: 0.1, a: 0.85}
+    ringImpactColor: {r: 1, g: 0.9, b: 0.3, a: 1}
+    ringWidth: 0.06
+    ringTelegraphWidth: 0.14
+    telegraphPulseSpeed: 12
+    impactFlashDuration: 0.15
+  guidedMissile:
+    targetRoles: 0200000000000000
+    interval: 5
+    telegraphTime: 0.8
+    turnRate: 90
+    speed: 5
+    warningLingerTime: 2
+  patternBarrageCooldown: 7
+  patternBarrageTelegraphTime: 0.7
+  fanBulletCount: 5
+  fanSpreadAngle: 50
+  ringBulletCount: 12
+  spiralBulletCount: 20
+  spiralAngleStep: 25
+  spiralShotInterval: 0.05
+  targets: []
   tauntBonus: 100
-  enemySpawner: {fileID: 0}
+  enableMinions: 0
+--- !u!114 &2333862066334353517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e6ef79d4461f64096dd72bae1444c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinionSpawner
+  minionPrefab: {fileID: 7300340836886836703, guid: a14be3077050d3a4e814eee0fdb8982b, type: 3}
+  maxConcurrentMinions: 2
+  spawnInterval: 6
+  spawnRadius: 2
+  explosiveMinionChance: 0.3

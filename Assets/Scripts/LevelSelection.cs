@@ -1,10 +1,9 @@
-// Carries which level was picked in LevelSelect into that level's own scene.
-// A plain static field survives SceneManager.LoadScene within one Play
-// session but resets to null on domain reload - mirrors GameModeSelection.cs
-// / PartyRoleAssignment.cs's pattern exactly. Nothing currently branches on
-// this (each level's own scene already fully determines its own behavior via
-// its own LevelSequencer/boss); it exists so a future HUD "Level N: Halcyon"
-// title has something to read.
+// Carries which level was picked in LevelSelect into the shared Level scene,
+// where LevelSetup spawns that level's boss. A plain static field survives
+// SceneManager.LoadScene within one Play session (so Restart, which reloads
+// the active scene, replays the same level) but resets to null on domain
+// reload - mirrors GameModeSelection.cs / PartyRoleAssignment.cs's pattern
+// exactly. Null (scene opened directly) means LevelSetup.editorDefaultLevel.
 public enum Level
 {
     Level1,
