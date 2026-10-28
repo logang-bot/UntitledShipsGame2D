@@ -564,15 +564,16 @@ is independently testable and the one before it de-risks the next.
   in [art-roadmap.md](art-roadmap.md):
   - foundations;
   - a pipeline test with one ship;
-  - the four role ships plus roll;
+  - the four role ships plus motion;
+  - an optional 3D bake inside Unity;
   - effects;
   - powers (black hole);
   - bosses;
   - anime cut-ins;
   - HUD and menus last.
 
-  Pipeline: Blender-modeled, pre-rendered sprites (color + normal map + glow
-  mask), URP 2D `Sprite-Lit-Default` + `Light2D`, and Shape Blaster-inspired
-  neon effects.
+  Pipeline: 2D neon vector sprites (SVG) from the Claude Design "Ship
+  Designs" project, URP 2D `Sprite-Lit-Default` + `Light2D` + bloom, and
+  Shape Blaster-inspired neon effects. Blender is optional.
 
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.

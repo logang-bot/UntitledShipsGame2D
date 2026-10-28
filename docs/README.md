@@ -13,8 +13,8 @@
 - [progress-log-archive.md](progress-log-archive.md) — archived Sessions
   1-27 (pre-boss fundamentals through the boss-encounter arc and the Level 1
   rework), moved out for length.
-- [art-roadmap.md](art-roadmap.md) — the phased art plan (Blender
-  pre-rendered sprites, neon effects and powers, anime cut-ins, mobile
+- [art-roadmap.md](art-roadmap.md) — the phased art plan (2D neon
+  vector sprites with an optional 3D bake, neon effects and powers, anime cut-ins, mobile
   quality tiers). It runs in parallel with the gameplay work.
 - [architecture.md](architecture.md) — concrete code-level conventions:
   script organization, communication patterns, deliberate omissions.

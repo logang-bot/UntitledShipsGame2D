@@ -50,10 +50,12 @@ on desktop.
 - **Networking (planned, last):** Nakama self-hosted on Fly.io,
   server-authoritative.
 - **Audio (planned):** FMOD, adaptive to boss phase.
-- **Art (in progress, parallel to phase 3):** Blender-modeled, pre-rendered
-  sprites (color + normal map + glow mask) into URP 2D `Sprite-Lit-Default`
-  + `Light2D`; Shape Blaster-inspired neon effects; anime ability cut-ins via
-  VRoid → Blender. See [docs/art-roadmap.md](docs/art-roadmap.md).
+- **Art (in progress, parallel to phase 3):** 2D neon vector sprites (SVGs
+  from the Claude Design "Ship Designs" project) into URP 2D
+  `Sprite-Lit-Default` + `Light2D` + bloom; an optional 3D look baked inside
+  Unity from the designs' GLB models; Shape Blaster-inspired neon effects;
+  anime ability cut-ins as 2D illustrations or VRoid → Unity (route decided
+  later). Blender is optional. See [docs/art-roadmap.md](docs/art-roadmap.md).
 
 For the full reasoning behind each of these, see
 [docs/overview.md](docs/overview.md)'s "Tech Stack Decisions".
@@ -94,9 +96,9 @@ For the full reasoning behind each of these, see
 | Run structure | Pre-fight loadout screen | Simplest path to validating whether cards are fun; roguelike runs / meta-progression deferred |
 | Card economy | Energy earned by grazing | The mechanic that fuses bullet-hell skill with the deck layer |
 | Work split | Phase 3 (hitbox/focus/grazing/cards) by another developer; art in parallel | Art replaces working placeholders, so it never blocks gameplay |
-| Art pipeline | Blender, **pre-rendered** sprites (color + normal map + glow mask) | Detailed ships; roll animation = extra rendered frames; normal maps give real-time 2D lighting. Imported 3D models stay possible later without remodeling |
+| Art pipeline | **2D neon vector sprites first** (SVG → Unity); optional 3D upgrade baked **inside Unity** from existing GLB models; Blender optional | At in-game size (~65–115 px) the silhouette and glowing trim are what read; 3D detail becomes noise. Replaces the earlier Blender pre-render plan (Session 50) |
 | Effects style | Neon, inspired by Tuts+ "Neon Vector Shooter" (Shape Blaster) | Bloom, additive stretched particles, warping grid, black-hole powers; enemy bullets must stay readable over effects |
-| Ability cut-ins | Anime 3D-look characters: VRoid → Blender toon shading, pre-rendered | Genshin/ZZZ feel; pre-rendering looks identical on every device and is cheap on phones |
+| Ability cut-ins | 2D illustrated, or VRoid → Unity (UniVRM + MToon); picked at the start of art Phase 6 | Neither route needs Blender. 2D matches the ships and Touhou's spell-card cut-ins; VRoid → Unity keeps the anime-3D look |
 | Mobile | One project, per-platform quality tiers | No duplicated code; keeps crossplay possible. A sibling project was considered and rejected |
 | Version control | git, ships-game history retained | `origin` still points at `logang-bot/UntitledShipsGame2D` — retarget before pushing |
 
@@ -108,8 +110,9 @@ For the full reasoning behind each of these, see
 - How cards are acquired/unlocked over time (the loadout screen assumes a
   pool exists; where it comes from is deferred).
 - Number and structure of bosses/stages beyond Level 1.
-- Final art palettes, the cut-in quality ceiling, and audio direction. The
-  art pipeline itself is decided; see
+- Role colors (code vs. designs), the cut-in route, whether to take the 3D
+  upgrade, final art palettes, and audio direction. The art pipeline
+  itself is decided; see
   [docs/art-roadmap.md](docs/art-roadmap.md)'s "Open questions".
 - Steam integration approach (Steamworks.NET vs. other), achievements,
   leaderboards.

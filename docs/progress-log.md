@@ -1154,3 +1154,58 @@ asset replaces a placeholder that already works. The plan is the new
 
 Git LFS is installed (3.6.1), but no file types are tracked yet. The art
 roadmap says to set it up before the first art commit.
+
+## Session 50 — Art Pipeline Revised: 2D Sprites First, Blender Optional
+
+You reviewed the ship designs in the Claude Design "Ship Designs" project
+(`Ship Designs.dc.html`, `Ship Models 3D.html`, `ships3d.js`). They show
+the four role ships two ways: AEGIS-04 (Tank), NOVA-11 (Attacker),
+LUMEN-02 (Medic) and ECHO-07 (Support). The question was whether Blender
+is really needed. It isn't, so the art plan changed. Work is on the new
+`art-first-draft` branch, with Session 49's roadmap commit cherry-picked
+from `warden-fixes`.
+
+### What the designs are
+
+- **2D set:** flat neon line art, one small SVG per ship (about 15 shapes),
+  with a blur filter for the glow.
+- **3D set:** never modeled in Blender. Built in code from simple shapes
+  (extruded outlines, cylinders, rings) with metallic hulls and emissive
+  trim, and downloadable as GLB/OBJ. The animated parts (shield pulse,
+  halo spin, gyro) are separate pieces.
+
+### Decisions and why
+
+- **2D vector sprites first.** At real in-game size (orthographic size 5,
+  0.6-unit ships: about 65 px on a 1080p desktop, 115 px on a 1080×1920
+  phone) the 3D models' fine detail shrinks to 1–2 px. What reads is the
+  silhouette and the glowing trim, which the 2D set has.
+- **The 3D look becomes an optional Phase 2b,** taken only if the 2D ships
+  look flat in motion. The models already exist, and Unity can bake the
+  frames itself (orthographic camera, `RenderTexture`, PNG output), so
+  Blender isn't needed even then.
+- **Blender is optional** for the whole project: only for refining a 3D
+  model or a cleaner normal map.
+- **Cut-ins:** the route is picked at the start of art Phase 6, between 2D
+  illustrated characters animated in Unity and VRoid → Unity through UniVRM
+  and its MToon toon shader. Neither needs Blender.
+
+### Updated docs
+
+- `art-roadmap.md`: rewritten decisions, a new "Source designs" section,
+  Phases 0–2 and 6 revised, Phase 2b added, and LFS now tracks `*.glb`.
+- `AGENTS.md`: the tech-stack art bullet, the art pipeline and cut-in
+  decision rows, and the art open question.
+- `overview.md`: the art pipeline row.
+- `roadmap.md`: the Art & audio section.
+- `README.md`: the art roadmap index entry.
+
+### Found while checking
+
+- **Role colors disagree.** The code (`PlayerRoleStats`) uses Attacker red,
+  Tank blue, Medic green, Support yellow. The designs use orange, cyan,
+  lime and purple. It's settled in art Phase 1, and it also changes the HUD
+  (`PartyFrameUI`, `DpsMeterUI`).
+- **Standalone Claude Design closes by December 14, 2026.** The SVGs and
+  GLBs get exported into the repo in art Phase 1.
+- Unity's Vector Graphics module is already in `Packages/manifest.json`.
