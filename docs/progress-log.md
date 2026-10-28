@@ -1333,3 +1333,45 @@ No code changes. Decisions recorded in `art-roadmap.md`, `roadmap.md` and
   the bullet-less roaming storm, Warden the turret fortress).
 - Assumption in the prompt: the buildings are seen from above (rooftops),
   since the camera is top-down. Change it if a side-on skyline was meant.
+
+## Session 53 — Per-Boss Parallax Backgrounds (Art Phase 2c, First Draft)
+
+The backgrounds came back from Claude Design (`Boss Designs.dc.html`): four
+vertically tiling 1080×1920 layers per boss, with relative scroll speeds.
+Boss ship art was left for later.
+
+- **Static PNGs, not a C# port of the design's generator.** The design
+  builds the layers procedurally in JS. Porting that to Unity meshes would
+  cost vertices, jagged edges (or MSAA) and soft-glow overdraw every frame
+  on phones. Drawing it into a texture once at load fixes the GPU side, but
+  textures made at runtime can't be compressed (~32 MB per boss) and are
+  still a large port. The only thing a port adds is a new city every run.
+  The PNGs, exported through a "Download all (ZIP)" button added to the
+  design, match it exactly and are cheap.
+- **Variety without the port:** each layer starts at a random point in its
+  loop, and the whole background is mirrored left-to-right on a coin flip.
+  It is flipped as a whole, so shadows stay consistent; a top-to-bottom
+  flip would point the shadows the wrong way.
+- New `ParallaxLayer` (tiled sprite, scroll and wrap), `ParallaxBackground`
+  (random mirror), `BossEntry.backgroundPrefab` spawned by `LevelSetup`,
+  and three `<Boss>Background.prefab`s. The playfield camera went from
+  light blue to `#04050A`. Details in `art-roadmap.md`'s Phase 2c.
+
+### Verified
+
+Play mode, `Level.unity`, with `editorDefaultLevel` set to each level in
+turn: the right background spawns for all three bosses, the layers scroll,
+and ships, bullets and enemies draw over them. The colors in saved
+screenshots match the design palette exactly (e.g. Marauder roofs
+`#1F1A22`). The MCP inline screenshot preview looked much brighter than
+the saved file; check the saved PNG, not the preview, when judging
+background brightness. The Editor was unfocused, so game time barely
+advanced (see `unity-notes.md`). A full wrap of the near layer wasn't
+watched live, only covered by the `WrappedOffset` tests. Worth a human
+look at the seam and at bullet readability.
+
+### Tests
+
+New `ParallaxLayerTests` (4 cases) pass, as do `LevelSetupTests`. The 6
+failures are the known pre-existing ones (`PlayerRoleStatsTests` ×4,
+`MarauderBossDamageTests` ×2).

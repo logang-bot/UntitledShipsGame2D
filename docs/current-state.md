@@ -282,8 +282,11 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   are same-scene UI overlays within `Level`, not separate scenes (see
   [systems/combat.md](systems/combat.md)).
 - Art is only started: the four player ships are their 3D design models
-  (see [art-roadmap.md](art-roadmap.md)); bosses, minions, bullets, the
-  background and the avatar slot are still placeholder shapes. No audio.
+  (see [art-roadmap.md](art-roadmap.md)), and each boss fight scrolls its
+  own four-layer parallax background (Marauder's burning foundry,
+  Halcyon's storm-drowned towers, Warden's walled garrison). Bosses,
+  minions, bullets and the avatar slot are still placeholder shapes. No
+  audio.
 
 See [roadmap.md](roadmap.md)'s "Development priority order" for the
 authoritative build sequence: full basic mechanics first, then

@@ -532,6 +532,15 @@ reference docs live under `systems/`.
   design models live (glTFast), through `ShipVisual`, `ShipBank` and a
   custom `ShipMesh.shader`, with Bloom on in `Level`. See
   `art-roadmap.md`.
+- **Per-boss parallax backgrounds (Session 53)** — art Phase 2c, first
+  draft. Each boss has a `<Boss>Background.prefab` in
+  `Assets/Art/Backgrounds/<Boss>/`: four layers (far stars, near stars,
+  far buildings, near buildings) from the Claude Design PNGs, each
+  scrolled and wrapped by `ParallaxLayer`. Each run starts every layer at
+  a random point in its loop, and `ParallaxBackground` mirrors the whole
+  background left-to-right on a coin flip. `LevelSetup` spawns the picked
+  boss's `BossEntry.backgroundPrefab`. The playfield camera is near-black.
+  See `art-roadmap.md`'s Phase 2c.
 
 ## In Progress
 
@@ -588,8 +597,7 @@ is independently testable and the one before it de-risks the next.
   in [art-roadmap.md](art-roadmap.md):
   - the four role ships as live 3D models (done: Session 51), plus motion;
   - one parallax background per boss: dark, stars, city rooftops far below
-    (first draft, to be designed in Claude Design; prompt written in
-    Session 52);
+    (first draft done: Session 53);
   - effects;
   - powers (black hole);
   - bosses, designed in Claude Design alongside the backgrounds;

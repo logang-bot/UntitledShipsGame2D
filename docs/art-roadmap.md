@@ -121,9 +121,7 @@ Built straight from the 3D models instead of the planned 2D sprites first.
     too.
   - A Global Volume with Bloom (threshold 1) in `Level.unity`.
 - **Still open from these phases:**
-  - **A dark background.** The playfield camera is still light blue, which
-    hides most of the bloom. Phase 2c replaces it with the per-boss
-    backgrounds.
+  - ~~**A dark background.**~~ Done in Phase 2c (Session 53).
   - Tune the ship scale, light direction, hull brightness and bloom against
     that background, at in-game size.
   - Engine flames that react to speed, and the Tank shield-emitter pulse
@@ -156,14 +154,33 @@ Built straight from the 3D models instead of the planned 2D sprites first.
   low-saturation, with only small dim lights. Nothing that looks like a
   bullet, nothing in the boss's signature color, and far less glow than the
   ships and the boss (below the bloom threshold).
-- **Make:**
-  - Each layer as a sprite in `Assets/Art/Backgrounds/<Boss>/`.
-  - A small scroller component that moves each layer downward at its own
-    speed and wraps it seamlessly.
-  - One background prefab per boss, picked per level through `LevelSetup`'s
-    `BossEntry` (e.g. a background field, or activating it from
-    `onSpawned`), so it follows the shared-`Level`-scene pattern.
-  - The camera background set to near-black behind the layers.
+- **Designed (Session 53):** `Boss Designs.dc.html` in the Claude Design
+  project. Each boss gets four 1080×1920 layers that tile vertically:
+  far stars (opaque base, ×0.08), near stars (×0.2), far buildings
+  (×0.45) and near buildings (×1). Speeds are relative to the near layer.
+  Themes: Marauder's burning foundry district, Halcyon's storm-drowned
+  towers, Warden's walled garrison.
+- **In place (Session 53):**
+  - The 12 PNGs, exported from the design's "Download all backgrounds
+    (ZIP)" button, in `Assets/Art/Backgrounds/<Boss>/`. Imported as
+    sprites at **192 pixels per unit**, so one layer is exactly the
+    playfield (5.625 × 10 units). Mesh type Full Rect (needed for tiled
+    drawing), no mipmaps, high-quality compression.
+  - `ParallaxLayer` draws its sprite tiled two tiles tall, scrolls it down
+    and wraps it after one tile. Each run starts at a random point in the
+    loop. Speeds: 0.063 / 0.158 / 0.354 / 0.79 units/s. The near layer
+    moves at the design mockup's 0.14 playfield widths per second.
+  - `ParallaxBackground` on each prefab root mirrors the whole background
+    left-to-right on a coin flip. All four layers flip together, so the
+    rooftop shadows stay consistent.
+  - `<Boss>Background.prefab` per boss: z = 9, sorting orders −40 to −10,
+    and **`Sprite-Unlit-Default`**, so the scene's 2D lights don't tint
+    the designed colors.
+  - `BossEntry.backgroundPrefab`, spawned by `LevelSetup` for the picked
+    boss. The playfield camera background is `#04050A`.
+  - The near layer repeats every ~13 s, the far buildings every ~28 s, and
+    the stars every 1–3 minutes. If it still feels repetitive in play,
+    ask the design for 2–3 seeded variants per boss and pick one per run.
 - **Then:** tune ship scale, hull brightness and bloom against the dark
   backgrounds (see the open items in Phases 0–2).
 - **Later:** whether the backgrounds need more (e.g. per-phase changes, the
