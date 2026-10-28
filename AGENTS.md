@@ -99,6 +99,7 @@ For the full reasoning behind each of these, see
 | Art pipeline | Player ships are the design GLB models (`Assets/Art/Ships/`) rendered **live** as meshes; baking to sprites is only a possible phone optimization; Blender optional | Session 51 chose live models over a sprite-first route: they already existed, and give banking and animated parts for free. Replaces the Session 50 plan (2D first, then a bake) |
 | Role colors | Design palette: Attacker `#FF8A3D`, Tank `#00E5FF`, Medic `#B6FF3C`, Support `#A855F7` | Match the ship models; set in `PlayerRoleStats` (Session 51) |
 | Level scenes | **One shared `Level.unity`**; each boss is its own prefab, and `LevelSetup` spawns only the picked one | Replaced three drifting `Ctrl+D` copies (Session 51). Two bosses can't coexist, and boss edits live in per-boss prefabs |
+| Boss art and backgrounds | Bosses and one parallax background per boss designed in Claude Design (2D + 3D GLB, signature color per boss); backgrounds dark with stars and city rooftops far below, in scrolling layers | Same pipeline as the ships; each fight gets its own look without hurting bullet readability (Session 52, first draft) |
 | Effects style | Neon, inspired by Tuts+ "Neon Vector Shooter" (Shape Blaster) | Bloom, additive stretched particles, warping grid, black-hole powers; enemy bullets must stay readable over effects |
 | Ability cut-ins | 2D illustrated, or VRoid → Unity (UniVRM + MToon); picked at the start of art Phase 6 | Neither route needs Blender. 2D matches the ships and Touhou's spell-card cut-ins; VRoid → Unity keeps the anime-3D look |
 | Mobile | One project, per-platform quality tiers | No duplicated code; keeps crossplay possible. A sibling project was considered and rejected |
@@ -112,7 +113,8 @@ For the full reasoning behind each of these, see
 - How cards are acquired/unlocked over time (the loadout screen assumes a
   pool exists; where it comes from is deferred).
 - Number and structure of bosses/stages beyond Level 1.
-- The cut-in route, whether live ship models hold up on low-end phones,
+- The cut-in route, whether live ship models hold up on low-end phones
+  (phone work deferred),
   final art palettes, and audio direction. The art pipeline
   itself is decided; see
   [docs/art-roadmap.md](docs/art-roadmap.md)'s "Open questions".

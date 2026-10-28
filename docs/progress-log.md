@@ -1311,3 +1311,25 @@ New EditMode tests: `BossEventsTests`, `LevelSetupTests`, `ShipBankTests`.
 All 63 EditMode tests ran: 57 pass. The 6 failures are the known
 pre-existing ones (`PlayerRoleStatsTests` ×4 on moveSpeed,
 `MarauderBossDamageTests` ×2).
+
+## Session 52 — Boss and Background Designs Requested; Phone Work Deferred
+
+No code changes. Decisions recorded in `art-roadmap.md`, `roadmap.md` and
+`AGENTS.md`:
+
+- **Phone work is deferred** until the art is further along. The quality
+  tier plan stays as written.
+- **One background per boss**, first draft: dark, with stars and small city
+  buildings seen from above, far below, scrolling vertically in separate
+  parallax layers. Each boss's background gets its own identity. It must
+  stay dark and dim enough that bullets stay readable. Planned as a new art
+  **Phase 2c**, with one background prefab per boss picked through
+  `LevelSetup`'s `BossEntry`.
+- **The bosses get designed in Claude Design** with the backgrounds, from
+  one prompt: each boss as a 2D sprite and a 3D GLB built like the ships
+  (named parts, phase 2 look), with a signature neon color distinct from
+  the four role colors that also becomes its bullet color. The prompt
+  describes each fight as it's built today (Marauder the brawler, Halcyon
+  the bullet-less roaming storm, Warden the turret fortress).
+- Assumption in the prompt: the buildings are seen from above (rooftops),
+  since the camera is top-down. Change it if a side-on skyline was meant.

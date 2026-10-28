@@ -586,16 +586,19 @@ is independently testable and the one before it de-risks the next.
 
 - **Art** — started early, in parallel with phase 3. Its phased plan lives
   in [art-roadmap.md](art-roadmap.md):
-  - foundations;
-  - a pipeline test with one ship;
   - the four role ships as live 3D models (done: Session 51), plus motion;
+  - one parallax background per boss: dark, stars, city rooftops far below
+    (first draft, to be designed in Claude Design; prompt written in
+    Session 52);
   - effects;
   - powers (black hole);
-  - bosses;
+  - bosses, designed in Claude Design alongside the backgrounds;
   - anime cut-ins;
   - the pre-level screens (main menu through level select) on a shared UI
     kit;
   - the in-level HUD last.
+
+  Phone builds and tuning are deferred until the art is further along.
 
   Pipeline: the Claude Design "Ship Designs" GLB models rendered live
   (glTFast + `ShipMesh.shader`) under the URP 2D Renderer, plus bloom and

@@ -18,7 +18,9 @@ Two rules keep the parallel work safe:
 | Topic | Decision | Why |
 | --- | --- | --- |
 | Player ships | **Live 3D models** (Session 51): the four "Ship Designs" GLBs (`Assets/Art/Ships/Models/`), imported with glTFast and rendered as meshes under the URP 2D Renderer. | The models already existed, so nothing needed modeling, and live meshes give banking and animated parts (halo, gyros, reactor core) for free. Chosen over baking them to sprites first. |
-| Bosses | Same route once 3D models exist for them; the 2D SVG route stays available if a boss is drawn instead. | |
+| Bosses | **Designed in Claude Design** (Session 52 prompt): each boss as a 2D sprite and a 3D GLB model built like the ships, with named parts (separate nodes for anything that moves, e.g. Warden's arms), a phase 2 look, and a **signature neon color** distinct from the four role colors. In game they follow the ships' live-model route. | Same pipeline as the ships, so nothing new to learn. The signature color is also the boss's bullet color, which keeps bullets readable. |
+| Backgrounds | **One per boss** (Session 52, first draft): dark, with stars and small city buildings seen from above, far below, scrolling vertically in **parallax layers** (far stars → near buildings). Each boss's background has its own identity. | Gives each fight a sense of place and motion without competing with bullets. Layers are separate so the game scrolls them at different speeds. |
+| Phone work | **Deferred** (Session 52): no phone builds or tuning until the art is further along. | Keeps the focus on the look first. The quality-tier plan below still stands. |
 | Baking to sprites | **Not planned; a possible phone optimization.** If the live meshes cost too much on low-end phones, an editor script can render them to sprite frames later. | Gameplay code never sees how a ship is drawn, so swapping is local to the ship visual. |
 | Blender | **Optional, not a foundation.** Only for refining a 3D model. | It was the biggest learning cost in the old plan, and none of the current designs need it. |
 | How they're lit | Ships: a custom unlit `ShipMesh.shader` (fixed-direction Lambert from mesh normals, plus HDR emission for the neon). Everything else: URP **2D Renderer**, `Sprite-Lit-Default`, `Light2D`. Bloom does most of the glow. | URP's `Mesh2D-Lit` lights meshes only through normal-map textures and ignores mesh normals, so the models would look flat. |
@@ -44,6 +46,7 @@ The ship designs live in the Claude Design project "Ship Designs"
 | `Ship Designs.dc.html` | The four ships as 2D SVG line art (set 1a), with 96/48/32 px scale previews, and the 3D set (1b) embedded |
 | `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download. **Saved and in use:** `Assets/Art/Ships/Models/aegis-04.glb`, `nova-11.glb`, `lumen-02.glb`, `echo-07.glb` |
 | `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the UI kit (Phase 7) and the HUD (Phase 8). There are **no designs yet** for the screens before a level. |
+| *(requested, Session 52)* | The three bosses (2D + 3D, phase 2 looks, signature colors) and one layered parallax background per boss, from the prompt summarized in Phase 2c. Not designed yet. |
 
 | Role | Ship | Shape | Design color |
 | --- | --- | --- | --- |
@@ -119,8 +122,8 @@ Built straight from the 3D models instead of the planned 2D sprites first.
   - A Global Volume with Bloom (threshold 1) in `Level.unity`.
 - **Still open from these phases:**
   - **A dark background.** The playfield camera is still light blue, which
-    hides most of the bloom; the neon look needs the dark background from
-    the style guide.
+    hides most of the bloom. Phase 2c replaces it with the per-boss
+    backgrounds.
   - Tune the ship scale, light direction, hull brightness and bloom against
     that background, at in-game size.
   - Engine flames that react to speed, and the Tank shield-emitter pulse
@@ -129,10 +132,44 @@ Built straight from the 3D models instead of the planned 2D sprites first.
     (still `LineRenderer`s); the designs show a dashed arc and ring.
   - Whether a roll also gives invulnerability frames is a gameplay decision
     for the phase 3 developer.
-- **Mobile check (not done yet):** four ships on screen with bloom on, on a
-  real phone. Each ship is 30–55 meshes. If it's too heavy, bake the
+- **Mobile check (deferred, Session 52):** four ships on screen with bloom
+  on, on a real phone. Each ship is 30–55 meshes. If it's too heavy, bake the
   models to sprites (see "Baking to sprites" above) or merge each ship's
   static meshes.
+
+### Phase 2c: Per-boss backgrounds (first draft)
+
+- **Design first:** the per-boss backgrounds and the boss designs (Phase 5)
+  come from one Claude Design prompt (Session 52). It asks for:
+  - a dark background with stars, and small buildings seen from above (city
+    rooftops and blocks far below), scrolling top to bottom as the ships fly
+    "up";
+  - separate layers that each tile seamlessly vertically (e.g. far stars,
+    near stars, far buildings, near buildings), with a suggested relative
+    scroll speed per layer;
+  - a distinct identity per boss, matching the fight (suggested: Marauder a
+    raided industrial district, Halcyon a storm-lit city, Warden a fortified
+    military zone);
+  - a mockup per boss with the boss, the four ships and a few enemy bullets
+    at real size, to judge readability.
+- **Readability rules for backgrounds:** dark, low-contrast and
+  low-saturation, with only small dim lights. Nothing that looks like a
+  bullet, nothing in the boss's signature color, and far less glow than the
+  ships and the boss (below the bloom threshold).
+- **Make:**
+  - Each layer as a sprite in `Assets/Art/Backgrounds/<Boss>/`.
+  - A small scroller component that moves each layer downward at its own
+    speed and wraps it seamlessly.
+  - One background prefab per boss, picked per level through `LevelSetup`'s
+    `BossEntry` (e.g. a background field, or activating it from
+    `onSpawned`), so it follows the shared-`Level`-scene pattern.
+  - The camera background set to near-black behind the layers.
+- **Then:** tune ship scale, hull brightness and bloom against the dark
+  backgrounds (see the open items in Phases 0–2).
+- **Later:** whether the backgrounds need more (e.g. per-phase changes, the
+  warping grid from Phase 3 on top) is decided after this first draft.
+- **Done when:** each of the three fights scrolls its own background, and
+  enemy bullets stay easy to read over it.
 
 ### Phase 3: Effects foundation
 
@@ -170,10 +207,18 @@ Built straight from the 3D models instead of the planned 2D sprites first.
 ### Phase 5: Bosses
 
 - **Make:**
-  - **Marauder**, **Halcyon** and **Warden**, designed in the same neon
-    style. 3D models follow the ships' live-model route (glTFast +
+  - **Marauder**, **Halcyon** and **Warden**, from the Claude Design boss
+    designs (see Phase 2c's "Design first"). The prompt describes each
+    fight as built: Marauder the brawler (M-pattern hops, aimed shots,
+    shockwave, guided missile, Pattern Barrage, flanking minions, aggro);
+    Halcyon the storm (no bullets, full-arena roam, Surge stillness window,
+    Static Field pulse); Warden the fortress (two turret arms, a third in
+    phase 2, Lockdown wall, shockwave). A boss is about 3× a ship's size.
+  - The 3D models follow the ships' live-model route (glTFast +
     `ShipMesh.shader` + a visual child on each boss prefab); a drawn boss
     goes in as a sprite.
+  - Each boss's **signature color** becomes its bullet color (see the
+    readability rule).
   - **Warden's arms** as separate sprites, which matches their existing child
     GameObjects (`ArmA`/`ArmB`/`ArmC`). The arms' "down" look replaces the
     gray tint `WardenArmHealth` applies today.
@@ -300,13 +345,17 @@ art:
 
 ## Open questions
 
-- **Live models on phones:** whether four live ships (30–55 meshes each)
-  plus bloom hold up on low-end phones, or need baking or mesh merging.
+- **Live models on phones** (deferred, Session 52): whether four live
+  ships (30–55 meshes each), a 3D boss and bloom hold up on low-end phones,
+  or need baking or mesh merging.
 - **Explosion lighting on ships:** `ShipMesh.shader` uses a fixed light
   direction; reacting to `Light2D`s would need extra shader work.
 - **Cut-in route:** 2D illustrated or VRoid → Unity, decided at the start of
   Phase 6. Commissioning an artist later could raise the quality of either.
-- **Final per-boss bullet and glow palettes.**
+- **Each boss's signature color** (its bullets and glow): proposed by the
+  Claude Design boss designs, then confirmed.
+- **Backgrounds beyond the first draft:** per-phase changes, the warping
+  grid on top, or more layers. Decided after seeing the first draft in game.
 - **Screens on desktop:** do the menus fill the whole window, or stay
   inside the 9:16 playfield frame with the sidebars like the levels?
   Decided with the Phase 7 mockups.
