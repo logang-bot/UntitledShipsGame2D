@@ -185,9 +185,10 @@ candidate. `BossEvents.AssignShips` (called by `PartyBossWiring`) sets
 `ships` on the spawned boss's `HalcyonStaticField`, the same place
 `MarauderBoss.targets` gets its equivalent fix.
 
-**Ring visual**: same always-dim / brighter-during-telegraph /
-impact-flash-on-hit `LineRenderer` idiom as Marauder's shockwave ring, at
-radius `bossRange`, built once in `Awake()` and toggled by
+**Ring visual**: a `StaticFieldRing` child with a `DangerZoneVisual`
+(Combat FX sprites, wired as `visual`) at radius `bossRange`: the charge
+ring at half alpha when idle and full while telegraphing, the pulse frame
+on impact, then the fade frame for `fadeDuration` (0.3 s). Toggled by
 `HalcyonBoss.SetVisible` via `SetRingVisible(bool)`.
 
 **Public API**: `CooldownRemaining`, `SetRingVisible(bool)`.

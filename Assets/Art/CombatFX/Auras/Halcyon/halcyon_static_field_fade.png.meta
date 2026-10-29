@@ -1,0 +1,1508 @@
+fileFormatVersion: 2
+guid: dc9d8530ba3c3414c996b3b46fbe78b3
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -932308169703611814
+    second: halcyon_static_field_fade_0
+  - first:
+      213: -5560557184694802531
+    second: halcyon_static_field_fade_1
+  - first:
+      213: -8031030818795783197
+    second: halcyon_static_field_fade_2
+  - first:
+      213: 7566284821301318543
+    second: halcyon_static_field_fade_3
+  - first:
+      213: -3945677266194835347
+    second: halcyon_static_field_fade_4
+  - first:
+      213: 7263179387574547295
+    second: halcyon_static_field_fade_5
+  - first:
+      213: 5122047390692483562
+    second: halcyon_static_field_fade_6
+  - first:
+      213: 5432979355853956802
+    second: halcyon_static_field_fade_7
+  - first:
+      213: -4574067899457121713
+    second: halcyon_static_field_fade_8
+  - first:
+      213: 5571216502703479203
+    second: halcyon_static_field_fade_9
+  - first:
+      213: -5662177340634054227
+    second: halcyon_static_field_fade_10
+  - first:
+      213: 6977744024538169265
+    second: halcyon_static_field_fade_11
+  - first:
+      213: 3040649502391295810
+    second: halcyon_static_field_fade_12
+  - first:
+      213: 2719020040967455457
+    second: halcyon_static_field_fade_13
+  - first:
+      213: -4526711168362793058
+    second: halcyon_static_field_fade_14
+  - first:
+      213: -7155756659620909621
+    second: halcyon_static_field_fade_15
+  - first:
+      213: -1150210374256043299
+    second: halcyon_static_field_fade_16
+  - first:
+      213: -4637271223586273331
+    second: halcyon_static_field_fade_17
+  - first:
+      213: -3332703154479365063
+    second: halcyon_static_field_fade_18
+  - first:
+      213: 332434833232399696
+    second: halcyon_static_field_fade_19
+  - first:
+      213: 4732717120813935118
+    second: halcyon_static_field_fade_20
+  - first:
+      213: -7511674671762512974
+    second: halcyon_static_field_fade_21
+  - first:
+      213: 4899118904597159799
+    second: halcyon_static_field_fade_22
+  - first:
+      213: -6708977372843331188
+    second: halcyon_static_field_fade_23
+  - first:
+      213: -4868862963712508108
+    second: halcyon_static_field_fade_24
+  - first:
+      213: 5423360158303137135
+    second: halcyon_static_field_fade_25
+  - first:
+      213: -1635162739423188048
+    second: halcyon_static_field_fade_26
+  - first:
+      213: -6775648665225517512
+    second: halcyon_static_field_fade_27
+  - first:
+      213: 5797136070772820930
+    second: halcyon_static_field_fade_28
+  - first:
+      213: 5279813537804127478
+    second: halcyon_static_field_fade_29
+  - first:
+      213: -2760312594290692079
+    second: halcyon_static_field_fade_30
+  - first:
+      213: 2492403307315942138
+    second: halcyon_static_field_fade_31
+  - first:
+      213: 7059671930086891977
+    second: halcyon_static_field_fade_32
+  - first:
+      213: 133739857916051181
+    second: halcyon_static_field_fade_33
+  - first:
+      213: -1104637439412911330
+    second: halcyon_static_field_fade_34
+  - first:
+      213: 1904389907078591901
+    second: halcyon_static_field_fade_35
+  - first:
+      213: 8110546057078650548
+    second: halcyon_static_field_fade_36
+  - first:
+      213: -5178542609009191646
+    second: halcyon_static_field_fade_37
+  - first:
+      213: -6119553616016056493
+    second: halcyon_static_field_fade_38
+  - first:
+      213: 1134714964061436470
+    second: halcyon_static_field_fade_39
+  - first:
+      213: 8656125833822213193
+    second: halcyon_static_field_fade_40
+  - first:
+      213: -7385935357196604684
+    second: halcyon_static_field_fade_41
+  - first:
+      213: -7555935521475004211
+    second: halcyon_static_field_fade_42
+  - first:
+      213: 1969531917932305421
+    second: halcyon_static_field_fade_43
+  - first:
+      213: -253552935792419708
+    second: halcyon_static_field_fade_44
+  - first:
+      213: -4359086878797032760
+    second: halcyon_static_field_fade_45
+  - first:
+      213: 194294850170484916
+    second: halcyon_static_field_fade_46
+  - first:
+      213: -1227224266484055778
+    second: halcyon_static_field_fade_47
+  - first:
+      213: -3671422692535809502
+    second: halcyon_static_field_fade_48
+  - first:
+      213: -9119145419610405262
+    second: halcyon_static_field_fade_49
+  - first:
+      213: 8602839584913695301
+    second: halcyon_static_field_fade_50
+  - first:
+      213: -6556305064681451285
+    second: halcyon_static_field_fade_51
+  - first:
+      213: 435203143851188218
+    second: halcyon_static_field_fade_52
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_0
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 425
+        width: 18
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a522f93c8a6cf03f0800000000000000
+      internalID: -932308169703611814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_1
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 434
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d97250d93bee4d2b0800000000000000
+      internalID: -5560557184694802531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_2
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 434
+        width: 29
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3eb7671450c0c8090800000000000000
+      internalID: -8031030818795783197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_3
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 432
+        width: 66
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f83581305f7d00960800000000000000
+      internalID: 7566284821301318543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_4
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 432
+        width: 29
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d685f167e632e39c0800000000000000
+      internalID: -3945677266194835347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_5
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 421
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f53f158cb2ffbc460800000000000000
+      internalID: 7263179387574547295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_6
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 407
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae121fcc6fa251740800000000000000
+      internalID: 5122047390692483562
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_7
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 414
+        width: 19
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c6a4b160f1d56b40800000000000000
+      internalID: 5432979355853956802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_8
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 405
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f42575ada75a580c0800000000000000
+      internalID: -4574067899457121713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_9
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 407
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a95f6244efe05d40800000000000000
+      internalID: 5571216502703479203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_10
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 397
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da1cd3c45b7eb61b0800000000000000
+      internalID: -5662177340634054227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_11
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 400
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bfb33c783de5d060800000000000000
+      internalID: 6977744024538169265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_12
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 389
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24f5084cc9e823a20800000000000000
+      internalID: 3040649502391295810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_13
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 392
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e2880f3256ebb520800000000000000
+      internalID: 2719020040967455457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_14
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 380
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9731f80d24ed21c0800000000000000
+      internalID: -4526711168362793058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_15
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 363
+        width: 13
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcde82c1b35a1bc90800000000000000
+      internalID: -7155756659620909621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_16
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 351
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ddadf7932c1a900f0800000000000000
+      internalID: -1150210374256043299
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_17
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 361
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc7cff6346a15afb0800000000000000
+      internalID: -4637271223586273331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_18
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 357
+        width: 10
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9340f6f632cdfb1d0800000000000000
+      internalID: -3332703154479365063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_19
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 364
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05d88c138bb0d9400800000000000000
+      internalID: 332434833232399696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_20
+      rect:
+        serializedVersion: 2
+        x: 417
+        y: 355
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0a2688752dfda140800000000000000
+      internalID: 4732717120813935118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_21
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 341
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b3eb414fab21c790800000000000000
+      internalID: -7511674671762512974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_22
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 344
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 77f1ae4efaa2df340800000000000000
+      internalID: 4899118904597159799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_23
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 319
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c813a8500ace4e2a0800000000000000
+      internalID: -6708977372843331188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_24
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 301
+        width: 7
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43f3cdb4ee25e6cb0800000000000000
+      internalID: -4868862963712508108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_25
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 322
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6d2aac6455a34b40800000000000000
+      internalID: 5423360158303137135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_26
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 248
+        width: 25
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bbe9b6e62cbe49e0800000000000000
+      internalID: -1635162739423188048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_27
+      rect:
+        serializedVersion: 2
+        x: 437
+        y: 264
+        width: 14
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 836226a107f08f1a0800000000000000
+      internalID: -6775648665225517512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_28
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 201
+        width: 12
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2cb8405ba80937050800000000000000
+      internalID: 5797136070772820930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_29
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 178
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fc0d11607aa54940800000000000000
+      internalID: 5279813537804127478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_30
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 192
+        width: 22
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 110344cf15661b9d0800000000000000
+      internalID: -2760312594290692079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_31
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 163
+        width: 22
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af253994a9bc69220800000000000000
+      internalID: 2492403307315942138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_32
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 170
+        width: 17
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c120a7773ef8f160800000000000000
+      internalID: 7059671930086891977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_33
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 157
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: deeb56331b32bd100800000000000000
+      internalID: 133739857916051181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_34
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 160
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e13423af91a8ba0f0800000000000000
+      internalID: -1104637439412911330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_35
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 146
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d953245d780cd6a10800000000000000
+      internalID: 1904389907078591901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_36
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 149
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b63e9adaa27e8070800000000000000
+      internalID: 8110546057078650548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_37
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 137
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22558c72fee1228b0800000000000000
+      internalID: -5178542609009191646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_38
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 139
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35fd765b86af21ba0800000000000000
+      internalID: -6119553616016056493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_39
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 119
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63ab3327f315fbf00800000000000000
+      internalID: 1134714964061436470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_40
+      rect:
+        serializedVersion: 2
+        x: 370
+        y: 119
+        width: 20
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9441e00759cb02870800000000000000
+      internalID: 8656125833822213193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_41
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 130
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fa6c4ccce2ef7990800000000000000
+      internalID: -7385935357196604684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_42
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 115
+        width: 18
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc8f9b02dace32790800000000000000
+      internalID: -7555935521475004211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_43
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 121
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0c162628de255b10800000000000000
+      internalID: 1969531917932305421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_44
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 103
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48cd552c2f23b7cf0800000000000000
+      internalID: -253552935792419708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_45
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 112
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c29c3444996183c0800000000000000
+      internalID: -4359086878797032760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_46
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 104
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b87916032642b200800000000000000
+      internalID: 194294850170484916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_47
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 78
+        width: 37
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e118a70280608fee0800000000000000
+      internalID: -1227224266484055778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_48
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 62
+        width: 63
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22a481f538c7c0dc0800000000000000
+      internalID: -3671422692535809502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_49
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 97
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 276cdf06e89427180800000000000000
+      internalID: -9119145419610405262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_50
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 62
+        width: 53
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 542237ec50d636770800000000000000
+      internalID: 8602839584913695301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_51
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 84
+        width: 16
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be0519cc7435305a0800000000000000
+      internalID: -6556305064681451285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_static_field_fade_52
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 61
+        width: 30
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aff126a14f62a0600800000000000000
+      internalID: 435203143851188218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      halcyon_static_field_fade_0: -932308169703611814
+      halcyon_static_field_fade_1: -5560557184694802531
+      halcyon_static_field_fade_10: -5662177340634054227
+      halcyon_static_field_fade_11: 6977744024538169265
+      halcyon_static_field_fade_12: 3040649502391295810
+      halcyon_static_field_fade_13: 2719020040967455457
+      halcyon_static_field_fade_14: -4526711168362793058
+      halcyon_static_field_fade_15: -7155756659620909621
+      halcyon_static_field_fade_16: -1150210374256043299
+      halcyon_static_field_fade_17: -4637271223586273331
+      halcyon_static_field_fade_18: -3332703154479365063
+      halcyon_static_field_fade_19: 332434833232399696
+      halcyon_static_field_fade_2: -8031030818795783197
+      halcyon_static_field_fade_20: 4732717120813935118
+      halcyon_static_field_fade_21: -7511674671762512974
+      halcyon_static_field_fade_22: 4899118904597159799
+      halcyon_static_field_fade_23: -6708977372843331188
+      halcyon_static_field_fade_24: -4868862963712508108
+      halcyon_static_field_fade_25: 5423360158303137135
+      halcyon_static_field_fade_26: -1635162739423188048
+      halcyon_static_field_fade_27: -6775648665225517512
+      halcyon_static_field_fade_28: 5797136070772820930
+      halcyon_static_field_fade_29: 5279813537804127478
+      halcyon_static_field_fade_3: 7566284821301318543
+      halcyon_static_field_fade_30: -2760312594290692079
+      halcyon_static_field_fade_31: 2492403307315942138
+      halcyon_static_field_fade_32: 7059671930086891977
+      halcyon_static_field_fade_33: 133739857916051181
+      halcyon_static_field_fade_34: -1104637439412911330
+      halcyon_static_field_fade_35: 1904389907078591901
+      halcyon_static_field_fade_36: 8110546057078650548
+      halcyon_static_field_fade_37: -5178542609009191646
+      halcyon_static_field_fade_38: -6119553616016056493
+      halcyon_static_field_fade_39: 1134714964061436470
+      halcyon_static_field_fade_4: -3945677266194835347
+      halcyon_static_field_fade_40: 8656125833822213193
+      halcyon_static_field_fade_41: -7385935357196604684
+      halcyon_static_field_fade_42: -7555935521475004211
+      halcyon_static_field_fade_43: 1969531917932305421
+      halcyon_static_field_fade_44: -253552935792419708
+      halcyon_static_field_fade_45: -4359086878797032760
+      halcyon_static_field_fade_46: 194294850170484916
+      halcyon_static_field_fade_47: -1227224266484055778
+      halcyon_static_field_fade_48: -3671422692535809502
+      halcyon_static_field_fade_49: -9119145419610405262
+      halcyon_static_field_fade_5: 7263179387574547295
+      halcyon_static_field_fade_50: 8602839584913695301
+      halcyon_static_field_fade_51: -6556305064681451285
+      halcyon_static_field_fade_52: 435203143851188218
+      halcyon_static_field_fade_6: 5122047390692483562
+      halcyon_static_field_fade_7: 5432979355853956802
+      halcyon_static_field_fade_8: -4574067899457121713
+      halcyon_static_field_fade_9: 5571216502703479203
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

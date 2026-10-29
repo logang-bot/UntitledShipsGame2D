@@ -33,7 +33,7 @@ public class PlayerAbilitySupport
     /// <summary>
     /// Non-destructive party-wide buff: sets (never multiplies-in-place)
     /// every ally's PlayerController buff multipliers and toggles their
-    /// party-buff ring, tinted to this caster's (always Support's) color.
+    /// party-buff ring.
     /// Plain assignment on both ends, so there's no revert math and nothing
     /// to double-apply.
     /// </summary>
@@ -56,6 +56,6 @@ public class PlayerAbilitySupport
             pc.fireRateBuffMultiplier = multiplier;
         }
         PlayerAbility allyAbility = ally.GetComponent<PlayerAbility>();
-        if (allyAbility != null) allyAbility.SetPartyBuffVisual(visualActive, ability.TintColor);
+        if (allyAbility != null) allyAbility.SetPartyBuffVisual(visualActive);
     }
 }

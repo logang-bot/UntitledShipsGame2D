@@ -45,7 +45,6 @@ public class Minion : MonoBehaviour
     public int fragmentCount = 8;
     public float fragmentSpeed = 5f;
     public float fragmentDamage = 1f; // see bulletDamage comment - must stay >= 1, fractions round to 0
-    public PaletteSwatch explosiveTintColor = new PaletteSwatch(PaletteColor.ExplosiveTint);
 
     public Vector2 HalfExtents { get; private set; }
 
@@ -68,20 +67,15 @@ public class Minion : MonoBehaviour
     // Called once by MinionSpawner right after Instantiate - sets which boss
     // this minion flanks, its fixed offset from the boss's live position,
     // and its type. Type has to flow in here rather than being set directly
-    // on the field post-Instantiate, since Awake() (which would need it for
-    // the tint below) already ran by then.
+    // on the field post-Instantiate, since Awake() already ran by then;
+    // HostileLook picks the standard or explosive hull sprite.
     public void Init(MarauderBoss owner, Vector2 offset, MinionType minionType = MinionType.Standard)
     {
         boss = owner;
         flankOffset = offset;
         type = minionType;
         nextFireTime = Time.time + Random.Range(0f, fireInterval); // stagger, same idiom as Enemy.cs
-
-        if (type == MinionType.Explosive)
-        {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            if (sr != null) sr.color = explosiveTintColor;
-        }
+        if (TryGetComponent(out HostileLook look)) look.Apply(0, type == MinionType.Explosive);
     }
 
     void Update()
@@ -145,6 +139,7 @@ public class Minion : MonoBehaviour
         if (isDead) return;
         isDead = true;
         if (type == MinionType.Explosive) SpawnFragments();
+        if (TryGetComponent(out HostileLook look)) look.SpawnDeath(type == MinionType.Explosive);
         Destroy(gameObject);
     }
 
@@ -167,9 +162,6 @@ public class Minion : MonoBehaviour
             Bullet b = fragObj.GetComponent<Bullet>();
             b.damage = fragmentDamage;
             b.Init(dir, fragmentSpeed, "Enemy");
-
-            SpriteRenderer fragSr = fragObj.GetComponent<SpriteRenderer>();
-            if (fragSr != null) fragSr.color = explosiveTintColor;
         }
     }
 }

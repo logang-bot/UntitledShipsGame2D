@@ -117,7 +117,6 @@ public class MarauderBoss : MonoBehaviour, IBoss
         shockwave = new MarauderBossShockwave(this);
         attacks = new MarauderBossAttacks(this);
         aggroSystem = new MarauderBossAggro(this);
-        shockwave.CreateRing();
     }
 
     /// <summary>

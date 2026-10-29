@@ -368,16 +368,14 @@ displacement works out to roughly `impulse × 0.105` — so `33` gives ~3.5
 units of actual push (~5.8 ship-widths, ~62% of the 5.625-unit playable
 width).
 
-**Visual**: a world-space ring at `shockwaveSettings.radius`, built the
-same procedural-`LineRenderer` way as `PlayerAbility.cs`'s Medic aura ring
-— dim and always visible so the danger zone reads before it ever triggers
-(`shockwaveSettings.ringColor`), pulses to a bright warning color
-(`shockwaveSettings.ringTelegraphColor`) at `shockwaveSettings.telegraphPulseSpeed`
-during the telegraph wind-up, then flashes a distinct impact color
-(`shockwaveSettings.ringImpactColor`) for `shockwaveSettings.impactFlashDuration`
-on the exact frame it hits. `CreateRing()` builds it once in `Awake()`;
-`UpdateRing()` runs every `Update()`, re-centering it on the boss's live
-(erratically-moving) position.
+**Visual**: a `ShockwaveRing` child on the boss prefab with a
+`DangerZoneVisual` (Combat FX sprites), wired as `shockwaveSettings.visual`.
+`UpdateRing()` reports the state every `Update()`: the dim dashed idle zone,
+always visible so the danger zone reads before it ever triggers; the two
+warning frames alternating during the telegraph wind-up; then the impact
+flash for `shockwaveSettings.impactFlashDuration` on the exact frame it
+hits. The sprite is scaled so its drawn ring (183 px) sits exactly on
+`shockwaveSettings.radius`. As a child it follows the boss for free.
 
 ### Guided missile
 
@@ -611,8 +609,8 @@ and can't be reused for something that must also heal the human.
 `FindHurtAlly()` reuses this same array (`ability.allies`, read from
 `AIController` via its cached `PlayerAbility` reference).
 
-A dim, thin `LineRenderer` ring around the Medic shows the aura's current
-radius live — bigger and brighter while boosted. Allies actually healed by
+A Combat FX ring around the Medic shows the aura's current radius live —
+bigger and brighter while boosted (see [player-roles.md](../player-roles.md)). Allies actually healed by
 a tick get a distinct green flash via `PlayerDamageFlash.Flash(Color)`.
 
 ### Support roaming positioning
@@ -893,16 +891,14 @@ already ran by then) decides what `Die()` does next:
   bullet from a distance is exactly as dangerous as letting it touch you, by
   design, so players can't just snipe them safely. `fragmentPrefab` is
   optional and falls back to the minion's own `bulletPrefab` if left
-  unassigned, so no dedicated prefab is required to use this. Each spawned
-  fragment also gets its `SpriteRenderer` tinted to the minion's own
-  `explosiveTintColor` (added after an initial pass shipped fragments in the
-  bullet prefab's default color, indistinguishable from any other shot on
-  screen) — one line right after `Init()`, so a fragment now visually reads
-  as "piece of the thing that just exploded" rather than a generic bullet.
+  unassigned. On `Minion.prefab` it is `Bullets/MarauderFragment`, a
+  Marauder-coloured shard sprite (Combat FX), so a fragment reads as a
+  piece of the thing that just exploded. (Before the Combat FX art, each
+  fragment was tinted `explosiveTintColor`; that tint is gone.)
 
 An Explosive minion is visually distinct the instant it spawns: `Init()`
-tints its `SpriteRenderer` to `explosiveTintColor` (orange, `(1, 0.45,
-0.1)`) — consistent with this project's standing rule of always giving a new
+asks its `HostileLook` for the `marauder_minion_explosive` sprite (dashed
+blast ring and bright core) — consistent with this project's standing rule of always giving a new
 hazard a visible tell (shockwave ring, aura ring, party-buff ring) rather
 than a mechanic with no on-screen cue.
 

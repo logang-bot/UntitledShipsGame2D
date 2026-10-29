@@ -2033,3 +2033,36 @@ New `NeonPaletteTests`, `PaletteSwatchTests`, `MenuEaseTests`,
 `JoinPressRouterTests`, `SquadLineupTests`, `RoleStatScaleTests`. All 128
 EditMode tests pass (the old `PlayerRoleStatsTests` / `MarauderBossDamageTests`
 failures were fixed on `main` by the Warden fixes this branch now sits on).
+
+## Session 55 — Combat FX Sprites (Art Phases 3–5)
+
+Built the Claude Design `Combat FX Designs.dc.html` into the game. The
+user exported its ZIP (108 PNGs) into `Assets/Art/CombatFX/`; a Warden
+shockwave was added to the design for this pass, since only Marauder had
+one. Decisions: enemy hitboxes match the visible bullet body (glow
+excluded); Halcyon/Warden minion art is imported only, since those fights
+have no minions. Details in `art-roadmap.md`'s Phase 3.
+
+- New: `SpriteSequence` (+ `SpriteSequenceStep`), `DangerZoneVisual` (+
+  `DangerZoneState`), `HostileLook`, `PlayerShotLook` (+ `PlayerShotKind`),
+  `ShipCombatFx`, `ShieldArcBlockFlash`, `FxSprites`, `AttackerComboShot`.
+- Changed: `Bullet.alignToDirection`; `FireBigShot` takes a shot kind and
+  widens the collider instead of the transform; Medic aura, Tank shield arc,
+  party speed ring and the Marauder/Warden/Halcyon rings draw sprites
+  instead of `LineRenderer`s; `Enemy`/`Minion` lost `explosiveTintColor`;
+  `guidedMissile.missilePrefab`; Tank `shieldArcHeight` 0.4 → 0.2.
+- Prefabs: 8 new bullets in `Prefabs/Bullets/`, 13 sequences in
+  `Prefabs/FX/`; `EnemyBullet`, `PlayerBullet`, `Minion`, `Enemy`, `Ship`
+  and the three boss prefabs rewired.
+- Imported but unused (28 sprites, plus the Halcyon/Warden death prefabs):
+  listed with reasons in `art-roadmap.md`'s "Combat FX imported but not
+  used yet".
+
+### Verified
+
+All 128 EditMode tests pass; no console errors. Played the Marauder level:
+the wave enemies (all three patterns, standard and explosive), every bullet
+type (rotated along flight), death bursts plus an 8-shard fragment ring,
+all four abilities, the Medic/Support/Tank visuals and the Marauder
+shockwave ring render. The Halcyon and Warden fights weren't played; their
+rings use the same code path as Marauder's.

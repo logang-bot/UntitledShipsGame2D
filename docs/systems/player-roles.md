@@ -85,10 +85,14 @@ blocks re-activation until the current role's cooldown elapses.
   `E`-triggered): a wide, curved shield in front of Tank, both visual and
   **functional**. Built procedurally in `Awake()` only for `role == Tank`:
   a child `ShieldArc` GameObject, tagged `Player`, with a local-space
-  `EdgeCollider2D` (`isTrigger`) and matching `LineRenderer`, both sampling
-  the same shallow-parabola point set — `shieldArcWidthMultiplier` (3x
-  Tank's own `BoxCollider2D` width) wide, `shieldArcHeight` (0.4) tall,
-  offset `shieldArcYOffset` (0.3) above the body. Local-space and built
+  `EdgeCollider2D` (`isTrigger`) sampling a shallow-parabola point set —
+  `shieldArcWidthMultiplier` (3x Tank's own `BoxCollider2D` width) wide,
+  `shieldArcHeight` (0.2 — matched to the Combat FX arc sprite's 40 px
+  depth; was 0.4) tall,
+  offset `shieldArcYOffset` (0.3) above the body. The Combat FX
+  `tank_shield_idle` sprite is scaled so its end caps sit on the
+  collider's ends, and `ShieldArcBlockFlash` swaps it to `tank_shield_block`
+  for 0.12 s whenever an enemy bullet hits the arc. Local-space and built
   once, so it tracks Tank's movement with no per-frame `Update()` needed.
   Relies on `Bullet.cs`'s `other.GetComponentInParent<PlayerHealth>()` (not
   `GetComponent`), so a hit on this child collider (which has no
@@ -106,11 +110,13 @@ blocks re-activation until the current role's cooldown elapses.
   `auraBoostRadius` (1.5) and a much faster `auraBoostTickInterval` (0.25s
   vs. 1s) for `auraBoostDuration` (4s), via a `StopCoroutine`/
   `StartCoroutine` restart-safety pattern — `auraBoostCooldown` (10s) must
-  stay ≥ `auraBoostDuration` to avoid double-applying. A `LineRenderer`
-  ring around the Medic (dim/thin by default, bright/thick while boosted)
-  shows the live radius, and allies actually healed by a tick get a
-  distinct green flash (`PlayerDamageFlash.Flash(Color)`) — both purely
-  visual.
+  stay ≥ `auraBoostDuration` to avoid double-applying. A Combat FX
+  ring around the Medic (dim dashed idle sprite; while boosted, the bright
+  boost sprite alternating with its pulse frame every `auraPulseInterval`)
+  is scaled so the drawn ring sits exactly on the live radius, and allies
+  actually healed by a tick get a distinct green flash
+  (`PlayerDamageFlash.Flash(Color)`) plus the `HealFlash` sprite burst —
+  all purely visual.
 - **Support — Speed Boost**: a **party-wide**, non-destructive multiplier
   on both move speed and fire rate, not a self-only effect.
   `TriggerSpeedBoost()` loops over `allies[]` (all 4 ships, self-included)
@@ -120,11 +126,12 @@ blocks re-activation until the current role's cooldown elapses.
   assignment on both ends, no revert arithmetic. `speedBoostCooldown` is
   15s (round placeholder, tunable — flagged as a strong effect given it's
   party-wide). Every ship has its own initially-hidden `PartyBuffRing`,
-  toggled by the caster's `SetPartyBuffVisual(bool, Color)` call on each
-  ally — all 4 rings light up in the caster's tint color the instant the
-  boost starts and disappear together the instant it ends.
+  toggled by the caster's `SetPartyBuffVisual(bool)` call on each ally —
+  all 4 Combat FX speed rings (always Support purple, per the design)
+  light up the instant the boost starts, and when it ends each shows the
+  ring breaking up for 0.25 s before hiding.
 - **Attacker — Big Shot**: calls `PlayerController.FireBigShot(widthMultiplier,
-  damageAmount)` (`3x` width) and `PlayerController.AddRecoil(Vector2.down
+  damageAmount, PlayerShotKind.BigShot)` (`3x` hitbox width) and `PlayerController.AddRecoil(Vector2.down
   * recoilForce)`. Damage is a live multiplier of the caster's current
   `fireDamage` (`bigShotDamageMultiplier`, `2x`), computed at cast time —
   so it automatically stays proportional if `fireDamage` is ever retuned.
@@ -149,19 +156,26 @@ blocks re-activation until the current role's cooldown elapses.
   for bots yet, only for human input.
 
 Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
-(3), `shieldArcHeight` (0.4), `shieldArcYOffset` (0.3),
-`shieldArcColor`/`shieldArcLineWidth`; `allies[]`, `auraRadius` (0.5),
+(3), `shieldArcHeight` (0.2), `shieldArcYOffset` (0.3); `allies[]`, `auraRadius` (0.5),
 `auraTickInterval` (1s), `auraHealPerTick`/`auraShieldPerTick` (1 each),
 `auraBoostRadius` (1.5), `auraBoostTickInterval` (0.25s), `auraBoostDuration`
-(4s), `auraBoostCooldown` (10s), `auraRingColor`/`auraRingBoostedColor`/
-`auraRingWidth`/`auraRingBoostedWidth`, `healFlashColor`; `speedBoostCooldown`
-(15s), `speedBoostDuration` (4s), `speedBoostMultiplier` (1.5),
-`partyBuffRingRadius`/`partyBuffRingWidth`; `bigShotCooldown` (3s),
+(4s), `auraBoostCooldown` (10s), `auraPulseInterval` (0.25s), `healFlashColor`; `speedBoostCooldown`
+(15s), `speedBoostDuration` (4s), `speedBoostMultiplier` (1.5); `bigShotCooldown` (3s),
 `bigShotWidthMultiplier` (3), `bigShotDamageMultiplier` (2), `recoilForce`
 (6); `comboAttackCooldown` (0.5s), `comboStepDamageMultipliers` (`1, 1.3,
 1.8`), `comboStepWidthMultipliers` (`1, 1.5, 2.5`),
 `comboBreakDamageMultiplier` (0.5). Key public methods: `OnAbility(InputValue)`,
 `OnCombo1/2/3(InputValue)`.
+
+**Ability effects (Combat FX).** `ShipCombatFx` on `Ship.prefab` holds every
+role's art: after a successful `TryUseAbility()`, `PlayerAbility` calls
+`Fx.PlayAbility(role)`, which spawns that role's `SpriteSequence` prefab
+(`Prefabs/FX/TauntFx`, `AuraBoostFx`, `SpeedBoostFx`, `BigShotFx`) as a ship
+child. Purely cosmetic: the mechanic itself still fires instantly. Taunt
+holds its aggro-mark frame for 2 s (`holdSeconds` on the prefab); the Medic
+and Support sequences are wind-up + activate only, since the boosted aura
+and the party speed rings show the sustain. `ShipCombatFx` also holds the
+aura, shield-arc and speed-ring sprites the helpers above draw.
 
 Also exposes read-only status for the HUD (see `PartyFrameUI.cs` in
 [hud-layout.md](hud-layout.md)): `CooldownRemaining`, `IsSpeedBoostActive`,

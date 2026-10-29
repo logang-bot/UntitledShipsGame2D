@@ -316,9 +316,18 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   (see [art-roadmap.md](art-roadmap.md)), the menus are restyled (see
   above), and each boss fight scrolls its
   own four-layer parallax background (Marauder's burning foundry,
-  Halcyon's storm-drowned towers, Warden's walled garrison). Bosses,
-  minions, bullets and the avatar slot are still placeholder shapes. No
-  audio.
+  Halcyon's storm-drowned towers, Warden's walled garrison). Combat FX
+  are in (Session 55): designed bullets for players, Marauder, Warden and
+  the waves, wave-enemy and Marauder-minion hulls with death bursts, the
+  Medic aura, Tank shield arc, Support speed ring, the three bosses' danger
+  rings, and a sprite effect for each role's ability. The bosses themselves
+  and the avatar slot are still placeholder shapes. No audio.
+- Some imported Combat FX art isn't used yet: the Halcyon and Warden
+  minions and their death bursts (those fights have no minions), the
+  Halcyon bullet set, several spare orb sizes, the Warden Big Shot orb
+  (`WardenBigShot` isn't on the Warden prefab), the standalone aggro mark,
+  and the four particle textures. Full list, with where each would go, in
+  [art-roadmap.md](art-roadmap.md)'s "Combat FX imported but not used yet".
 - **Known issue:** sometimes a white shape appears in the center of the
   screen for the moment a hit ship flashes. It's intermittent and not yet
   diagnosed; see [roadmap.md](roadmap.md)'s "Known issues".

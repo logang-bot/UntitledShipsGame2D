@@ -23,7 +23,7 @@ public class PlayerAbilityAttacker
     public void Trigger()
     {
         float damage = ability.PlayerController.fireDamage * ability.bigShotDamageMultiplier;
-        ability.PlayerController.FireBigShot(ability.bigShotWidthMultiplier, damage);
+        ability.PlayerController.FireBigShot(ability.bigShotWidthMultiplier, damage, PlayerShotKind.BigShot);
         ability.PlayerController.AddRecoil(Vector2.down * ability.recoilForce);
     }
 
@@ -38,28 +38,27 @@ public class PlayerAbilityAttacker
     public void TryComboAttack(int slot)
     {
         if (slot < 1 || slot > 3) return;
+        if (Time.time < nextAttackTime[slot - 1]) return;
+        nextAttackTime[slot - 1] = Time.time + ability.comboAttackCooldown;
 
-        int slotIndex = slot - 1;
-        if (Time.time < nextAttackTime[slotIndex]) return;
-        nextAttackTime[slotIndex] = Time.time + ability.comboAttackCooldown;
+        AttackerComboShot shot = slot == expectedSlot ? AdvanceRotation() : BreakRotation();
+        float damage = ability.PlayerController.fireDamage * shot.DamageMultiplier;
+        ability.PlayerController.FireBigShot(shot.WidthMultiplier, damage, shot.Kind);
+    }
 
-        float damageMultiplier;
-        float widthMultiplier;
-        if (slot == expectedSlot)
-        {
-            int stepIndex = expectedSlot - 1;
-            damageMultiplier = ability.comboStepDamageMultipliers[stepIndex];
-            widthMultiplier = ability.comboStepWidthMultipliers[stepIndex];
-            expectedSlot = expectedSlot == 3 ? 1 : expectedSlot + 1;
-        }
-        else
-        {
-            damageMultiplier = ability.comboBreakDamageMultiplier;
-            widthMultiplier = 1f;
-            expectedSlot = 1;
-        }
+    private AttackerComboShot AdvanceRotation()
+    {
+        int stepIndex = expectedSlot - 1;
+        expectedSlot = expectedSlot == 3 ? 1 : expectedSlot + 1;
+        return new AttackerComboShot(
+            ability.comboStepDamageMultipliers[stepIndex],
+            ability.comboStepWidthMultipliers[stepIndex],
+            PlayerShotKind.Combo1 + stepIndex);
+    }
 
-        float damage = ability.PlayerController.fireDamage * damageMultiplier;
-        ability.PlayerController.FireBigShot(widthMultiplier, damage);
+    private AttackerComboShot BreakRotation()
+    {
+        expectedSlot = 1;
+        return new AttackerComboShot(ability.comboBreakDamageMultiplier, 1f, PlayerShotKind.ComboBroken);
     }
 }

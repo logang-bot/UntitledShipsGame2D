@@ -26,6 +26,9 @@ private string owner; // "Player" or "Enemy" - determines what it can hit
 
     public float lifeTime = 3f;
     public float damage = 1f;
+    // Rotates the sprite (drawn nose-down) along its flight: missiles,
+    // capsules, rods and shards. Round orbs leave it off.
+    public bool alignToDirection;
 
 public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = null)
     {
@@ -33,7 +36,15 @@ public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = 
         speed = spd;
         owner = ownerTag;
         ownerObject = ownerObj;
+        FaceDirection();
         ScheduleLifetimeCleanup();
+    }
+
+    private void FaceDirection()
+    {
+        if (!alignToDirection) return;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg + 90f;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     /// <summary>
@@ -58,17 +69,21 @@ public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = 
         owner = ownerTag;
         ownerObject = ownerObj;
         direction = target != null ? ((Vector2)target.position - (Vector2)transform.position).normalized : Vector2.down;
+        FaceDirection();
         ScheduleLifetimeCleanup();
     }
 
     void Update()
     {
-        if (homingTarget != null && homingTarget.gameObject.activeInHierarchy)
-        {
-            Vector2 desiredDir = ((Vector2)homingTarget.position - (Vector2)transform.position).normalized;
-            direction = ((Vector2)Vector3.RotateTowards(direction, desiredDir, turnRateDegPerSec * Mathf.Deg2Rad * Time.deltaTime, 0f)).normalized;
-        }
+        if (homingTarget != null && homingTarget.gameObject.activeInHierarchy) SteerTowardTarget();
         transform.Translate(direction * speed * Time.deltaTime, Space.World);
+    }
+
+    private void SteerTowardTarget()
+    {
+        Vector2 desiredDir = ((Vector2)homingTarget.position - (Vector2)transform.position).normalized;
+        direction = ((Vector2)Vector3.RotateTowards(direction, desiredDir, turnRateDegPerSec * Mathf.Deg2Rad * Time.deltaTime, 0f)).normalized;
+        FaceDirection();
     }
 
 void OnTriggerEnter2D(Collider2D other)

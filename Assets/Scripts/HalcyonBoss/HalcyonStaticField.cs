@@ -9,8 +9,6 @@ using UnityEngine;
 // docs/superpowers/specs/2026-09-04-halcyon-boss-design.md.
 public class HalcyonStaticField : MonoBehaviour
 {
-    private const int RingSegments = 32;
-
     [Header("Ships")]
     public GameObject[] ships; // drag Player + 3 Teammates - proximity data only, no aggro
 
@@ -25,17 +23,14 @@ public class HalcyonStaticField : MonoBehaviour
     public float impactFlashDuration = 0.15f;
 
     [Header("Ring visual")]
-    public PaletteSwatch ringColor = new PaletteSwatch(PaletteColor.StaticFieldRing, 0.25f);
-    public PaletteSwatch telegraphColor = new PaletteSwatch(PaletteColor.StaticFieldTelegraph, 0.85f);
-    public PaletteSwatch impactColor = new PaletteSwatch(PaletteColor.StaticFieldImpact);
-    public float ringWidth = 0.06f;
-    public float telegraphWidth = 0.14f;
-    public float telegraphPulseSpeed = 12f;
+    // Child on the boss prefab: charge ring idle and while telegraphing,
+    // the pulse frame on impact, then the fade frame for fadeDuration.
+    public DangerZoneVisual visual;
+    public float fadeDuration = 0.3f;
 
     public float CooldownRemaining => Mathf.Max(0f, nextPulseTime - Time.time);
 
     private HalcyonBoss boss;
-    private LineRenderer ring;
     private bool isTelegraphing;
     private float impactFlashUntil;
     private float nextPulseTime;
@@ -43,7 +38,6 @@ public class HalcyonStaticField : MonoBehaviour
     void Awake()
     {
         boss = GetComponent<HalcyonBoss>();
-        CreateRing();
     }
 
     void OnEnable()
@@ -115,55 +109,18 @@ public class HalcyonStaticField : MonoBehaviour
 
     public void SetRingVisible(bool visible)
     {
-        if (ring != null) ring.gameObject.SetActive(visible);
-    }
-
-    private void CreateRing()
-    {
-        GameObject ringObj = new GameObject("StaticFieldRing");
-        ringObj.transform.SetParent(transform, false);
-        ring = ringObj.AddComponent<LineRenderer>();
-        ring.useWorldSpace = true;
-        ring.loop = true;
-        ring.positionCount = RingSegments;
-        ring.material = new Material(Shader.Find("Sprites/Default"));
-        ring.sortingLayerName = "Default";
-        ring.sortingOrder = -1;
+        if (visual != null) visual.gameObject.SetActive(visible);
     }
 
     private void UpdateRing()
     {
-        if (ring == null) return;
-        SelectRingColorAndWidth(out Color color, out float width);
-        ring.startColor = color;
-        ring.endColor = color;
-        ring.startWidth = width;
-        ring.endWidth = width;
-        UpdateRingGeometry();
+        if (visual != null) visual.Show(CurrentZoneState(), bossRange);
     }
 
-    private void SelectRingColorAndWidth(out Color color, out float width)
+    private DangerZoneState CurrentZoneState()
     {
-        if (isTelegraphing) { TelegraphColorAndWidth(out color, out width); return; }
-        bool flashing = Time.time < impactFlashUntil;
-        color = flashing ? impactColor : ringColor;
-        width = flashing ? telegraphWidth : ringWidth;
-    }
-
-    private void TelegraphColorAndWidth(out Color color, out float width)
-    {
-        float pulse = (Mathf.Sin(Time.time * telegraphPulseSpeed) + 1f) * 0.5f;
-        color = Color.Lerp(ringColor, telegraphColor, pulse);
-        width = Mathf.Lerp(ringWidth, telegraphWidth, pulse);
-    }
-
-    private void UpdateRingGeometry()
-    {
-        Vector3 center = transform.position;
-        for (int i = 0; i < RingSegments; i++)
-        {
-            float angle = (i / (float)RingSegments) * Mathf.PI * 2f;
-            ring.SetPosition(i, center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * bossRange);
-        }
+        if (isTelegraphing) return DangerZoneState.Telegraph;
+        if (Time.time < impactFlashUntil) return DangerZoneState.Impact;
+        return Time.time < impactFlashUntil + fadeDuration ? DangerZoneState.AfterImpact : DangerZoneState.Idle;
     }
 }

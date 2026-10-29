@@ -1,17 +1,21 @@
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// Generic, initially-hidden ring on every ship (not role-gated) that
-/// Support's party-wide speed boost toggles on/off, tinted to match
-/// whichever role cast it. Local-space and built once - a fixed-radius
-/// circle has nothing to recompute per frame.
+/// Support's party-wide speed boost toggles on/off. Drawn with the Combat FX
+/// speed-ring sprite, which is always Support purple whichever ship carries
+/// it, at the design's own size. When the boost ends it shows the ring
+/// breaking up for a moment before hiding.
 /// </summary>
 public class PlayerAbilityPartyBuffRing
 {
-    private const int Segments = 24;
+    private const int SortingOrder = -5;
+    private const float EndFrameSeconds = 0.25f;
 
     private readonly PlayerAbility ability;
-    private LineRenderer ring;
+    private SpriteRenderer ring;
+    private Coroutine hideRoutine;
 
     public PlayerAbilityPartyBuffRing(PlayerAbility ability)
     {
@@ -20,43 +24,32 @@ public class PlayerAbilityPartyBuffRing
 
     public void Create()
     {
-        GameObject ringObj = new GameObject("PartyBuffRing");
-        ringObj.transform.SetParent(ability.transform, false);
-        ring = ringObj.AddComponent<LineRenderer>();
-        ConfigureRenderer();
-        PlaceCirclePoints();
-        ringObj.SetActive(false);
+        if (ability.Fx == null) return;
+        ring = FxSprites.CreateChild(ability.transform, "PartyBuffRing", SortingOrder);
+        FxSprites.UndoParentScale(ring.transform);
+        ring.gameObject.SetActive(false);
     }
 
-    public void Show(bool active, Color color)
+    public void Show(bool active)
     {
         if (ring == null) return;
-        if (active)
-        {
-            ring.startColor = color;
-            ring.endColor = color;
-        }
-        ring.gameObject.SetActive(active);
+        if (hideRoutine != null) ability.StopCoroutine(hideRoutine);
+        hideRoutine = null;
+        if (active) ShowSustain();
+        else if (ring.gameObject.activeSelf) hideRoutine = ability.StartCoroutine(ShowEndThenHide());
     }
 
-    private void ConfigureRenderer()
+    private void ShowSustain()
     {
-        ring.useWorldSpace = false;
-        ring.loop = true;
-        ring.positionCount = Segments;
-        ring.material = new Material(Shader.Find("Sprites/Default"));
-        ring.sortingLayerName = "Default";
-        ring.sortingOrder = -1;
-        ring.startWidth = ability.partyBuffRingWidth;
-        ring.endWidth = ability.partyBuffRingWidth;
+        ring.sprite = ability.Fx.speedRing;
+        ring.gameObject.SetActive(true);
     }
 
-    private void PlaceCirclePoints()
+    private IEnumerator ShowEndThenHide()
     {
-        for (int i = 0; i < Segments; i++)
-        {
-            float angle = (i / (float)Segments) * Mathf.PI * 2f;
-            ring.SetPosition(i, new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * ability.partyBuffRingRadius);
-        }
+        ring.sprite = ability.Fx.speedRingEnd;
+        yield return new WaitForSeconds(EndFrameSeconds);
+        ring.gameObject.SetActive(false);
+        hideRoutine = null;
     }
 }

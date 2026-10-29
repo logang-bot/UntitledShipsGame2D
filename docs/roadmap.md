@@ -589,6 +589,17 @@ reference docs live under `systems/`.
   background left-to-right on a coin flip. `LevelSetup` spawns the picked
   boss's `BossEntry.backgroundPrefab`. The playfield camera is near-black.
   See `art-roadmap.md`'s Phase 2c.
+- **Combat FX (Session 55)** — art Phases 3–5 sprites from the "Combat
+  FX Designs" file (`Assets/Art/CombatFX/`, 192 px/unit): bullet prefabs
+  per boss and for the waves (`Assets/Prefabs/Bullets/`, enemy hitboxes
+  now match the visible bullet body), role-coloured player shots and the
+  Attacker's Big Shot / combo sprites (`PlayerShotLook`), wave-enemy and
+  Marauder-minion hulls with 3-frame death bursts (`HostileLook`,
+  `SpriteSequence`), the Medic aura, Tank shield arc (block flash), Support
+  speed ring, each role's ability effect (`ShipCombatFx`), and the
+  Marauder / Warden shockwave and Halcyon Static Field rings
+  (`DangerZoneVisual`). The procedural `LineRenderer` rings are gone. See
+  `art-roadmap.md`'s Phase 3.
 - **Pre-fight menus restyled, PC (Session 54)** — art Phase 7 on PC. The
   five menu screens follow the "Pre-Fight Menus" design with a shared UI
   kit (`MenuButton`, `NeonFrame`, `TagChip`, `MenuHeader`, hint bars,
@@ -679,8 +690,8 @@ is independently testable and the one before it de-risks the next.
   - the four role ships as live 3D models (done: Session 51), plus motion;
   - one parallax background per boss: dark, stars, city rooftops far below
     (first draft done: Session 53);
-  - effects;
-  - powers (black hole);
+  - effects (Combat FX sprites done: Session 55; grid and particles open);
+  - powers (role ability effects done: Session 55; black hole open);
   - bosses, designed in Claude Design alongside the backgrounds;
   - anime cut-ins;
   - the pre-level screens (main menu through level select) on a shared UI

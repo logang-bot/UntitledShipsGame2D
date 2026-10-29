@@ -43,7 +43,6 @@ public class Enemy : MonoBehaviour
     public int fragmentCount = 8;
     public float fragmentSpeed = 5f;
     public float fragmentDamage = 1f;      // must stay >= 1 - same rounding footgun as contactDamage
-    public PaletteSwatch explosiveTintColor = new PaletteSwatch(PaletteColor.ExplosiveTint);
 
     public Vector2 HalfExtents { get; private set; }
 
@@ -73,17 +72,13 @@ public class Enemy : MonoBehaviour
     }
 
     // Called by EnemySpawner right after Instantiate (Awake has already run by then,
-    // since Unity runs Awake synchronously during Instantiate), same reasoning as
-    // Minion.Init() needing to run after Awake to tint the already-cached SpriteRenderer.
+    // since Unity runs Awake synchronously during Instantiate). HostileLook picks the
+    // hull sprite for this pattern and type.
     public void Init(MovementPattern pattern, EnemyType enemyType)
     {
         movementPattern = pattern;
         type = enemyType;
-        if (type == EnemyType.Explosive)
-        {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            if (sr != null) sr.color = explosiveTintColor;
-        }
+        if (TryGetComponent(out HostileLook look)) look.Apply((int)pattern, type == EnemyType.Explosive);
     }
 
     void Update()
@@ -157,6 +152,7 @@ public class Enemy : MonoBehaviour
         if (isDead) return;
         isDead = true;
         if (type == EnemyType.Explosive) SpawnFragments();
+        if (TryGetComponent(out HostileLook look)) look.SpawnDeath(type == EnemyType.Explosive);
         Destroy(gameObject);
     }
 
@@ -176,9 +172,6 @@ public class Enemy : MonoBehaviour
             Bullet b = fragObj.GetComponent<Bullet>();
             b.damage = fragmentDamage;
             b.Init(dir, fragmentSpeed, "Enemy");
-
-            SpriteRenderer fragSr = fragObj.GetComponent<SpriteRenderer>();
-            if (fragSr != null) fragSr.color = explosiveTintColor;
         }
     }
 }

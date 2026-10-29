@@ -238,8 +238,9 @@ Sibling component: [Marauder](marauder-boss.md)'s telegraphed-ring/knockback
 proximity mechanic, ported with unchanged numbers and formula — `radius`
 1.7, `damageMultiplier` 3×, `knockback` 33, `cooldown` 3s, `telegraphTime`
 0.3s — the same closed-form recoil-decay knockback math Marauder's own
-shockwave already uses, and the same always-dim / brighter-during-telegraph
-/ impact-flash-on-hit `LineRenderer` ring idiom. A direct port for
+shockwave already uses, and the same danger-zone ring idea, drawn by a `ShockwaveRing` child with a
+`DangerZoneVisual` (wired as `visual`) using Warden's own Combat FX
+shockwave frames (idle, warning A/B, impact; blue with bracket markers). A direct port for
 consistency, the same way `HalcyonStaticField` ported the shockwave's `3×
 bulletDamage` convention.
 

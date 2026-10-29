@@ -12,16 +12,9 @@ public class MarauderBossShockwaveSettings
     public float knockback = 33f; // ~3.5 units of total displacement, see AddRecoil's decay math in PlayerController.cs
     public float cooldown = 3f;
     public float telegraphTime = 0.3f;
-
-    // Always-visible dim ring at radius so the danger zone reads before it
-    // ever triggers; pulses to a bright warning color during the telegraph
-    // wind-up, then flashes on the frame it actually hits. See
-    // MarauderBossShockwave for the LineRenderer setup.
-    public PaletteSwatch ringColor = new PaletteSwatch(PaletteColor.ShockwaveRing, 0.25f);
-    public PaletteSwatch ringTelegraphColor = new PaletteSwatch(PaletteColor.ShockwaveTelegraph, 0.85f);
-    public PaletteSwatch ringImpactColor = new PaletteSwatch(PaletteColor.ShockwaveImpact);
-    public float ringWidth = 0.06f;
-    public float ringTelegraphWidth = 0.14f;
-    public float telegraphPulseSpeed = 12f;
     public float impactFlashDuration = 0.15f;
+
+    // Always-visible danger-zone ring at radius so the zone reads before it
+    // ever triggers; a child on the boss prefab, driven by MarauderBossShockwave.
+    public DangerZoneVisual visual;
 }

@@ -3,10 +3,7 @@ using UnityEngine;
 
 public class MarauderBossShockwave
 {
-    private const int RingSegments = 32;
-
     private readonly MarauderBoss boss;
-    private LineRenderer ring;
     private bool isTelegraphing;
     private float impactFlashUntil;
     private float nextCheckTime;
@@ -29,70 +26,25 @@ public class MarauderBossShockwave
 
     public void SetVisible(bool visible)
     {
-        if (ring != null) ring.gameObject.SetActive(visible);
+        if (boss.shockwaveSettings.visual != null) boss.shockwaveSettings.visual.gameObject.SetActive(visible);
     }
 
     /// <summary>
-    /// World-space ring around the boss showing the shockwave's danger radius
-    /// - dim and always visible, pulses brighter during the telegraph
-    /// wind-up, then flashes on the frame it actually hits. Built the same
-    /// way PlayerAbility.cs's Medic aura ring is (procedural LineRenderer,
-    /// Sprites/Default shader, no art asset).
+    /// Danger-zone ring around the boss at the shockwave's radius (a
+    /// DangerZoneVisual child wired on the prefab): dim and always visible,
+    /// alternating warning frames during the telegraph wind-up, then the
+    /// impact flash on the frame it hits.
     /// </summary>
-    public void CreateRing()
-    {
-        GameObject ringObj = new GameObject("ShockwaveRing");
-        ringObj.transform.SetParent(boss.transform, false);
-        ring = ringObj.AddComponent<LineRenderer>();
-        ring.useWorldSpace = true;
-        ring.loop = true;
-        ring.positionCount = RingSegments;
-        ring.material = new Material(Shader.Find("Sprites/Default"));
-        ring.sortingLayerName = "Default";
-        ring.sortingOrder = -1; // behind the boss sprite
-    }
-
     public void UpdateRing()
     {
-        if (ring == null) return;
-
-        SelectRingColorAndWidth(out Color color, out float width);
-        ring.startColor = color;
-        ring.endColor = color;
-        ring.startWidth = width;
-        ring.endWidth = width;
-
-        UpdateRingGeometry(boss.transform.position);
+        DangerZoneVisual visual = boss.shockwaveSettings.visual;
+        if (visual != null) visual.Show(CurrentZoneState(), boss.shockwaveSettings.radius);
     }
 
-    private void SelectRingColorAndWidth(out Color color, out float width)
+    private DangerZoneState CurrentZoneState()
     {
-        MarauderBossShockwaveSettings s = boss.shockwaveSettings;
-        if (isTelegraphing)
-        {
-            float pulse = (Mathf.Sin(Time.time * s.telegraphPulseSpeed) + 1f) * 0.5f;
-            color = Color.Lerp(s.ringColor, s.ringTelegraphColor, pulse);
-            width = Mathf.Lerp(s.ringWidth, s.ringTelegraphWidth, pulse);
-        }
-        else if (Time.time < impactFlashUntil)
-        {
-            color = s.ringImpactColor;
-            width = s.ringTelegraphWidth;
-        }
-        else
-        {
-            color = s.ringColor;
-            width = s.ringWidth;
-        }
-    }
-
-    private void UpdateRingGeometry(Vector3 center)
-    {
-        for (int i = 0; i < RingSegments; i++)
-        {
-            float angle = (i / (float)RingSegments) * Mathf.PI * 2f;
-            ring.SetPosition(i, center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * boss.shockwaveSettings.radius);
-        }
+        if (isTelegraphing) return DangerZoneState.Telegraph;
+        return Time.time < impactFlashUntil ? DangerZoneState.Impact : DangerZoneState.Idle;
     }
 
     public void CheckShockwave()

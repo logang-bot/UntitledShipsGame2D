@@ -48,7 +48,7 @@ The ship designs live in the Claude Design project "Ship Designs"
 | `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the HUD (Phase 8) and the starting point of the UI kit. |
 | `Pre-Fight Menus.dc.html` + `Menu Button.dc.html` + `Hint Bar.dc.html` | The five screens before a level (Main Menu, Lobby, Join Lobby, Role Select single and multi, Level Select) at PC 1600×900 and mobile 390×844, the UI kit (frames, button states, slot frames, icons, colour tokens, type scale) and the screen transitions. **PC built** (Session 54, Phase 7); mobile waits for the phone work. Icons exported as PNGs to `Assets/Art/UI/Import/`. |
 | `Boss Designs.dc.html` + `bossBackgrounds.js` | The three bosses (2D + 3D, phase 2 looks, signature colors: Marauder `#FF2D95`, Halcyon `#FFE14A`, Warden `#5470FF`), Marauder's minions, and the four-layer parallax background per boss, from the prompt summarized in Phase 2c. **Backgrounds in use** (Session 53, PNGs in `Assets/Art/Backgrounds/`); the bosses aren't in the game yet (Phase 5). |
-| *(requested, Session 53)* | `Combat FX Designs.dc.html`: bullets, auras and rings, the role abilities' activation effects, and every boss's minions plus the wave enemies, each shown over the three backgrounds, with PNG and particle-texture exports. Feeds Phases 3–5. Not designed yet. |
+| `Combat FX Designs.dc.html` | Bullets, auras and rings, the four role abilities as wind-up / activate / sustain / end frames, every boss's minions plus the wave enemies with death bursts, Marauder and Warden shockwave rings, Halcyon's Static Field, and four white particle textures, each shown over the three backgrounds. **In use** (Session 55): its "Download all (ZIP)" export, 108 PNGs, in `Assets/Art/CombatFX/`. See Phase 3. |
 
 | Role | Ship | Shape | Design color |
 | --- | --- | --- | --- |
@@ -128,8 +128,8 @@ Built straight from the 3D models instead of the planned 2D sprites first.
     that background, at in-game size.
   - Engine flames that react to speed, and the Tank shield-emitter pulse
     (the design pulses its glow, which needs per-renderer emission).
-  - Visuals for the Tank's **Shield Arc** and the Medic's **aura ring**
-    (still `LineRenderer`s); the designs show a dashed arc and ring.
+  - ~~Visuals for the Tank's **Shield Arc** and the Medic's **aura ring**.~~
+    Done with the Combat FX sprites (Session 55, see Phase 3).
   - Whether a roll also gives invulnerability frames is a gameplay decision
     for the phase 3 developer.
 - **Mobile check (deferred, Session 52):** four ships on screen with bloom
@@ -199,9 +199,9 @@ Built straight from the 3D models instead of the planned 2D sprites first.
   - **Bullet looks** that follow the readability rule, for player bullets,
     each boss's bullets, and the wide Big Shot. Designs requested in
     Session 53 (`Combat FX Designs.dc.html`, with the auras, ability
-    effects and minions). That prompt colors Explosive minions and their
-    fragments in the boss color, so `explosiveTintColor` (orange today,
-    close to the Attacker's `#FF8A3D`) changes when that art goes in.
+    effects and minions). **Done, Session 55** (below). Explosive minions
+    and their fragments now carry the boss colour in the sprites, so
+    `explosiveTintColor` is gone.
   - **Hit sparks and explosions:** particles in **Stretched Billboard** mode,
     so fast particles become streaks, with additive blending.
   - **The warping background grid**: a spring-mass grid that explosions push
@@ -211,6 +211,66 @@ Built straight from the 3D models instead of the planned 2D sprites first.
   a reacting grid, with enemy bullets still easy to read.
 - **Mobile check:** a lower-resolution grid and a capped particle count on
   the low tier.
+- **In place (Session 55): the Combat FX sprites.**
+  - **Import:** 108 PNGs from the design's ZIP in `Assets/Art/CombatFX/`
+    (`Bullets/`, `Auras/`, `Superpowers/`, `Minions/`, `Particles/`), as
+    sprites at **192 px/unit** (the design's 1080 px playfield), no mipmaps,
+    uncompressed, pivot centre (`support_speed_ring` pivots on its ring
+    centre, 0.5 / 0.609). Every effect uses `Sprite-Unlit-Default`, like
+    the backgrounds.
+  - **Sorting:** auras and danger rings −5, ability effects −2, player
+    bullets 5, death bursts 8, enemy bullets **10**.
+  - **Bullets:** one prefab per look in `Assets/Prefabs/Bullets/` (table in
+    `systems/combat.md`). Enemy hitboxes now match the visible coloured
+    body (was a 0.05 × 0.5 box for everything); player hitboxes are
+    unchanged. `Bullet.alignToDirection` turns missiles, capsules, rods and
+    shards along their flight.
+  - **Minions and waves:** `HostileLook` picks the hull per movement
+    pattern and standard/explosive type, and spawns the 3-frame death burst
+    (`Assets/Prefabs/FX/<Set>Death[Explosive]`, a `SpriteSequence`).
+    Prefab scales went to 1 with colliders resized to keep the old world
+    hitboxes.
+  - **Role visuals:** `ShipCombatFx` on `Ship.prefab` holds the sprites:
+    the Medic aura (idle, boosted, pulsing) is scaled to the real heal
+    radius; the Tank shield arc fits the collider, whose depth went 0.4 →
+    0.2 to match the sprite, and flashes on a block; Support's speed ring
+    is always purple; healed allies show a heal flash. Each ability plays
+    its frame sequence (`TauntFx`, `AuraBoostFx`, `SpeedBoostFx`,
+    `BigShotFx`).
+  - **Boss rings:** `DangerZoneVisual` children for the Marauder and
+    Warden shockwaves (the Warden frames were added to the design for this)
+    and Halcyon's Static Field, scaled so the drawn ring sits on the damage
+    radius.
+  - **Imported, not used yet:** see the list just below.
+  - **Still open in this phase:** bloom tuning, hit sparks and explosions,
+    the warping grid. `WardenBigShot` isn't attached to `WardenBoss.prefab`,
+    so its bullet has no prefab yet.
+
+#### Combat FX imported but not used yet
+
+Everything below is imported (192 px/unit, same settings as the rest)
+but nothing in the game spawns it yet. Paths are under
+`Assets/Art/CombatFX/`. Check this list first when a matching mechanic
+lands, and update it when an asset gets wired.
+
+| Asset(s) | Why it's unused | Where it would go |
+| --- | --- | --- |
+| `Minions/Halcyon/halcyon_minion`, `halcyon_minion_explosive` | Halcyon's fight has no minions (`MinionSpawner` only works with `MarauderBoss`) | A `HostileLook` on a Halcyon minion prefab, if that fight gets minions |
+| `Minions/Warden/warden_minion`, `warden_minion_explosive` | Same: Warden's fight has no minions | Same, for Warden |
+| `Minions/Halcyon/halcyon_death_1–3`, `halcyon_death_explosive_1–3` | Already built into `Prefabs/FX/HalcyonDeath` and `HalcyonDeathExplosive`, but nothing spawns those prefabs | `HostileLook.deathFxPrefab` / `explosiveDeathFxPrefab` on a Halcyon minion |
+| `Minions/Warden/warden_death_1–3`, `warden_death_explosive_1–3` | Already built into `Prefabs/FX/WardenDeath` and `WardenDeathExplosive`; unused | Same, for Warden |
+| `Bullets/Halcyon/halcyon_bullet_s`, `_m`, `_l`, `halcyon_fragment_shard`, `halcyon_fragment_ring` | Halcyon fires no bullets (the design calls this set "a reserve") | Halcyon minion fire and fragments, or any future Halcyon bullet attack |
+| `Bullets/Warden/warden_bullet_s`, `_m` | Warden's arms fire the turret capsules and Lockdown fires rods, so no orbs | Any future Warden aimed or ring attack |
+| `Bullets/Warden/warden_bullet_l` | Meant for `WardenBigShot`, which isn't attached to `WardenBoss.prefab` | A `WardenBigShotBullet` prefab, circle collider r 0.083 (set `widthMultiplier` to 1, since the orb is already big) |
+| `Bullets/Warden/warden_fragment_shard`, `warden_fragment_ring` | No Warden explosive minions | Warden explosive-minion fragments |
+| `Bullets/Warden/warden_lockdown_wall_segment` | 8 rods in one sprite; Lockdown spawns rods one by one, since each rod is its own `Bullet` | Only if Lockdown is ever rebuilt as one moving wall object |
+| `Bullets/Marauder/marauder_bullet_l` | All Marauder fire uses the medium orb, the minions the small one | A heavier Marauder attack, e.g. a slower big round in Pattern Barrage |
+| `Bullets/Wave/wave_bullet_m`, `wave_bullet_l` | Wave enemies fire the small orb | Tougher wave enemy types |
+| `Bullets/*/*_fragment_ring` (Marauder, Wave; plus Halcyon and Warden above) | A preview of 8 shards in a ring, from the design; in game each fragment is its own `Bullet` with the shard sprite | Nothing planned; reference only |
+| `Superpowers/Tank/tank_aggro_mark` | The mark already appears inside `tank_taunt_2_activate` / `_3_sustain` | An aggro indicator shown separately, e.g. above whichever ship the boss is targeting |
+| `Superpowers/Medic/medic_aura_boost_3_sustain`, `_4_end` | `AuraBoostFx` plays only wind-up and activate; the boosted aura ring (`medic_aura_boost`) already covers the sustain, and the ring returning to idle is the end | A visible "boost ending" beat if the aura's return to idle feels too abrupt |
+| `Superpowers/Support/support_speed_boost_3_sustain` | The party ring (`Auras/Player/support_speed_ring`) is the same picture and is what every ship shows | Nothing planned; duplicate of the ring |
+| `Particles/particle_glow_dot`, `particle_streak`, `particle_ring`, `particle_shard` | No particle systems yet. `FX-Additive.mat` (URP Particles/Unlit, additive, glow dot as its texture) is ready | Hit sparks and explosions (Stretched Billboard), tinted with Start Color, per the Phase 3 "Make" list above |
 
 ### Phase 4: Powers
 

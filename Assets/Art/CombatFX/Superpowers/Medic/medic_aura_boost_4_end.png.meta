@@ -1,0 +1,1378 @@
+fileFormatVersion: 2
+guid: a12e2b045a8b8d74bb8a8490ca5ca6c5
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1914137454014835589
+    second: medic_aura_boost_4_end_0
+  - first:
+      213: 7720513843096630865
+    second: medic_aura_boost_4_end_1
+  - first:
+      213: -4544062270371044914
+    second: medic_aura_boost_4_end_2
+  - first:
+      213: 282182460728032711
+    second: medic_aura_boost_4_end_3
+  - first:
+      213: -6992168818446014882
+    second: medic_aura_boost_4_end_4
+  - first:
+      213: -7639015653136954338
+    second: medic_aura_boost_4_end_5
+  - first:
+      213: 7878882583796634593
+    second: medic_aura_boost_4_end_6
+  - first:
+      213: -581435561462146435
+    second: medic_aura_boost_4_end_7
+  - first:
+      213: -6597218184151390699
+    second: medic_aura_boost_4_end_8
+  - first:
+      213: -3458051637837361876
+    second: medic_aura_boost_4_end_9
+  - first:
+      213: -7511080376294491272
+    second: medic_aura_boost_4_end_10
+  - first:
+      213: 2141235427347563055
+    second: medic_aura_boost_4_end_11
+  - first:
+      213: 3955358329335301284
+    second: medic_aura_boost_4_end_12
+  - first:
+      213: 1464197743108469405
+    second: medic_aura_boost_4_end_13
+  - first:
+      213: 4260695257564033498
+    second: medic_aura_boost_4_end_14
+  - first:
+      213: 1146272190248687217
+    second: medic_aura_boost_4_end_15
+  - first:
+      213: 9067956589848306416
+    second: medic_aura_boost_4_end_16
+  - first:
+      213: 3908859503009622449
+    second: medic_aura_boost_4_end_17
+  - first:
+      213: 8323879256536643890
+    second: medic_aura_boost_4_end_18
+  - first:
+      213: -73328123919645593
+    second: medic_aura_boost_4_end_19
+  - first:
+      213: -5163820735806012746
+    second: medic_aura_boost_4_end_20
+  - first:
+      213: -6133169124186899668
+    second: medic_aura_boost_4_end_21
+  - first:
+      213: -1391449437796112058
+    second: medic_aura_boost_4_end_22
+  - first:
+      213: 1833623253319202899
+    second: medic_aura_boost_4_end_23
+  - first:
+      213: -5258613509438920881
+    second: medic_aura_boost_4_end_24
+  - first:
+      213: -5233771376748712946
+    second: medic_aura_boost_4_end_25
+  - first:
+      213: 6390751614553890097
+    second: medic_aura_boost_4_end_26
+  - first:
+      213: 2043759220488925183
+    second: medic_aura_boost_4_end_27
+  - first:
+      213: 743996249058884544
+    second: medic_aura_boost_4_end_28
+  - first:
+      213: 5198751180192628720
+    second: medic_aura_boost_4_end_29
+  - first:
+      213: 1525199002662973595
+    second: medic_aura_boost_4_end_30
+  - first:
+      213: -1047996425644079162
+    second: medic_aura_boost_4_end_31
+  - first:
+      213: 4384256797922375486
+    second: medic_aura_boost_4_end_32
+  - first:
+      213: 5032140259158302480
+    second: medic_aura_boost_4_end_33
+  - first:
+      213: 1604234683857839366
+    second: medic_aura_boost_4_end_34
+  - first:
+      213: 9119274513220489678
+    second: medic_aura_boost_4_end_35
+  - first:
+      213: 3886273741906215176
+    second: medic_aura_boost_4_end_36
+  - first:
+      213: 5161221765899768115
+    second: medic_aura_boost_4_end_37
+  - first:
+      213: 4517641266664717064
+    second: medic_aura_boost_4_end_38
+  - first:
+      213: 2180125594976421723
+    second: medic_aura_boost_4_end_39
+  - first:
+      213: 7528882558185816882
+    second: medic_aura_boost_4_end_40
+  - first:
+      213: -4384952644158169582
+    second: medic_aura_boost_4_end_41
+  - first:
+      213: -2267481857783575088
+    second: medic_aura_boost_4_end_42
+  - first:
+      213: -7622943163518550546
+    second: medic_aura_boost_4_end_43
+  - first:
+      213: 7061877758261820837
+    second: medic_aura_boost_4_end_44
+  - first:
+      213: -1838457258626161985
+    second: medic_aura_boost_4_end_45
+  - first:
+      213: 7846823388524870664
+    second: medic_aura_boost_4_end_46
+  - first:
+      213: -2829646969859762691
+    second: medic_aura_boost_4_end_47
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_0
+      rect:
+        serializedVersion: 2
+        x: 467
+        y: 653
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58b23d57fd1609a10800000000000000
+      internalID: 1914137454014835589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_1
+      rect:
+        serializedVersion: 2
+        x: 484
+        y: 657
+        width: 13
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 156b24d6f66c42b60800000000000000
+      internalID: 7720513843096630865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_2
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 656
+        width: 46
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec16749c07f30f0c0800000000000000
+      internalID: -4544062270371044914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_3
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 651
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cd3a85f3738ae300800000000000000
+      internalID: 282182460728032711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_4
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 640
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5666f67183d6fe90800000000000000
+      internalID: -6992168818446014882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_5
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 648
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1c8f199cb3ccf590800000000000000
+      internalID: -7639015653136954338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_6
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 644
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e3d53247f9675d60800000000000000
+      internalID: 7878882583796634593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_7
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 631
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7ad44bff635ee7f0800000000000000
+      internalID: -581435561462146435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_8
+      rect:
+        serializedVersion: 2
+        x: 582
+        y: 636
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 516a8ebd309f174a0800000000000000
+      internalID: -6597218184151390699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_9
+      rect:
+        serializedVersion: 2
+        x: 596
+        y: 626
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2d0fbf5b588200d0800000000000000
+      internalID: -3458051637837361876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_10
+      rect:
+        serializedVersion: 2
+        x: 396
+        y: 608
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87b3f83713843c790800000000000000
+      internalID: -7511080376294491272
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_11
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 620
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f228883c64237bd10800000000000000
+      internalID: 2141235427347563055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_12
+      rect:
+        serializedVersion: 2
+        x: 610
+        y: 615
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a4c963b17144e630800000000000000
+      internalID: 3955358329335301284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_13
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 595
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d92b8e6f610e15410800000000000000
+      internalID: 1464197743108469405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_14
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 602
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad1bb4b33c7012b30800000000000000
+      internalID: 4260695257564033498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_15
+      rect:
+        serializedVersion: 2
+        x: 377
+        y: 580
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1769eabdb7068ef00800000000000000
+      internalID: 1146272190248687217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_16
+      rect:
+        serializedVersion: 2
+        x: 632
+        y: 589
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f22290797ad7dd70800000000000000
+      internalID: 9067956589848306416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_17
+      rect:
+        serializedVersion: 2
+        x: 370
+        y: 565
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b96cc9020f0f3630800000000000000
+      internalID: 3908859503009622449
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_18
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 574
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 239fb1ff41c548370800000000000000
+      internalID: 8323879256536643890
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_19
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 549
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76449b5b57c7bfef0800000000000000
+      internalID: -73328123919645593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_20
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 558
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b28c7e566c6658b0800000000000000
+      internalID: -5163820735806012746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_21
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 515
+        width: 8
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2b327d2d2b92eaa0800000000000000
+      internalID: -6133169124186899668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_22
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 542
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 649ee39cb1490bce0800000000000000
+      internalID: -1391449437796112058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_23
+      rect:
+        serializedVersion: 2
+        x: 658
+        y: 525
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 358bcf942a6527910800000000000000
+      internalID: 1833623253319202899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_24
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 481
+        width: 7
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f47a2dedfd6a507b0800000000000000
+      internalID: -5258613509438920881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_25
+      rect:
+        serializedVersion: 2
+        x: 657
+        y: 483
+        width: 7
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0c294d99a8ed57b0800000000000000
+      internalID: -5233771376748712946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_26
+      rect:
+        serializedVersion: 2
+        x: 364
+        y: 465
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13d1d39dbb280b850800000000000000
+      internalID: 6390751614553890097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_27
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 467
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fffeba7ce24ec5c10800000000000000
+      internalID: 2043759220488925183
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_28
+      rect:
+        serializedVersion: 2
+        x: 369
+        y: 449
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cbb06b85a4335a00800000000000000
+      internalID: 743996249058884544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_29
+      rect:
+        serializedVersion: 2
+        x: 648
+        y: 451
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ff360b77aca52840800000000000000
+      internalID: 5198751180192628720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_30
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 434
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b90b18d79689a2510800000000000000
+      internalID: 1525199002662973595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_31
+      rect:
+        serializedVersion: 2
+        x: 640
+        y: 436
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c70b9badc4c471f0800000000000000
+      internalID: -1047996425644079162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_32
+      rect:
+        serializedVersion: 2
+        x: 385
+        y: 419
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e373144345208dc30800000000000000
+      internalID: 4384256797922375486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_33
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 421
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01f921f77e0c5d540800000000000000
+      internalID: 5032140259158302480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_34
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 406
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60525b302f2634610800000000000000
+      internalID: 1604234683857839366
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_35
+      rect:
+        serializedVersion: 2
+        x: 620
+        y: 408
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec1d7c19adb2e8e70800000000000000
+      internalID: 9119274513220489678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_36
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 395
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8018f3eb061dee530800000000000000
+      internalID: 3886273741906215176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_37
+      rect:
+        serializedVersion: 2
+        x: 594
+        y: 386
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 331587bc9d750a740800000000000000
+      internalID: 5161221765899768115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_38
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 396
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80b323aebc2e1be30800000000000000
+      internalID: 4517641266664717064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_39
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 385
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b578e468dac514e10800000000000000
+      internalID: 2180125594976421723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_40
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 376
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 233cc440cc6fb7860800000000000000
+      internalID: 7528882558185816882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_41
+      rect:
+        serializedVersion: 2
+        x: 580
+        y: 377
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21eda087dc48523c0800000000000000
+      internalID: -4384952644158169582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_42
+      rect:
+        serializedVersion: 2
+        x: 449
+        y: 369
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ddca2493494880e0800000000000000
+      internalID: -2267481857783575088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_43
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 364
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eedfb73b49dd53690800000000000000
+      internalID: -7622943163518550546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_44
+      rect:
+        serializedVersion: 2
+        x: 549
+        y: 364
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ad7d6cd764d00260800000000000000
+      internalID: 7061877758261820837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_45
+      rect:
+        serializedVersion: 2
+        x: 565
+        y: 370
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb269d42ddc7c76e0800000000000000
+      internalID: -1838457258626161985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_46
+      rect:
+        serializedVersion: 2
+        x: 481
+        y: 360
+        width: 30
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80c70403c4485ec60800000000000000
+      internalID: 7846823388524870664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_boost_4_end_47
+      rect:
+        serializedVersion: 2
+        x: 515
+        y: 360
+        width: 30
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df59fb1b2131bb8d0800000000000000
+      internalID: -2829646969859762691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      medic_aura_boost_4_end_0: 1914137454014835589
+      medic_aura_boost_4_end_1: 7720513843096630865
+      medic_aura_boost_4_end_10: -7511080376294491272
+      medic_aura_boost_4_end_11: 2141235427347563055
+      medic_aura_boost_4_end_12: 3955358329335301284
+      medic_aura_boost_4_end_13: 1464197743108469405
+      medic_aura_boost_4_end_14: 4260695257564033498
+      medic_aura_boost_4_end_15: 1146272190248687217
+      medic_aura_boost_4_end_16: 9067956589848306416
+      medic_aura_boost_4_end_17: 3908859503009622449
+      medic_aura_boost_4_end_18: 8323879256536643890
+      medic_aura_boost_4_end_19: -73328123919645593
+      medic_aura_boost_4_end_2: -4544062270371044914
+      medic_aura_boost_4_end_20: -5163820735806012746
+      medic_aura_boost_4_end_21: -6133169124186899668
+      medic_aura_boost_4_end_22: -1391449437796112058
+      medic_aura_boost_4_end_23: 1833623253319202899
+      medic_aura_boost_4_end_24: -5258613509438920881
+      medic_aura_boost_4_end_25: -5233771376748712946
+      medic_aura_boost_4_end_26: 6390751614553890097
+      medic_aura_boost_4_end_27: 2043759220488925183
+      medic_aura_boost_4_end_28: 743996249058884544
+      medic_aura_boost_4_end_29: 5198751180192628720
+      medic_aura_boost_4_end_3: 282182460728032711
+      medic_aura_boost_4_end_30: 1525199002662973595
+      medic_aura_boost_4_end_31: -1047996425644079162
+      medic_aura_boost_4_end_32: 4384256797922375486
+      medic_aura_boost_4_end_33: 5032140259158302480
+      medic_aura_boost_4_end_34: 1604234683857839366
+      medic_aura_boost_4_end_35: 9119274513220489678
+      medic_aura_boost_4_end_36: 3886273741906215176
+      medic_aura_boost_4_end_37: 5161221765899768115
+      medic_aura_boost_4_end_38: 4517641266664717064
+      medic_aura_boost_4_end_39: 2180125594976421723
+      medic_aura_boost_4_end_4: -6992168818446014882
+      medic_aura_boost_4_end_40: 7528882558185816882
+      medic_aura_boost_4_end_41: -4384952644158169582
+      medic_aura_boost_4_end_42: -2267481857783575088
+      medic_aura_boost_4_end_43: -7622943163518550546
+      medic_aura_boost_4_end_44: 7061877758261820837
+      medic_aura_boost_4_end_45: -1838457258626161985
+      medic_aura_boost_4_end_46: 7846823388524870664
+      medic_aura_boost_4_end_47: -2829646969859762691
+      medic_aura_boost_4_end_5: -7639015653136954338
+      medic_aura_boost_4_end_6: 7878882583796634593
+      medic_aura_boost_4_end_7: -581435561462146435
+      medic_aura_boost_4_end_8: -6597218184151390699
+      medic_aura_boost_4_end_9: -3458051637837361876
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

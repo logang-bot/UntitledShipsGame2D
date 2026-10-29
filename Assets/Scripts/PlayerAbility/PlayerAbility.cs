@@ -36,10 +36,8 @@ public class PlayerAbility : MonoBehaviour
     public float auraBoostCooldown = 10f;
 
     [Header("Medic - Aura Visual")]
-    public PaletteSwatch auraRingColor = new PaletteSwatch(PaletteColor.Medic, 0.35f);
-    public PaletteSwatch auraRingBoostedColor = new PaletteSwatch(PaletteColor.Medic, 0.7f);
-    public float auraRingWidth = 0.05f;
-    public float auraRingBoostedWidth = 0.12f;
+    /// <summary>Seconds per half-beat of the boosted ring's pulse (boost / boost-peak sprites).</summary>
+    public float auraPulseInterval = 0.25f;
     public PaletteSwatch healFlashColor = new PaletteSwatch(PaletteColor.MedicSoft);
 
     [Header("Support - Speed Boost")]
@@ -86,12 +84,6 @@ public class PlayerAbility : MonoBehaviour
     public float shieldArcHeight = 0.4f;
     /// <summary>Local offset above the ship.</summary>
     public float shieldArcYOffset = 0.3f;
-    public PaletteSwatch shieldArcColor = new PaletteSwatch(PaletteColor.Tank, 0.5f);
-    public float shieldArcLineWidth = 0.08f;
-
-    [Header("Party Buff Visual")]
-    public float partyBuffRingRadius = 0.6f;
-    public float partyBuffRingWidth = 0.08f;
 
     private PlayerRoleComponent roleComponent;
     private PlayerController playerController;
@@ -102,6 +94,7 @@ public class PlayerAbility : MonoBehaviour
     private PlayerAbilityMedic medic;
     private PlayerAbilitySupport support;
     private PlayerAbilityAttacker attacker;
+    private ShipCombatFx fx;
 
     public float CooldownRemaining => Mathf.Max(0f, nextAbilityTime - Time.time);
     public bool IsSpeedBoostActive => support.IsActive;
@@ -109,6 +102,7 @@ public class PlayerAbility : MonoBehaviour
     public bool IsAuraBoosted => medic.IsBoosted;
     public float AuraBoostRemaining => medic.BoostRemaining;
     public PlayerController PlayerController => playerController;
+    public ShipCombatFx Fx => fx;
     public Color TintColor => roleComponent.Stats.tintColor;
     // Which combo key (1/2/3) continues the rotation correctly right now -
     // read by the HUD and by AIController so Attacker bots always feed
@@ -130,6 +124,7 @@ public class PlayerAbility : MonoBehaviour
         roleComponent = GetComponent<PlayerRoleComponent>();
         playerController = GetComponent<PlayerController>();
         playerHealth = GetComponent<PlayerHealth>();
+        fx = GetComponent<ShipCombatFx>();
     }
 
     private void CreateHelpers()
@@ -182,9 +177,9 @@ public class PlayerAbility : MonoBehaviour
 
     /// <summary>
     /// Called on every ally by Support's speed boost - shows/hides this
-    /// ship's party-buff ring in the caster's tint color.
+    /// ship's party-buff ring (always Support purple, per the design).
     /// </summary>
-    public void SetPartyBuffVisual(bool active, Color color) => partyBuffRing?.Show(active, color);
+    public void SetPartyBuffVisual(bool active) => partyBuffRing?.Show(active);
 
     public void OnAbility(InputValue value)
     {
@@ -200,6 +195,12 @@ public class PlayerAbility : MonoBehaviour
     {
         if (Time.time < nextAbilityTime) return;
         nextAbilityTime = Time.time + CooldownFor(roleComponent.role);
+        TriggerRoleAbility();
+        if (fx != null) fx.PlayAbility(roleComponent.role);
+    }
+
+    private void TriggerRoleAbility()
+    {
         switch (roleComponent.role)
         {
             case PlayerRole.Tank: tank.Trigger(); break;
