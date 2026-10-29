@@ -13,6 +13,9 @@
 - [progress-log-archive.md](progress-log-archive.md) — archived Sessions
   1-27 (pre-boss fundamentals through the boss-encounter arc and the Level 1
   rework), moved out for length.
+- [art-roadmap.md](art-roadmap.md) — the phased art plan (Blender
+  pre-rendered sprites, neon effects and powers, anime cut-ins, mobile
+  quality tiers). It runs in parallel with the gameplay work.
 - [architecture.md](architecture.md) — concrete code-level conventions:
   script organization, communication patterns, deliberate omissions.
 
@@ -43,8 +46,9 @@ the scene is wired.
   boss: a pure positioning fight — full-arena roam, a Surge vulnerability
   window, and a Static Field proximity pulse as the real damage source.
 - [systems/bosses/warden-boss.md](systems/bosses/warden-boss.md) — **Warden**, Level 3's
-  boss: **design spec, not yet built** — a dual-threat/Tank-coordination
-  pitch (dual turret-arms, Lockdown volley).
+  boss: a lane-coverage fight with turret-arms that shield the boss until
+  they're knocked down (a third joins at Phase 2), Lockdown volley, and
+  Big Shot.
 - [systems/level-sequencing.md](systems/level-sequencing.md) — the
   intro/minion-phase/boss-entrance timeline that orchestrates a level.
 - [systems/input.md](systems/input.md) — New Input System setup,

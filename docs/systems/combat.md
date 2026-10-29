@@ -72,7 +72,10 @@ Shared projectile behavior. Direction, speed, and owner (`"Player"` or
 `"Enemy"`) are set at spawn time via `Init()`. Owner determines which tag it
 can damage on collision (`Player` bullets hit `Enemy` tag and vice versa).
 Self-destructs after `lifeTime` seconds as a safety net if it never hits
-anything.
+anything. `ScheduleLifetimeCleanup()` only schedules this in Play mode,
+because Unity rejects a delayed `Destroy()` in edit mode (and logs an
+error), where EditMode tests spawn bullets. Tests clean up their own
+bullets in `TearDown`.
 
 `damage` is a plain public field (not passed through `Init()`, which only
 covers direction/speed/owner) — set directly on the instantiated bullet
@@ -105,14 +108,24 @@ collider still resolves to its own `PlayerHealth` first, since
 
 `Init()`'s 4th, optional param — `Init(Vector2 dir, float spd, string
 ownerTag, GameObject ownerObject = null)` — lets player-fired bullets pass
-their shooter as `ownerObject`, so `OnTriggerEnter2D`'s
-player-bullet-vs-`Enemy`-tag branch — in addition to its
-`Enemy.TakeDamage(damage)` call — also checks for a `MarauderBoss` component
-(calls `boss.TakeDamage(damage, ownerObject)`, attributing the hit to its
-shooter for the boss's aggro system) and a `HalcyonBoss` component (calls
-`boss.TakeDamage(damage)` — no `ownerObject`, since Halcyon has no aggro to
-attribute it to). See [marauder-boss.md](bosses/marauder-boss.md) and
-[halcyon-boss.md](bosses/halcyon-boss.md). Both `Enemy.TakeDamage`/
+their shooter as `ownerObject`.
+
+`OnTriggerEnter2D` only dispatches. The player-bullet-vs-`Enemy`-tag case
+goes to `HitEnemy()`, and the enemy-bullet-vs-`Player`-tag case goes to
+`HitPlayer()`. `HitEnemy()` checks the collider for each damageable
+component, then destroys the bullet:
+- `DamageBoss()`:
+  - `MarauderBoss.TakeDamage(damage, ownerObject)`. The shooter is passed
+    so Marauder's aggro system can credit the hit.
+  - `HalcyonBoss.TakeDamage(damage)` and `WardenBoss.TakeDamage(damage)`.
+    No `ownerObject`, since neither has aggro.
+  - `WardenArmHealth.TakeDamage(damage)` for Warden's arms, which are
+    `Enemy`-tagged trigger colliders.
+- `DamageMinorEnemy()`: `Enemy` and `Minion`.
+
+See [marauder-boss.md](bosses/marauder-boss.md),
+[halcyon-boss.md](bosses/halcyon-boss.md) and
+[warden-boss.md](bosses/warden-boss.md). Both `Enemy.TakeDamage`/
 `MarauderBoss.TakeDamage` take a `float amount` — each rounds
 (`Mathf.RoundToInt`) only at the point it subtracts from its own `int`
 health pool, so no fractional HP appears anywhere. The enemy-bullet-vs-
@@ -167,8 +180,23 @@ public methods: `TakeDamage(int)`, `Heal(int)`, `RestoreShield(int)`.
 **Requires:** `panelRoot` (Inspector-dragged, set to `GameOverPanel` itself).
 
 Purely event-driven, no `Update()`. `Awake()` hides `panelRoot` so it's
-invisible during normal play. `Show()` is wired as a listener on `Player`'s
-`PlayerHealth.OnDeath` — reveals the panel, unless `VictoryPanel` is already
+invisible during normal play, then watches every **human-controlled** ship
+in `partyFrameManager.players` (human = `PlayerInput` enabled, via
+`PartyFrameManager.IsHuman`): it adds a runtime listener to each one's
+`PlayerHealth.OnDeath`, and once **every** human ship is dead it calls
+`Show()`. AI teammates still alive don't keep the run going, and with 2+
+local humans, one dying doesn't end it. These listeners are added in code
+rather than the Inspector because ships spawned by the co-op flow come
+from `Ship.prefab`, and a prefab's persistent listener can't target a
+scene object. Before Session 40, those spawned ships' `OnDeath → Show`
+listeners had a null target, so the normal Main Menu → level path never
+showed Game Over at all. `PartySetupBootstrap` (execution order -1000)
+replaces `players` with the spawned ships before this `Awake()` runs.
+`PlayerHealth.OnDeath`/`OnDamaged` are initialized with `new UnityEvent()`
+so a runtime-added `PlayerHealth` (e.g. in EditMode tests) can take
+listeners too. Covered by `Assets/Tests/EditMode/GameOverUITests.cs`.
+
+`Show()` reveals the panel, unless `VictoryPanel` is already
 showing (`victoryPanelRoot` guard — the 3 CPU teammates can still defeat the
 boss after the human dies, see [marauder-boss.md](bosses/marauder-boss.md)'s "Death handling" for the
 mutual-exclusion guard with `VictoryUI.cs`). `Restart()` is wired to the
@@ -180,7 +208,8 @@ the active level scene from scratch so every stateful script (`PlayerHealth`,
 loads `RoleSelect` instead (see [player-roles.md](player-roles.md)'s "Role
 Select scene").
 
-Key public fields: `panelRoot`, `victoryPanelRoot`. Key public methods:
+Key public fields: `panelRoot`, `victoryPanelRoot`, `partyFrameManager`.
+Key public methods:
 `Show()`, `Restart()`, `ChangeRoles()`.
 
 ## PlayerDamageFlash.cs
@@ -213,7 +242,12 @@ see [hud-layout.md](hud-layout.md)).
 
 Shakes the camera on a non-fatal player hit. Wired as a listener on
 `PlayerHealth.OnDamaged`, and also on `PlayerAbility.OnTaunt` (same
-pattern as `PlayerDamageFlash.cs` above). Caches `transform.localPosition`
+pattern as `PlayerDamageFlash.cs` above). On hand-placed scene ships these
+are Inspector listeners. Ships spawned by the co-op flow get them at
+runtime from `SpawnedShipEventWiring` (via
+`PartySetupBootstrap.cameraShake`), because `Ship.prefab`'s own listeners
+can't target the scene's Main Camera. Before Session 41 they had a null
+target, so the normal menu path never shook the camera. Caches `transform.localPosition`
 once in `Awake()` as the base to return to; `Shake()` restarts the
 coroutine the same way as `PlayerDamageFlash.Flash()`. Offsets
 `transform.localPosition` by a linearly-decaying random offset each frame,
@@ -224,6 +258,12 @@ viewport), never `transform`.
 
 Key public fields: `shakeDuration` (default 0.2s), `shakeMagnitude` (default
 0.15). Key public method: `Shake()`.
+
+**Open issue:** sometimes a white shape appears in the center of the screen
+during a hit's flash/shake. It's intermittent and the cause isn't found
+yet. `PlayerDamageFlash` and `CameraShake` were checked and ruled out in
+Session 46. See [roadmap.md](../roadmap.md)'s "Known issues" for what was
+checked and what to capture next time.
 
 ## Enemy.cs
 

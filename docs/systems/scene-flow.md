@@ -212,7 +212,3 @@ itself is attached to.
   relative to `LevelSelect` (before or after level-picking) is a decision
   for that future work, not settled here. See [cards.md](cards.md)'s "Deck
   loadout scene".
-- Warden (Level 3) doesn't have real boss mechanics yet — its placeholder
-  exists so the level-select flow and scene plumbing didn't need to be
-  re-touched once its own design lands. Halcyon (Level 2) does now — see
-  [bosses/halcyon-boss.md](bosses/halcyon-boss.md) and `../roadmap.md`.

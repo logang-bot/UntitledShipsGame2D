@@ -4,15 +4,18 @@ using UnityEngine;
 // Sibling component on the Boss GameObject: Marauder's dash-or-hold "M"
 // pattern, reimplemented as a MonoBehaviour with its own fields (can't reuse
 // MarauderBossMovement directly - it's a helper class owned by MarauderBoss,
-// not a shared utility). Same numbers/shape as MarauderBossMovement.cs. See
+// not a shared utility). Unlike Marauder, legs are speed-based and eased
+// (slower, since Warden already has the densest fire of the three bosses).
+// Coroutine-driven, so OnDisable must stop it - disabling a MonoBehaviour
+// does not stop coroutines it started (see docs/unity-notes.md). See
 // docs/superpowers/specs/2026-09-04-warden-boss-design.md.
 public class WardenMovement : MonoBehaviour
 {
     [Header("Pattern")]
     public float sideOffsetX = 2.2f;
-    public float patternMoveDurationMin = 0.4f;
-    public float patternMoveDurationMax = 2f;
-    public float cycleGapMin = 0.5f;
+    public float moveSpeedMin = 1.5f;
+    public float moveSpeedMax = 2.5f;
+    public float cycleGapMin = 1f;
     public float cycleGapMax = 2.5f;
     public float maxAdvanceFraction = 0.4f;
     [Range(0f, 1f)] public float mPatternNotchDepth = 0.5f;
@@ -30,8 +33,14 @@ public class WardenMovement : MonoBehaviour
 
     void OnEnable()
     {
+        StopAllCoroutines();
         home = transform.position;
         StartCoroutine(MovementPatternRoutine());
+    }
+
+    void OnDisable()
+    {
+        StopAllCoroutines();
     }
 
     private IEnumerator MovementPatternRoutine()
@@ -40,9 +49,13 @@ public class WardenMovement : MonoBehaviour
         {
             yield return new WaitForSeconds(Random.Range(cycleGapMin, cycleGapMax));
             Vector3 target = PickRandomVertex();
-            float legDuration = Random.Range(patternMoveDurationMin, patternMoveDurationMax);
-            yield return MoveOverTime(transform.position, target, legDuration);
+            yield return MoveOverTime(transform.position, target, LegDuration(target));
         }
+    }
+
+    private float LegDuration(Vector3 to)
+    {
+        return Vector3.Distance(transform.position, to) / Random.Range(moveSpeedMin, moveSpeedMax);
     }
 
     private Vector3[] GetPatternVertices()
@@ -92,7 +105,7 @@ public class WardenMovement : MonoBehaviour
         while (t < duration)
         {
             t += Time.deltaTime;
-            transform.position = Vector3.Lerp(from, to, Mathf.Clamp01(t / duration));
+            transform.position = Vector3.Lerp(from, to, Mathf.SmoothStep(0f, 1f, t / duration));
             yield return null;
         }
         transform.position = to;

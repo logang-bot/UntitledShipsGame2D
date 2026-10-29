@@ -651,9 +651,11 @@ GameObject:
   - component: {fileID: 80833323}
   - component: {fileID: 80833324}
   - component: {fileID: 80833325}
+  - component: {fileID: 80833327}
+  - component: {fileID: 80833326}
   m_Layer: 0
   m_Name: ArmB
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -753,6 +755,67 @@ MonoBehaviour:
   tauntWeightMultiplier: 3
   bulletPrefab: {fileID: 2454154910025362242, guid: 948b73a827320324aa43963466632840, type: 3}
   bulletSpeed: 6
+--- !u!114 &80833326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 80833322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5552a8787d9c7d4cb063d34e6c2cc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
+  maxHealth: 20
+  downDuration: 15
+  downColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
+--- !u!61 &80833327
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 80833322}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &94012568
 GameObject:
   m_ObjectHideFlags: 0
@@ -1300,9 +1363,11 @@ GameObject:
   - component: {fileID: 245556760}
   - component: {fileID: 245556759}
   - component: {fileID: 245556758}
+  - component: {fileID: 245556762}
+  - component: {fileID: 245556761}
   m_Layer: 0
   m_Name: ArmC
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1402,6 +1467,67 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1636344750194998057}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &245556761
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245556757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5552a8787d9c7d4cb063d34e6c2cc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
+  maxHealth: 20
+  downDuration: 15
+  downColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
+--- !u!61 &245556762
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245556757}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &247765250
 GameObject:
   m_ObjectHideFlags: 0
@@ -4150,6 +4276,164 @@ MonoBehaviour:
   - {fileID: 1561194720}
   - {fileID: 524495637}
   - {fileID: 1521651747}
+--- !u!1 &958746200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 958746201}
+  - component: {fileID: 958746204}
+  - component: {fileID: 958746203}
+  - component: {fileID: 958746202}
+  m_Layer: 0
+  m_Name: BossBigShotText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &958746201
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958746200}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1593914215}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &958746202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958746200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: 30
+  m_PreferredWidth: -1
+  m_PreferredHeight: 30
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
+--- !u!114 &958746203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958746200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: 'Big Shot: Ready'
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4284923903
+  m_fontColor: {r: 1, g: 0.75, b: 0.4, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 24
+  m_fontSizeBase: 24
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &958746204
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958746200}
+  m_CullTransparentMesh: 1
 --- !u!1 &963647175
 GameObject:
   m_ObjectHideFlags: 0
@@ -6822,6 +7106,7 @@ MonoBehaviour:
   partyFrameManager: {fileID: 952499542}
   bossObject: {fileID: 1636344750194998062}
   halcyonStaticField: {fileID: 0}
+  cameraShake: {fileID: 519420034}
 --- !u!4 &1579036666
 Transform:
   m_ObjectHideFlags: 0
@@ -6878,6 +7163,7 @@ RectTransform:
   - {fileID: 1699391175}
   - {fileID: 316819448}
   - {fileID: 247765251}
+  - {fileID: 958746201}
   m_Father: {fileID: 17387746}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
@@ -6967,6 +7253,7 @@ MonoBehaviour:
   armC: {fileID: 245556758}
   shockwave: {fileID: 1636344750194998060}
   lockdownVolley: {fileID: 1636344750194998059}
+  bigShot: {fileID: 1636344750194998063}
   healthBarFill: {fileID: 19396665}
   healthText: {fileID: 804710583}
   phaseText: {fileID: 491745480}
@@ -6976,6 +7263,7 @@ MonoBehaviour:
   shockwaveCooldownText: {fileID: 964701584}
   lockdownWarningText: {fileID: 247765253}
   lockdownCooldownText: {fileID: 1699391177}
+  bigShotText: {fileID: 958746203}
 --- !u!1 &1652931907
 GameObject:
   m_ObjectHideFlags: 0
@@ -6987,9 +7275,11 @@ GameObject:
   - component: {fileID: 1652931908}
   - component: {fileID: 1652931909}
   - component: {fileID: 1652931910}
+  - component: {fileID: 1652931912}
+  - component: {fileID: 1652931911}
   m_Layer: 0
   m_Name: ArmA
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7089,6 +7379,67 @@ MonoBehaviour:
   tauntWeightMultiplier: 3
   bulletPrefab: {fileID: 2454154910025362242, guid: 948b73a827320324aa43963466632840, type: 3}
   bulletSpeed: 6
+--- !u!114 &1652931911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652931907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5552a8787d9c7d4cb063d34e6c2cc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
+  maxHealth: 20
+  downDuration: 15
+  downColor: {r: 0.35, g: 0.35, b: 0.35, a: 1}
+--- !u!61 &1652931912
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1652931907}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &1699391174
 GameObject:
   m_ObjectHideFlags: 0
@@ -7692,6 +8043,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameOverUI
   panelRoot: {fileID: 2055462885}
   victoryPanelRoot: {fileID: 1890823469}
+  partyFrameManager: {fileID: 952499542}
 --- !u!114 &2055462888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8025,6 +8377,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1990896620938820717, guid: d8ab0af82c975d74e8e9c3e1212da1b8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1636344750194998059}
+    - targetCorrespondingSourceObject: {fileID: 1990896620938820717, guid: d8ab0af82c975d74e8e9c3e1212da1b8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1636344750194998063}
   m_SourcePrefab: {fileID: 100100000, guid: d8ab0af82c975d74e8e9c3e1212da1b8, type: 3}
 --- !u!4 &1636344750194998057 stripped
 Transform:
@@ -8087,15 +8442,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1636344750194998058}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 95478198a9f12f0428286ef9e6d5781f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UntitledShips.Runtime::WardenMovement
   sideOffsetX: 2.2
-  patternMoveDurationMin: 0.4
-  patternMoveDurationMax: 2
-  cycleGapMin: 0.5
+  moveSpeedMin: 1.5
+  moveSpeedMax: 2.5
+  cycleGapMin: 1
   cycleGapMax: 2.5
   maxAdvanceFraction: 0.4
   mPatternNotchDepth: 0.5
@@ -8131,6 +8486,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1890823470}
+        m_TargetAssemblyTypeName: VictoryUI, UntitledShips.Runtime
+        m_MethodName: Show
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   bulletDamage: 1
   bodyContactDamageMultiplier: 2
   contactDamageCooldown: 1
@@ -8143,6 +8510,29 @@ MonoBehaviour:
   armA: {fileID: 1652931910}
   armB: {fileID: 80833325}
   armC: {fileID: 245556758}
+--- !u!114 &1636344750194998063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636344750194998058}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52e2dbc1dc288e647883e10ebd5584b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenBigShot
+  cooldown: 8
+  cooldownPhase2: 6
+  cooldownJitter: 1.5
+  telegraphTime: 0.6
+  bulletPrefab: {fileID: 2454154910025362242, guid: 948b73a827320324aa43963466632840, type: 3}
+  widthMultiplier: 3
+  damageMultiplier: 2
+  bulletSpeed: 5
+  muzzleOffset: 0.9
+  telegraphColor: {r: 1, g: 0.35, b: 0.15, a: 1}
+  telegraphPulseSpeed: 14
 --- !u!1001 &1771511203806262392
 PrefabInstance:
   m_ObjectHideFlags: 0

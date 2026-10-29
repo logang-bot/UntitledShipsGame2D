@@ -5,8 +5,8 @@ public class PlayerHealth : MonoBehaviour
 {
     public int maxHealth = 5;
     public int maxShield = 3; // placeholder base, scaled by role like maxHealth; no passive regen (see Heal/RestoreShield)
-    public UnityEvent OnDeath;
-    public UnityEvent OnDamaged;
+    public UnityEvent OnDeath = new UnityEvent();
+    public UnityEvent OnDamaged = new UnityEvent();
 
     private int currentHealth;
     private int currentShield;

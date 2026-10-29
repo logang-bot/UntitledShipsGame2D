@@ -1,18 +1,25 @@
 using UnityEngine;
 
 // Sibling component on the Boss GameObject: full-arena waypoint-to-waypoint
-// roam, unlike MarauderBoss's near-home M-pattern. Freezes whenever
-// HalcyonSurge is telegraphing or active. See
+// roam, unlike MarauderBoss's near-home M-pattern. Speed is randomized per
+// leg and mid-glide (see HalcyonRoamPhaseSettings), faster in phase 2.
+// Freezes whenever HalcyonSurge is telegraphing or active. See
 // docs/superpowers/specs/2026-09-04-halcyon-boss-design.md.
 public class HalcyonRoam : MonoBehaviour
 {
-    [Header("Speed")]
-    public float roamSpeed = 2.5f;
-    public float roamSpeedPhase2 = 3.5f;
+    [Header("Speed / pauses per phase")]
+    public HalcyonRoamPhaseSettings phase1 = new HalcyonRoamPhaseSettings();
+    public HalcyonRoamPhaseSettings phase2 = new HalcyonRoamPhaseSettings
+    {
+        speedMin = 5f,
+        speedMax = 7f,
+        pauseMin = 0.05f,
+        pauseMax = 0.2f,
+        speedChangeIntervalMin = 0.4f,
+        speedChangeIntervalMax = 0.9f,
+    };
 
     [Header("Waypoints")]
-    public float pauseMin = 0.3f;
-    public float pauseMax = 0.8f;
     public float minWaypointDistance = 2f;
     public Vector2 screenPadding = new Vector2(0.8f, 0.5f);
 
@@ -21,6 +28,8 @@ public class HalcyonRoam : MonoBehaviour
     private Camera cam;
     private Vector3 target;
     private float pauseUntil;
+    private float currentSpeed;
+    private float nextSpeedChangeTime;
 
     void Awake()
     {
@@ -33,6 +42,7 @@ public class HalcyonRoam : MonoBehaviour
     {
         target = transform.position;
         pauseUntil = Time.time;
+        RerollSpeed();
     }
 
     void Update()
@@ -40,20 +50,34 @@ public class HalcyonRoam : MonoBehaviour
         if (surge != null && (surge.IsTelegraphing || surge.IsActive)) return;
         if (Time.time < pauseUntil) return;
 
+        if (Time.time >= nextSpeedChangeTime) RerollSpeed();
         MoveTowardTarget();
+    }
+
+    private HalcyonRoamPhaseSettings CurrentSettings()
+    {
+        return boss != null && boss.IsPhase2 ? phase2 : phase1;
+    }
+
+    private void RerollSpeed()
+    {
+        HalcyonRoamPhaseSettings settings = CurrentSettings();
+        currentSpeed = Random.Range(settings.speedMin, settings.speedMax);
+        nextSpeedChangeTime = Time.time + Random.Range(settings.speedChangeIntervalMin, settings.speedChangeIntervalMax);
     }
 
     private void MoveTowardTarget()
     {
-        float speed = boss != null && boss.IsPhase2 ? roamSpeedPhase2 : roamSpeed;
-        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, target, currentSpeed * Time.deltaTime);
         if (Vector3.Distance(transform.position, target) < 0.05f) ArriveAtTarget();
     }
 
     private void ArriveAtTarget()
     {
-        pauseUntil = Time.time + Random.Range(pauseMin, pauseMax);
+        HalcyonRoamPhaseSettings settings = CurrentSettings();
+        pauseUntil = Time.time + Random.Range(settings.pauseMin, settings.pauseMax);
         target = PickWaypoint();
+        RerollSpeed();
     }
 
     private Vector3 PickWaypoint()

@@ -37,8 +37,9 @@ remains something to revisit only if that stops being true.
 
 Nearly every class is a plain `MonoBehaviour`. The only exceptions are
 `PlayerRole.cs`'s static lookup (`PlayerRoleStats`) and
-`PartyRoleAssignment`'s static nullable field — no interfaces, no abstract
-base classes, no component hierarchies anywhere in the codebase.
+`PartyRoleAssignment`'s static nullable field. There are no component
+hierarchies. The only interfaces or base classes are the two documented
+exceptions below: `IBoss`, and the `AIBossTactics` strategy.
 
 ## Boss-type-agnostic orchestration: IBoss
 
@@ -62,6 +63,44 @@ and `AIController`'s boss-avoidance positioning) stays on the
 since every `Component` already exposes them. See
 `docs/systems/bosses/halcyon-boss.md`'s "Code architecture: sibling
 MonoBehaviours + IBoss" for the full context this was introduced under.
+
+## Per-boss AI behavior: Strategy (AIBossTactics)
+
+This is the second deliberate exception, added in Session 46. It's a plain
+C# base class (not a `MonoBehaviour`) with one subclass per boss that needs
+different AI. It lives in `AIController/`:
+
+- **`AIBossTactics`** is the default behavior, used as-is by Halcyon and any
+  boss without special needs:
+  - `FocusPoint()`: the boss position.
+  - `HasPriorityFocus()`: false.
+  - `ShouldTaunt(ai)`: false.
+- **`MarauderAITactics`** overrides `ShouldTaunt`: only taunt when not
+  already holding aggro.
+- **`WardenAITactics`** overrides all three:
+  - always taunt;
+  - while shielded, `FocusPoint()` is the lowest-HP arm still up;
+  - `HasPriorityFocus()` is true while shielded, so even Support stops
+    roaming.
+
+`AIController` creates its tactics once, in `Start()`, through the factory
+`AIBossTactics.For(bossObject)`. It's `Start()` rather than `Awake()`
+because the co-op path assigns `bossObject` after `Awake()` has run.
+
+Positioning (`AIControllerPositioning.BiasedPositionDirection`,
+`AIControllerAttacker`) aims at `Tactics.FocusPoint()`. Boss-distance and
+avoidance math still uses the real boss position. Tank's Taunt goes through
+`Tactics.ShouldTaunt`.
+
+**Why:** before this, per-boss AI logic was `bossObject as MarauderBoss` /
+`as WardenBoss` casts inside `AIController`, which would grow with every
+boss. Every Warden-specific AI rule now lives in one class.
+
+**Adding a boss with special AI needs:**
+1. Write a subclass that overrides only what differs.
+2. Add one line to `AIBossTactics.For()`.
+
+A boss that needs nothing special needs no code at all.
 
 ## Primary Wiring: Inspector-Wired Public Fields
 

@@ -251,17 +251,13 @@ speed.
 
 | Role     | Health | Shield | Fire damage | Fire rate | **DPS** | Move speed |
 | -------- | ------ | ------ | ------------ | --------- | ------- | ---------- |
-| Attacker | 6      | 5      | 2.0          | 2.5/s     | **5.00** | 3.0 u/s   |
-| Tank     | 8      | 20     | 1.0          | 1/s       | **1.00** | 1.5 u/s   |
-| Medic    | 4      | 3      | 0.7          | 1.5/s     | **1.05** | 3.0 u/s   |
-| Support  | 5      | 3      | 1.0          | 2/s       | **2.00** | 4.5 u/s   |
+| Attacker | 6      | 5      | 2.0          | 2.5/s     | **5.00** | 2.4 u/s   |
+| Tank     | 8      | 20     | 1.0          | 1/s       | **1.00** | 1.2 u/s   |
+| Medic    | 4      | 3      | 0.7          | 1.5/s     | **1.05** | 2.4 u/s   |
+| Support  | 5      | 3      | 1.0          | 2/s       | **2.00** | 3.6 u/s   |
 
-> **Move speed in this table is stale.** `PlayerRole.cs` actually holds
-> 2.4 / 1.2 / 2.4 / 3.6 — every value exactly 0.8x the ones above, which reads
-> as a deliberate global tuning pass that never reached the docs or
-> `PlayerRoleStatsTests` (where it is currently the only failing assertion).
-> Every other column here matches the code. Resolve before trusting the
-> movement numbers.
+Move speeds are 0.8x their original values (3.0 / 1.5 / 3.0 / 4.5), from a
+global tuning pass in commit `182e1e6`.
 
 **DPS is derived, not stored** — `RoleStats.Dps => fireDamage *
 shotsPerSecond`. There is no third field to keep in sync, and asserting it in
@@ -387,6 +383,18 @@ aggro table all stay untouched by this feature.
   ship, even now that "the human" can be any of several), and assigns the
   spawned set directly onto `LevelSequencer.ships`/`PartyFrameManager.players`
   (safe given this script's `-1000` execution order).
+
+  It also calls `SpawnedShipEventWiring.Wire(ship, bossObject,
+  cameraShake)` on each spawned ship. That adds, at runtime, the event
+  listeners `Ship.prefab` can't carry because a prefab can't target scene
+  objects: camera shake on `OnDamaged`/`OnTaunt`, and Taunt →
+  `MarauderBoss`/`WardenBoss.TauntedBy`. Halcyon is skipped, since Taunt is
+  a deliberate no-op against it. Game Over and the party-frame gray-out are
+  wired the same way by `GameOverUI`/`PartyFrameManager`.
+
+  In Session 41, `SpawnDynamicParty()` was split into small single-purpose
+  methods (`DeactivateMarkers`, `SpawnParty`, `SpawnJoinedPlayerShip`,
+  `WireSpawnedShips`, `HandRosterToScene`, ...) with no behavior change.
   
   **Legacy branch (unchanged)**: if `CoOpRoster.Players` is unset, falls
   back to the original single-human path — if `PartyRoleAssignment.HumanRole`
@@ -427,8 +435,9 @@ aggro table all stay untouched by this feature.
   `PartyFrameManager` are fully role-agnostic, keyed by GameObject
   reference, never by name.
 - **`VictoryUI.cs`** (mirrors `GameOverUI.cs`) — a `VictoryPanel` under
-  `HUDCanvas`, shown as a listener on `MarauderBoss.OnDefeated` (alongside
-  `BossPanelUI.ShowDefeated()`) unless `GameOverPanel` is already showing
+  `HUDCanvas`, shown as a listener on each level's boss `OnDefeated`
+  (`MarauderBoss`/`HalcyonBoss`/`WardenBoss`, alongside that level's boss
+  panel `ShowDefeated()`) unless `GameOverPanel` is already showing
   (`gameOverPanelRoot` guard — the AI/other-human teammates can still
   defeat the boss after one human `Player` has already died, since only a
   human's own death ends the test; see [marauder-boss.md](bosses/marauder-boss.md)'s
@@ -445,7 +454,7 @@ aggro table all stay untouched by this feature.
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
 | **PlayerRoleComponent**  | role: Attacker (`Ship.prefab` default — overwritten at runtime by the Role Select flow, see "Role Select scene" above; used as-is when a level scene is opened directly) |
-| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` + `Boss/MarauderBoss.TauntedBy(self)` (real aggro redirect, see [marauder-boss.md](bosses/marauder-boss.md)) — baked into `Ship.prefab` itself (self-referencing, so every instance gets correct per-ship listeners for free, unlike the pre-`Ship.prefab` setup where each `Teammate_*` needed the same 3 listeners wired by hand) |
+| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `CameraShake.Shake()` + `MarauderBoss.TauntedBy(self)`. Only `Flash` works straight from the prefab, since it targets the ship itself. A prefab can't reference scene objects, so the shake and Taunt calls have null targets in `Ship.prefab`/`Teammate.prefab`. Hand-placed scene ships get those targets set per scene; Level 3 also retypes the call to `WardenBoss`. Co-op-spawned ships get them at runtime from `SpawnedShipEventWiring`. See [marauder-boss.md](bosses/marauder-boss.md)'s Taunt-wiring notes |
 
 ## Not yet built
 

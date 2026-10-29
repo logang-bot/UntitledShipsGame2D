@@ -276,3 +276,66 @@ above applies here too.
 
 Hit and re-confirmed in `docs/progress-log.md`/`docs/progress-log-archive.md`
 Sessions 11, 12, 16, 19, 24.
+
+## Disabling a MonoBehaviour does not stop its coroutines
+
+`component.enabled = false` stops Unity calling that component's
+`Update()`/`FixedUpdate()`/`LateUpdate()`, but **coroutines it already
+started with `StartCoroutine` keep running**. Only deactivating the whole
+GameObject (`SetActive(false)`) or an explicit `StopCoroutine`/
+`StopAllCoroutines()` stops them. Re-enabling the component then runs
+`OnEnable()` again, so a coroutine started there gets a *second* copy
+running alongside the first.
+
+Symptom (Session 39, `WardenMovement`): a movement coroutine started in
+`OnEnable()` at scene load kept moving the boss after `WardenBoss.Awake()`
+disabled the component, fought `LevelSequencer`'s entrance glide over
+`transform.position`, and a second copy started at `BossCombat` fought the
+first. Both showed up as the boss teleporting.
+
+Fix pattern for any coroutine-driven mechanic: `void OnDisable() {
+StopAllCoroutines(); }`, plus `StopAllCoroutines()` at the top of
+`OnEnable()` before starting the loop. Or drive the mechanic from
+`Update()` against `Time.time` deadlines instead, which respects `enabled`
+automatically. That's how `HalcyonSurge`, `WardenArm` and `WardenBigShot`
+work.
+
+## A prefab's persistent event listeners can't target scene objects
+
+An Inspector-wired `UnityEvent` listener on a **prefab asset** can only
+target objects inside that same prefab. A listener pointing at a scene
+object (the Main Camera, a boss, a HUD panel) is saved on the prefab as
+`m_Target: {fileID: 0}`. Hand-placed instances in a scene can override
+that target per scene, so they work. Instances created at runtime with
+`Instantiate()` get only the prefab's null target. Unity skips a
+null-target persistent call silently: no error, the call just doesn't
+happen.
+
+Symptom (Sessions 40 and 41): ships spawned by the co-op flow never showed
+Game Over, never grayed out their party frame, never shook the camera, and
+Tank's Taunt never reached the boss. Meanwhile, opening a level scene
+directly in the editor, which uses the hand-placed ships, worked fine. That
+hid the bug during editor testing.
+
+Fix pattern: wire spawned instances at runtime with `AddListener`, from
+the code that spawns them or owns the target. See `SpawnedShipEventWiring`,
+`GameOverUI.WatchHumanShips` and `PartyFrameManager.BindFrame`. To audit a
+prefab, grep its YAML for `m_Target: {fileID: 0}`.
+
+## Saving a scene from an unfocused Editor can write `NaN` UI layout values
+
+If you save a scene through MCP (`EditorSceneManager.SaveScene`) while the
+Editor is unfocused, it can write junk layout values for UI under
+layout-driven canvases:
+- `m_AnchoredPosition.x` as `NaN`;
+- shifted `m_SizeDelta` values.
+
+The layout was computed with no real Game view. The change you meant to
+make is still saved correctly. Always check `git diff` on the `.unity`
+file after a scripted save, and strip unrelated hunks before committing:
+- Filter the diff down to the intended hunks.
+- Run `git checkout --` on the scene.
+- `git apply` the filtered patch.
+- Reopen the scene to confirm Unity reads it back.
+
+Hit in Session 43 (`Level1.unity`, 52 `NaN`s).

@@ -6,6 +6,17 @@ brainstorming session with the user on 2026-09-04. This spec is the input
 to the implementation plan; see that plan for file-by-file steps and
 verification details.
 
+> **Revised after playtesting (Session 38, 2026-10-26).** This spec is the
+> original design record and is kept as-is below. Where they differ,
+> [halcyon-boss.md](../../systems/bosses/halcyon-boss.md) describes the
+> current build:
+> - Roam speed is randomized per waypoint and mid-glide (3.5–5.5 u/s
+>   phase 1, 5–7 u/s phase 2, shorter pauses), not a fixed 2.5 / 3.5 u/s.
+> - Surge is shown to players as an **Opening**: a green boss tint and
+>   "Opening!" / "OPENING — FIRE!" HUD text, not "Surge!".
+> - Static Field also hits a lone ship in range for 1 damage. Clustered
+>   ships still take 3 per nearby partner.
+
 ## Identity
 
 A pure positioning fight — the opposite of Marauder's bullet-heavy style.

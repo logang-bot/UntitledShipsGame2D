@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Sibling component on the Boss GameObject: Halcyon's actual damage source.
-// Every pulseCooldown, any two ships both near the boss AND near each other
-// take bonus damage - reuses MarauderBoss's shockwave damage convention
+// Every pulseCooldown, every ship near the boss takes damage - light for a
+// lone ship, heavy for ships also clustered near each other - reuses MarauderBoss's shockwave damage convention
 // (3x bulletDamage) and ring-telegraph idiom. See
 // docs/superpowers/specs/2026-09-04-halcyon-boss-design.md.
 public class HalcyonStaticField : MonoBehaviour
@@ -19,7 +19,8 @@ public class HalcyonStaticField : MonoBehaviour
     public float pulseCooldownPhase2 = 4f;
     public float bossRange = 1.8f;
     public float clusterRange = 0.6f;
-    public float damageMultiplier = 3f;
+    public float damageMultiplier = 3f; // per clustered partner
+    public float soloDamageMultiplier = 1f; // a ship in range with no partner nearby
     public float telegraphTime = 0.3f;
     public float impactFlashDuration = 0.15f;
 
@@ -71,25 +72,34 @@ public class HalcyonStaticField : MonoBehaviour
         ApplyPulseDamage();
     }
 
+    /// <summary>
+    /// A ship with no clustered partner takes soloDamageMultiplier; a ship
+    /// with N partners within clusterRange takes N x damageMultiplier - the
+    /// same total the original pairwise (each pair hits both ships) rule gave.
+    /// </summary>
     private void ApplyPulseDamage()
     {
         List<GameObject> nearBoss = ShipsNearBoss();
-        for (int i = 0; i < nearBoss.Count; i++)
-            for (int j = i + 1; j < nearBoss.Count; j++)
-                if (Vector2.Distance(nearBoss[i].transform.position, nearBoss[j].transform.position) <= clusterRange)
-                    DamagePair(nearBoss[i], nearBoss[j]);
+        foreach (GameObject ship in nearBoss)
+        {
+            int partners = CountClusterPartners(ship, nearBoss);
+            DamageShip(ship, partners > 0 ? partners * damageMultiplier : soloDamageMultiplier);
+        }
     }
 
-    private void DamagePair(GameObject a, GameObject b)
+    private int CountClusterPartners(GameObject ship, List<GameObject> nearBoss)
     {
-        DamageShip(a);
-        DamageShip(b);
+        int partners = 0;
+        foreach (GameObject other in nearBoss)
+            if (other != ship && Vector2.Distance(ship.transform.position, other.transform.position) <= clusterRange)
+                partners++;
+        return partners;
     }
 
-    private void DamageShip(GameObject ship)
+    private void DamageShip(GameObject ship, float multiplier)
     {
         PlayerHealth health = ship.GetComponent<PlayerHealth>();
-        if (health != null) health.TakeDamage(Mathf.RoundToInt(boss.bulletDamage * damageMultiplier));
+        if (health != null) health.TakeDamage(Mathf.RoundToInt(boss.bulletDamage * multiplier));
     }
 
     private List<GameObject> ShipsNearBoss()

@@ -6,6 +6,16 @@ brainstorming session with the user on 2026-09-04. This spec is the input to
 the implementation plan; see that plan for file-by-file steps and
 verification details.
 
+> **Revised after playtesting (Session 39, 2026-10-26).** This spec is the
+> original design record and is kept as-is below. Where they differ,
+> [warden-boss.md](../../systems/bosses/warden-boss.md) describes the
+> current build:
+> - Movement is speed-based and eased (1.5–2.5 u/s average), not
+>   Marauder's duration-based legs. A coroutine-lifetime bug that caused
+>   the entrance pop-in and the teleporting is fixed.
+> - New mechanic, **Big Shot**: a telegraphed 3×-wide, 2-damage shot fired
+>   straight down every 8s ±1.5s (6s in Phase 2).
+
 ## Identity
 
 A dual/triple-lane coverage fight — the first boss where two threats exist

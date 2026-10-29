@@ -50,8 +50,10 @@ on desktop.
 - **Networking (planned, last):** Nakama self-hosted on Fly.io,
   server-authoritative.
 - **Audio (planned):** FMOD, adaptive to boss phase.
-- **Art (planned):** Blender-rendered sprites with normal maps into URP 2D
-  `Sprite-Lit-Default` + `Light2D`.
+- **Art (in progress, parallel to phase 3):** Blender-modeled, pre-rendered
+  sprites (color + normal map + glow mask) into URP 2D `Sprite-Lit-Default`
+  + `Light2D`; Shape Blaster-inspired neon effects; anime ability cut-ins via
+  VRoid → Blender. See [docs/art-roadmap.md](docs/art-roadmap.md).
 
 For the full reasoning behind each of these, see
 [docs/overview.md](docs/overview.md)'s "Tech Stack Decisions".
@@ -65,7 +67,10 @@ For the full reasoning behind each of these, see
 - **Prove gameplay is fun before investing in infrastructure.** Build order
   is local prototype → full basic mechanics → boss mechanics validated with
   CPU-controlled AI teammates → deck layer → real networking → final art.
-  See [docs/roadmap.md](docs/roadmap.md).
+  See [docs/roadmap.md](docs/roadmap.md). Phase 2 is done. Phase 3 (the
+  deck layer) belongs to another developer, and the art now starts early,
+  in parallel, as replacements for placeholders that already work. See
+  [docs/art-roadmap.md](docs/art-roadmap.md).
 - Keep `docs/current-state.md` and `docs/roadmap.md`'s "Implemented" section
   in sync whenever a feature ships.
 - Code conventions (flat `Assets/Scripts/`, one class per file, plain
@@ -88,6 +93,11 @@ For the full reasoning behind each of these, see
 | Deck ownership | Per-player, not party-shared | Preserves role identity and keeps balancing tractable |
 | Run structure | Pre-fight loadout screen | Simplest path to validating whether cards are fun; roguelike runs / meta-progression deferred |
 | Card economy | Energy earned by grazing | The mechanic that fuses bullet-hell skill with the deck layer |
+| Work split | Phase 3 (hitbox/focus/grazing/cards) by another developer; art in parallel | Art replaces working placeholders, so it never blocks gameplay |
+| Art pipeline | Blender, **pre-rendered** sprites (color + normal map + glow mask) | Detailed ships; roll animation = extra rendered frames; normal maps give real-time 2D lighting. Imported 3D models stay possible later without remodeling |
+| Effects style | Neon, inspired by Tuts+ "Neon Vector Shooter" (Shape Blaster) | Bloom, additive stretched particles, warping grid, black-hole powers; enemy bullets must stay readable over effects |
+| Ability cut-ins | Anime 3D-look characters: VRoid → Blender toon shading, pre-rendered | Genshin/ZZZ feel; pre-rendering looks identical on every device and is cheap on phones |
+| Mobile | One project, per-platform quality tiers | No duplicated code; keeps crossplay possible. A sibling project was considered and rejected |
 | Version control | git, ships-game history retained | `origin` still points at `logang-bot/UntitledShipsGame2D` — retarget before pushing |
 
 ## Open questions (not yet decided)
@@ -98,7 +108,9 @@ For the full reasoning behind each of these, see
 - How cards are acquired/unlocked over time (the loadout screen assumes a
   pool exists; where it comes from is deferred).
 - Number and structure of bosses/stages beyond Level 1.
-- Art style specifics and audio direction.
+- Final art palettes, the cut-in quality ceiling, and audio direction. The
+  art pipeline itself is decided; see
+  [docs/art-roadmap.md](docs/art-roadmap.md)'s "Open questions".
 - Steam integration approach (Steamworks.NET vs. other), achievements,
   leaderboards.
 - Whether the card layer forces ScriptableObjects — see
