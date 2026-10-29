@@ -1375,3 +1375,14 @@ look at the seam and at bullet readability.
 New `ParallaxLayerTests` (4 cases) pass, as do `LevelSetupTests`. The 6
 failures are the known pre-existing ones (`PlayerRoleStatsTests` ×4,
 `MarauderBossDamageTests` ×2).
+
+### Next designs requested
+
+A Claude Design prompt for `Combat FX Designs.dc.html`: bullets (per-role
+player shots, Big Shot and its combo, enemy bullets in each boss's color
+with a pale core, the guided missile, explosive fragments, Warden's
+streams and Lockdown wall), auras and rings (Medic aura, Tank Shield Arc,
+Speed Boost ring, the shockwave and Static Field zones), the role
+abilities as 3–4 frame activation strips, and Standard/Explosive minions
+per boss plus the wave enemies. Not designed yet. It moves Explosive
+minions from today's orange tint to the boss color.

@@ -46,7 +46,8 @@ The ship designs live in the Claude Design project "Ship Designs"
 | `Ship Designs.dc.html` | The four ships as 2D SVG line art (set 1a), with 96/48/32 px scale previews, and the 3D set (1b) embedded |
 | `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download. **Saved and in use:** `Assets/Art/Ships/Models/aegis-04.glb`, `nova-11.glb`, `lumen-02.glb`, `echo-07.glb` |
 | `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the UI kit (Phase 7) and the HUD (Phase 8). There are **no designs yet** for the screens before a level. |
-| *(requested, Session 52)* | The three bosses (2D + 3D, phase 2 looks, signature colors) and one layered parallax background per boss, from the prompt summarized in Phase 2c. Not designed yet. |
+| `Boss Designs.dc.html` + `bossBackgrounds.js` | The three bosses (2D + 3D, phase 2 looks, signature colors: Marauder `#FF2D95`, Halcyon `#FFE14A`, Warden `#5470FF`), Marauder's minions, and the four-layer parallax background per boss, from the prompt summarized in Phase 2c. **Backgrounds in use** (Session 53, PNGs in `Assets/Art/Backgrounds/`); the bosses aren't in the game yet (Phase 5). |
+| *(requested, Session 53)* | `Combat FX Designs.dc.html`: bullets, auras and rings, the role abilities' activation effects, and every boss's minions plus the wave enemies, each shown over the three backgrounds, with PNG and particle-texture exports. Feeds Phases 3–5. Not designed yet. |
 
 | Role | Ship | Shape | Design color |
 | --- | --- | --- | --- |
@@ -195,7 +196,11 @@ Built straight from the 3D models instead of the planned 2D sprites first.
 - **Make:**
   - **Bloom tuning** for the final look.
   - **Bullet looks** that follow the readability rule, for player bullets,
-    each boss's bullets, and the wide Big Shot.
+    each boss's bullets, and the wide Big Shot. Designs requested in
+    Session 53 (`Combat FX Designs.dc.html`, with the auras, ability
+    effects and minions). That prompt colors Explosive minions and their
+    fragments in the boss color, so `explosiveTintColor` (orange today,
+    close to the Attacker's `#FF8A3D`) changes when that art goes in.
   - **Hit sparks and explosions:** particles in **Stretched Billboard** mode,
     so fast particles become streaks, with additive blending.
   - **The warping background grid**: a spring-mass grid that explosions push

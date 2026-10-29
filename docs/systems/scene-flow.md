@@ -28,6 +28,8 @@ setup (LevelSetup.cs)" below and [level-sequencing.md](level-sequencing.md).
 `Awake()` builds the scene into the picked level:
 1. Picks the `BossEntry` matching `LevelSelection.SelectedLevel`, or
    `editorDefaultLevel` (Level 1) when the scene is opened directly.
+   Then instantiates that entry's `backgroundPrefab`, if it has one
+   (the boss's parallax background; see `../art-roadmap.md`'s Phase 2c).
 2. Instantiates that entry's boss prefab (still inactive) and hands it to
    `LevelSequencer.bossObject`.
 3. Calls `PartySetupBootstrap.Setup(boss)`, which spawns or prepares the
@@ -37,7 +39,9 @@ setup (LevelSetup.cs)" below and [level-sequencing.md](level-sequencing.md).
 5. Invokes the entry's `onSpawned`.
 
 `BossEntry.cs` is a plain `[Serializable]` class (not a ScriptableObject):
-`level`, `bossPrefab` (the boss component on the prefab root), and three
+`level`, `bossPrefab` (the boss component on the prefab root),
+`backgroundPrefab` (`<Boss>Background.prefab` from
+`Assets/Art/Backgrounds/<Boss>/`, optional), and three
 Inspector-wired events reaching scene objects the prefab can't reference:
 
 | Entry | `onSpawned` | `onPhase2` | `onDefeated` |
