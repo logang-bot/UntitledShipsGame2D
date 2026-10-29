@@ -71,4 +71,10 @@ public enum PaletteColor
     NoticeDark = 93,
     SlotBottom = 94,
     BossVignette = 95,
+    Text5 = 96,
+    BarTrack = 97,
+    SurgeOpening = 98,
+    SurgeTelegraphText = 99,
+    WardenArmDown = 100,
+    WardenBigShotTelegraph = 101,
 }

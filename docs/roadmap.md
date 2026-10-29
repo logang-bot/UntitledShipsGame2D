@@ -589,6 +589,19 @@ reference docs live under `systems/`.
   background left-to-right on a coin flip. `LevelSetup` spawns the picked
   boss's `BossEntry.backgroundPrefab`. The playfield camera is near-black.
   See `art-roadmap.md`'s Phase 2c.
+- **Pre-fight menus restyled, PC (Session 54)** — art Phase 7 on PC. The
+  five menu screens follow the "Pre-Fight Menus" design with a shared UI
+  kit (`MenuButton`, `NeonFrame`, `TagChip`, `MenuHeader`, hint bars,
+  toast), TMP fonts, and **one palette for every color in the project**
+  (`NeonPalette` + `PaletteSwatch` + `PaletteTint`; prefab colors
+  migrated, CPU teammates' aura/shield now match the human ships). Screens
+  load additively over a persistent `MenuBackground` scene (camera,
+  EventSystem, grid, drifting fleet, ship portrait render textures) with
+  `MenuScreen` slide transitions. Join Lobby joins manually through
+  `JoinPressRouter` so B/Esc can leave; Role Select shows live 3D ships,
+  shared-scale stats and a squad strip; Level Select launches with a grow
+  and cut to black. Mobile layouts deferred. See `systems/ui-kit.md` and
+  `systems/scene-flow.md`.
 
 ## In Progress
 
@@ -638,8 +651,9 @@ is independently testable and the one before it de-risks the next.
 - **Starter card set** — ~20 cards, five per role plus Neutral, split Passive
   and Active.
 - **`DeckBuild.unity` loadout scene** — appended at whatever the next
-  available Build Settings index is when it's built (currently 6, since
-  `LevelSelect`/`Level` occupy 4-5), between `RoleSelect` and `Level` in
+  available Build Settings index is when it's built (currently 7, since
+  `LevelSelect`/`Level`/`MenuBackground` occupy 4-6; it should be a
+  `MenuScreen` scene like the other menus), between `RoleSelect` and `Level` in
   flow order;
   single/multi picker mirroring `RoleSelect`; `PartyDeckAssignment` static
   carrying the result across the scene load.
@@ -654,9 +668,9 @@ is independently testable and the one before it de-risks the next.
   state, matchmaking for 1–4 players. Offline/host mode using the same
   simulation layer. Only starts once the CPU-AI boss loop above is proven
   fun; this is what upgrades AI-controlled teammates to real human players.
-  `Lobby.unity`'s Online button (see "Scene scaffolding" above) is already
-  in place as a disabled placeholder — this item is what wires it up for
-  real and gives it somewhere (a real lobby/matchmaking flow) to lead to.
+  `Lobby.unity`'s ONLINE card (see "Scene scaffolding" above) is already
+  in place as a locked "coming later" card — this item is what unlocks it
+  and gives it somewhere (a real lobby/matchmaking flow) to lead to.
 
 ### Art & audio
 

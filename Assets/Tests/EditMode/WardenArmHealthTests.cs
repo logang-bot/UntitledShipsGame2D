@@ -66,7 +66,7 @@ public class WardenArmHealthTests
         Assert.IsTrue(arm.IsDown);
         Assert.IsFalse(arm.GetComponent<WardenArm>().enabled, "A downed arm must stop firing.");
         Assert.IsFalse(arm.GetComponent<Collider2D>().enabled, "A downed arm must lose its hitbox.");
-        Assert.AreEqual(arm.downColor, arm.GetComponent<SpriteRenderer>().color);
+        Assert.AreEqual(arm.downColor.Resolve(), arm.GetComponent<SpriteRenderer>().color);
     }
 
     [Test]

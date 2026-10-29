@@ -7,7 +7,7 @@ public class WardenArmHealth : MonoBehaviour
 {
     public float maxHealth = 20f;
     public float downDuration = 15f;
-    public Color downColor = new Color(0.35f, 0.35f, 0.35f);
+    public PaletteSwatch downColor = new PaletteSwatch(PaletteColor.WardenArmDown);
 
     public float CurrentHealth { get; private set; }
     public bool IsDown { get; private set; }

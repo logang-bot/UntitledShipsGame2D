@@ -297,27 +297,29 @@ see above) ever sets them, and only ever via plain assignment.
 An in-game role picker: `RoleSelect.unity` (Build Settings index 3, reached
 via `MainMenu` → `Lobby` → `JoinLobby` → `RoleSelect` — see
 [scene-flow.md](scene-flow.md)), which now leads to `LevelSelect.unity`
-(index 4) and then whichever level scene is picked (`Level1`/`Level2`/
-`Level3`, indices 5/6/7) — each a real separate scene, not a same-scene
-overlay. `RoleSelect` also has a Back button (→ `JoinLobby` if the co-op
-join flow was used, `Lobby` otherwise).
+(index 4) and then the shared `Level.unity` (index 5). `RoleSelect` also
+has a Back button (→ `JoinLobby` if the co-op join flow was used, `Lobby`
+otherwise).
 
 **`RoleSelect.unity` contents**: a single Screen Space - Overlay `Canvas`
-plus an `EventSystem` (`InputSystemUIInputModule`, matching the project's
-New-Input-System-only setup — see `input.md`) and a plain `Main Camera`
-(tagged `MainCamera`, background color matched to the dark HUD panel tone —
-needed because Unity's Game view shows a "No cameras rendering" diagnostic
-if a scene has zero cameras, even though the Overlay canvas itself doesn't
-need one to render). The Canvas holds two child panels,
-`RoleSelectUI.Awake()` activating exactly one based on
-`CoOpRoster.Players`' count (see "Local co-op / dynamic player count"
-below):
+(`RoleSelectUI`, `MenuScreen`) and nothing else. Since Session 54 the
+camera and the `EventSystem` (`InputSystemUIInputModule`) live in the
+persistent `MenuBackground.unity` loaded underneath — see
+[scene-flow.md](scene-flow.md)'s "Menu background and transitions". The
+Canvas holds the shared header and two panels, `RoleSelectUI.Awake()`
+activating exactly one based on `CoOpRoster.Players`' count (see "Local
+co-op / dynamic player count" below):
 
-- **`SinglePickerPanel`** — the original 4 role buttons + Start button,
-  used whenever 0 or 1 players joined (direct scene open, or exactly one
-  human via `JoinLobby`).
+- **`SinglePickerPanel`** — four `RoleCardView` cards (live 3D ship,
+  shared-scale stats from `RoleStatScale`, ability lines) + Start, used
+  whenever 0 or 1 players joined (direct scene open, or exactly one human
+  via `JoinLobby`). Nothing is highlighted on entry; a pick marks the card
+  YOU and the rest CPU.
 - **`MultiPickerPanel`** — `RoleSelectMultiUI` + one `RolePickerRow.prefab`
-  instance per joined player, used whenever 2+ players joined.
+  instance per joined player (four `RoleTileView` tiles each), the squad
+  strip and Start, used whenever 2+ players joined.
+
+The look is in [ui-kit.md](ui-kit.md).
 
 `PlayerRoleComponent`/`PlayerHealth`/`PlayerAbility`'s role-dependent setup
 (sprite tint, `maxHealth`/`maxShield`, Medic's aura ring / Tank's shield arc)
@@ -432,8 +434,9 @@ aggro table all stay untouched by this feature.
   one row per joined player; each row polls its own paired device directly
   (dpad/stick or WASD to move a highlight, South/Enter to confirm,
   West/Escape to unlock — see [input.md](input.md)'s "Local co-op join
-  screen input"). A shared `roleTaken` check across rows enforces distinct
-  picks; `Start` enables once every row has locked a role.
+  screen input"). `RoleSelectMultiUI.HolderOf` / `IsRoleTakenByOther`
+  across rows enforces distinct picks (other rows show the role as TAKEN);
+  `Start` enables once every row has locked a role.
 - **Cosmetic note**: `Teammate_Tank`/`Teammate_Medic`/`Teammate_Support`
   (the GameObject *names* in the legacy fallback scene content) frequently
   no longer play the role their name suggests once a human picks something

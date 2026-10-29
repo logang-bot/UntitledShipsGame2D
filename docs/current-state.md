@@ -8,11 +8,20 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Pre-fight menus in the neon style (Session 54, PC)** — all five screens
+  before a level follow the Claude Design "Pre-Fight Menus" design: the
+  UI kit (buttons with focus/hover/pressed/disabled states, frames, tag
+  chips, hint bars), Chakra Petch and JetBrains Mono, and one palette for
+  the whole project (`NeonPalette`). A persistent `MenuBackground` scene
+  keeps the grid and the four live ships drifting while screens slide in
+  and out; Role Select's cards show the live 3D ships; Level Select's
+  launch grows the boss card and cuts to black. Keyboard, mouse and
+  gamepad all navigate. See [systems/ui-kit.md](systems/ui-kit.md).
 - **Main Menu / Lobby / Join / Pause** — the game now boots into
   `MainMenu.unity` (Build Settings index 0): Play → `Lobby`, Quit. Lobby
   offers **Local** (proceeds to `JoinLobby`, a co-op device-join screen —
-  see "Local co-op" below) or **Online** — Online is a disabled placeholder
-  button, since there's no Nakama backend yet. Role Select (now index 3)
+  see "Local co-op" below) or **Online** — Online is a locked "coming
+  later" card, since there's no Nakama backend yet. Role Select (now index 3)
   gained a Back button (to `JoinLobby` or `Lobby`). Mid-run, pressing
   **Escape** (or a gamepad's **Start**) during a level scene pauses (freezes the
   game via `Time.timeScale`, shows Resume/Restart/Change Roles/Quit to Main
@@ -21,8 +30,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   [systems/scene-flow.md](systems/scene-flow.md).
 - **Local co-op (up to 4 players, one machine)** — `Lobby`'s Local button
   leads to `JoinLobby.unity`: press any key/click (keyboard+mouse) or any
-  button on a gamepad to claim one of 4 slots, shown live; **Continue** once
-  at least one player has joined. `RoleSelect` then shows either the
+  button on a gamepad to claim one of 4 slots, shown live; a joined player
+  leaves with B (gamepad) or Esc (keyboard); **Continue** (or Start/Enter)
+  once at least one player has joined. `RoleSelect` then shows either the
   original single-picker (0-1 joined) or a per-player row picker (2+
   joined) — each row moves its own highlight and locks a role using that
   player's own device (dpad/stick or WASD, confirm with South/Enter), and
@@ -289,18 +299,22 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 ## What's NOT there yet
 
 - No networked/authoritative multiplayer (multiple humans across *separate*
-  machines) — Lobby's **Online** option is a disabled placeholder until
+  machines) — Lobby's **Online** card is locked ("coming later") until
   Nakama networking lands. Local co-op (multiple humans on *one* machine) is
   implemented — see the "Local co-op" bullet above.
-- Six scenes exist: `MainMenu.unity` (0), `Lobby.unity` (1),
+- Seven scenes exist: `MainMenu.unity` (0), `Lobby.unity` (1),
   `JoinLobby.unity` (2), `RoleSelect.unity` (3), `LevelSelect.unity` (4),
-  and one shared `Level.unity` (5) that plays all three bosses, each
-  spawned from its own prefab — see
+  one shared `Level.unity` (5) that plays all three bosses, each
+  spawned from its own prefab, and `MenuBackground.unity` (6), loaded
+  underneath the five menu screens — see
   [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
   are same-scene UI overlays within `Level`, not separate scenes (see
   [systems/combat.md](systems/combat.md)).
+- The menus have no mobile layout yet (PC only), the Main Menu wordmark is
+  a placeholder block, and Level Select's boss art is a placeholder glyph.
 - Art is only started: the four player ships are their 3D design models
-  (see [art-roadmap.md](art-roadmap.md)), and each boss fight scrolls its
+  (see [art-roadmap.md](art-roadmap.md)), the menus are restyled (see
+  above), and each boss fight scrolls its
   own four-layer parallax background (Marauder's burning foundry,
   Halcyon's storm-drowned towers, Warden's walled garrison). Bosses,
   minions, bullets and the avatar slot are still placeholder shapes. No
@@ -319,31 +333,36 @@ real networking last, then art/audio.
 1. Open the project in Unity, with `MainMenu` (under `Assets/Scenes/`) as
    the open scene — it's Build Settings index 0, so this is also what a real
    build boots into.
-2. Press **Play**, click **Play** on the Main Menu to load `Lobby`, then
-   click **Local** (Online is a disabled placeholder for now) to load
-   `JoinLobby`. Press any key or click to join as Player 1 (Keyboard &
-   Mouse), then click **Continue** to load `RoleSelect`. Click one of the 4
-   role buttons (Attacker/Tank/Medic/Support — this is the role the human
-   `Player` will use), then click **Start** once it's enabled. This loads
-   `LevelSelect` — click a card (**Marauder**, **Halcyon**, or **Warden**;
+2. Press **Play** (the persistent `MenuBackground` loads underneath
+   automatically), click **Play** on the Main Menu to go to `Lobby`, then
+   click the **Local** card (Online is a locked "coming later" card) to go
+   to `JoinLobby`. Press any key or click to join as Player 1 (Keyboard &
+   Mouse; Esc leaves again), then click **Continue** to go to `RoleSelect`.
+   Click one of the 4 role cards (Attacker/Tank/Medic/Support — this is the
+   role the human `Player` will use; nothing is highlighted until you hover,
+   click or press an arrow/D-pad), then click **Start** once it's enabled.
+   This goes to `LevelSelect` — click a card (**Marauder**, **Halcyon**, or **Warden**;
    all three now have real boss mechanics, no placeholder remaining, see
    [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md),
    [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md), and
    [systems/bosses/warden-boss.md](systems/bosses/warden-boss.md)) to load that
    level's scene, which auto-assigns the 3 remaining roles to 3 AI ships (any
-   of the 4 you didn't pick, exactly once each). *(Opening `Level1`/
-   `Level2`/`Level3` directly instead and pressing Play still works too,
+   of the 4 you didn't pick, exactly once each). *(Opening `Level.unity`
+   directly instead and pressing Play still works too,
    bypassing every menu scene entirely, and falls back to whatever roles are
    currently hand-set on `Player`/`Teammate_*` in the Inspector — useful for
    quick iteration. A Back button on Lobby/JoinLobby/Role Select/Level Select
-   lets you step back a screen at a time instead.)*
+   (or B / Esc; Backspace on the multiplayer role picker) lets you step back
+   a screen at a time instead. Any single menu scene can also be opened and
+   played directly; it loads `MenuBackground` itself.)*
 3. *(Optional, local co-op)* At `JoinLobby`, connect one or more gamepads and
    press a button on each to join additional players (up to 4 total) — each
-   claims its own slot, shown live. Click **Continue** once everyone's
+   claims its own slot, shown live; B leaves. Click **Continue** once everyone's
    joined; with 2+ players, `RoleSelect` shows a row per player instead of
    the single picker — move each row's highlight with that player's own
-   dpad/stick or WASD and confirm with South/Enter to lock a role (no two
-   rows can lock the same one). Click **Start** once every row is locked,
+   dpad/stick or WASD and confirm with South/Enter to lock a role, X/Esc to
+   unlock (no two rows can lock the same one). Click **Start** (or gamepad
+   Start) once every row is locked,
    then pick a level at `LevelSelect` as above. Any role nobody picked is
    filled by AI, same as the single-player flow.
 4. Watch the opening sequence play out automatically: all 4 ships glide up

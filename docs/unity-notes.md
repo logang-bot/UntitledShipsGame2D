@@ -339,3 +339,33 @@ file after a scripted save, and strip unrelated hunks before committing:
 - Reopen the scene to confirm Unity reads it back.
 
 Hit in Session 43 (`Level1.unity`, 52 `NaN`s).
+
+## MCP screenshots: camera-rendered captures misreport Overlay UI
+
+`manage_camera` `screenshot` **with a `camera`** renders that camera
+directly, which leaves out (or misblends) Screen Space - Overlay canvases:
+the Lobby's LOCAL card sampled as bright teal (its glow showing through)
+when the real game view is near-black navy. **Without** a `camera` it uses
+the ScreenCapture API and matches the game view; read the saved PNG with
+the file reader. Also check the capture isn't mid-transition: a menu
+screen's groups start at alpha 0 and fade in over ~0.3 s (Session 54).
+
+## Simulated menu input doesn't reach UI actions from the MCP bridge
+
+The Input System settings use `PointersAndKeyboardsRespectGameViewFocus`
+and `ResetAndDisableNonBackgroundDevices`. Keyboard state queued with
+`InputSystem.QueueStateEvent` updates the device (`isPressed` is true) but
+never reaches `InputSystemUIInputModule`'s actions unless the Game view
+has focus, and a virtual gamepad is reset while the Editor is in the
+background. So menu navigation (arrows, D-pad, B / Esc hotkeys) can only
+be verified by hand. Calling the UI script methods (`Play()`,
+`SelectTank()`, `JoinLobbyUI.Handle(...)`) exercises the same logic.
+
+## MCP `execute_code` compiles as C# 6 (CodeDom)
+
+No Roslyn in this project, so one-off editor code is C# 6: no `using`
+directives (fully qualify `UnityEngine.UI.Image`, `TMPro.…`), no
+`out var`, no switch expressions, and `Object` is ambiguous (write
+`UnityEngine.Object`). A lambda parameter name can't be reused as a local
+later in the same method (`bar`, `sp`, `hb` all collided). The menu
+screens of Session 54 were built this way; no builder script was kept.

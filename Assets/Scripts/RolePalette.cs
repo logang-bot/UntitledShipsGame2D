@@ -25,7 +25,7 @@ public static class RolePalette
         _ => PaletteColor.Support,
     };
 
-    private static PaletteColor DimTokenFor(PlayerRole role) => role switch
+    public static PaletteColor DimTokenFor(PlayerRole role) => role switch
     {
         PlayerRole.Attacker => PaletteColor.AttackerDim,
         PlayerRole.Tank => PaletteColor.TankDim,
@@ -33,7 +33,7 @@ public static class RolePalette
         _ => PaletteColor.SupportDim,
     };
 
-    private static PaletteColor BgTokenFor(PlayerRole role) => role switch
+    public static PaletteColor BgTokenFor(PlayerRole role) => role switch
     {
         PlayerRole.Attacker => PaletteColor.AttackerBg,
         PlayerRole.Tank => PaletteColor.TankBg,

@@ -20,7 +20,7 @@ public class WardenBigShot : MonoBehaviour
     public float muzzleOffset = 0.9f;
 
     [Header("Telegraph")]
-    public Color telegraphColor = new Color(1f, 0.35f, 0.15f);
+    public PaletteSwatch telegraphColor = new PaletteSwatch(PaletteColor.WardenBigShotTelegraph);
     public float telegraphPulseSpeed = 14f;
 
     public bool IsTelegraphing { get; private set; }

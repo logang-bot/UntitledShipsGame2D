@@ -28,7 +28,7 @@ Two rules keep the parallel work safe:
 | Anime ability cut-ins | **Decided at the start of Phase 6**, between two routes, neither needing Blender: **2D illustrated** characters animated in Unity, or **VRoid → Unity** through UniVRM and its toon shader (MToon). | 2D matches 2D ships, and it's how Touhou's own spell-card cut-ins work. VRoid → Unity keeps the anime-3D look while skipping Blender entirely. |
 | Mobile | **One project** with per-platform quality settings | No duplicated code, and it keeps crossplay possible. Sprites cost a phone the same however they were made. |
 | Priority | Ships, bosses, effects and powers first; then the pre-level screens (main menu through level select); then the in-level HUD | The screens before the level show the ships and bosses, so they come after those exist. |
-| Screens and HUD style | One shared **UI kit** built from the `Neon Fleet HUD` design: dark panels, neon role-colored frames, **Chakra Petch** and **JetBrains Mono** fonts. Every menu and the HUD use it. | One look across all screens, built once. Both fonts are free Google Fonts (SIL Open Font License), usable in Unity through TextMesh Pro. |
+| Screens and HUD style | One shared **UI kit**, first from the `Neon Fleet HUD` design and built from the `Pre-Fight Menus` design (Session 54, see `systems/ui-kit.md`): dark panels, neon role-colored frames, **Chakra Petch** and **JetBrains Mono** fonts. Every menu and the HUD use it. | One look across all screens, built once. Both fonts are free Google Fonts (SIL Open Font License), usable in Unity through TextMesh Pro. |
 
 **Readability at real size.** At in-game size (about 65 px tall on a 1080p
 desktop, 115 px on a 1080×1920 phone) the 3D ships' fine detail (surface
@@ -45,7 +45,8 @@ The ship designs live in the Claude Design project "Ship Designs"
 | --- | --- |
 | `Ship Designs.dc.html` | The four ships as 2D SVG line art (set 1a), with 96/48/32 px scale previews, and the 3D set (1b) embedded |
 | `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download. **Saved and in use:** `Assets/Art/Ships/Models/aegis-04.glb`, `nova-11.glb`, `lumen-02.glb`, `echo-07.glb` |
-| `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the UI kit (Phase 7) and the HUD (Phase 8). There are **no designs yet** for the screens before a level. |
+| `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the HUD (Phase 8) and the starting point of the UI kit. |
+| `Pre-Fight Menus.dc.html` + `Menu Button.dc.html` + `Hint Bar.dc.html` | The five screens before a level (Main Menu, Lobby, Join Lobby, Role Select single and multi, Level Select) at PC 1600×900 and mobile 390×844, the UI kit (frames, button states, slot frames, icons, colour tokens, type scale) and the screen transitions. **PC built** (Session 54, Phase 7); mobile waits for the phone work. Icons exported as PNGs to `Assets/Art/UI/Import/`. |
 | `Boss Designs.dc.html` + `bossBackgrounds.js` | The three bosses (2D + 3D, phase 2 looks, signature colors: Marauder `#FF2D95`, Halcyon `#FFE14A`, Warden `#5470FF`), Marauder's minions, and the four-layer parallax background per boss, from the prompt summarized in Phase 2c. **Backgrounds in use** (Session 53, PNGs in `Assets/Art/Backgrounds/`); the bosses aren't in the game yet (Phase 5). |
 | *(requested, Session 53)* | `Combat FX Designs.dc.html`: bullets, auras and rings, the role abilities' activation effects, and every boss's minions plus the wave enemies, each shown over the three backgrounds, with PNG and particle-texture exports. Feeds Phases 3–5. Not designed yet. |
 
@@ -280,8 +281,18 @@ Built straight from the 3D models instead of the planned 2D sprites first.
 ### Phase 7: Pre-level screens
 
 The screens a player passes through before a fight, in build order (see
-[systems/scene-flow.md](systems/scene-flow.md)). Today they're plain Unity
-UI buttons and text that work, so this is a restyle, not new behavior.
+[systems/scene-flow.md](systems/scene-flow.md)). They were plain Unity
+UI buttons and text that worked, so this was mostly a restyle.
+
+**Status (Session 54): PC done.** All five screens follow the
+`Pre-Fight Menus` design on PC, full window (layout 1a for the Main
+Menu), with the UI kit, the two fonts, one project-wide palette
+(`NeonPalette`), live 3D ships on the role cards, a persistent
+`MenuBackground` scene with the drifting fleet, and the design's
+transitions. Details in [systems/ui-kit.md](systems/ui-kit.md). Still
+open: the mobile layouts, a real logo for the wordmark slot, boss art on
+the Level Select cards (Phase 5), QUIT's confirm modal, and a check with
+real gamepads. The table below is the original brief.
 
 | Screen | What it does today | What the art adds |
 | --- | --- | --- |
@@ -378,9 +389,8 @@ art:
   Claude Design boss designs, then confirmed.
 - **Backgrounds beyond the first draft:** per-phase changes, the warping
   grid on top, or more layers. Decided after seeing the first draft in game.
-- **Screens on desktop:** do the menus fill the whole window, or stay
-  inside the 9:16 playfield frame with the sidebars like the levels?
-  Decided with the Phase 7 mockups.
+- ~~**Screens on desktop:**~~ **Decided (Session 54):** the menus fill the
+  whole window (the design's layout 1a), not the 9:16 playfield frame.
 - **The game's title and logo,** needed for `MainMenu`.
 - **The roll mechanic:** purely visual, or does it give i-frames? That's the
   phase 3 developer's call.

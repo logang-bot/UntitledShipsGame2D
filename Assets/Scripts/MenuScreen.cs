@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -22,7 +23,14 @@ public class MenuScreen : MonoBehaviour
 
     /// <summary>Header, content and footer, staggered in this order. Empty = the whole screen slides as one.</summary>
     public CanvasGroup[] slideGroups;
+    /// <summary>Focused on enter (if focusOnEnter), and whenever a navigation press arrives with nothing selected.</summary>
     public Selectable firstSelected;
+    /// <summary>
+    /// Off for choice screens (Role Select, Level Select), which open with every
+    /// option unhighlighted; the first arrow / D-pad / stick press then focuses
+    /// firstSelected.
+    /// </summary>
+    public bool focusOnEnter = true;
 
     private CanvasGroup screenGroup;
     private SlideTarget[] targets;
@@ -42,12 +50,38 @@ public class MenuScreen : MonoBehaviour
     {
         yield return PlayAll(EnterSpec(MenuTransitionState.IsBack));
         SetInteractable(true);
-        Focus(firstSelected);
+        if (focusOnEnter) Focus(firstSelected);
     }
+
+    void LateUpdate()
+    {
+        if (leaving || !screenGroup.interactable || !NothingSelected()) return;
+        if (NavigationPressed()) Focus(firstSelected);
+    }
+
+    private static bool NothingSelected() =>
+        EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null;
+
+    private static bool NavigationPressed() =>
+        EventSystem.current.currentInputModule is InputSystemUIInputModule module
+        && module.move != null && module.move.action != null && module.move.action.triggered;
 
     public void GoTo(string scene) => Leave(scene, false);
 
     public void GoBack(string scene) => Leave(scene, true);
+
+    /// <summary>
+    /// For a screen that leaves by its own animation rather than GoTo/GoBack
+    /// (Level Select's launch): blocks input and any further transition.
+    /// False if the screen is already leaving.
+    /// </summary>
+    public bool TryBeginLeaving()
+    {
+        if (leaving) return false;
+        leaving = true;
+        SetInteractable(false);
+        return true;
+    }
 
     public void Focus(Selectable selectable)
     {

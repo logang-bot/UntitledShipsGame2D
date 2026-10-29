@@ -1952,3 +1952,84 @@ Speed Boost ring, the shockwave and Static Field zones), the role
 abilities as 3–4 frame activation strips, and Standard/Explosive minions
 per boss plus the wave enemies. Not designed yet. It moves Explosive
 minions from today's orange tint to the boss color.
+
+## Session 54 — Pre-Fight Menus, One Palette (Art Phase 7, PC)
+
+Built the Claude Design `Pre-Fight Menus.dc.html` (plus its `Menu Button`
+and `Hint Bar` components) for PC. Mobile layouts are deferred with the
+rest of the phone work. Details in `systems/ui-kit.md` and
+`systems/scene-flow.md`.
+
+### Decisions
+
+- **One source of truth for every color.** `NeonPalette` holds every color
+  as a `PaletteColor` token; code uses `Get()`, Inspector fields became
+  `PaletteSwatch` (token + alpha, implicitly a `Color`), and scene objects
+  use `PaletteTint`. The prefab values were migrated as-is, except that
+  `Teammate.prefab`'s Medic aura and Tank shield arc used an older green and
+  blue while `Ship.prefab` already used the role colors; both now use the
+  role colors. Menu cameras went from `(0.05, 0.05, 0.08)` to `Bg`
+  `#04050A`. The colors that arrived with the Warden fixes from `main`
+  (Halcyon surge tint and panel text, Warden arm "down" grey, Big Shot
+  telegraph) were migrated too, unchanged in value. The ship GLB materials
+  are the one documented exception.
+- **Menus fill the window on PC** (design layout 1a), closing the
+  art-roadmap open question.
+- **Five scenes kept, plus a persistent `MenuBackground`.** Screens load
+  additively over it, so the grid and fleet never restart and screens can
+  slide in and out; `MenuScreen` loads it if a screen is opened on its own,
+  so `PauseUI` needed no change. Chosen over merging the five scenes into
+  one (same transitions, but one shared scene file the deck-screen work
+  would also edit) and over plain fades (the background would restart).
+- **Live 3D ships on the role cards**, through four portrait cameras in
+  `MenuBackground` rendering into render textures.
+- **Join Lobby joins manually.** `PlayerInputManager`'s "join on any
+  button" also joined on the B / Esc press the design uses to leave, so
+  `JoinDeviceInput` + `JoinPressRouter` now decide join / leave / back /
+  continue per press.
+- **Choice screens open unhighlighted** (user feedback): Role Select and
+  Level Select no longer focus their first card on entry
+  (`MenuScreen.focusOnEnter` off); the first navigation press focuses it.
+- **No JS ported.** The design's SVG icons came in as PNGs exported from
+  Claude Design; Chakra Petch and JetBrains Mono as TTFs from Google Fonts.
+  Neither font has ✓ or ◤, so those are kit sprites.
+
+### Made
+
+- Palette: `PaletteColor`, `NeonPalette`, `PaletteSwatch`, `PaletteTint`,
+  `RoleColors`, `RolePalette`. `PlayerAbility.cs` was over the file-size
+  cap and was split (`PlayerAbilityPartyBuffRing`, `PlayerAbilityLabels`).
+- UI kit: `MenuButton` (+ variant/state/look/styles), `NeonFrame`
+  (+ looks), `TagChip` (+ looks, glyph), `MenuHeader`, `MenuFooter` /
+  `HintBar`, `MenuToast`, `MenuHotkey`, `TextGlow`, `CardFocusVisual`,
+  `PointerClickEvent`; TMP font assets; generated kit textures.
+- Transitions: `MenuScreen`, `MenuTween`, `MenuEase`, `TweenSpec`,
+  `SlideTarget`, `MenuTransitionState`; `MenuBackground.unity` with
+  `MenuFleet`, `MenuShipDrift` and `ShipPortraitStudio`. Build index 6.
+- Screens: Main Menu (1a), Lobby (2a, locked ONLINE card + toast), Join
+  Lobby (3a–c, `JoinSlotView`), Role Select (4a `RoleCardView` with
+  `StatBarView`/`AbilityLineView`; 4b `RoleTileView`, `SquadStripView`,
+  rewritten `RolePickerRow` visuals with the same input logic), Level
+  Select (5a `LevelCardView`, launch grow + blackout). Data:
+  `RoleCardText`, `RoleStatScale`, `SquadLineup`, `LevelCardText`.
+
+### Verified
+
+Play mode through the MCP bridge, with screenshots of the game view
+compared against the design: every screen and the main states (role
+picked, 2 players with one locked, 4 players all locked, level card
+focused). The flow forward and back, launching a level (only `Level` stays
+loaded), and Pause → Change Roles back into the menus with the background.
+Joining a keyboard and a virtual gamepad, leaving, and Continue carrying
+the roster. The MCP camera-rendered screenshots misreport UI colors; the
+ScreenCapture path (no camera given) matches the game view. Game time
+freezes while the Editor is unfocused, so the toast, join wipe, prompt
+pulse and card pulse weren't seen animating. Not tried: real keyboard
+presses and real gamepads.
+
+### Tests
+
+New `NeonPaletteTests`, `PaletteSwatchTests`, `MenuEaseTests`,
+`JoinPressRouterTests`, `SquadLineupTests`, `RoleStatScaleTests`. All 128
+EditMode tests pass (the old `PlayerRoleStatsTests` / `MarauderBossDamageTests`
+failures were fixed on `main` by the Warden fixes this branch now sits on).

@@ -6,7 +6,7 @@ using UnityEngine;
 // visual; only reads HalcyonSurge's flags.
 public class HalcyonSurgeTint : MonoBehaviour
 {
-    public Color openingColor = new Color(0.35f, 1f, 0.45f);
+    public PaletteSwatch openingColor = new PaletteSwatch(PaletteColor.SurgeOpening);
     public float telegraphPulseSpeed = 12f;
 
     private SpriteRenderer sr;

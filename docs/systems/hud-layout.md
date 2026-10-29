@@ -234,7 +234,8 @@ the end-of-fight totals are the point of having one.
 
 Key public fields: `boss`, `titleHeight`/`rowHeight`/`rowSpacing`/`padding`,
 `titleFontSize`/`rowFontSize`, `refreshInterval`, and the color set
-(`panelColor`/`titleColor`/`barTrackColor`/`rowTextColor`/`fallbackBarColor`).
+(`panelColor`/`titleColor`/`barTrackColor`/`rowTextColor`/`fallbackBarColor`),
+all `PaletteSwatch` palette tokens since Session 54 (see [ui-kit.md](ui-kit.md)).
 
 ## Scene wiring
 
@@ -299,7 +300,7 @@ destroyed normally either way, only the end-screen popup is guarded.
 **`Assets/Prefabs/PartyFrame.prefab`** — the party frame, avatar + role +
 live stats, `PartyFrameUI.cs` attached. `PartyFrame_1..4` are all instances
 of it (see `PartyFrameManager.cs` above). Root `Image` is a solid dark
-panel (`RGBA(0.05, 0.05, 0.08, 0.85)`), consistent with the project's
+panel (`RGBA(0.05, 0.05, 0.08, 0.85)`, the palette's `HudPanel` token at 85%), consistent with the project's
 cyberpunk/dark-neon aesthetic (`../overview.md`).
 
 ### GameplayCanvas

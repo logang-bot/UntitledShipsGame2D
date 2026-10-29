@@ -17,6 +17,20 @@ public static class MenuTween
         Apply(target, spec, 1f);
     }
 
+    /// <summary>Scales a UI element up from its current size while gliding it to the centre of its canvas (ease-in).</summary>
+    public static IEnumerator GrowToCenter(RectTransform target, float toScale, float seconds)
+    {
+        Vector3 from = target.position;
+        Vector3 to = target.root.position;
+        for (float elapsed = 0f; elapsed < seconds; elapsed += Time.unscaledDeltaTime)
+        {
+            float t = MenuEase.In(elapsed / seconds);
+            target.position = Vector3.Lerp(from, to, t);
+            target.localScale = Vector3.one * Mathf.Lerp(1f, toScale, t);
+            yield return null;
+        }
+    }
+
     private static float Eased(TweenSpec spec, float t) => spec.easeOut ? MenuEase.Out(t) : MenuEase.In(t);
 
     private static void Apply(SlideTarget target, TweenSpec spec, float progress)

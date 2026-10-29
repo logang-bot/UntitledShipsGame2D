@@ -17,8 +17,8 @@ public class HalcyonBossPanelUI : MonoBehaviour
     public TextMeshProUGUI surgeWarningText;
     public TextMeshProUGUI surgeCooldownText;
     public TextMeshProUGUI staticFieldCooldownText;
-    public Color telegraphTextColor = new Color(1f, 0.9f, 0.3f);
-    public Color openingTextColor = new Color(0.35f, 1f, 0.45f);
+    public PaletteSwatch telegraphTextColor = new PaletteSwatch(PaletteColor.SurgeTelegraphText);
+    public PaletteSwatch openingTextColor = new PaletteSwatch(PaletteColor.SurgeOpening);
 
     public void Bind(GameObject bossObject)
     {

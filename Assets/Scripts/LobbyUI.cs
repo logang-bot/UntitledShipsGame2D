@@ -1,17 +1,13 @@
 using UnityEngine;
-using UnityEngine.UI;
 
+// Mode select: LOCAL goes on to JoinLobby. ONLINE is a locked card, not a
+// button - there's no Nakama backend yet (see roadmap.md's "Nakama
+// networking") - so focus skips it and a click only shows a toast.
 public class LobbyUI : MonoBehaviour
 {
     public MenuScreen screen;
-    public Button onlineButton;
-
-    void Awake()
-    {
-        // No Nakama backend yet (see roadmap.md's "Nakama networking" item) -
-        // Online stays a disabled placeholder until networking lands.
-        onlineButton.interactable = false;
-    }
+    public MenuToast toast;
+    public string onlineNotice = "Online co-op arrives in a later update.";
 
     public void SelectLocal()
     {
@@ -20,6 +16,8 @@ public class LobbyUI : MonoBehaviour
         // docs/systems/scene-flow.md.
         screen.GoTo("JoinLobby");
     }
+
+    public void ShowOnlineNotice() => toast.Show(onlineNotice);
 
     public void Back()
     {

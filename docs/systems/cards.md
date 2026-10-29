@@ -132,9 +132,11 @@ one.
 
 A new `DeckBuild.unity` sits between `RoleSelect` and whichever level scene
 is chosen, in the flow, and is appended at whatever the next available
-Build Settings index is when it's built (currently **6**, since
-`LevelSelect`/`Level` occupy 4/5 — see
-[scene-flow.md](scene-flow.md)) — appending rather than inserting avoids
+Build Settings index is when it's built (currently **7**, since
+`LevelSelect`/`Level`/`MenuBackground` occupy 4–6 — see
+[scene-flow.md](scene-flow.md); like the other menus it should be a
+`MenuScreen` scene loaded over `MenuBackground`, using the UI kit in
+[ui-kit.md](ui-kit.md)) — appending rather than inserting avoids
 renumbering every scene before it. Flow order and build order don't have to
 match; only index 0 is meaningful. Its exact position relative to
 `LevelSelect` (before or after level-picking) is a decision for whenever
