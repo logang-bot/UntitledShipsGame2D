@@ -241,6 +241,9 @@ Built straight from the 3D models instead of the planned 2D sprites first.
     Warden shockwaves (the Warden frames were added to the design for this)
     and Halcyon's Static Field, scaled so the drawn ring sits on the damage
     radius.
+  - **No sprite atlases (Session 56):** each PNG stays its own texture.
+    Packing them didn't cut batches, since the SRP Batcher already batches
+    across textures, and doubled texture memory. See "Mobile quality tiers".
   - **Imported, not used yet:** see the list just below.
   - **Still open in this phase:** bloom tuning, hit sparks and explosions,
     the warping grid. `WardenBigShot` isn't attached to `WardenBoss.prefab`,
@@ -415,7 +418,16 @@ real gamepads. The table below is the original brief.
   - particle caps;
   - grid resolution.
 - **Android texture overrides:** a smaller max size, plus compression.
-- **Sprite Atlases**, to cut draw calls.
+- ~~**Sprite Atlases**, to cut draw calls.~~ **Tested, not needed
+  (Session 56).** URP 2D draws every sprite through the SRP Batcher, which
+  groups draws by shader, not by texture, so texture switches don't break
+  batches. With the Combat FX sprites packed into three atlases, a scripted
+  busy moment was still 3 sprite batches (with or without atlases), 112 vs
+  113 draw calls and 27 vs 27 SetPass with ship meshes hidden. The atlases
+  took 112 MB uncompressed against 54 MB for the source textures, so they
+  were removed. Revisit only if a phone tier turns the SRP Batcher off. The
+  real draw-call cost is the ship meshes: 155 separate draws outside the
+  SRP Batcher in that frame. Details in `progress-log.md`, Session 56.
 - Check on a real phone in **every phase**, not at the end.
 
 ### Asset organization

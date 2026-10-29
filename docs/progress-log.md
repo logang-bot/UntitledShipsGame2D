@@ -2066,3 +2066,43 @@ type (rotated along flight), death bursts plus an 8-shard fragment ring,
 all four abilities, the Medic/Support/Tank visuals and the Marauder
 shockwave ring render. The Halcyon and Warden fights weren't played; their
 rings use the same code path as Marauder's.
+
+## Session 56 — Sprite Atlases Tested and Dropped (Mobile Quality Tiers)
+
+Tried the "Sprite Atlases" item from `art-roadmap.md`'s "Mobile quality
+tiers" on the Combat FX sprites. It made no batch difference, so the
+atlases were removed. No code or import settings changed.
+
+- Built three Sprite Atlas V2 assets (packer mode was already Sprite Atlas
+  V2): `CombatFX_Small` (`Bullets/`, `Minions/`, the small player auras and
+  aggro mark; one 2048² page, 16 MB), `CombatFX_Rings` (boss rings and the
+  1024² boosted Medic aura; 4096×2048, 32 MB) and `CombatFX_Abilities`
+  (ability frames; 4096², 64 MB). `Particles/` was left out. Rotation and
+  tight packing off, padding 4, no mipmaps, Bilinear, uncompressed. All 104
+  sprites landed in exactly one atlas. Total 112 MB, against 54 MB for the
+  source textures: the padding stops the 512 and 1024 px frames from tiling.
+- Measured in Play Mode on `Level.unity` (Marauder) with a scripted, frozen
+  busy moment: 6 wave enemies (every pattern, standard and explosive), a
+  minion, 54 bullets of all nine prefabs, 7 death/heal sequences, the
+  Marauder ring, and all four abilities. For the no-atlas run the packer
+  was set to Disabled and then restored.
+
+| | No atlases | Atlases |
+| --- | --- | --- |
+| Sprite SRP batches (Frame Debugger) | 3 | 3 |
+| Draw calls / SetPass, ship meshes hidden | 113 / 27 | 112 / 27 |
+| Draw calls / SetPass, full frame | 268 / 143 | 267 / 135 |
+
+- Why: URP 2D draws sprites through the SRP Batcher, which batches by
+  shader variant rather than by texture, so a texture switch doesn't start
+  a new batch. The 3 sprite batches come from the ship meshes interleaving
+  by sort order. The ship meshes themselves are 155 separate draws outside
+  the SRP Batcher, which is where draw calls could actually be saved.
+- Visual check while atlased: sprite sizes and pivots unchanged (including
+  `support_speed_ring`'s 0.5 / 0.609), the Marauder ring drawn at exactly
+  its 1.7 radius, and no edge bleeding in cropped supersized captures.
+
+### Verified
+
+All 128 EditMode tests pass; no console errors. The atlas folder is
+deleted and `EditorSettings.asset` is unchanged.

@@ -690,7 +690,8 @@ is independently testable and the one before it de-risks the next.
   - the four role ships as live 3D models (done: Session 51), plus motion;
   - one parallax background per boss: dark, stars, city rooftops far below
     (first draft done: Session 53);
-  - effects (Combat FX sprites done: Session 55; grid and particles open);
+  - effects (Combat FX sprites done: Session 55, Sprite Atlases tested and
+    dropped: Session 56; grid and particles open);
   - powers (role ability effects done: Session 55; black hole open);
   - bosses, designed in Claude Design alongside the backgrounds;
   - anime cut-ins;

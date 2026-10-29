@@ -328,6 +328,10 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   (`WardenBigShot` isn't on the Warden prefab), the standalone aggro mark,
   and the four particle textures. Full list, with where each would go, in
   [art-roadmap.md](art-roadmap.md)'s "Combat FX imported but not used yet".
+- The Combat FX sprites are deliberately **not** in Sprite Atlases: tested
+  in Session 56, they made no batch difference under the SRP Batcher and
+  doubled texture memory (see [art-roadmap.md](art-roadmap.md)'s "Mobile
+  quality tiers").
 - **Known issue:** sometimes a white shape appears in the center of the
   screen for the moment a hit ship flashes. It's intermittent and not yet
   diagnosed; see [roadmap.md](roadmap.md)'s "Known issues".
