@@ -13,17 +13,15 @@ Orchestrator Per Level" for why this is a new coordination *shape* without
 actually breaking any of this project's existing conventions (still a
 plain `MonoBehaviour`, still Inspector-wired, no singleton/
 `FindObjectOfType`). Kept intentionally minimal: one script, no generic
-framework. Named generically (not `Level1`-prefixed) since it's duplicated
-as-is into each level's own scene (`Level1`/`Level2`/`Level3`) — only the
-boss instance and
-this component's own Inspector-tuned durations are Level-1-specific.
+framework. Named generically (not `Level1`-prefixed) since it drives every
+level: all three play in the one shared `Level` scene, and only the boss
+differs (see [scene-flow.md](scene-flow.md)'s "Level setup").
 
 ## LevelSequencer.cs
 
-**Attached to:** a standalone `LevelSequencer` GameObject in each level
-scene (`Level1`/`Level2`/`Level3`).
+**Attached to:** a standalone `LevelSequencer` GameObject in `Level.unity`.
 **Requires:** `ships[]` (drag `Player` + all 3 `Teammate_*`), `enemySpawner`
-(drag `Spawner`), `bossObject` (drag the `Boss` instance — `MonoBehaviour`-typed
+(drag `Spawner`), `bossObject` (set at runtime by `LevelSetup` to the spawned boss — `MonoBehaviour`-typed
 and cast to `IBoss` internally so this same script drives either
 `MarauderBoss` or `HalcyonBoss` with zero sequencing changes; see
 `../architecture.md`'s "Boss-type-agnostic orchestration: IBoss").

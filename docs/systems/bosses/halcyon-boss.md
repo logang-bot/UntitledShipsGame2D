@@ -10,6 +10,14 @@ via a brainstorming session recorded in
 [docs/superpowers/specs/2026-09-04-halcyon-boss-design.md](../../superpowers/specs/2026-09-04-halcyon-boss-design.md);
 this doc describes the built system.
 
+> **Session 51:** this boss is now its own prefab, `Assets/Prefabs/HalcyonBoss.prefab`
+> (inactive root at its home position), spawned into the one shared
+> `Level.unity` by `LevelSetup` only when its level is picked. Its panel is
+> `HUDCanvas/BossPanel_Halcyon`, bound at spawn. Ship rosters, taunt and the
+> defeat/Victory wiring are set at runtime (see
+> [scene-flow.md](../scene-flow.md)'s "Level setup"). Notes below about
+> per-level scenes describe how the boss was originally built.
+
 ## At a Glance
 
 - **Identity:** a mobility check — the first fight where standing still
@@ -26,7 +34,7 @@ this doc describes the built system.
   pulse](#halcyonstaticfieldcs) (the fight's real damage source — chips any
   ship inside its ring, and punishes ships clustering near the boss and
   near each other much harder).
-- **Level summary:** reached via `LevelSelect` → `Level2.unity`, which runs
+- **Level summary:** reached via `LevelSelect` → Level 2 (the shared `Level.unity`), which runs
   the same shared `LevelSequencer` timeline every level uses (see
   [level-sequencing.md](../level-sequencing.md)) — no sequencing changes,
   only the boss instance and its own components differ from Marauder.
@@ -170,13 +178,12 @@ coroutine — the one mechanic here that needs a wait rather than pure
 aggro (unlike Marauder's `targets[]`, this never feeds a threat table).
 Still needs the *live* spawned roster on the normal co-op join route, for
 exactly the reason `MarauderBoss.targets[]` does (see marauder-boss.md's
-"Aggro roster comes from `targets[]`") — `PartySetupBootstrap.SpawnDynamicParty()`
-deactivates the 4 legacy scene ships and spawns fresh ones, so a stale
+"Aggro roster comes from `targets[]`") — `PartySetupBootstrap`
+deactivates the 4 scene ships and spawns fresh ones, so a stale
 Inspector-wired `ships[]` would mean Static Field never finds a live
-candidate. `PartySetupBootstrap` gained a `halcyonStaticField` field (only
-set in `Level2.unity`) alongside its existing `bossObject` field, assigning
-`halcyonStaticField.ships = spawned` the same place `MarauderBoss.targets`
-gets its equivalent fix.
+candidate. `BossEvents.AssignShips` (called by `PartyBossWiring`) sets
+`ships` on the spawned boss's `HalcyonStaticField`, the same place
+`MarauderBoss.targets` gets its equivalent fix.
 
 **Ring visual**: same always-dim / brighter-during-telegraph /
 impact-flash-on-hit `LineRenderer` idiom as Marauder's shockwave ring, at
@@ -234,9 +241,9 @@ see `docs/architecture.md`'s "Boss-type-agnostic orchestration: IBoss".
 `Level2.unity`'s `LevelSequencer`/`PartySetupBootstrap` and all 4 ships'
 `PlayerController`/`AIController` have `bossObject` dragged to the `Boss`
 instance, same as `Level1.unity`'s do to `MarauderBoss.prefab`.
-`PartySetupBootstrap` additionally has `halcyonStaticField` set (see
-"HalcyonStaticField.cs" above) — a field that stays `null`/unused in
-`Level1.unity`.
+Since Session 51 the boss is spawned from `HalcyonBoss.prefab` into the
+shared `Level.unity`, so these references are set at runtime by
+`PartyBossWiring` rather than dragged in the Inspector.
 
 AI teammates against Halcyon use the default `AIBossTactics`. That's the
 per-boss AI strategy since Session 46; see `docs/architecture.md`'s
@@ -246,10 +253,9 @@ auto-taunts against Halcyon, matching Taunt's documented no-op there. Its
 
 ### Not shared with Marauder
 
-`PartySetupBootstrap`'s aggro-roster fix (`boss.targets = spawned`) doesn't
-apply here — Halcyon has no `targets[]`/aggro at all, so that assignment is
-simply absent for this boss, replaced by the `halcyonStaticField.ships =
-spawned` assignment described above.
+The aggro-roster fix (`boss.targets = ships`) doesn't apply here —
+Halcyon has no `targets[]`/aggro at all, so `BossEvents.AssignShips` sets
+`HalcyonStaticField.ships` instead, as described above.
 
 `Level2.unity`'s 4 ships previously carried Marauder's `OnTaunt` →
 `MarauderBoss.TauntedBy` persistent listener (inherited from when the scene

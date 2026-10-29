@@ -6,21 +6,19 @@ public class PlayerDamageFlash : MonoBehaviour
     public Color flashColor = Color.white;
     public float flashDuration = 0.12f;
 
-    private SpriteRenderer sprite;
-    private PlayerRoleComponent roleComponent;
+    private ShipVisual visual;
     private Coroutine flashCoroutine;
 
     void Awake()
     {
-        sprite = GetComponent<SpriteRenderer>();
-        roleComponent = GetComponent<PlayerRoleComponent>();
+        visual = GetComponent<ShipVisual>();
     }
 
     public void Flash() => Flash(flashColor);
 
     // Overload lets other systems (e.g. Medic's heal aura) flash a
     // different color than the default damage-flash color, while still
-    // sharing the same coroutine/revert-to-role-tint mechanics.
+    // sharing the same coroutine and revert mechanics.
     public void Flash(Color color)
     {
         if (flashCoroutine != null)
@@ -30,9 +28,9 @@ public class PlayerDamageFlash : MonoBehaviour
 
     IEnumerator FlashRoutine(Color color)
     {
-        sprite.color = color;
+        visual.SetFlash(color);
         yield return new WaitForSeconds(flashDuration);
-        sprite.color = roleComponent.Stats.tintColor;
+        visual.ClearFlash();
         flashCoroutine = null;
     }
 }

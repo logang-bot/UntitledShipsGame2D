@@ -44,17 +44,17 @@ across sibling components).
   missing.
 
 **Why `Start()`, not `Awake()`, for role-dependent setup**: the co-op
-spawner (`PartySetupBootstrap.SpawnDynamicParty()`, see "Role Select scene"
+spawner (`PartyShipSpawner.SpawnParty()`, see "Role Select scene"
 below) creates ships via `Instantiate()`/`PlayerInput.Instantiate()`, which
 run the new object's `Awake()` **synchronously before returning** — before
 the spawner's own code gets a chance to set `.role` on the result. Unity
 does *not* run a freshly-instantiated object's `Start()` synchronously,
-though, so every role-dependent side effect (`PlayerRoleComponent`'s sprite
-tint, `PlayerHealth`'s `maxHealth`/`maxShield`, `PlayerAbility`'s aura
+though, so every role-dependent side effect (`ShipVisual`'s role model, `PlayerHealth`'s `maxHealth`/`maxShield`, `PlayerAbility`'s aura
 ring/shield arc construction and initial cooldown) was moved from `Awake()`
 into `Start()` to guarantee it always sees the real, assigned role — a
 behavior-preserving change for the legacy scene-placed path too, since
-`PartySetupBootstrap`'s `[DefaultExecutionOrder(-1000)]` `Awake()` already
+`LevelSetup`'s `[DefaultExecutionOrder(-1000)]` `Awake()` (which calls
+`PartySetupBootstrap.Setup`) already
 ran (and already set `.role`) well before any object's `Start()` fires
 either way.
 
@@ -358,9 +358,14 @@ aggro table all stay untouched by this feature.
   `devices[]` (paired at `JoinLobby`, still valid in whichever level scene
   loads since physical `InputDevice`s persist across scene loads), and `role` (filled
   in by `RoleSelect`). `null` means the co-op flow wasn't used.
-- **`PartySetupBootstrap.cs`** (`[DefaultExecutionOrder(-1000)]`) —
-  `Awake()` now checks `CoOpRoster.Players` **first**: if set and non-empty,
-  runs `SpawnDynamicParty()` instead of the legacy branch below. The 4
+- **`PartySetupBootstrap.cs`** — `Setup(boss)`, called by `LevelSetup`'s
+  `[DefaultExecutionOrder(-1000)]` `Awake()` (Session 51; it used to be its
+  own `Awake()`), checks `CoOpRoster.Players` **first**: if set and
+  non-empty, spawns the party through `PartyShipSpawner` instead of the
+  legacy branch below. Either way it then hands the ships to
+  `PartyBossWiring.Wire(ships, boss)`, which sets each ship's `bossObject`,
+  adds the runtime `OnTaunt` → `BossEvents.Taunt` listener and fills the
+  boss's ship roster. The 4
   original scene ships are reused purely as position markers (read
   `.transform.position`, then `SetActive(false)`) so both branches share one
   authored set of spawn points. For each joined human:
@@ -384,17 +389,19 @@ aggro table all stay untouched by this feature.
   spawned set directly onto `LevelSequencer.ships`/`PartyFrameManager.players`
   (safe given this script's `-1000` execution order).
 
-  It also calls `SpawnedShipEventWiring.Wire(ship, bossObject,
-  cameraShake)` on each spawned ship. That adds, at runtime, the event
-  listeners `Ship.prefab` can't carry because a prefab can't target scene
-  objects: camera shake on `OnDamaged`/`OnTaunt`, and Taunt →
-  `MarauderBoss`/`WardenBoss.TauntedBy`. Halcyon is skipped, since Taunt is
-  a deliberate no-op against it. Game Over and the party-frame gray-out are
-  wired the same way by `GameOverUI`/`PartyFrameManager`.
+  It also calls `SpawnedShipEventWiring.Wire(ship, cameraShake)` on each
+  spawned ship. That adds the camera-shake listeners on
+  `OnDamaged`/`OnTaunt` at runtime, because `Ship.prefab` can't carry them
+  (a prefab can't target the scene's Main Camera). Taunt is not wired
+  there: `PartyBossWiring` adds every ship's `OnTaunt` → `BossEvents.Taunt`
+  listener, which calls `MarauderBoss`/`WardenBoss.TauntedBy` and is a
+  deliberate no-op against Halcyon. Game Over and the party-frame gray-out
+  are wired at runtime too, by `GameOverUI`/`PartyFrameManager`.
 
-  In Session 41, `SpawnDynamicParty()` was split into small single-purpose
-  methods (`DeactivateMarkers`, `SpawnParty`, `SpawnJoinedPlayerShip`,
-  `WireSpawnedShips`, `HandRosterToScene`, ...) with no behavior change.
+  History: Session 41 added `SpawnedShipEventWiring` for both camera shake
+  and Taunt inside the old single-class `PartySetupBootstrap`. Session 51
+  split that class into `PartyShipSpawner` and `PartyBossWiring`, which
+  took over Taunt, so `SpawnedShipEventWiring` now only wires camera shake.
   
   **Legacy branch (unchanged)**: if `CoOpRoster.Players` is unset, falls
   back to the original single-human path — if `PartyRoleAssignment.HumanRole`
@@ -454,7 +461,7 @@ aggro table all stay untouched by this feature.
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
 | **PlayerRoleComponent**  | role: Attacker (`Ship.prefab` default — overwritten at runtime by the Role Select flow, see "Role Select scene" above; used as-is when a level scene is opened directly) |
-| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `CameraShake.Shake()` + `MarauderBoss.TauntedBy(self)`. Only `Flash` works straight from the prefab, since it targets the ship itself. A prefab can't reference scene objects, so the shake and Taunt calls have null targets in `Ship.prefab`/`Teammate.prefab`. Hand-placed scene ships get those targets set per scene; Level 3 also retypes the call to `WardenBoss`. Co-op-spawned ships get them at runtime from `SpawnedShipEventWiring`. See [marauder-boss.md](bosses/marauder-boss.md)'s Taunt-wiring notes |
+| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`. Only `Flash` works straight from the prefab, since it targets the ship itself. A prefab can't reference scene objects, so the shake call has a null target in `Ship.prefab` (`Teammate.prefab` also still carries a null-target `MarauderBoss.TauntedBy`, which does nothing). Taunt is added at runtime to every ship by `PartyBossWiring` (`OnTaunt` → `BossEvents.Taunt`). Co-op-spawned ships get camera shake at runtime from `SpawnedShipEventWiring`. See [marauder-boss.md](bosses/marauder-boss.md)'s Taunt-wiring notes |
 
 ## Not yet built
 

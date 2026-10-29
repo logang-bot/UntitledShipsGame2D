@@ -8,7 +8,7 @@ using UnityEngine.UI;
 // this boss. See docs/superpowers/specs/2026-09-04-halcyon-boss-design.md.
 public class HalcyonBossPanelUI : MonoBehaviour
 {
-    public HalcyonBoss boss; // direct scene reference - scene-bound, not a reusable prefab
+    public HalcyonBoss boss; // set by Bind() when LevelSetup spawns the boss
     public HalcyonSurge surge;
     public HalcyonStaticField staticField;
     public Image healthBarFill;
@@ -19,6 +19,13 @@ public class HalcyonBossPanelUI : MonoBehaviour
     public TextMeshProUGUI staticFieldCooldownText;
     public Color telegraphTextColor = new Color(1f, 0.9f, 0.3f);
     public Color openingTextColor = new Color(0.35f, 1f, 0.45f);
+
+    public void Bind(GameObject bossObject)
+    {
+        boss = bossObject.GetComponent<HalcyonBoss>();
+        surge = bossObject.GetComponent<HalcyonSurge>();
+        staticField = bossObject.GetComponent<HalcyonStaticField>();
+    }
 
     void Update()
     {

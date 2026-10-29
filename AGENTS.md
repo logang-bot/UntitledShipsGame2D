@@ -50,10 +50,12 @@ on desktop.
 - **Networking (planned, last):** Nakama self-hosted on Fly.io,
   server-authoritative.
 - **Audio (planned):** FMOD, adaptive to boss phase.
-- **Art (in progress, parallel to phase 3):** Blender-modeled, pre-rendered
-  sprites (color + normal map + glow mask) into URP 2D `Sprite-Lit-Default`
-  + `Light2D`; Shape Blaster-inspired neon effects; anime ability cut-ins via
-  VRoid → Blender. See [docs/art-roadmap.md](docs/art-roadmap.md).
+- **Art (in progress, parallel to phase 3):** the player ships are the
+  Claude Design "Ship Designs" GLB models, rendered live (glTFast + a custom
+  `ShipMesh.shader`) under the URP 2D Renderer with bloom; everything else
+  stays URP 2D `Sprite-Lit-Default` + `Light2D`; Shape Blaster-inspired neon effects;
+  anime ability cut-ins as 2D illustrations or VRoid → Unity (route decided
+  later). Blender is optional. See [docs/art-roadmap.md](docs/art-roadmap.md).
 
 For the full reasoning behind each of these, see
 [docs/overview.md](docs/overview.md)'s "Tech Stack Decisions".
@@ -94,9 +96,12 @@ For the full reasoning behind each of these, see
 | Run structure | Pre-fight loadout screen | Simplest path to validating whether cards are fun; roguelike runs / meta-progression deferred |
 | Card economy | Energy earned by grazing | The mechanic that fuses bullet-hell skill with the deck layer |
 | Work split | Phase 3 (hitbox/focus/grazing/cards) by another developer; art in parallel | Art replaces working placeholders, so it never blocks gameplay |
-| Art pipeline | Blender, **pre-rendered** sprites (color + normal map + glow mask) | Detailed ships; roll animation = extra rendered frames; normal maps give real-time 2D lighting. Imported 3D models stay possible later without remodeling |
+| Art pipeline | Player ships are the design GLB models (`Assets/Art/Ships/`) rendered **live** as meshes; baking to sprites is only a possible phone optimization; Blender optional | Session 51 chose live models over a sprite-first route: they already existed, and give banking and animated parts for free. Replaces the Session 50 plan (2D first, then a bake) |
+| Role colors | Design palette: Attacker `#FF8A3D`, Tank `#00E5FF`, Medic `#B6FF3C`, Support `#A855F7` | Match the ship models; set in `PlayerRoleStats` (Session 51) |
+| Level scenes | **One shared `Level.unity`**; each boss is its own prefab, and `LevelSetup` spawns only the picked one | Replaced three drifting `Ctrl+D` copies (Session 51). Two bosses can't coexist, and boss edits live in per-boss prefabs |
+| Boss art and backgrounds | Bosses and one parallax background per boss designed in Claude Design (2D + 3D GLB, signature color per boss); backgrounds dark with stars and city rooftops far below, in scrolling layers | Same pipeline as the ships; each fight gets its own look without hurting bullet readability (Session 52, first draft). Backgrounds ship as static PNG layers with a random start offset and mirror, not a port of the design's JS generator (Session 53) |
 | Effects style | Neon, inspired by Tuts+ "Neon Vector Shooter" (Shape Blaster) | Bloom, additive stretched particles, warping grid, black-hole powers; enemy bullets must stay readable over effects |
-| Ability cut-ins | Anime 3D-look characters: VRoid → Blender toon shading, pre-rendered | Genshin/ZZZ feel; pre-rendering looks identical on every device and is cheap on phones |
+| Ability cut-ins | 2D illustrated, or VRoid → Unity (UniVRM + MToon); picked at the start of art Phase 6 | Neither route needs Blender. 2D matches the ships and Touhou's spell-card cut-ins; VRoid → Unity keeps the anime-3D look |
 | Mobile | One project, per-platform quality tiers | No duplicated code; keeps crossplay possible. A sibling project was considered and rejected |
 | Version control | git, ships-game history retained | `origin` still points at `logang-bot/UntitledShipsGame2D` — retarget before pushing |
 
@@ -108,8 +113,10 @@ For the full reasoning behind each of these, see
 - How cards are acquired/unlocked over time (the loadout screen assumes a
   pool exists; where it comes from is deferred).
 - Number and structure of bosses/stages beyond Level 1.
-- Final art palettes, the cut-in quality ceiling, and audio direction. The
-  art pipeline itself is decided; see
+- The cut-in route, whether live ship models hold up on low-end phones
+  (phone work deferred),
+  final art palettes, and audio direction. The art pipeline
+  itself is decided; see
   [docs/art-roadmap.md](docs/art-roadmap.md)'s "Open questions".
 - Steam integration approach (Steamworks.NET vs. other), achievements,
   leaderboards.

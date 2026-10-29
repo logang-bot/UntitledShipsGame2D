@@ -1,0 +1,1612 @@
+fileFormatVersion: 2
+guid: 0669690a852872948b0e0a4c2b06c040
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4783114991016702847
+    second: marauder_bg_2_stars_near_0
+  - first:
+      213: -3927974217458255319
+    second: marauder_bg_2_stars_near_1
+  - first:
+      213: 5978316990158947438
+    second: marauder_bg_2_stars_near_2
+  - first:
+      213: 2040405221022844834
+    second: marauder_bg_2_stars_near_3
+  - first:
+      213: -6688824923079176977
+    second: marauder_bg_2_stars_near_4
+  - first:
+      213: 6507653772427083651
+    second: marauder_bg_2_stars_near_5
+  - first:
+      213: -2764444940928148658
+    second: marauder_bg_2_stars_near_6
+  - first:
+      213: 9077833906108984938
+    second: marauder_bg_2_stars_near_7
+  - first:
+      213: -7842397904142503417
+    second: marauder_bg_2_stars_near_8
+  - first:
+      213: 676444929876652179
+    second: marauder_bg_2_stars_near_9
+  - first:
+      213: 3634809938323755997
+    second: marauder_bg_2_stars_near_10
+  - first:
+      213: -5843231739326425537
+    second: marauder_bg_2_stars_near_11
+  - first:
+      213: -7062783584127519763
+    second: marauder_bg_2_stars_near_12
+  - first:
+      213: -474384454554892869
+    second: marauder_bg_2_stars_near_13
+  - first:
+      213: 8258614864676692250
+    second: marauder_bg_2_stars_near_14
+  - first:
+      213: 5246359573055342401
+    second: marauder_bg_2_stars_near_15
+  - first:
+      213: 5053267279770636994
+    second: marauder_bg_2_stars_near_16
+  - first:
+      213: 1095812087477802874
+    second: marauder_bg_2_stars_near_17
+  - first:
+      213: 7482341259074375714
+    second: marauder_bg_2_stars_near_18
+  - first:
+      213: 8731581094499948644
+    second: marauder_bg_2_stars_near_19
+  - first:
+      213: -2526479380255857423
+    second: marauder_bg_2_stars_near_20
+  - first:
+      213: -3599985031931009522
+    second: marauder_bg_2_stars_near_21
+  - first:
+      213: 9101730468335820197
+    second: marauder_bg_2_stars_near_22
+  - first:
+      213: -3655161160329263422
+    second: marauder_bg_2_stars_near_23
+  - first:
+      213: 4372443316512258837
+    second: marauder_bg_2_stars_near_24
+  - first:
+      213: 2177172685235294064
+    second: marauder_bg_2_stars_near_25
+  - first:
+      213: -54661768841360970
+    second: marauder_bg_2_stars_near_26
+  - first:
+      213: -131372258893484660
+    second: marauder_bg_2_stars_near_27
+  - first:
+      213: 5750056264449538559
+    second: marauder_bg_2_stars_near_28
+  - first:
+      213: -6357999554315900038
+    second: marauder_bg_2_stars_near_29
+  - first:
+      213: -3437859955372460823
+    second: marauder_bg_2_stars_near_30
+  - first:
+      213: -5494592447333922921
+    second: marauder_bg_2_stars_near_31
+  - first:
+      213: -8018355723627820166
+    second: marauder_bg_2_stars_near_32
+  - first:
+      213: 2261424018315726247
+    second: marauder_bg_2_stars_near_33
+  - first:
+      213: -1964537877639737424
+    second: marauder_bg_2_stars_near_34
+  - first:
+      213: -1471158320023748998
+    second: marauder_bg_2_stars_near_35
+  - first:
+      213: -4990091314190456547
+    second: marauder_bg_2_stars_near_36
+  - first:
+      213: -1438676395979389470
+    second: marauder_bg_2_stars_near_37
+  - first:
+      213: -8151400859249394991
+    second: marauder_bg_2_stars_near_38
+  - first:
+      213: -3894530633249393585
+    second: marauder_bg_2_stars_near_39
+  - first:
+      213: 1572484450048199020
+    second: marauder_bg_2_stars_near_40
+  - first:
+      213: 7272298731622138370
+    second: marauder_bg_2_stars_near_41
+  - first:
+      213: -4550929177583767944
+    second: marauder_bg_2_stars_near_42
+  - first:
+      213: 5522711741499171582
+    second: marauder_bg_2_stars_near_43
+  - first:
+      213: 3205680724810774428
+    second: marauder_bg_2_stars_near_44
+  - first:
+      213: -7760384789941200868
+    second: marauder_bg_2_stars_near_45
+  - first:
+      213: 7083689068848324916
+    second: marauder_bg_2_stars_near_46
+  - first:
+      213: 4886741056321401946
+    second: marauder_bg_2_stars_near_47
+  - first:
+      213: 7980783683545394315
+    second: marauder_bg_2_stars_near_48
+  - first:
+      213: -1362460714944582588
+    second: marauder_bg_2_stars_near_49
+  - first:
+      213: 580553030839629
+    second: marauder_bg_2_stars_near_50
+  - first:
+      213: -3077955395209302448
+    second: marauder_bg_2_stars_near_51
+  - first:
+      213: 2843979648027856932
+    second: marauder_bg_2_stars_near_52
+  - first:
+      213: -4397458958209756563
+    second: marauder_bg_2_stars_near_53
+  - first:
+      213: 8969414146983965448
+    second: marauder_bg_2_stars_near_54
+  - first:
+      213: 5710986268251901407
+    second: marauder_bg_2_stars_near_55
+  - first:
+      213: -106064838143931577
+    second: marauder_bg_2_stars_near_56
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_0
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 1911
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7375670eb9016240800000000000000
+      internalID: 4783114991016702847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_1
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 1904
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92af181b2480d79c0800000000000000
+      internalID: -3927974217458255319
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_2
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 1895
+        width: 64
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e644b19c0af37f250800000000000000
+      internalID: 5978316990158947438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_3
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 1821
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a74bececb9f05c10800000000000000
+      internalID: 2040405221022844834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_4
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 1825
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fec061fdb258c23a0800000000000000
+      internalID: -6688824923079176977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_5
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 1810
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38f3fb280a4df4a50800000000000000
+      internalID: 6507653772427083651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_6
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 1708
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4b1ade09f7b2a9d0800000000000000
+      internalID: -2764444940928148658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_7
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 1537
+        width: 166
+        height: 204
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6e6f9757d1fafd70800000000000000
+      internalID: 9077833906108984938
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_8
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 1682
+        width: 140
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 702715038a43a2390800000000000000
+      internalID: -7842397904142503417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_9
+      rect:
+        serializedVersion: 2
+        x: 130
+        y: 1659
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 390796b6417336900800000000000000
+      internalID: 676444929876652179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_10
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 1593
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd3d8df7160717230800000000000000
+      internalID: 3634809938323755997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_11
+      rect:
+        serializedVersion: 2
+        x: 406
+        y: 1542
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f36192d11bba8eea0800000000000000
+      internalID: -5843231739326425537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_12
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 1376
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de37e9e10c3fbfd90800000000000000
+      internalID: -7062783584127519763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_13
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 1356
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb5c94b1ad5aa69f0800000000000000
+      internalID: -474384454554892869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_14
+      rect:
+        serializedVersion: 2
+        x: 662
+        y: 1344
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a11a0d1a67e7c9270800000000000000
+      internalID: 8258614864676692250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_15
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 1314
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1470feb3c30dec840800000000000000
+      internalID: 5246359573055342401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_16
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 1239
+        width: 132
+        height: 92
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c255dd41dfc02640800000000000000
+      internalID: 5053267279770636994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_17
+      rect:
+        serializedVersion: 2
+        x: 753
+        y: 1258
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7791b6a94b153f00800000000000000
+      internalID: 1095812087477802874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_18
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 1249
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22090636bbd96d760800000000000000
+      internalID: 7482341259074375714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_19
+      rect:
+        serializedVersion: 2
+        x: 739
+        y: 1207
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4689f295ebecc2970800000000000000
+      internalID: 8731581094499948644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_20
+      rect:
+        serializedVersion: 2
+        x: 958
+        y: 1049
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f42087b36420fcd0800000000000000
+      internalID: -2526479380255857423
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_21
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 991
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e06670fdfa84a0ec0800000000000000
+      internalID: -3599985031931009522
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_22
+      rect:
+        serializedVersion: 2
+        x: 1012
+        y: 996
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ad918e43a7df4e70800000000000000
+      internalID: 9101730468335820197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_23
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 957
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c605c16a42464dc0800000000000000
+      internalID: -3655161160329263422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_24
+      rect:
+        serializedVersion: 2
+        x: 595
+        y: 945
+        width: 37
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51b7e39b70a0eac30800000000000000
+      internalID: 4372443316512258837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_25
+      rect:
+        serializedVersion: 2
+        x: 1049
+        y: 938
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07f0226a50fd63e10800000000000000
+      internalID: 2177172685235294064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_26
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 889
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b98a6d296dcd3ff0800000000000000
+      internalID: -54661768841360970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_27
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 863
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8d205760a54d2ef0800000000000000
+      internalID: -131372258893484660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_28
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 846
+        width: 34
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff9360915bd4ccf40800000000000000
+      internalID: 5750056264449538559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_29
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 820
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7ba8ea6719d3c7a0800000000000000
+      internalID: -6357999554315900038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_30
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 782
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e4fb7cc5944a40d0800000000000000
+      internalID: -3437859955372460823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_31
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 743
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7970e1fd7494fb3b0800000000000000
+      internalID: -5494592447333922921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_32
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 747
+        width: 27
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7b8172d3f319b090800000000000000
+      internalID: -8018355723627820166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_33
+      rect:
+        serializedVersion: 2
+        x: 1075
+        y: 663
+        width: 5
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7adce32c921326f10800000000000000
+      internalID: 2261424018315726247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_34
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 599
+        width: 139
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bfcb77753f8cb4e0800000000000000
+      internalID: -1964537877639737424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_35
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 577
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7ebf9e6d45659be0800000000000000
+      internalID: -1471158320023748998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_36
+      rect:
+        serializedVersion: 2
+        x: 700
+        y: 540
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d196aec6362afbab0800000000000000
+      internalID: -4990091314190456547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_37
+      rect:
+        serializedVersion: 2
+        x: 589
+        y: 461
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e5c8e6b07bc80ce0800000000000000
+      internalID: -1438676395979389470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_38
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 444
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1da30a24b1860ee80800000000000000
+      internalID: -8151400859249394991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_39
+      rect:
+        serializedVersion: 2
+        x: 835
+        y: 429
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f44fa4ee509d3f9c0800000000000000
+      internalID: -3894530633249393585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_40
+      rect:
+        serializedVersion: 2
+        x: 1034
+        y: 423
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c69c2f3a64692d510800000000000000
+      internalID: 1572484450048199020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_41
+      rect:
+        serializedVersion: 2
+        x: 2
+        y: 172
+        width: 158
+        height: 193
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2028cd68a256ce460800000000000000
+      internalID: 7272298731622138370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_42
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 289
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87ea82c560ad7d0c0800000000000000
+      internalID: -4550929177583767944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_43
+      rect:
+        serializedVersion: 2
+        x: 957
+        y: 292
+        width: 7
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef2efec711d94ac40800000000000000
+      internalID: 5522711741499171582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_44
+      rect:
+        serializedVersion: 2
+        x: 507
+        y: 270
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c97b9a182addc7c20800000000000000
+      internalID: 3205680724810774428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_45
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 234
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c18d53b56239d4490800000000000000
+      internalID: -7760384789941200868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_46
+      rect:
+        serializedVersion: 2
+        x: 485
+        y: 209
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 431a5085da15e4260800000000000000
+      internalID: 7083689068848324916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_47
+      rect:
+        serializedVersion: 2
+        x: 376
+        y: 195
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a54ba53891131d340800000000000000
+      internalID: 4886741056321401946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_48
+      rect:
+        serializedVersion: 2
+        x: 434
+        y: 198
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8ce4f6e97071ce60800000000000000
+      internalID: 7980783683545394315
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_49
+      rect:
+        serializedVersion: 2
+        x: 491
+        y: 181
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44cad49c231971de0800000000000000
+      internalID: -1362460714944582588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_50
+      rect:
+        serializedVersion: 2
+        x: 838
+        y: 166
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4d2d298200120000800000000000000
+      internalID: 580553030839629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_51
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 131
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05e6d0230e7e845d0800000000000000
+      internalID: -3077955395209302448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_52
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 83
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 420142dfb68d77720800000000000000
+      internalID: 2843979648027856932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_53
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 75
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d625c81506619f2c0800000000000000
+      internalID: -4397458958209756563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_54
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 51
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 803b75a05a2c97c70800000000000000
+      internalID: 8969414146983965448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_55
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 38
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fddc94cb0cf714f40800000000000000
+      internalID: 5710986268251901407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_bg_2_stars_near_56
+      rect:
+        serializedVersion: 2
+        x: 435
+        y: 11
+        width: 17
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74b8547779e278ef0800000000000000
+      internalID: -106064838143931577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      marauder_bg_2_stars_near_0: 4783114991016702847
+      marauder_bg_2_stars_near_1: -3927974217458255319
+      marauder_bg_2_stars_near_10: 3634809938323755997
+      marauder_bg_2_stars_near_11: -5843231739326425537
+      marauder_bg_2_stars_near_12: -7062783584127519763
+      marauder_bg_2_stars_near_13: -474384454554892869
+      marauder_bg_2_stars_near_14: 8258614864676692250
+      marauder_bg_2_stars_near_15: 5246359573055342401
+      marauder_bg_2_stars_near_16: 5053267279770636994
+      marauder_bg_2_stars_near_17: 1095812087477802874
+      marauder_bg_2_stars_near_18: 7482341259074375714
+      marauder_bg_2_stars_near_19: 8731581094499948644
+      marauder_bg_2_stars_near_2: 5978316990158947438
+      marauder_bg_2_stars_near_20: -2526479380255857423
+      marauder_bg_2_stars_near_21: -3599985031931009522
+      marauder_bg_2_stars_near_22: 9101730468335820197
+      marauder_bg_2_stars_near_23: -3655161160329263422
+      marauder_bg_2_stars_near_24: 4372443316512258837
+      marauder_bg_2_stars_near_25: 2177172685235294064
+      marauder_bg_2_stars_near_26: -54661768841360970
+      marauder_bg_2_stars_near_27: -131372258893484660
+      marauder_bg_2_stars_near_28: 5750056264449538559
+      marauder_bg_2_stars_near_29: -6357999554315900038
+      marauder_bg_2_stars_near_3: 2040405221022844834
+      marauder_bg_2_stars_near_30: -3437859955372460823
+      marauder_bg_2_stars_near_31: -5494592447333922921
+      marauder_bg_2_stars_near_32: -8018355723627820166
+      marauder_bg_2_stars_near_33: 2261424018315726247
+      marauder_bg_2_stars_near_34: -1964537877639737424
+      marauder_bg_2_stars_near_35: -1471158320023748998
+      marauder_bg_2_stars_near_36: -4990091314190456547
+      marauder_bg_2_stars_near_37: -1438676395979389470
+      marauder_bg_2_stars_near_38: -8151400859249394991
+      marauder_bg_2_stars_near_39: -3894530633249393585
+      marauder_bg_2_stars_near_4: -6688824923079176977
+      marauder_bg_2_stars_near_40: 1572484450048199020
+      marauder_bg_2_stars_near_41: 7272298731622138370
+      marauder_bg_2_stars_near_42: -4550929177583767944
+      marauder_bg_2_stars_near_43: 5522711741499171582
+      marauder_bg_2_stars_near_44: 3205680724810774428
+      marauder_bg_2_stars_near_45: -7760384789941200868
+      marauder_bg_2_stars_near_46: 7083689068848324916
+      marauder_bg_2_stars_near_47: 4886741056321401946
+      marauder_bg_2_stars_near_48: 7980783683545394315
+      marauder_bg_2_stars_near_49: -1362460714944582588
+      marauder_bg_2_stars_near_5: 6507653772427083651
+      marauder_bg_2_stars_near_50: 580553030839629
+      marauder_bg_2_stars_near_51: -3077955395209302448
+      marauder_bg_2_stars_near_52: 2843979648027856932
+      marauder_bg_2_stars_near_53: -4397458958209756563
+      marauder_bg_2_stars_near_54: 8969414146983965448
+      marauder_bg_2_stars_near_55: 5710986268251901407
+      marauder_bg_2_stars_near_56: -106064838143931577
+      marauder_bg_2_stars_near_6: -2764444940928148658
+      marauder_bg_2_stars_near_7: 9077833906108984938
+      marauder_bg_2_stars_near_8: -7842397904142503417
+      marauder_bg_2_stars_near_9: 676444929876652179
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

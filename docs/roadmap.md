@@ -556,6 +556,39 @@ reference docs live under `systems/`.
   is opened directly, the teammates' Taunt/shake listeners are now wired.
   Marauder's `targets` now lists all 4 ships (it only had `Player`), so an
   AI Tank's Taunt pulls aggro there too. See `systems/bosses/marauder-boss.md`.
+- **One shared `Level` scene (Session 51)** — reverses the per-level-scene
+  decision above. `Level1`/`Level2`/`Level3.unity` were `Ctrl+D` copies that
+  had already drifted: beating Halcyon or Warden never showed Victory,
+  because their `OnDefeated` listeners pointed at a removed component. Now
+  `Level1.unity` became `Level.unity`, each boss is its own prefab
+  (`MarauderBoss`/`HalcyonBoss`/`WardenBoss.prefab`, inactive root), and a
+  new `LevelSetup` (the project's only `[DefaultExecutionOrder(-1000)]`)
+  instantiates only the boss `LevelSelection` picked, then runs
+  `PartySetupBootstrap.Setup(boss)`. The two original objections no longer
+  hold: two bosses can't coexist when only one is ever instantiated, and
+  boss edits live in per-boss prefabs, not the shared scene. Per-level
+  scene wiring moved to `BossEntry` rows on `LevelSetup` (panel activate +
+  `Bind`, `onPhase2`, `onDefeated` → panel + Victory for all three), and
+  `BossEvents` is the one place that switches on boss type.
+  `PartySetupBootstrap` was split into `PartyShipSpawner` and
+  `PartyBossWiring`; the latter also fixes co-op-spawned ships' taunt,
+  which still targeted the old `Boss` type. Build Settings: `Level` is
+  index 5. See `systems/scene-flow.md`'s "Level setup".
+- **Role colors from the ship designs + 3D ship models (Session 51)** —
+  roles use the design palette (Attacker `#FF8A3D`, Tank `#00E5FF`, Medic
+  `#B6FF3C`, Support `#A855F7`). The four player ships render their GLB
+  design models live (glTFast), through `ShipVisual`, `ShipBank` and a
+  custom `ShipMesh.shader`, with Bloom on in `Level`. See
+  `art-roadmap.md`.
+- **Per-boss parallax backgrounds (Session 53)** — art Phase 2c, first
+  draft. Each boss has a `<Boss>Background.prefab` in
+  `Assets/Art/Backgrounds/<Boss>/`: four layers (far stars, near stars,
+  far buildings, near buildings) from the Claude Design PNGs, each
+  scrolled and wrapped by `ParallaxLayer`. Each run starts every layer at
+  a random point in its loop, and `ParallaxBackground` mirrors the whole
+  background left-to-right on a coin flip. `LevelSetup` spawns the picked
+  boss's `BossEntry.backgroundPrefab`. The playfield camera is near-black.
+  See `art-roadmap.md`'s Phase 2c.
 
 ## In Progress
 
@@ -605,9 +638,9 @@ is independently testable and the one before it de-risks the next.
 - **Starter card set** — ~20 cards, five per role plus Neutral, split Passive
   and Active.
 - **`DeckBuild.unity` loadout scene** — appended at whatever the next
-  available Build Settings index is when it's built (currently 8, since
-  `LevelSelect`/`Level1`/`Level2`/`Level3` now occupy 4-7), between
-  `RoleSelect` and whichever level scene is chosen in flow order;
+  available Build Settings index is when it's built (currently 6, since
+  `LevelSelect`/`Level` occupy 4-5), between `RoleSelect` and `Level` in
+  flow order;
   single/multi picker mirroring `RoleSelect`; `PartyDeckAssignment` static
   carrying the result across the scene load.
 - **AI decks** — `AIController` playing cards through `PlayerCards.TryPlayCard()`,
@@ -629,17 +662,21 @@ is independently testable and the one before it de-risks the next.
 
 - **Art** — started early, in parallel with phase 3. Its phased plan lives
   in [art-roadmap.md](art-roadmap.md):
-  - foundations;
-  - a pipeline test with one ship;
-  - the four role ships plus roll;
+  - the four role ships as live 3D models (done: Session 51), plus motion;
+  - one parallax background per boss: dark, stars, city rooftops far below
+    (first draft done: Session 53);
   - effects;
   - powers (black hole);
-  - bosses;
+  - bosses, designed in Claude Design alongside the backgrounds;
   - anime cut-ins;
-  - HUD and menus last.
+  - the pre-level screens (main menu through level select) on a shared UI
+    kit;
+  - the in-level HUD last.
 
-  Pipeline: Blender-modeled, pre-rendered sprites (color + normal map + glow
-  mask), URP 2D `Sprite-Lit-Default` + `Light2D`, and Shape Blaster-inspired
-  neon effects.
+  Phone builds and tuning are deferred until the art is further along.
+
+  Pipeline: the Claude Design "Ship Designs" GLB models rendered live
+  (glTFast + `ShipMesh.shader`) under the URP 2D Renderer, plus bloom and
+  Shape Blaster-inspired neon effects. Blender is optional.
 
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.

@@ -1720,3 +1720,235 @@ asset replaces a placeholder that already works. The plan is the new
 
 Git LFS is installed (3.6.1), but no file types are tracked yet. The art
 roadmap says to set it up before the first art commit.
+
+## Session 50 — Art Pipeline Revised: 2D Sprites First, Blender Optional
+
+You reviewed the ship designs in the Claude Design "Ship Designs" project
+(`Ship Designs.dc.html`, `Ship Models 3D.html`, `ships3d.js`). They show
+the four role ships two ways: AEGIS-04 (Tank), NOVA-11 (Attacker),
+LUMEN-02 (Medic) and ECHO-07 (Support). The question was whether Blender
+is really needed. It isn't, so the art plan changed. Work is on the new
+`art-first-draft` branch, with Session 49's roadmap commit cherry-picked
+from `warden-fixes`.
+
+### What the designs are
+
+- **2D set:** flat neon line art, one small SVG per ship (about 15 shapes),
+  with a blur filter for the glow.
+- **3D set:** never modeled in Blender. Built in code from simple shapes
+  (extruded outlines, cylinders, rings) with metallic hulls and emissive
+  trim, and downloadable as GLB/OBJ. The animated parts (shield pulse,
+  halo spin, gyro) are separate pieces.
+
+### Decisions and why
+
+- **2D vector sprites first.** At real in-game size (orthographic size 5,
+  0.6-unit ships: about 65 px on a 1080p desktop, 115 px on a 1080×1920
+  phone) the 3D models' fine detail shrinks to 1–2 px. What reads is the
+  silhouette and the glowing trim, which the 2D set has.
+- **The 3D look becomes an optional Phase 2b,** taken only if the 2D ships
+  look flat in motion. The models already exist, and Unity can bake the
+  frames itself (orthographic camera, `RenderTexture`, PNG output), so
+  Blender isn't needed even then.
+- **Blender is optional** for the whole project: only for refining a 3D
+  model or a cleaner normal map.
+- **Cut-ins:** the route is picked at the start of art Phase 6, between 2D
+  illustrated characters animated in Unity and VRoid → Unity through UniVRM
+  and its MToon toon shader. Neither needs Blender.
+
+### Updated docs
+
+- `art-roadmap.md`: rewritten decisions, a new "Source designs" section,
+  Phases 0–2 and 6 revised, Phase 2b added, and LFS now tracks `*.glb`.
+- `AGENTS.md`: the tech-stack art bullet, the art pipeline and cut-in
+  decision rows, and the art open question.
+- `overview.md`: the art pipeline row.
+- `roadmap.md`: the Art & audio section.
+- `README.md`: the art roadmap index entry.
+
+### Found while checking
+
+- **Role colors disagree.** The code (`PlayerRoleStats`) uses Attacker red,
+  Tank blue, Medic green, Support yellow. The designs use orange, cyan,
+  lime and purple. It's settled in art Phase 1, and it also changes the HUD
+  (`PartyFrameUI`, `DpsMeterUI`).
+- **Standalone Claude Design closes by December 14, 2026.** The SVGs and
+  GLBs get exported into the repo in art Phase 1.
+- Unity's Vector Graphics module is already in `Packages/manifest.json`.
+
+### Later in the session: the 3D models are planned, and saved
+
+- **You confirmed the design's 3D models will be used.** Phase 2b (the
+  bake inside Unity) is now planned work, not a fallback gated on a
+  playtest. 2D still goes first, to replace the placeholders fast and prove
+  the import, glow and tint setup the bake reuses.
+- **The four GLBs are saved** in `ArtSource/Ships/` (`aegis-04`, `nova-11`,
+  `lumen-02`, `echo-07`, 150–310 KB each). They were generated in Node with
+  three.js 0.184's `GLTFExporter`, the same exporter as the design page's
+  download button, from the design's `ships3d.js`. Each was loaded back to
+  check it: 27–51 meshes, 1–4 neon edge-line objects and 8–12 named
+  materials per ship.
+- **`ships3d.js` itself isn't kept.** The GLBs are the asset, and Blender
+  or the bake script can edit them directly.
+- **Git LFS is enabled** in the repo and tracks `*.glb`. The other art types
+  get added before their first commit.
+
+### Later in the session: the pre-level screens join the art plan
+
+- **New art Phase 7, "Pre-level screens":** `MainMenu`, `Lobby`,
+  `JoinLobby`, `RoleSelect` and `LevelSelect`. They work today as plain
+  buttons and text, so this is a restyle with almost no code change. The
+  only touchpoints are a device icon in `JoinLobbyUI` and the ship sprite on
+  the `RoleSelect` cards.
+- **A shared UI kit** comes first in that phase, built from the
+  `Neon Fleet HUD` design (dark panels, neon role frames, Chakra Petch and
+  JetBrains Mono, both free Google Fonts). The HUD reuses it later.
+- **No designs exist yet** for these screens. The design project only
+  covers the in-level HUD and the ships, so Phase 7 starts with mockups.
+- The old "Later" phase is now **Phase 8: In-level HUD and later**, and it
+  covers the Pause, Game Over and Victory overlays too, since those live
+  inside the level scenes.
+- The future loadout (deck) screen, between `RoleSelect` and `LevelSelect`,
+  is noted as the phase 3 developer's, but on the same UI kit.
+
+## Session 51 — Role Colors, One Shared Level Scene, 3D Ships in Game
+
+Three changes, on `art-first-draft`.
+
+### Role colors
+
+The roles now use the ship-design palette: Attacker `#FF8A3D`, Tank
+`#00E5FF`, Medic `#B6FF3C`, Support `#A855F7`. It's set in
+`PlayerRoleStats` and in the serialized copies on `Ship.prefab` (aura ring,
+heal flash, shield arc) and the RoleSelect buttons. `RoleStats` lost its
+6-parameter constructor in favor of object initializers, to meet the
+project's parameter cap. The code defaults for those colors in
+`PlayerAbility.cs` are now stale (the prefab values win); that file is 302
+lines and wasn't touched, to avoid forcing its split.
+
+### One `Level` scene instead of three
+
+- **Why:** `Level1`/`Level2`/`Level3.unity` were `Ctrl+D` copies that had
+  already drifted. **Beating Halcyon or Warden never showed Victory**: their
+  `OnDefeated` listeners pointed at a component the scene had removed.
+  Co-op-spawned ships' taunt also still targeted the old `Boss` type. The
+  documented reasons for separate scenes (two bosses at once, merge risk)
+  don't hold once each boss is a prefab and only the picked one is spawned.
+- **What:**
+  - `Level1.unity` became `Level.unity`; `Level2`/`Level3.unity` are gone.
+  - The bosses are `MarauderBoss.prefab`, `HalcyonBoss.prefab` (was
+    `Level2BossPlaceholder`) and `WardenBoss.prefab` (was
+    `Level3BossPlaceholder`, now with its arms), each saved inactive.
+  - New `LevelSetup` (`[DefaultExecutionOrder(-1000)]`, moved from
+    `PartySetupBootstrap`) with one `BossEntry` per level; new `BossEvents`
+    and `PartyBossWiring`; `PartySetupBootstrap` split out
+    `PartyShipSpawner`. The three boss panels live side by side in the HUD
+    and get a `Bind(GameObject)`. `BossPanelUI`'s long `Update` was split
+    into helpers.
+- **Verified in play mode:** each level spawns exactly its own boss and
+  panel; Marauder, Halcyon and Warden all get the 4 ships; the Tank's taunt
+  reaches Marauder and Warden (a no-op on Halcyon, as before); forcing each
+  boss's defeat shows "DEFEATED" and the Victory screen for Halcyon and
+  Warden too; no console errors.
+
+### 3D ships
+
+- glTFast 6.20.0 installed; the GLBs moved from `ArtSource/Ships/` to
+  `Assets/Art/Ships/Models/`.
+- `ShipMesh.shader`: URP's `Mesh2D-Lit` ignores mesh normals, so this unlit
+  shader does its own fixed-direction Lambert plus HDR emission and a
+  `_FlashColor` for hits.
+- 24 materials from the design colors, and one prefab per ship with
+  spinning halo/gyros and pulsing cores.
+- `Ship.prefab`: the white-square sprite is gone. `ShipVisual` spawns the
+  role's model under a `Visual` child (rotated to face the camera, scale
+  0.07, pushed behind z=0 so enemy bullets draw on top); `ShipBank` rolls
+  it while moving sideways; `PlayerDamageFlash` flashes the model.
+- Bloom: a Global Volume in `Level.unity`, and post-processing on the main
+  camera.
+- **Still open:** the playfield camera background is light blue, which hides
+  most of the bloom; the neon look needs a dark background. Ship scale,
+  light direction and hull brightness need tuning against it. No phone
+  test yet.
+
+### Tests
+
+New EditMode tests: `BossEventsTests`, `LevelSetupTests`, `ShipBankTests`.
+All 63 EditMode tests ran: 57 pass. The 6 failures are the known
+pre-existing ones (`PlayerRoleStatsTests` ×4 on moveSpeed,
+`MarauderBossDamageTests` ×2).
+
+## Session 52 — Boss and Background Designs Requested; Phone Work Deferred
+
+No code changes. Decisions recorded in `art-roadmap.md`, `roadmap.md` and
+`AGENTS.md`:
+
+- **Phone work is deferred** until the art is further along. The quality
+  tier plan stays as written.
+- **One background per boss**, first draft: dark, with stars and small city
+  buildings seen from above, far below, scrolling vertically in separate
+  parallax layers. Each boss's background gets its own identity. It must
+  stay dark and dim enough that bullets stay readable. Planned as a new art
+  **Phase 2c**, with one background prefab per boss picked through
+  `LevelSetup`'s `BossEntry`.
+- **The bosses get designed in Claude Design** with the backgrounds, from
+  one prompt: each boss as a 2D sprite and a 3D GLB built like the ships
+  (named parts, phase 2 look), with a signature neon color distinct from
+  the four role colors that also becomes its bullet color. The prompt
+  describes each fight as it's built today (Marauder the brawler, Halcyon
+  the bullet-less roaming storm, Warden the turret fortress).
+- Assumption in the prompt: the buildings are seen from above (rooftops),
+  since the camera is top-down. Change it if a side-on skyline was meant.
+
+## Session 53 — Per-Boss Parallax Backgrounds (Art Phase 2c, First Draft)
+
+The backgrounds came back from Claude Design (`Boss Designs.dc.html`): four
+vertically tiling 1080×1920 layers per boss, with relative scroll speeds.
+Boss ship art was left for later.
+
+- **Static PNGs, not a C# port of the design's generator.** The design
+  builds the layers procedurally in JS. Porting that to Unity meshes would
+  cost vertices, jagged edges (or MSAA) and soft-glow overdraw every frame
+  on phones. Drawing it into a texture once at load fixes the GPU side, but
+  textures made at runtime can't be compressed (~32 MB per boss) and are
+  still a large port. The only thing a port adds is a new city every run.
+  The PNGs, exported through a "Download all (ZIP)" button added to the
+  design, match it exactly and are cheap.
+- **Variety without the port:** each layer starts at a random point in its
+  loop, and the whole background is mirrored left-to-right on a coin flip.
+  It is flipped as a whole, so shadows stay consistent; a top-to-bottom
+  flip would point the shadows the wrong way.
+- New `ParallaxLayer` (tiled sprite, scroll and wrap), `ParallaxBackground`
+  (random mirror), `BossEntry.backgroundPrefab` spawned by `LevelSetup`,
+  and three `<Boss>Background.prefab`s. The playfield camera went from
+  light blue to `#04050A`. Details in `art-roadmap.md`'s Phase 2c.
+
+### Verified
+
+Play mode, `Level.unity`, with `editorDefaultLevel` set to each level in
+turn: the right background spawns for all three bosses, the layers scroll,
+and ships, bullets and enemies draw over them. The colors in saved
+screenshots match the design palette exactly (e.g. Marauder roofs
+`#1F1A22`). The MCP inline screenshot preview looked much brighter than
+the saved file; check the saved PNG, not the preview, when judging
+background brightness. The Editor was unfocused, so game time barely
+advanced (see `unity-notes.md`). A full wrap of the near layer wasn't
+watched live, only covered by the `WrappedOffset` tests. Worth a human
+look at the seam and at bullet readability.
+
+### Tests
+
+New `ParallaxLayerTests` (4 cases) pass, as do `LevelSetupTests`. The 6
+failures are the known pre-existing ones (`PlayerRoleStatsTests` ×4,
+`MarauderBossDamageTests` ×2).
+
+### Next designs requested
+
+A Claude Design prompt for `Combat FX Designs.dc.html`: bullets (per-role
+player shots, Big Shot and its combo, enemy bullets in each boss's color
+with a pale core, the guided missile, explosive fragments, Warden's
+streams and Lockdown wall), auras and rings (Medic aura, Tank Shield Arc,
+Speed Boost ring, the shockwave and Static Field zones), the role
+abilities as 3–4 frame activation strips, and Standard/Explosive minions
+per boss plus the wave enemies. Not designed yet. It moves Explosive
+minions from today's orange tint to the boss color.

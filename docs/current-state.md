@@ -292,14 +292,19 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   machines) — Lobby's **Online** option is a disabled placeholder until
   Nakama networking lands. Local co-op (multiple humans on *one* machine) is
   implemented — see the "Local co-op" bullet above.
-- Eight scenes now exist: `MainMenu.unity` (0), `Lobby.unity` (1),
+- Six scenes exist: `MainMenu.unity` (0), `Lobby.unity` (1),
   `JoinLobby.unity` (2), `RoleSelect.unity` (3), `LevelSelect.unity` (4),
-  `Level1.unity` (5), `Level2.unity` (6), `Level3.unity` (7) — see
+  and one shared `Level.unity` (5) that plays all three bosses, each
+  spawned from its own prefab — see
   [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
-  are same-scene UI overlays within whichever level scene is active, not
-  separate scenes (see [systems/combat.md](systems/combat.md)).
-- No real art — the avatar slot and every ship are placeholder colored
-  squares, no audio.
+  are same-scene UI overlays within `Level`, not separate scenes (see
+  [systems/combat.md](systems/combat.md)).
+- Art is only started: the four player ships are their 3D design models
+  (see [art-roadmap.md](art-roadmap.md)), and each boss fight scrolls its
+  own four-layer parallax background (Marauder's burning foundry,
+  Halcyon's storm-drowned towers, Warden's walled garrison). Bosses,
+  minions, bullets and the avatar slot are still placeholder shapes. No
+  audio.
 - **Known issue:** sometimes a white shape appears in the center of the
   screen for the moment a hit ship flashes. It's intermittent and not yet
   diagnosed; see [roadmap.md](roadmap.md)'s "Known issues".

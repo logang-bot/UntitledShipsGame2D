@@ -9,7 +9,7 @@ using UnityEngine.UI;
 // docs/superpowers/specs/2026-09-04-warden-boss-design.md.
 public class WardenBossPanelUI : MonoBehaviour
 {
-    public WardenBoss boss; // direct scene reference - scene-bound, not a reusable prefab
+    public WardenBoss boss; // set by Bind() when LevelSetup spawns the boss
     public WardenArm armA;
     public WardenArm armB;
     public WardenArm armC;
@@ -27,6 +27,17 @@ public class WardenBossPanelUI : MonoBehaviour
     public TextMeshProUGUI lockdownWarningText;
     public TextMeshProUGUI lockdownCooldownText;
     public TextMeshProUGUI bigShotText;
+
+    public void Bind(GameObject bossObject)
+    {
+        boss = bossObject.GetComponent<WardenBoss>();
+        armA = boss.armA;
+        armB = boss.armB;
+        armC = boss.armC;
+        shockwave = bossObject.GetComponent<WardenShockwave>();
+        lockdownVolley = bossObject.GetComponent<WardenLockdownVolley>();
+        bigShot = bossObject.GetComponent<WardenBigShot>();
+    }
 
     void Update()
     {

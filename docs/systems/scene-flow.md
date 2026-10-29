@@ -1,23 +1,67 @@
 # Scene Flow
 
-Eight scenes now exist, in this order (Build Settings index in parens):
+Six scenes exist, in this order (Build Settings index in parens):
 `MainMenu` (0) → `Lobby` (1) → `JoinLobby` (2) → `RoleSelect` (3) →
-`LevelSelect` (4) → `Level1` (5) → `Level2` (6) → `Level3` (7). Game
-Over/Victory/Pause stay same-scene UI overlays inside whichever level scene
-is active, not separate scenes — see [combat.md](combat.md) for Game
-Over/Victory and "Pause overlay" below.
+`LevelSelect` (4) → `Level` (5). Game Over/Victory/Pause stay same-scene UI
+overlays inside `Level`, not separate scenes — see [combat.md](combat.md)
+for Game Over/Victory and "Pause overlay" below.
 
-**Scene naming**: each level is its own dedicated scene, not one shared
-scene reused across bosses (a shared-scene design was considered and
-rejected — see `../roadmap.md` — because it makes accidentally running two
-bosses at once possible, and concentrates scene-corruption/merge-conflict
-risk across all three instead of scoping it per level). `Level2.unity`/
-`Level3.unity` are plain `Ctrl+D` duplicates of `Level1.unity`'s full
-structure (`LevelSequencer`, `PartySetupBootstrap`, `HUDCanvas`,
-pause/game-over/victory overlays all copy across with references intact),
-each with its own placeholder boss prefab in place of `MarauderBoss.prefab`
-— see [marauder-boss.md](bosses/marauder-boss.md) and
-[level-sequencing.md](level-sequencing.md).
+**One shared `Level` scene, one prefab per boss** (Session 51). All three
+levels play in `Level.unity`; only the boss differs, and each boss is its
+own prefab — `MarauderBoss.prefab`, `HalcyonBoss.prefab`,
+`WardenBoss.prefab` (Warden's `ArmA`/`ArmB`/`ArmC` are children inside it),
+each saved with an **inactive** root at its home position (0, 4.2). This
+replaced three `Ctrl+D` copies (`Level1`/`Level2`/`Level3.unity`) that had
+already drifted apart — beating Halcyon or Warden never showed Victory,
+because their `OnDefeated` listeners pointed at a removed component. The
+original reasons for separate scenes no longer apply: only the selected
+boss is ever instantiated, so two bosses can't run at once, and boss edits
+live in their own prefab files rather than the shared scene. See "Level
+setup (LevelSetup.cs)" below and [level-sequencing.md](level-sequencing.md).
+
+## Level setup (LevelSetup.cs)
+
+**Attached to:** `LevelSetup`, the first root object in `Level.unity`.
+`[DefaultExecutionOrder(-1000)]` — the project's only use of it (see
+`../architecture.md`'s "Execution Order").
+
+`Awake()` builds the scene into the picked level:
+1. Picks the `BossEntry` matching `LevelSelection.SelectedLevel`, or
+   `editorDefaultLevel` (Level 1) when the scene is opened directly.
+   Then instantiates that entry's `backgroundPrefab`, if it has one
+   (the boss's parallax background; see `../art-roadmap.md`'s Phase 2c).
+2. Instantiates that entry's boss prefab (still inactive) and hands it to
+   `LevelSequencer.bossObject`.
+3. Calls `PartySetupBootstrap.Setup(boss)`, which spawns or prepares the
+   ships and wires them to the boss both ways (`PartyBossWiring`).
+4. Forwards the boss's own `OnPhase2`/`OnDefeated` to the entry's events,
+   then activates the boss, so its `Awake()` already sees its ships.
+5. Invokes the entry's `onSpawned`.
+
+`BossEntry.cs` is a plain `[Serializable]` class (not a ScriptableObject):
+`level`, `bossPrefab` (the boss component on the prefab root),
+`backgroundPrefab` (`<Boss>Background.prefab` from
+`Assets/Art/Backgrounds/<Boss>/`, optional), and three
+Inspector-wired events reaching scene objects the prefab can't reference:
+
+| Entry | `onSpawned` | `onPhase2` | `onDefeated` |
+|---|---|---|---|
+| Level 1 Marauder | `BossPanel_Marauder` `SetActive(true)` + `BossPanelUI.Bind` | `EnemySpawner.StartSpawning` | `BossPanelUI.ShowDefeated`, `VictoryUI.Show` |
+| Level 2 Halcyon | `BossPanel_Halcyon` `SetActive(true)` + `HalcyonBossPanelUI.Bind` | — | `HalcyonBossPanelUI.ShowDefeated`, `VictoryUI.Show` |
+| Level 3 Warden | `BossPanel_Warden` `SetActive(true)` + `WardenBossPanelUI.Bind` | — | `WardenBossPanelUI.ShowDefeated`, `VictoryUI.Show` |
+
+The three boss panels sit side by side under `HUDCanvas`, all inactive
+until their entry's `onSpawned`. Each panel's `Bind(GameObject)` fills its
+typed fields from the spawned boss with `GetComponent`.
+
+`BossEvents.cs` is the one place that switches on the concrete boss type
+(`Phase2`/`Defeated` events, `AssignShips` — Marauder `targets`, Halcyon's
+`HalcyonStaticField.ships`, Warden `ships` — and `Taunt`, a deliberate
+no-op for Halcyon). `PartyBossWiring` gives every ship its `bossObject`
+and a runtime `OnTaunt` listener that calls `BossEvents.Taunt`.
+
+`Restart` (Pause, Game Over, Victory) reloads the active scene, and the
+static `LevelSelection` survives the reload, so it replays the same level.
 
 ## MainMenuUI.cs
 
@@ -49,7 +93,7 @@ same pattern as `PartyRoleAssignment.cs`/`CoOpRoster.cs` (see
 reload. Anything that gates on `Mode` treats `null` as "allowed"/local — the
 same "unset = no-op fallback" contract `PartySetupBootstrap` relies on for
 `PartyRoleAssignment.HumanRole`/`CoOpRoster.Players`, which is what keeps
-opening `Level1` (or any level scene) directly (bypassing
+opening `Level` directly (bypassing
 `Lobby`/`JoinLobby`/`RoleSelect` entirely) working for quick iteration.
 
 ## JoinLobbyUI.cs + CoOpRoster.cs — local co-op device join
@@ -78,7 +122,7 @@ persisted `PlayerInput` objects are needed — each later scene re-pairs the
 same physical devices fresh via `PlayerInput.Instantiate(...)` (see
 `PartySetupBootstrap.cs` below). `Back` → loads `Lobby`.
 
-`CoOpRoster.Players == null` (e.g. `Level1`/`RoleSelect` opened directly,
+`CoOpRoster.Players == null` (e.g. `Level`/`RoleSelect` opened directly,
 bypassing `JoinLobby`) is treated as "co-op flow wasn't used" everywhere it's
 read, falling back to the older single-human `PartyRoleAssignment.HumanRole`
 carrier or (if that's unset too) the Inspector-only manual role assignment —
@@ -111,24 +155,20 @@ which exists specifically to gate on a variable-length multi-picker; here
 each card is already a complete, unambiguous choice, closer to
 `LobbyUI.SelectLocal()`'s shape). Each card's handler
 (`SelectLevel1()`/`SelectLevel2()`/`SelectLevel3()`) writes the pick to
-`LevelSelection.SelectedLevel` then loads that level's scene by name
-(`"Level1"`/`"Level2"`/`"Level3"`). `Back()` loads `RoleSelect`.
+`LevelSelection.SelectedLevel` then loads the shared `"Level"` scene.
+`Back()` loads `RoleSelect`.
 
 `LevelSelection.cs` is a plain `public static class` holding `Level?
 SelectedLevel` (`Level` enum: `Level1`/`Level2`/`Level3`) — built on exactly
-the same static-carrier pattern as `GameModeSelection.cs`. Nothing currently
-branches on it: each level's own scene already fully determines its own
-behavior via its own `LevelSequencer`/boss instance, so the carrier exists
-now purely so a future HUD "Level N: Halcyon" title has something to read,
-without over-building for that today. Its fallback contract is trivial by
-construction — `SelectedLevel == null` (e.g. a level scene opened directly,
-bypassing `LevelSelect`) requires no special handling anywhere, since
-nothing reads it for control flow.
+the same static-carrier pattern as `GameModeSelection.cs`. `LevelSetup`
+reads it to decide which boss to spawn; `null` (the `Level` scene opened
+directly, bypassing `LevelSelect`) falls back to
+`LevelSetup.editorDefaultLevel`.
 
 ## Pause overlay (PauseUI.cs)
 
 **Attached to:** a standalone `PauseController` GameObject in each level
-scene (`Level1.unity`/`Level2.unity`/`Level3.unity`) — **not** the
+scene (`Level.unity`) — **not** the
 `PausePanel` it shows/hides (see "Awake/OnEnable pitfall"
 below for why that distinction matters). `PausePanel` itself lives under
 `HUDCanvas`, alongside `GameOverPanel`/`VictoryPanel`, and follows the same
@@ -160,7 +200,7 @@ title text, and Button children) — see [combat.md](combat.md) for
   `GameModeSelection.Mode == GameMode.Online` (pausing a
   networked/authoritative match won't make sense once Online is real — this
   makes Pause auto-disable itself then, with no further code change needed).
-  An unset `Mode` — e.g. `Level1` opened directly — is treated as allowed,
+  An unset `Mode` — e.g. `Level` opened directly — is treated as allowed,
   matching `GameModeSelection`'s fallback contract above.
 
 ### Awake/OnEnable pitfall (why PauseUI isn't on its own panel)
@@ -196,7 +236,7 @@ itself is attached to.
 | `JoinLobby` | `Canvas` (`JoinLobbyUI`, 4 slot-text rows, `ContinueButton`/`BackButton`), `PlayerInputManager`, `EventSystem`, `Main Camera` |
 | `RoleSelect` | `Canvas` (`RoleSelectUI`, `singlePickerPanel` → `SinglePickerPanel` [original 4 role buttons + Start], `multiPickerPanel` → `MultiPickerPanel` [`RoleSelectMultiUI`, `RolePickerRow.prefab` instances]) plus `BackButton` |
 | `LevelSelect` | `Canvas` (`LevelSelectUI`, `MarauderButton`/`HalcyonButton`/`WardenButton` cards) plus `BackButton` |
-| `Level1` / `Level2` / `Level3` | Each: `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`, both the legacy fixed-4-object fallback fields and the new dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` wired to that scene's own boss instance (`MarauderBoss.prefab` for `Level1`, `HalcyonBoss`/`HalcyonRoam`/`HalcyonSurge`/`HalcyonStaticField` built on the `Boss` GameObject for `Level2`, `Level3BossPlaceholder.prefab` for `Level3` — see [marauder-boss.md](bosses/marauder-boss.md)/[halcyon-boss.md](bosses/halcyon-boss.md)) |
+| `Level` | `LevelSetup` (three `BossEntry` rows — see "Level setup" above); `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons) and `BossPanel_Marauder`/`BossPanel_Halcyon`/`BossPanel_Warden`; standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`: the 4 scene ships plus the dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` (its `bossObject` is set at runtime by `LevelSetup`); `Global Volume` (Bloom, `Assets/Settings/LevelVolumeProfile.asset`) |
 
 ## Not yet built
 
@@ -207,8 +247,8 @@ itself is attached to.
 - No `DeckBuild.unity` — the deck loadout screen is designed but not built.
   It will sit between `RoleSelect` and whichever level scene is chosen, in
   flow order, while being appended at whatever the next available Build
-  Settings index is when it's built (currently **8**, since `LevelSelect`
-  and `Level1`/`Level2`/`Level3` now occupy indices 4/5/6/7). Its exact position
+  Settings index is when it's built (currently **6**, since `LevelSelect`
+  and `Level` occupy indices 4/5). Its exact position
   relative to `LevelSelect` (before or after level-picking) is a decision
   for that future work, not settled here. See [cards.md](cards.md)'s "Deck
   loadout scene".

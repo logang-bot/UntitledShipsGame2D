@@ -1,0 +1,1638 @@
+fileFormatVersion: 2
+guid: 590f523ff4cc5894d9dbfcbd3a423fdf
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4413940874534418241
+    second: halcyon_bg_2_stars_near_0
+  - first:
+      213: 5662873360161556553
+    second: halcyon_bg_2_stars_near_1
+  - first:
+      213: -5501407461399386494
+    second: halcyon_bg_2_stars_near_2
+  - first:
+      213: 8629750372445546373
+    second: halcyon_bg_2_stars_near_3
+  - first:
+      213: -1986882614838566976
+    second: halcyon_bg_2_stars_near_4
+  - first:
+      213: -3997350974101835382
+    second: halcyon_bg_2_stars_near_5
+  - first:
+      213: -8597712787296527795
+    second: halcyon_bg_2_stars_near_6
+  - first:
+      213: 3428265419996326836
+    second: halcyon_bg_2_stars_near_7
+  - first:
+      213: -8448781704222506383
+    second: halcyon_bg_2_stars_near_8
+  - first:
+      213: 2509650092195643000
+    second: halcyon_bg_2_stars_near_9
+  - first:
+      213: 1068159898811361436
+    second: halcyon_bg_2_stars_near_10
+  - first:
+      213: -7249723305791450744
+    second: halcyon_bg_2_stars_near_11
+  - first:
+      213: -8842072250287267910
+    second: halcyon_bg_2_stars_near_12
+  - first:
+      213: -6952973161305370745
+    second: halcyon_bg_2_stars_near_13
+  - first:
+      213: -8969975783940812280
+    second: halcyon_bg_2_stars_near_14
+  - first:
+      213: 357121086176994954
+    second: halcyon_bg_2_stars_near_15
+  - first:
+      213: 7246535019381595978
+    second: halcyon_bg_2_stars_near_16
+  - first:
+      213: 4762947356361784889
+    second: halcyon_bg_2_stars_near_17
+  - first:
+      213: -139981806916120895
+    second: halcyon_bg_2_stars_near_18
+  - first:
+      213: -7399208930992336565
+    second: halcyon_bg_2_stars_near_19
+  - first:
+      213: -279183776072352252
+    second: halcyon_bg_2_stars_near_20
+  - first:
+      213: 7456399492373735575
+    second: halcyon_bg_2_stars_near_21
+  - first:
+      213: -5810211823437235254
+    second: halcyon_bg_2_stars_near_22
+  - first:
+      213: -3990669884670944615
+    second: halcyon_bg_2_stars_near_23
+  - first:
+      213: -9085842157954894141
+    second: halcyon_bg_2_stars_near_24
+  - first:
+      213: 8673134640496029094
+    second: halcyon_bg_2_stars_near_25
+  - first:
+      213: 2018678527861917157
+    second: halcyon_bg_2_stars_near_26
+  - first:
+      213: -2789378139482816527
+    second: halcyon_bg_2_stars_near_27
+  - first:
+      213: 6036816304937168980
+    second: halcyon_bg_2_stars_near_28
+  - first:
+      213: -917642989065794885
+    second: halcyon_bg_2_stars_near_29
+  - first:
+      213: -3455788868072517595
+    second: halcyon_bg_2_stars_near_30
+  - first:
+      213: -2117390718165562276
+    second: halcyon_bg_2_stars_near_31
+  - first:
+      213: -1577180600162593297
+    second: halcyon_bg_2_stars_near_32
+  - first:
+      213: -418339416536579028
+    second: halcyon_bg_2_stars_near_33
+  - first:
+      213: -6641834663462179475
+    second: halcyon_bg_2_stars_near_34
+  - first:
+      213: 7173628420950340203
+    second: halcyon_bg_2_stars_near_35
+  - first:
+      213: 4105536542738898172
+    second: halcyon_bg_2_stars_near_36
+  - first:
+      213: 6630717627101071644
+    second: halcyon_bg_2_stars_near_37
+  - first:
+      213: -5000703985725566175
+    second: halcyon_bg_2_stars_near_38
+  - first:
+      213: 7657119542346880051
+    second: halcyon_bg_2_stars_near_39
+  - first:
+      213: 1025188765159514191
+    second: halcyon_bg_2_stars_near_40
+  - first:
+      213: -369483461487491583
+    second: halcyon_bg_2_stars_near_41
+  - first:
+      213: -3394550129672093291
+    second: halcyon_bg_2_stars_near_42
+  - first:
+      213: 4234221828820643733
+    second: halcyon_bg_2_stars_near_43
+  - first:
+      213: 6083802732202819647
+    second: halcyon_bg_2_stars_near_44
+  - first:
+      213: 2474454765777869411
+    second: halcyon_bg_2_stars_near_45
+  - first:
+      213: 4813399986018055234
+    second: halcyon_bg_2_stars_near_46
+  - first:
+      213: -5514807978153186017
+    second: halcyon_bg_2_stars_near_47
+  - first:
+      213: 5028317457892990859
+    second: halcyon_bg_2_stars_near_48
+  - first:
+      213: 8024528567879009621
+    second: halcyon_bg_2_stars_near_49
+  - first:
+      213: 9022889286223113387
+    second: halcyon_bg_2_stars_near_50
+  - first:
+      213: 1158350329464972156
+    second: halcyon_bg_2_stars_near_51
+  - first:
+      213: -3100037146124789523
+    second: halcyon_bg_2_stars_near_52
+  - first:
+      213: -3860778087343080769
+    second: halcyon_bg_2_stars_near_53
+  - first:
+      213: 6451158478479045136
+    second: halcyon_bg_2_stars_near_54
+  - first:
+      213: 4776891991986997159
+    second: halcyon_bg_2_stars_near_55
+  - first:
+      213: -9010000116876018173
+    second: halcyon_bg_2_stars_near_56
+  - first:
+      213: -7099119262112124715
+    second: halcyon_bg_2_stars_near_57
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_0
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 1725
+        width: 352
+        height: 195
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb88cc129288eb2c0800000000000000
+      internalID: -4413940874534418241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_1
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 1776
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 948c3706151969e40800000000000000
+      internalID: 5662873360161556553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_2
+      rect:
+        serializedVersion: 2
+        x: 686
+        y: 1732
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2862b92cf0317a3b0800000000000000
+      internalID: -5501407461399386494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_3
+      rect:
+        serializedVersion: 2
+        x: 698
+        y: 1794
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58769e9cd3803c770800000000000000
+      internalID: 8629750372445546373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_4
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 1766
+        width: 149
+        height: 154
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cfd52ce9cc2d64e0800000000000000
+      internalID: -1986882614838566976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_5
+      rect:
+        serializedVersion: 2
+        x: 84
+        y: 1685
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a81391ac77e8688c0800000000000000
+      internalID: -3997350974101835382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_6
+      rect:
+        serializedVersion: 2
+        x: 690
+        y: 1679
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4a5b58c5c9cea880800000000000000
+      internalID: -8597712787296527795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_7
+      rect:
+        serializedVersion: 2
+        x: 781
+        y: 1639
+        width: 24
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bbe2aa5c35a39f20800000000000000
+      internalID: 3428265419996326836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_8
+      rect:
+        serializedVersion: 2
+        x: 1062
+        y: 1654
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1728ff6bdc5efba80800000000000000
+      internalID: -8448781704222506383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_9
+      rect:
+        serializedVersion: 2
+        x: 74
+        y: 1635
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87ef8df467114d220800000000000000
+      internalID: 2509650092195643000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_10
+      rect:
+        serializedVersion: 2
+        x: 753
+        y: 1599
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c98e7f3c4cdd2de00800000000000000
+      internalID: 1068159898811361436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_11
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 1584
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8811e66601fc36b90800000000000000
+      internalID: -7249723305791450744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_12
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 1584
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abfd94bb226aa4580800000000000000
+      internalID: -8842072250287267910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_13
+      rect:
+        serializedVersion: 2
+        x: 929
+        y: 1562
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78f819b8fb3128f90800000000000000
+      internalID: -6952973161305370745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_14
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 1548
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8021a5aac8e348380800000000000000
+      internalID: -8969975783940812280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_15
+      rect:
+        serializedVersion: 2
+        x: 1040
+        y: 1483
+        width: 40
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a86a16b5cbfb4f400800000000000000
+      internalID: 357121086176994954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_16
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 1537
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4f1ba2d43dd09460800000000000000
+      internalID: 7246535019381595978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_17
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 1478
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93e74dba263691240800000000000000
+      internalID: 4762947356361784889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_18
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 1267
+        width: 162
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ce4fbbc94fae0ef0800000000000000
+      internalID: -139981806916120895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_19
+      rect:
+        serializedVersion: 2
+        x: 466
+        y: 1312
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b41dd411eaab05990800000000000000
+      internalID: -7399208930992336565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_20
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 1266
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40eb728b5d3202cf0800000000000000
+      internalID: -279183776072352252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_21
+      rect:
+        serializedVersion: 2
+        x: 87
+        y: 1251
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 798e65625d37a7760800000000000000
+      internalID: 7456399492373735575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_22
+      rect:
+        serializedVersion: 2
+        x: 751
+        y: 1187
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acbbf32612bfd5fa0800000000000000
+      internalID: -5810211823437235254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_23
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 1127
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99ad65422ea4e98c0800000000000000
+      internalID: -3990669884670944615
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_24
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 1106
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c674d932ba98e180800000000000000
+      internalID: -9085842157954894141
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_25
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 1033
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ada6e7d00a2d5870800000000000000
+      internalID: 8673134640496029094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_26
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 1014
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e50be8fc69c30c10800000000000000
+      internalID: 2018678527861917157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_27
+      rect:
+        serializedVersion: 2
+        x: 370
+        y: 971
+        width: 95
+        height: 61
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1fff2e36c532a49d0800000000000000
+      internalID: -2789378139482816527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_28
+      rect:
+        serializedVersion: 2
+        x: 518
+        y: 988
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 450f016e17417c350800000000000000
+      internalID: 6036816304937168980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_29
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 920
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bba0b163090e343f0800000000000000
+      internalID: -917642989065794885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_30
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 865
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 520d9c385529a00d0800000000000000
+      internalID: -3455788868072517595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_31
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 854
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5c48093c548d92e0800000000000000
+      internalID: -2117390718165562276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_32
+      rect:
+        serializedVersion: 2
+        x: 996
+        y: 856
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe5dba4b99abc1ae0800000000000000
+      internalID: -1577180600162593297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_33
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 740
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c240bc16482c13af0800000000000000
+      internalID: -418339416536579028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_34
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 722
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6de573409673d3a0800000000000000
+      internalID: -6641834663462179475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_35
+      rect:
+        serializedVersion: 2
+        x: 1020
+        y: 701
+        width: 49
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6234659a09dd8360800000000000000
+      internalID: 7173628420950340203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_36
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 653
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfc565acbbbc9f830800000000000000
+      internalID: 4105536542738898172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_37
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 614
+        width: 55
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c19c7410d8a050c50800000000000000
+      internalID: 6630717627101071644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_38
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 614
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12392f7483ee99ab0800000000000000
+      internalID: -5000703985725566175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_39
+      rect:
+        serializedVersion: 2
+        x: 531
+        y: 585
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 334994497ad834a60800000000000000
+      internalID: 7657119542346880051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_40
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 581
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f40ed0f00c33a3e00800000000000000
+      internalID: 1025188765159514191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_41
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 577
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10608a7dfb45fdaf0800000000000000
+      internalID: -369483461487491583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_42
+      rect:
+        serializedVersion: 2
+        x: 168
+        y: 567
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59183a464a224e0d0800000000000000
+      internalID: -3394550129672093291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_43
+      rect:
+        serializedVersion: 2
+        x: 789
+        y: 512
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59f2f07c15af2ca30800000000000000
+      internalID: 4234221828820643733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_44
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 498
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3000800a520e6450800000000000000
+      internalID: 6083802732202819647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_45
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 456
+        width: 77
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36a56fecf77075220800000000000000
+      internalID: 2474454765777869411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_46
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 388
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 244f978e8c1acc240800000000000000
+      internalID: 4813399986018055234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_47
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 380
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1d60b1dc577773b0800000000000000
+      internalID: -5514807978153186017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_48
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 337
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8f5b97361c28c540800000000000000
+      internalID: 5028317457892990859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_49
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 298
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 555076a773adc5f60800000000000000
+      internalID: 8024528567879009621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_50
+      rect:
+        serializedVersion: 2
+        x: 598
+        y: 184
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baca101200eb73d70800000000000000
+      internalID: 9022889286223113387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_51
+      rect:
+        serializedVersion: 2
+        x: 748
+        y: 108
+        width: 57
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c736739cc79431010800000000000000
+      internalID: 1158350329464972156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_52
+      rect:
+        serializedVersion: 2
+        x: 615
+        y: 172
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de857bae3a47af4d0800000000000000
+      internalID: -3100037146124789523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_53
+      rect:
+        serializedVersion: 2
+        x: 941
+        y: 153
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbabd4be8c2cb6ac0800000000000000
+      internalID: -3860778087343080769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_54
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 87
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0123e7bd47e178950800000000000000
+      internalID: 6451158478479045136
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_55
+      rect:
+        serializedVersion: 2
+        x: 572
+        y: 0
+        width: 97
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a70bc825fdea4240800000000000000
+      internalID: 4776891991986997159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_56
+      rect:
+        serializedVersion: 2
+        x: 766
+        y: 39
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30e706771ac06f280800000000000000
+      internalID: -9010000116876018173
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_bg_2_stars_near_57
+      rect:
+        serializedVersion: 2
+        x: 924
+        y: 0
+        width: 69
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d07ca3d4acda7d90800000000000000
+      internalID: -7099119262112124715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      halcyon_bg_2_stars_near_0: -4413940874534418241
+      halcyon_bg_2_stars_near_1: 5662873360161556553
+      halcyon_bg_2_stars_near_10: 1068159898811361436
+      halcyon_bg_2_stars_near_11: -7249723305791450744
+      halcyon_bg_2_stars_near_12: -8842072250287267910
+      halcyon_bg_2_stars_near_13: -6952973161305370745
+      halcyon_bg_2_stars_near_14: -8969975783940812280
+      halcyon_bg_2_stars_near_15: 357121086176994954
+      halcyon_bg_2_stars_near_16: 7246535019381595978
+      halcyon_bg_2_stars_near_17: 4762947356361784889
+      halcyon_bg_2_stars_near_18: -139981806916120895
+      halcyon_bg_2_stars_near_19: -7399208930992336565
+      halcyon_bg_2_stars_near_2: -5501407461399386494
+      halcyon_bg_2_stars_near_20: -279183776072352252
+      halcyon_bg_2_stars_near_21: 7456399492373735575
+      halcyon_bg_2_stars_near_22: -5810211823437235254
+      halcyon_bg_2_stars_near_23: -3990669884670944615
+      halcyon_bg_2_stars_near_24: -9085842157954894141
+      halcyon_bg_2_stars_near_25: 8673134640496029094
+      halcyon_bg_2_stars_near_26: 2018678527861917157
+      halcyon_bg_2_stars_near_27: -2789378139482816527
+      halcyon_bg_2_stars_near_28: 6036816304937168980
+      halcyon_bg_2_stars_near_29: -917642989065794885
+      halcyon_bg_2_stars_near_3: 8629750372445546373
+      halcyon_bg_2_stars_near_30: -3455788868072517595
+      halcyon_bg_2_stars_near_31: -2117390718165562276
+      halcyon_bg_2_stars_near_32: -1577180600162593297
+      halcyon_bg_2_stars_near_33: -418339416536579028
+      halcyon_bg_2_stars_near_34: -6641834663462179475
+      halcyon_bg_2_stars_near_35: 7173628420950340203
+      halcyon_bg_2_stars_near_36: 4105536542738898172
+      halcyon_bg_2_stars_near_37: 6630717627101071644
+      halcyon_bg_2_stars_near_38: -5000703985725566175
+      halcyon_bg_2_stars_near_39: 7657119542346880051
+      halcyon_bg_2_stars_near_4: -1986882614838566976
+      halcyon_bg_2_stars_near_40: 1025188765159514191
+      halcyon_bg_2_stars_near_41: -369483461487491583
+      halcyon_bg_2_stars_near_42: -3394550129672093291
+      halcyon_bg_2_stars_near_43: 4234221828820643733
+      halcyon_bg_2_stars_near_44: 6083802732202819647
+      halcyon_bg_2_stars_near_45: 2474454765777869411
+      halcyon_bg_2_stars_near_46: 4813399986018055234
+      halcyon_bg_2_stars_near_47: -5514807978153186017
+      halcyon_bg_2_stars_near_48: 5028317457892990859
+      halcyon_bg_2_stars_near_49: 8024528567879009621
+      halcyon_bg_2_stars_near_5: -3997350974101835382
+      halcyon_bg_2_stars_near_50: 9022889286223113387
+      halcyon_bg_2_stars_near_51: 1158350329464972156
+      halcyon_bg_2_stars_near_52: -3100037146124789523
+      halcyon_bg_2_stars_near_53: -3860778087343080769
+      halcyon_bg_2_stars_near_54: 6451158478479045136
+      halcyon_bg_2_stars_near_55: 4776891991986997159
+      halcyon_bg_2_stars_near_56: -9010000116876018173
+      halcyon_bg_2_stars_near_57: -7099119262112124715
+      halcyon_bg_2_stars_near_6: -8597712787296527795
+      halcyon_bg_2_stars_near_7: 3428265419996326836
+      halcyon_bg_2_stars_near_8: -8448781704222506383
+      halcyon_bg_2_stars_near_9: 2509650092195643000
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
