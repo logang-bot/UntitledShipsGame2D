@@ -271,12 +271,16 @@ is no `RightSidebar` wrapper):
   guided-missile warning, and shockwave/guided-missile cooldowns, driven by
   `BossPanelUI.cs`. Full reference: [marauder-boss.md](bosses/marauder-boss.md).
 - **GameOverPanel** — full-rect dark overlay + "Game Over" text + Restart/
-  Change Roles buttons, `GameOverUI.cs` attached. Hidden by default (shown
-  on `PlayerHealth.OnDeath`). Lives here rather than `GameplayCanvas`
+  Change Roles buttons, `GameOverUI.cs` attached. Hidden by default, shown
+  once every human-controlled ship is dead. `GameOverUI.partyFrameManager`
+  is dragged to `LeftSidebar`'s `PartyFrameManager` in every level scene,
+  and it reads the live roster from there. Lives here rather than `GameplayCanvas`
   because it needs to cover the pillarbox bars too. See
   [combat.md](combat.md#gameoverpanel) for the death/restart flow.
-- **VictoryPanel** — mirrors `GameOverPanel`, shown on `MarauderBoss.OnDefeated`
-  via `VictoryUI.cs`. See [player-roles.md](player-roles.md)'s "Role Select
+- **VictoryPanel** — mirrors `GameOverPanel`, shown on each level's boss
+  `OnDefeated` (`MarauderBoss`/`HalcyonBoss`/`WardenBoss`, a persistent
+  `VictoryUI.Show` listener wired in each level scene) via `VictoryUI.cs`.
+  A new level's boss needs this listener wired too. See [player-roles.md](player-roles.md)'s "Role Select
   scene".
 
 `GameOverUI.victoryPanelRoot` is dragged to `VictoryPanel` and

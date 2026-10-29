@@ -38,6 +38,7 @@ public class WardenBoss : MonoBehaviour, IBoss
     public bool IsPhase2 { get; private set; }
     public GameObject TauntedShip { get; private set; }
     public float TauntActiveUntil { get; private set; }
+    public bool IsShielded => ArmShields(armA) || ArmShields(armB) || ArmShields(armC);
 
     private readonly Dictionary<GameObject, float> lastContactDamageTime = new Dictionary<GameObject, float>();
     private SpriteRenderer sr;
@@ -57,7 +58,7 @@ public class WardenBoss : MonoBehaviour, IBoss
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
         shockwave = GetComponent<WardenShockwave>();
-        mechanics = new Behaviour[] { GetComponent<WardenMovement>(), shockwave, GetComponent<WardenLockdownVolley>(), armA, armB };
+        mechanics = new Behaviour[] { GetComponent<WardenMovement>(), shockwave, GetComponent<WardenLockdownVolley>(), GetComponent<WardenBigShot>(), armA, armB };
     }
 
     private void DisableMechanics()
@@ -99,6 +100,7 @@ public class WardenBoss : MonoBehaviour, IBoss
 
     public void TakeDamage(float amount)
     {
+        if (IsShielded) return;
         CurrentHealth -= Mathf.RoundToInt(amount);
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2) EnterPhase2();
         if (CurrentHealth <= 0) Die();
@@ -114,6 +116,17 @@ public class WardenBoss : MonoBehaviour, IBoss
     {
         TauntedShip = taunter;
         TauntActiveUntil = Time.time + tauntWindowDuration;
+    }
+
+    /// <summary>
+    /// An arm shields only while its GameObject is active (so ArmC counts
+    /// from Phase 2 on) and its WardenArmHealth isn't knocked down. An arm
+    /// without WardenArmHealth never shields.
+    /// </summary>
+    public static bool ArmShields(WardenArm arm)
+    {
+        if (arm == null || !arm.gameObject.activeInHierarchy) return false;
+        return arm.TryGetComponent(out WardenArmHealth health) && !health.IsDown;
     }
 
     private void EnterPhase2()

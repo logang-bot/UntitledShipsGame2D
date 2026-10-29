@@ -17,6 +17,8 @@ public class HalcyonBossPanelUI : MonoBehaviour
     public TextMeshProUGUI surgeWarningText;
     public TextMeshProUGUI surgeCooldownText;
     public TextMeshProUGUI staticFieldCooldownText;
+    public Color telegraphTextColor = new Color(1f, 0.9f, 0.3f);
+    public Color openingTextColor = new Color(0.35f, 1f, 0.45f);
 
     void Update()
     {
@@ -37,9 +39,18 @@ public class HalcyonBossPanelUI : MonoBehaviour
     private void UpdateSurgeTexts()
     {
         if (surge == null) return;
-        bool warning = surge.IsTelegraphing || surge.IsActive;
-        if (surgeWarningText != null) surgeWarningText.text = warning ? "Surge!" : "";
-        if (surgeCooldownText != null) surgeCooldownText.text = FormatCooldown("Surge", surge.CooldownRemaining);
+        if (surgeWarningText != null)
+        {
+            surgeWarningText.text = SurgeWarningLabel();
+            surgeWarningText.color = surge.IsActive ? openingTextColor : telegraphTextColor;
+        }
+        if (surgeCooldownText != null) surgeCooldownText.text = FormatCooldown("Opening", surge.CooldownRemaining);
+    }
+
+    private string SurgeWarningLabel()
+    {
+        if (surge.IsActive) return "OPENING — FIRE!";
+        return surge.IsTelegraphing ? "Opening!" : "";
     }
 
     private void UpdateStaticFieldText()

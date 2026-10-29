@@ -15,6 +15,7 @@ public class WardenBossPanelUI : MonoBehaviour
     public WardenArm armC;
     public WardenShockwave shockwave;
     public WardenLockdownVolley lockdownVolley;
+    public WardenBigShot bigShot;
 
     public Image healthBarFill;
     public TextMeshProUGUI healthText;
@@ -25,6 +26,7 @@ public class WardenBossPanelUI : MonoBehaviour
     public TextMeshProUGUI shockwaveCooldownText;
     public TextMeshProUGUI lockdownWarningText;
     public TextMeshProUGUI lockdownCooldownText;
+    public TextMeshProUGUI bigShotText;
 
     void Update()
     {
@@ -35,20 +37,28 @@ public class WardenBossPanelUI : MonoBehaviour
         UpdateArmText(armC, armCWarningText, "Arm C");
         UpdateShockwaveText();
         UpdateLockdownText();
+        UpdateBigShotText();
     }
 
     private void UpdateHealth()
     {
         healthBarFill.fillAmount = (float)boss.CurrentHealth / boss.maxHealth;
         healthText.text = $"HP: {boss.CurrentHealth}/{boss.maxHealth}";
-        phaseText.text = boss.IsPhase2 ? "Phase 2" : "Phase 1";
+        string phase = boss.IsPhase2 ? "Phase 2" : "Phase 1";
+        phaseText.text = boss.IsShielded ? $"{phase} · Shielded" : phase;
     }
 
     private void UpdateArmText(WardenArm arm, TextMeshProUGUI text, string label)
     {
         if (text == null) return;
-        bool armLive = arm != null && arm.isActiveAndEnabled;
-        text.text = armLive ? $"{label}: {ArmTargetLabel(arm)}" : $"{label}: —";
+        text.text = $"{label}: {ArmStatusLabel(arm)}";
+    }
+
+    private string ArmStatusLabel(WardenArm arm)
+    {
+        if (arm == null || !arm.gameObject.activeInHierarchy) return "—";
+        if (arm.TryGetComponent(out WardenArmHealth health) && health.IsDown) return $"DOWN {health.DownRemaining:0}s";
+        return arm.isActiveAndEnabled ? ArmTargetLabel(arm) : "—";
     }
 
     private string ArmTargetLabel(WardenArm arm)
@@ -69,6 +79,12 @@ public class WardenBossPanelUI : MonoBehaviour
             lockdownWarningText.text = lockdownVolley.IsTelegraphing ? $"Incoming: {lockdownVolley.IncomingEdge} Lockdown" : "";
         if (lockdownCooldownText != null)
             lockdownCooldownText.text = FormatCooldown("Lockdown", lockdownVolley.CooldownRemaining);
+    }
+
+    private void UpdateBigShotText()
+    {
+        if (bigShot == null || bigShotText == null) return;
+        bigShotText.text = bigShot.IsTelegraphing ? "BIG SHOT!" : FormatCooldown("Big Shot", bigShot.CooldownRemaining);
     }
 
     private string FormatCooldown(string label, float remaining)

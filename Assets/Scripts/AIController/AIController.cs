@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class AIController : MonoBehaviour
 {
-    public MonoBehaviour bossObject; // must implement IBoss - MarauderBoss or HalcyonBoss
+    public MonoBehaviour bossObject; // must implement IBoss - any of MarauderBoss/HalcyonBoss/WardenBoss
     public float weaveFrequency = 0.8f;
     public float weaveSpeed = 1f;
 
@@ -111,8 +111,10 @@ public class AIController : MonoBehaviour
     private AIControllerSupport support;
     private AIControllerAttacker attacker;
     private AIControllerAvoidance avoidance;
+    private AIBossTactics tactics;
 
     public PlayerAbility Ability => ability;
+    public AIBossTactics Tactics => tactics;
     public PlayerController Controller => controller;
     public Camera Cam => cam;
     public AIControllerPositioning Positioning => positioning;
@@ -138,6 +140,15 @@ public class AIController : MonoBehaviour
         support = new AIControllerSupport(this);
         attacker = new AIControllerAttacker(this);
         avoidance = new AIControllerAvoidance(this);
+    }
+
+    /// <summary>
+    /// Start, not Awake: on the co-op path PartySetupBootstrap assigns
+    /// bossObject right after Instantiate(), once Awake() has already run.
+    /// </summary>
+    void Start()
+    {
+        tactics = AIBossTactics.For(bossObject);
     }
 
     void Update()
@@ -176,7 +187,9 @@ public class AIController : MonoBehaviour
                     ? medic.ApproachDirection(medicTarget)
                     : positioning.BiasedPositionDirection(medicBias, guardDeadzone);
             case PlayerRole.Support:
-                return support.WanderDirection();
+                return tactics.HasPriorityFocus()
+                    ? positioning.BiasedPositionDirection(attackerBias, attackerDeadzone)
+                    : support.WanderDirection();
             case PlayerRole.Attacker:
                 return attacker.PositionDirection();
             default:
@@ -185,34 +198,22 @@ public class AIController : MonoBehaviour
     }
 
     /// <summary>
-    /// Tank gates its ability behind a distance check (below); every other
-    /// role retries every frame, which the ability's own cooldown gate
-    /// makes safe. TEMPORARY for Medic specifically: fires the aura boost
-    /// the instant it's off cooldown regardless of whether anyone needs it -
-    /// flagged for rework once the aura AI is revisited (see
-    /// docs/systems/boss.md's "AI teammate behavior").
+    /// Tank's Taunt is decided per boss by tactics.ShouldTaunt (see
+    /// AIBossTactics and its subclasses); every other role retries every
+    /// frame, which the ability's own cooldown gate makes safe. Attacker
+    /// always requests the slot that continues its combo, so bots play a
+    /// perfect rotation paced by comboAttackCooldown. TEMPORARY for Medic:
+    /// fires the aura boost the instant it's off cooldown regardless of
+    /// whether anyone needs it - flagged for rework once the aura AI is
+    /// revisited (see docs/systems/bosses/marauder-boss.md's "AI teammate behavior").
     /// </summary>
     private void UpdateAbilityUsage()
     {
         if (role.role == PlayerRole.Tank)
         {
-            // Only MarauderBoss has an aggro table to check against - a Tank
-            // never auto-taunts against a boss with no aggro (e.g. Halcyon),
-            // matching its documented no-op there.
-            MarauderBoss marauderBoss = bossObject as MarauderBoss;
-            if (marauderBoss != null && marauderBoss.CurrentTarget != gameObject) ability.TryUseAbility();
-
-            // Against Warden, Taunt has a real, always-beneficial effect (biases
-            // arm re-picks toward the Tank) with no "already holding aggro"
-            // concept to gate on - same "fire the instant it's off cooldown"
-            // placeholder trigger every other AI ability already uses by default.
-            WardenBoss wardenBoss = bossObject as WardenBoss;
-            if (wardenBoss != null) ability.TryUseAbility();
+            if (tactics.ShouldTaunt(this)) ability.TryUseAbility();
             return;
         }
-        // Always requests whatever slot continues the rotation correctly, so
-        // Attacker bots play a perfect combo - TryComboAttack's own per-slot
-        // cooldown (comboAttackCooldown) is what paces it, not this call.
         if (role.role == PlayerRole.Attacker) ability.TryComboAttack(ability.AttackerComboExpectedSlot);
         ability.TryUseAbility();
     }

@@ -11,7 +11,7 @@ public class PlayerRoleStatsTests
         Assert.AreEqual(5, stats.maxShield);
         Assert.AreEqual(2.0f, stats.fireDamage);
         Assert.AreEqual(2.5f, stats.shotsPerSecond);
-        Assert.AreEqual(3.0f, stats.moveSpeed);
+        Assert.AreEqual(2.4f, stats.moveSpeed);
     }
 
     [Test]
@@ -23,7 +23,7 @@ public class PlayerRoleStatsTests
         Assert.AreEqual(20, stats.maxShield);
         Assert.AreEqual(1.0f, stats.fireDamage);
         Assert.AreEqual(1f, stats.shotsPerSecond);
-        Assert.AreEqual(1.5f, stats.moveSpeed);
+        Assert.AreEqual(1.2f, stats.moveSpeed);
     }
 
     [Test]
@@ -35,7 +35,7 @@ public class PlayerRoleStatsTests
         Assert.AreEqual(3, stats.maxShield);
         Assert.AreEqual(0.7f, stats.fireDamage);
         Assert.AreEqual(1.5f, stats.shotsPerSecond);
-        Assert.AreEqual(3.0f, stats.moveSpeed);
+        Assert.AreEqual(2.4f, stats.moveSpeed);
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class PlayerRoleStatsTests
         Assert.AreEqual(3, stats.maxShield);
         Assert.AreEqual(1.0f, stats.fireDamage);
         Assert.AreEqual(2f, stats.shotsPerSecond);
-        Assert.AreEqual(4.5f, stats.moveSpeed);
+        Assert.AreEqual(3.6f, stats.moveSpeed);
     }
 
     // ------------------------------------------------------------------ DPS

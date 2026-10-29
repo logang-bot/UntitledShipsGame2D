@@ -15,8 +15,8 @@ public class MarauderBossDamageTests
 {
     private static readonly MethodInfo AwakeMethod = typeof(MarauderBoss)
         .GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
-    private static readonly MethodInfo PickTargetMethod = typeof(MarauderBoss)
-        .GetMethod("PickTarget", BindingFlags.NonPublic | BindingFlags.Instance);
+    private static readonly FieldInfo AggroField = typeof(MarauderBoss)
+        .GetField("aggroSystem", BindingFlags.NonPublic | BindingFlags.Instance);
 
     private readonly List<GameObject> created = new List<GameObject>();
 
@@ -39,7 +39,7 @@ public class MarauderBossDamageTests
 
     private static void PickTarget(MarauderBoss boss)
     {
-        PickTargetMethod.Invoke(boss, null);
+        ((MarauderBossAggro)AggroField.GetValue(boss)).PickTarget();
     }
 
     [TearDown]

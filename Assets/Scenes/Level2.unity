@@ -6584,6 +6584,7 @@ MonoBehaviour:
   partyFrameManager: {fileID: 952499542}
   bossObject: {fileID: 1636344750194998061}
   halcyonStaticField: {fileID: 1636344750194998059}
+  cameraShake: {fileID: 519420034}
 --- !u!4 &1579036666
 Transform:
   m_ObjectHideFlags: 0
@@ -6732,6 +6733,8 @@ MonoBehaviour:
   surgeWarningText: {fileID: 1860440742}
   surgeCooldownText: {fileID: 964701584}
   staticFieldCooldownText: {fileID: 1699391177}
+  telegraphTextColor: {r: 1, g: 0.9, b: 0.3, a: 1}
+  openingTextColor: {r: 0.35, g: 1, b: 0.45, a: 1}
 --- !u!1 &1699391174
 GameObject:
   m_ObjectHideFlags: 0
@@ -7335,6 +7338,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameOverUI
   panelRoot: {fileID: 2055462885}
   victoryPanelRoot: {fileID: 1890823469}
+  partyFrameManager: {fileID: 952499542}
 --- !u!114 &2055462888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7659,6 +7663,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1990896620938820717, guid: 8ed158d9e87c5864e9dfd26a6399ec0e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1636344750194998059}
+    - targetCorrespondingSourceObject: {fileID: 1990896620938820717, guid: 8ed158d9e87c5864e9dfd26a6399ec0e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1636344750194998063}
   m_SourcePrefab: {fileID: 100100000, guid: 8ed158d9e87c5864e9dfd26a6399ec0e, type: 3}
 --- !u!1 &1636344750194998058 stripped
 GameObject:
@@ -7687,6 +7694,7 @@ MonoBehaviour:
   bossRange: 1.8
   clusterRange: 0.6
   damageMultiplier: 3
+  soloDamageMultiplier: 1
   telegraphTime: 0.3
   impactFlashDuration: 0.15
   ringColor: {r: 0.3, g: 0.6, b: 1, a: 0.25}
@@ -7728,7 +7736,31 @@ MonoBehaviour:
       m_Calls: []
   OnDefeated:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1593914220}
+        m_TargetAssemblyTypeName: HalcyonBossPanelUI, UntitledShips.Runtime
+        m_MethodName: ShowDefeated
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1890823470}
+        m_TargetAssemblyTypeName: VictoryUI, UntitledShips.Runtime
+        m_MethodName: Show
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   bulletDamage: 1
   bodyContactDamageMultiplier: 2
   contactDamageCooldown: 1
@@ -7744,12 +7776,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1b7bd0a06d224541be90a6ef6d4ba02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UntitledShips.Runtime::HalcyonRoam
-  roamSpeed: 2.5
-  roamSpeedPhase2: 3.5
-  pauseMin: 0.3
-  pauseMax: 0.8
+  phase1:
+    speedMin: 3.5
+    speedMax: 5.5
+    pauseMin: 0.2
+    pauseMax: 0.5
+    speedChangeIntervalMin: 0.5
+    speedChangeIntervalMax: 1.2
+  phase2:
+    speedMin: 5
+    speedMax: 7
+    pauseMin: 0.05
+    pauseMax: 0.2
+    speedChangeIntervalMin: 0.4
+    speedChangeIntervalMax: 0.9
   minWaypointDistance: 2
   screenPadding: {x: 0.8, y: 0.5}
+--- !u!114 &1636344750194998063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1636344750194998058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29577528ce45191448db333138ba43aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::HalcyonSurgeTint
+  openingColor: {r: 0.35, g: 1, b: 0.45, a: 1}
+  telegraphPulseSpeed: 12
 --- !u!1001 &1771511203806262392
 PrefabInstance:
   m_ObjectHideFlags: 0

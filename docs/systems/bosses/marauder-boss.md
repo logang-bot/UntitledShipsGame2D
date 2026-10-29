@@ -507,7 +507,9 @@ Drives a CPU-controlled teammate every `Update()`:
 - **Abilities**: `PlayerAbility.TryUseAbility()` — a public method that goes
   through the same cooldown gate and role-dispatch switch the human player
   uses. Per-role heuristic: **Tank** taunts whenever it doesn't currently
-  hold the boss's aggro (`boss.CurrentTarget != gameObject`); **Medic**
+  hold the boss's aggro. That's `MarauderAITactics.ShouldTaunt`, the
+  per-boss AI strategy since Session 46; see `docs/architecture.md`'s
+  "Per-boss AI behavior". **Medic**
   fires its aura boost the instant it's off cooldown — flagged as a
   temporary, need-unaware heuristic, see "Medic positioning + aura" below;
   **Support**/**Attacker** just retry every frame, safe and cheap since
@@ -1006,17 +1008,39 @@ copies).
 
 ### Tank taunt → boss aggro
 
-On all 4 `PlayerAbility` components (`Player` + 3 `Teammate_*`), `OnTaunt`
-has persistent listeners to `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
-(feedback) and `MarauderBoss.TauntedBy(GameObject)` with the fixed argument dragged
-to that same GameObject (each player's taunt targets itself).
+`OnTaunt` has listeners to `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
+(feedback) and `MarauderBoss.TauntedBy(GameObject)`, with the taunting ship
+itself as the argument.
+
+- **Co-op-spawned ships** (the normal menu path) get the camera-shake and
+  `TauntedBy` listeners at runtime from `SpawnedShipEventWiring`, called by
+  `PartySetupBootstrap`. `Ship.prefab`'s own persistent copies have null
+  targets (and, until Session 44, a stale `Boss` type name), so before Session 41 Tank's Taunt
+  did nothing to Marauder on that path.
+- **Hand-placed scene ships** (a level opened directly in the editor) use
+  Inspector listeners. Until Session 43, in `Level1.unity` only `Player`'s
+  `OnTaunt` reached `MarauderBoss.TauntedBy`, so an AI Tank's taunt did
+  nothing when Level 1 was opened directly. Two gaps caused it:
+  - The 3 `Teammate_*` ships' `CameraShake.Shake`/`TauntedBy` listeners
+    had null targets.
+  - The scene's `MarauderBoss.targets` held only `Player`. Its 3 teammate
+    slots were null, so the teammates had no aggro entry, and `TauntedBy`
+    ignores a taunter with no entry.
+
+  Both are now wired, so all 4 ships work, the same as in `Level3.unity`.
+
+`TauntedBy` raises the taunter's aggro immediately, but `CurrentTarget`
+only switches on the next `PickTarget()` in `Update()`, which is skipped
+while the boss is disabled or `LevelSequencer.ShipsFrozen`.
 
 ### Death handling
 
-Only the human `Player`'s `PlayerHealth.OnDeath` shows `GameOverPanel`
-(`GameOverPanel/GameOverUI.Show()`). Each `Teammate_*`'s `OnDeath` is wired
-only to its own party frame (`PartyFrame_N/PartyFrameUI.OnPlayerDied()`) —
-a teammate dying just grays its frame, it doesn't end the whole fight, so
+`GameOverPanel` shows once **every human-controlled** ship is dead
+(`GameOverUI` watches them at runtime; see
+[combat.md](../combat.md#gameoveruics)). Each ship's frame grays out via
+`PartyFrameUI.OnPlayerDied()`, hooked at runtime by
+`PartyFrameManager.BindFrame` so spawned co-op ships get it too. An AI
+teammate dying just grays its frame, it doesn't end the whole fight, so
 the 3 CPU teammates keep fighting (and can still defeat the boss) after the
 human is already gone.
 
@@ -1031,9 +1055,6 @@ the end-screen popup is guarded. See
 
 ## Not yet built
 
-- **Local co-op / dynamic player count** — the party is 4 fixed,
-  hand-placed scene objects, not a runtime spawner (see `../../roadmap.md`'s
-  "In Progress").
 - **Out of scope by design**: a 3rd boss phase, an enrage state, or any
   behavior after Phase 2 beyond death. 2 phases ending in death is the
   complete, intended design.

@@ -12,16 +12,22 @@ reference docs live under `systems/`.
    prove the raid-style boss fight using AI-controlled teammates for the
    non-human roles, so role-coordination can be shown to be fun with a
    single human player, before any networking exists.
+   **Status: done (Session 48).** Marauder, Halcyon and Warden have all
+   been playtested and accepted with AI teammates, including AI breaking
+   Warden's arm shield.
 3. **Bullet-hell + deck layer** — the merged `tohou_deck` half: small hitbox,
    focus mode, grazing/energy, then cards and the loadout screen, then boss
    spell cards. Deliberately *after* step 2: cards modify a fight that has
    already been shown to be fun, they don't substitute for one. See
-   `systems/cards.md`.
+   `systems/cards.md`. **Owner: another developer** (from Session 49).
 4. **Networking (Nakama) — last.** Only starts once the CPU-AI boss loop is
    proven fun. This is what upgrades the AI-controlled teammates to real
    human players, not a separate feature bolted on afterward.
 5. **Art & audio — final pass**, once everything above works with
-   placeholder assets.
+   placeholder assets. **Exception (Session 49): art starts now, in
+   parallel with step 3.** Each asset replaces a placeholder that already
+   works, so it never blocks gameplay. See `art-roadmap.md`. Audio is still
+   last.
 
 ## Implemented
 
@@ -505,10 +511,74 @@ reference docs live under `systems/`.
   changes to the interface or its consumers were needed, since that
   generalization was already done for Halcyon. See
   `systems/bosses/warden-boss.md` and the design spec above.
+- **Halcyon playtest tuning + Victory on every boss** — first round of real
+  playtest feedback on Halcyon. Roam speed is now randomized per leg and
+  mid-glide (`HalcyonRoamPhaseSettings`, faster in phase 2). Surge is
+  presented to players as an **Opening** (`HalcyonSurgeTint.cs` flashes
+  the boss green; HUD reads "Opening!" / "OPENING — FIRE!"). Static Field
+  now also hits a lone ship in range, for less (1 vs. 3 per clustered
+  partner). `VictoryUI.Show` is now wired to `OnDefeated` in `Level2.unity`
+  and `Level3.unity` too — previously only Level 1 showed a Victory screen.
+  See `systems/bosses/halcyon-boss.md`.
+- **Warden playtest fixes + Big Shot** — fixed the entrance pop-in and the
+  mid-fight teleporting (a `WardenMovement` coroutine kept running after
+  its component was disabled, then a second one stacked on top). Movement
+  is now speed-based, eased, and slower (1.5–2.5 u/s average). New
+  `WardenBigShot.cs`: a telegraphed 3×-wide, 2-damage shot straight down
+  every 8s ±1.5s (6s in phase 2), the boss's mirror of the Attacker's Big
+  Shot, with its own HUD row. See `systems/bosses/warden-boss.md`.
+- **Game Over on the co-op path** — Game Over never showed when reaching a
+  level through the normal menu flow: spawned ships' `OnDeath` listeners
+  (from `Ship.prefab`) had null targets. `GameOverUI` now watches every
+  human-controlled ship at runtime and shows once all of them are dead.
+  `PartyFrameManager` hooks each frame's gray-out the same way. See
+  `systems/combat.md`'s "GameOverUI.cs".
+- **Taunt + camera shake on the co-op path** — co-op-spawned ships had
+  null-target `OnDamaged`/`OnTaunt` listeners, so hits never shook the
+  camera and Tank's Taunt did nothing to Marauder or Warden on the normal
+  menu path. `SpawnedShipEventWiring` now adds those listeners at runtime.
+  See `systems/player-roles.md`'s `PartySetupBootstrap` entry.
+- **Warden arm shields** — the arms were untouchable, so the fight couldn't
+  be won. Each arm now has a trigger hitbox and a new `WardenArmHealth`
+  (20 HP). Warden takes no damage while any active arm is up. A downed arm
+  turns gray, stops firing and loses its hitbox for 15s, then recovers.
+  ArmC still joins at Phase 2 and brings the shield back. The HUD shows
+  "Shielded" and "DOWN {n}s". See `systems/bosses/warden-boss.md`'s
+  "WardenArmHealth.cs".
+- **Per-boss AI tactics (Strategy pattern)** — AI teammates now play each
+  boss through an `AIBossTactics` object: the default class, or a per-boss
+  subclass that overrides only what differs. While Warden is shielded,
+  every AI ship lines up under the lowest-HP arm still up, and returns to
+  the boss once the shield drops. The Tank's per-boss Taunt rules moved
+  into the tactics classes too. See `architecture.md`'s "Per-boss AI
+  behavior".
+- **Level 1 AI Tank Taunt (editor quick-test path)** — when `Level1.unity`
+  is opened directly, the teammates' Taunt/shake listeners are now wired.
+  Marauder's `targets` now lists all 4 ships (it only had `Player`), so an
+  AI Tank's Taunt pulls aggro there too. See `systems/bosses/marauder-boss.md`.
 
 ## In Progress
 
 *(none currently)*
+
+## Known issues (open)
+
+- **White shape in the center of the screen on a ship hit.** Reported in
+  Session 46. It's intermittent: sometimes, for the same 0.12s a hit ship
+  flashes white, a white shape also shows around the screen center.
+  - **Not reproduced yet.** Play mode doesn't run while the Editor is
+    unfocused.
+  - **Ruled out** (Session 46):
+    - the only renderer that changes on a hit is the hit ship's own sprite;
+    - no white renderer or UI graphic exists near the center;
+    - `GameplayCanvas` is empty;
+    - a shake-sized camera offset shows nothing.
+  - **Next time it's visible:** capture a screenshot or recording, and note
+    whether it's in the Game view or the Scene view. The Scene view draws
+    `HUDCanvas` as a large plane near the world origin; see
+    `systems/hud-layout.md`.
+
+  See `systems/combat.md`'s "PlayerDamageFlash.cs"/"CameraShake.cs".
 
 ## Planned (not yet started)
 
@@ -555,10 +625,21 @@ is independently testable and the one before it de-risks the next.
   in place as a disabled placeholder — this item is what wires it up for
   real and gives it somewhere (a real lobby/matchmaking flow) to lead to.
 
-### Art & audio (final pass)
+### Art & audio
 
-- **Art pipeline** — Blender-rendered sprites with normal maps, URP 2D
-  `Sprite-Lit-Default` shader + `Light2D` + `Shadow Caster 2D` for dynamic lighting.
-  Role-based color variants via material emission swaps.
+- **Art** — started early, in parallel with phase 3. Its phased plan lives
+  in [art-roadmap.md](art-roadmap.md):
+  - foundations;
+  - a pipeline test with one ship;
+  - the four role ships plus roll;
+  - effects;
+  - powers (black hole);
+  - bosses;
+  - anime cut-ins;
+  - HUD and menus last.
+
+  Pipeline: Blender-modeled, pre-rendered sprites (color + normal map + glow
+  mask), URP 2D `Sprite-Lit-Default` + `Light2D`, and Shape Blaster-inspired
+  neon effects.
 
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.

@@ -49,8 +49,9 @@ public class AIControllerPositioning
     }
 
     /// <summary>
-    /// Steers toward a point between the AI-controlled allies and the boss,
-    /// biased by `bias` (0 = at ally center, 1 = at the boss, negative =
+    /// Steers toward a point between the AI-controlled allies and the
+    /// tactics' FocusPoint (normally the boss), biased by `bias` (0 = at
+    /// ally center, 1 = at the focus point, negative =
     /// extrapolates past ally center away from the boss, via LerpUnclamped
     /// rather than Lerp). Tank uses a positive bias to physically stand in
     /// incoming bullets' paths (Bullet.cs doesn't home - it just hits
@@ -62,7 +63,7 @@ public class AIControllerPositioning
     {
         if (owner.bossObject == null) return Vector2.zero;
 
-        Vector2 targetPoint = Vector2.LerpUnclamped(GetAllyCenter(), owner.bossObject.transform.position, bias);
+        Vector2 targetPoint = Vector2.LerpUnclamped(GetAllyCenter(), owner.Tactics.FocusPoint(), bias);
         targetPoint = EnforceBossDistance(targetPoint);
 
         Vector2 toTarget = targetPoint - (Vector2)owner.transform.position;

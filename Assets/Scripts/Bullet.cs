@@ -33,7 +33,17 @@ public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = 
         speed = spd;
         owner = ownerTag;
         ownerObject = ownerObj;
-        Destroy(gameObject, lifeTime); // safety cleanup if it never hits anything
+        ScheduleLifetimeCleanup();
+    }
+
+    /// <summary>
+    /// Safety cleanup if the bullet never hits anything. Play mode only:
+    /// a delayed Destroy() is rejected (and logged as an error) in edit
+    /// mode, where EditMode tests spawn bullets.
+    /// </summary>
+    private void ScheduleLifetimeCleanup()
+    {
+        if (Application.isPlaying) Destroy(gameObject, lifeTime);
     }
 
     // Re-aims toward target's current position every frame, at a capped turn
@@ -48,7 +58,7 @@ public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = 
         owner = ownerTag;
         ownerObject = ownerObj;
         direction = target != null ? ((Vector2)target.position - (Vector2)transform.position).normalized : Vector2.down;
-        Destroy(gameObject, lifeTime);
+        ScheduleLifetimeCleanup();
     }
 
     void Update()
@@ -63,29 +73,41 @@ public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = 
 
 void OnTriggerEnter2D(Collider2D other)
     {
-        if (owner == "Player" && other.CompareTag("Enemy"))
-        {
-            Enemy enemy = other.GetComponent<Enemy>();
-            if (enemy != null) enemy.TakeDamage(damage);
-            MarauderBoss boss = other.GetComponent<MarauderBoss>();
-            if (boss != null) boss.TakeDamage(damage, ownerObject);
-            HalcyonBoss halcyonBoss = other.GetComponent<HalcyonBoss>();
-            if (halcyonBoss != null) halcyonBoss.TakeDamage(damage);
-            WardenBoss wardenBoss = other.GetComponent<WardenBoss>();
-            if (wardenBoss != null) wardenBoss.TakeDamage(damage);
-            Minion minion = other.GetComponent<Minion>();
-            if (minion != null) minion.TakeDamage(damage);
-            Destroy(gameObject);
-        }
-        else if (owner == "Enemy" && other.CompareTag("Player"))
-        {
-            // GetComponentInParent (not GetComponent) so a child collider -
-            // e.g. Tank's wide shield-arc trigger - can route the hit to
-            // its ship's own PlayerHealth, not just a ship's own body collider.
-            PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
-            if (health != null) health.TakeDamage(Mathf.RoundToInt(damage));
-            Destroy(gameObject);
-        }
+        if (owner == "Player" && other.CompareTag("Enemy")) HitEnemy(other);
+        else if (owner == "Enemy" && other.CompareTag("Player")) HitPlayer(other);
+    }
+
+    private void HitEnemy(Collider2D other)
+    {
+        DamageBoss(other);
+        DamageMinorEnemy(other);
+        Destroy(gameObject);
+    }
+
+    private void DamageBoss(Collider2D other)
+    {
+        if (other.TryGetComponent(out MarauderBoss boss)) boss.TakeDamage(damage, ownerObject);
+        if (other.TryGetComponent(out HalcyonBoss halcyonBoss)) halcyonBoss.TakeDamage(damage);
+        if (other.TryGetComponent(out WardenBoss wardenBoss)) wardenBoss.TakeDamage(damage);
+        if (other.TryGetComponent(out WardenArmHealth wardenArm)) wardenArm.TakeDamage(damage);
+    }
+
+    private void DamageMinorEnemy(Collider2D other)
+    {
+        if (other.TryGetComponent(out Enemy enemy)) enemy.TakeDamage(damage);
+        if (other.TryGetComponent(out Minion minion)) minion.TakeDamage(damage);
+    }
+
+    /// <summary>
+    /// GetComponentInParent (not GetComponent) so a child collider - e.g.
+    /// Tank's wide shield-arc trigger - can route the hit to its ship's own
+    /// PlayerHealth, not just a ship's own body collider.
+    /// </summary>
+    private void HitPlayer(Collider2D other)
+    {
+        PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
+        if (health != null) health.TakeDamage(Mathf.RoundToInt(damage));
+        Destroy(gameObject);
     }
 
 }

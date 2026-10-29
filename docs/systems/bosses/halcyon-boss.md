@@ -16,15 +16,16 @@ this doc describes the built system.
   (or clustering) is the losing strategy. Unlike Marauder (stationary-but-
   erratic, confined near its home position), Halcyon roams the *whole*
   arena continuously.
-- **Movement:** full-arena waypoint-to-waypoint roam (`HalcyonRoam.cs`),
-  pausing briefly at each point before picking the next — see
-  "HalcyonRoam.cs" below.
+- **Movement:** full-arena waypoint-to-waypoint roam (`HalcyonRoam.cs`) at
+  a randomized, constantly re-rolled speed, pausing briefly at each point
+  before picking the next — see "HalcyonRoam.cs" below.
 - **Mechanics:** [body contact damage](#halcyonbosscs) (touching it
   directly, kept from Marauder, unchanged mechanic) · [Surge
   window](#halcyonsurgecs) (a periodic stillness window — the only reliable
-  time to land hits) · [Static Field pulse](#halcyonstaticfieldcs) (the
-  fight's real damage source — punishes ships clustering near the boss and
-  near each other).
+  time to land hits; shown to players as an **Opening**) · [Static Field
+  pulse](#halcyonstaticfieldcs) (the fight's real damage source — chips any
+  ship inside its ring, and punishes ships clustering near the boss and
+  near each other much harder).
 - **Level summary:** reached via `LevelSelect` → `Level2.unity`, which runs
   the same shared `LevelSequencer` timeline every level uses (see
   [level-sequencing.md](../level-sequencing.md)) — no sequencing changes,
@@ -91,14 +92,30 @@ aggro to attribute the source to.
 
 Full-arena waypoint-to-waypoint movement: picks a random point within the
 viewport bounds (same clamp idiom `PlayerController`/`MarauderBoss` use),
-glides there via `Vector3.MoveTowards` at `roamSpeed` (2.5 u/s phase 1, 3.5
-u/s phase 2 — the phase-2 escalation for this mechanic), pauses briefly
-(`Random.Range(pauseMin, pauseMax)`, 0.3–0.8s) on arrival, then picks the
-next point — re-rolling (bounded retries) if the new point is too close to
-the current one (`minWaypointDistance`, 2). Same "sit, hop" idiom as
-Marauder's M-pattern hops, just arena-wide with random destinations instead
-of a fixed vertex set, and speed-driven rather than duration-driven since
-"matches ship speed" was the design brief.
+glides there via `Vector3.MoveTowards` at `currentSpeed`, pauses briefly on
+arrival, then picks the next point — re-rolling (bounded retries) if the
+new point is too close to the current one (`minWaypointDistance`, 2). Same
+"sit, hop" idiom as Marauder's M-pattern hops, just arena-wide with random
+destinations instead of a fixed vertex set.
+
+**Randomized speed** (playtest feedback: a fixed 2.5/3.5 u/s made its
+arrival easy to predict). Speed, pause, and re-roll timing live in two
+`HalcyonRoamPhaseSettings` fields, `phase1` and `phase2` (a
+`[Serializable]` plain class, same grouping pattern as
+`MarauderBossShockwaveSettings`). `currentSpeed` is re-rolled from
+`[speedMin, speedMax]` on enable, on every waypoint arrival, **and**
+mid-glide every `[speedChangeIntervalMin, speedChangeIntervalMax]`
+seconds, so the boss visibly speeds up/slows down partway to a point:
+
+| | Phase 1 | Phase 2 |
+|---|---|---|
+| speed (u/s) | 3.5–5.5 | 5–7 |
+| pause on arrival (s) | 0.2–0.5 | 0.05–0.2 |
+| mid-glide re-roll every (s) | 0.5–1.2 | 0.4–0.9 |
+
+For reference, ship speeds are 1.2 (Tank) to 3.6 (Support) — Halcyon now
+always outpaces every ship, so the party tracks it by positioning, not by
+chasing it.
 
 Freezes in place (skips its movement step in `Update()`) whenever
 `HalcyonSurge.IsTelegraphing || HalcyonSurge.IsActive` — read via a cached
@@ -116,18 +133,36 @@ otherwise always moving, so this is the one consistent window to land
 hits — no damage-taken multiplier is applied.
 
 Public API: `IsTelegraphing`, `IsActive`, `CooldownRemaining` — read by
-`HalcyonRoam` (to freeze) and `HalcyonBossPanelUI` (a `"Surge!"` warning
-text while either flag is true, plus a cooldown countdown).
+`HalcyonRoam` (to freeze), `HalcyonSurgeTint` and `HalcyonBossPanelUI`.
+
+**Player-facing name: "Opening".** Playtesting found "Surge!" read as an
+incoming attack, the opposite of what the window is. The C# names stay
+`HalcyonSurge`/`surge*`; only what the player sees changed:
+
+- `HalcyonSurgeTint.cs` (sibling component, purely visual) pulses the
+  boss sprite toward `openingColor` (green) during the telegraph and holds
+  it solid while active, back to the base sprite color otherwise.
+- `HalcyonBossPanelUI` shows "Opening!" (yellow, `telegraphTextColor`)
+  during the telegraph, "OPENING — FIRE!" (green, `openingTextColor`)
+  while active, and an "Opening: Xs" cooldown.
 
 ## HalcyonStaticField.cs
 
 The fight's actual damage source. Every `pulseCooldown` (6s phase 1, 4s
 phase 2 — the phase-2 escalation for this mechanic), pulses from the
-boss's live position: any two ships that are both within `bossRange` (1.8
-units, ~3 ship-widths) of the boss AND within `clusterRange` (0.6 units,
-~1 ship-width) of each other both take `damageMultiplier × bulletDamage`
-(3 × 1 = 3) — reusing `MarauderBoss`'s shockwave damage convention (3×
-bullet damage) exactly. A short telegraph (`telegraphTime`, 0.3s, via a
+boss's live position and damages every ship within `bossRange` (1.8 units,
+~3 ship-widths):
+
+- **Lone ship** (no other in-range ship within `clusterRange`): takes
+  `soloDamageMultiplier × bulletDamage` (1 × 1 = 1). Added after
+  playtesting — previously a lone ship was completely safe inside the ring.
+- **Clustered ship**: takes `damageMultiplier × bulletDamage` (3 × 1 = 3)
+  **per** in-range partner within `clusterRange` (0.6 units, ~1
+  ship-width) — 3 for a pair, 6 each for three stacked ships, 9 each for
+  four. Same totals as the original pairwise rule, reusing
+  `MarauderBoss`'s shockwave damage convention (3× bullet damage).
+
+Covered by `Assets/Tests/EditMode/HalcyonStaticFieldTests.cs`. A short telegraph (`telegraphTime`, 0.3s, via a
 coroutine — the one mechanic here that needs a wait rather than pure
 `Update()` polling) precedes the actual damage application.
 
@@ -180,10 +215,16 @@ per level, same treatment `MarauderBoss.prefab` gets in `Level1.unity`.
 
 | Component | Key inspector values |
 | --- | --- |
-| **HalcyonBoss.cs** | `maxHealth`: 110; component starts **disabled** |
-| **HalcyonRoam.cs** | `roamSpeed`/`roamSpeedPhase2`: 2.5/3.5 |
+| **HalcyonBoss.cs** | `maxHealth`: 110; component starts **disabled**; `OnDefeated` → `HalcyonBossPanelUI.ShowDefeated` + `VictoryUI.Show` |
+| **HalcyonRoam.cs** | `phase1`/`phase2`: see the table under "HalcyonRoam.cs" |
 | **HalcyonSurge.cs** | `cooldown`/`telegraphTime`/`activeTime`: 8/1/2 |
-| **HalcyonStaticField.cs** | `pulseCooldown`/`pulseCooldownPhase2`: 6/4; `bossRange`/`clusterRange`: 1.8/0.6; `ships`: `Player` + all 3 `Teammate_*` |
+| **HalcyonSurgeTint.cs** | `openingColor`: green `(0.35, 1, 0.45)` |
+| **HalcyonStaticField.cs** | `pulseCooldown`/`pulseCooldownPhase2`: 6/4; `bossRange`/`clusterRange`: 1.8/0.6; `damageMultiplier`/`soloDamageMultiplier`: 3/1; `ships`: `Player` + all 3 `Teammate_*` |
+
+`OnDefeated` had **no** listeners before this was fixed — the persistent
+listeners were lost when the scene's `Boss` swapped its `MarauderBoss`
+component for `HalcyonBoss`, so beating Halcyon never showed the Victory
+screen.
 
 ### LevelSequencer / PlayerController / AIController / PartySetupBootstrap
 
@@ -197,11 +238,11 @@ instance, same as `Level1.unity`'s do to `MarauderBoss.prefab`.
 "HalcyonStaticField.cs" above) — a field that stays `null`/unused in
 `Level1.unity`.
 
-`AIController.UpdateAbilityUsage()`'s Tank heuristic (auto-taunt whenever
-not holding the boss's aggro) casts `bossObject as MarauderBoss` and simply
-skips the ability call when that's `null` — a Tank never auto-taunts
-against Halcyon, matching its documented no-op there, without any
-Halcyon-specific branching needed.
+AI teammates against Halcyon use the default `AIBossTactics`. That's the
+per-boss AI strategy since Session 46; see `docs/architecture.md`'s
+"Per-boss AI behavior". Its `ShouldTaunt` is false, so an AI Tank never
+auto-taunts against Halcyon, matching Taunt's documented no-op there. Its
+`FocusPoint` is the boss. No Halcyon-specific AI class is needed.
 
 ### Not shared with Marauder
 
@@ -222,14 +263,12 @@ clean absence the design called for. Removed on all 4 ships.
 
 ## Not yet built
 
-- **Real human playtest** — the mechanics above are verified via the Unity
-  MCP bridge (direct method calls confirming waypoint bounds, the Surge
-  state machine's timing, Static Field's pairwise proximity damage
-  including both negative cases — a lone ship near the boss, and two ships
-  clustered but far from the boss — and phase-2 numbers actually changing)
-  plus a live Play-mode pass through `LevelSelect` → `Level2` confirming
-  the boss appears/roams/HUD updates correctly, but no real human has
-  played the fight yet.
+- **Further balance tuning** — the fight has now had a real human
+  playtest (Session 38): the original version felt too predictable and
+  "Surge!" read as an attack, which drove the randomized roam, the
+  Opening cue, and solo Static Field damage above. The revised fight was
+  reported to feel better. All numbers are still first-pass values open
+  to further adjustment.
 - **Out of scope by design**: everything Marauder has that isn't body
   contact damage — phase-based fire, shockwave, guided missile, Pattern
   Barrage, minions, aggro/taunt. This boss's identity is Roam + Surge +

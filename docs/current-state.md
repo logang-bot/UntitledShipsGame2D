@@ -41,9 +41,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   [systems/combat.md](systems/combat.md).
 - **Player health, damage feedback & game over** — the ship has HP; enemy
   bullets deal 1 damage each hit. A non-fatal hit flashes the ship's sprite
-  and briefly shakes the camera. At 0 HP the ship disables and a full-screen
-  "Game Over" overlay appears with a Restart button that reloads the scene
-  from scratch. See [systems/combat.md](systems/combat.md).
+  and briefly shakes the camera. At 0 HP the ship disables, and once every
+  human-controlled ship is dead a full-screen "Game Over" overlay appears
+  with a Restart button that reloads the scene from scratch. See [systems/combat.md](systems/combat.md).
 - **Player roles & abilities** — each ship is assigned a role (`Attacker`,
   `Tank`, `Medic`, `Support`) via `PlayerRoleComponent`, which sets its
   health, shield, fire damage, fire rate, move speed, and sprite tint color
@@ -243,12 +243,16 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 - **Halcyon (Level 2's boss)** — a pure positioning fight, no ambient
   bullets at all. It roams the entire arena continuously (not confined
-  near a home position like Marauder), periodically stopping for a brief
-  ~2s window (telegraphed ~1s ahead) that's the only reliable time to land
-  hits on it. Its real damage source is a Static Field pulse every 6s
-  (4s once it hits phase 2): any two ships both near the boss and near
-  each other when it pulses take a hit — a dim ring around it always
-  shows the pulse's range, brightening right before it fires. Touching the
+  near a home position like Marauder) at a randomized speed that re-rolls
+  every waypoint and mid-glide (3.5–5.5 u/s, 5–7 u/s with near-zero pauses
+  in phase 2), periodically stopping for a brief ~2s **Opening** (telegraphed
+  ~1s ahead — the boss flashes green and the HUD reads "Opening!" then
+  "OPENING — FIRE!") that's the only reliable time to land hits on it. Its
+  real damage source is a Static Field pulse every 6s (4s once it hits
+  phase 2): every ship inside the ring takes a hit — 1 damage for a lone
+  ship, 3 per nearby partner for ships clustered together — a dim ring
+  around it always shows the pulse's range, brightening right before it
+  fires. Touching the
   boss directly still costs a ship 2x bullet damage, same as Marauder. It
   has no aggro/target system at all — Tank's Taunt does nothing against it
   (still flashes/shakes as feedback, just doesn't redirect anything). See
@@ -265,7 +269,21 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   of parallel bullets in from a random arena edge (top, left, or right)
   with a couple of gaps in it — built specifically to reward standing in
   it behind Tank's Shield Arc, which blocks whichever lanes cross its
-  width for free, rather than trying to dodge it. See
+  width for free, rather than trying to dodge it. Every ~8s (6s in phase
+  2) it also flashes orange-red for 0.6s and fires a **Big Shot** — one
+  3×-wide, 2-damage bullet straight down, like the Attacker's own Big
+  Shot. It glides in from above the screen like the other bosses and is
+  the slowest mover of the three (eased legs, 1.5–2.5 u/s average). **The
+  arms shield the boss.** Warden takes no damage while any active arm is
+  up, and the HUD's phase line reads "Shielded". After 20 HP of hits, an
+  arm goes down:
+  - it turns gray;
+  - it stops firing;
+  - it loses its hitbox for 15s, and its HUD line shows "DOWN 12s".
+
+  Knocking every arm down opens the damage window. AI teammates go after
+  the arms on their own: while Warden is shielded, they all line up under
+  the arm with the least HP left. See
   [systems/bosses/warden-boss.md](systems/bosses/warden-boss.md).
 
 ## What's NOT there yet
@@ -282,6 +300,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   separate scenes (see [systems/combat.md](systems/combat.md)).
 - No real art — the avatar slot and every ship are placeholder colored
   squares, no audio.
+- **Known issue:** sometimes a white shape appears in the center of the
+  screen for the moment a hit ship flashes. It's intermittent and not yet
+  diagnosed; see [roadmap.md](roadmap.md)'s "Known issues".
 
 See [roadmap.md](roadmap.md)'s "Development priority order" for the
 authoritative build sequence: full basic mechanics first, then
@@ -382,8 +403,9 @@ real networking last, then art/audio.
    and minions all stop mid-motion). Press **Escape** again or click
    **Resume** to continue exactly where you left off. Pause won't open on
    top of an already-showing Game Over/Victory overlay.
-8. At 0 HP, **only a human-controlled ship** triggers the "Game Over" overlay
-   and ends the test — a teammate dying just grays out its own party frame and
+8. The "Game Over" overlay appears once **every human-controlled ship** is
+   at 0 HP, ending the test (with 2+ local players, one dying doesn't end
+   it). An AI teammate dying just grays out its own party frame and
    it keeps fighting inactive (if the remaining teammates go on to defeat
    the boss after that, the Victory panel is suppressed rather than popping
    on top of Game Over — whichever end screen shows first wins). Click

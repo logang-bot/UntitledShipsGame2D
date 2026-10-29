@@ -1,28 +1,43 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PartyFrameManager : MonoBehaviour
 {
     public GameObject[] players;
     public PartyFrameUI[] partyFrames;
 
-void Awake()
-    {
-        int humanIndex = 0;
-        int cpuIndex = 0;
-        for (int i = 0; i < partyFrames.Length && i < players.Length; i++)
-        {
-            if (players[i] == null || partyFrames[i] == null) continue;
+    private int humanCount;
+    private int cpuCount;
 
-            // Every ship (human or AI) now carries both PlayerInput and
-            // AIController (see Ship.prefab / docs/systems/player-roles.md's
-            // "Co-op roster" section) - which one is actually driving the
-            // ship is whichever is enabled, not which is present. Supports
-            // multiple human slots for local co-op, unlike the old
-            // hardcoded "Player 1" single-human assumption.
-            UnityEngine.InputSystem.PlayerInput playerInput = players[i].GetComponent<UnityEngine.InputSystem.PlayerInput>();
-            bool isHuman = playerInput != null && playerInput.enabled;
-            string displayName = isHuman ? "Player " + (++humanIndex) : "CPU " + (++cpuIndex);
-            partyFrames[i].Initialize(players[i], displayName, isHuman);
-        }
+    void Awake()
+    {
+        for (int i = 0; i < partyFrames.Length && i < players.Length; i++)
+            if (players[i] != null && partyFrames[i] != null) BindFrame(players[i], partyFrames[i]);
+    }
+
+    /// <summary>
+    /// The death listener is added at runtime, not in the Inspector: ships
+    /// spawned from Ship.prefab by the co-op flow can't carry a persistent
+    /// listener to a scene object, so their frames never grayed out.
+    /// </summary>
+    private void BindFrame(GameObject player, PartyFrameUI frame)
+    {
+        bool isHuman = IsHuman(player);
+        string displayName = isHuman ? "Player " + (++humanCount) : "CPU " + (++cpuCount);
+        frame.Initialize(player, displayName, isHuman);
+        player.GetComponent<PlayerHealth>().OnDeath.AddListener(frame.OnPlayerDied);
+    }
+
+    /// <summary>
+    /// Every ship (human or AI) carries both PlayerInput and AIController
+    /// (see Ship.prefab / docs/systems/player-roles.md's "Co-op roster") -
+    /// which one is driving is whichever is enabled, not which is present.
+    /// Only valid before LevelSequencer's first freeze disables PlayerInput.
+    /// </summary>
+    public static bool IsHuman(GameObject ship)
+    {
+        if (ship == null) return false;
+        PlayerInput playerInput = ship.GetComponent<PlayerInput>();
+        return playerInput != null && playerInput.enabled;
     }
 }

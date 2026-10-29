@@ -57,6 +57,7 @@ public class WardenArm : MonoBehaviour
 
     private WardenBoss boss;
     private SpriteRenderer sr;
+    private Collider2D col;
     private ArmState state;
     private float stateEndTime;
     private float nextShotTime;
@@ -66,6 +67,7 @@ public class WardenArm : MonoBehaviour
     {
         boss = GetComponentInParent<WardenBoss>();
         sr = GetComponent<SpriteRenderer>();
+        col = GetComponent<Collider2D>();
     }
 
     void OnEnable()
@@ -76,6 +78,7 @@ public class WardenArm : MonoBehaviour
     public void SetVisible(bool visible)
     {
         if (sr != null) sr.enabled = visible;
+        if (col != null) col.enabled = visible;
     }
 
     void Update()
