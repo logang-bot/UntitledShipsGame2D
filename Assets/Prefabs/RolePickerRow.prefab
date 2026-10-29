@@ -1406,7 +1406,15 @@ MonoBehaviour:
   - {fileID: 3724141402715766736}
   - {fileID: 1758897633285399089}
   statusText: {fileID: 1370345593176788461}
-  normalColor: {r: 1, g: 1, b: 1, a: 0.15}
-  hoverColor: {r: 1, g: 1, b: 1, a: 0.4}
-  lockedColor: {r: 0.3, g: 1, b: 0.4, a: 0.8}
-  takenColor: {r: 1, g: 0.3, b: 0.3, a: 0.3}
+  normalColor:
+    key: 12
+    alpha: 0.15
+  hoverColor:
+    key: 12
+    alpha: 0.4
+  lockedColor:
+    key: 32
+    alpha: 0.8
+  takenColor:
+    key: 51
+    alpha: 0.3

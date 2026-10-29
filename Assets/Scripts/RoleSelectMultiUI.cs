@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Multi-human half of RoleSelectUI's flow (CoOpRoster.Players.Count >= 2) -
@@ -8,6 +7,7 @@ using UnityEngine.UI;
 // and enables Start once every joined player has locked a role.
 public class RoleSelectMultiUI : MonoBehaviour
 {
+    public MenuScreen screen;
     public RolePickerRow rowPrefab;
     public Transform rowContainer;
     public Button startButton;
@@ -93,11 +93,11 @@ public class RoleSelectMultiUI : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("LevelSelect");
+        screen.GoTo("LevelSelect");
     }
 
     public void Back()
     {
-        SceneManager.LoadScene("JoinLobby");
+        screen.GoBack("JoinLobby");
     }
 }

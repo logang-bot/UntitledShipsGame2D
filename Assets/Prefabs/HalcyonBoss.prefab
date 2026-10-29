@@ -246,9 +246,15 @@ MonoBehaviour:
   damageMultiplier: 3
   telegraphTime: 0.3
   impactFlashDuration: 0.15
-  ringColor: {r: 0.3, g: 0.6, b: 1, a: 0.25}
-  telegraphColor: {r: 0.5, g: 0.85, b: 1, a: 0.85}
-  impactColor: {r: 0.9, g: 0.95, b: 1, a: 1}
+  ringColor:
+    key: 53
+    alpha: 0.25
+  telegraphColor:
+    key: 54
+    alpha: 0.85
+  impactColor:
+    key: 55
+    alpha: 1
   ringWidth: 0.06
   telegraphWidth: 0.14
   telegraphPulseSpeed: 12

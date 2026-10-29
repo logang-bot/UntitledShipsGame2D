@@ -25,9 +25,9 @@ public class HalcyonStaticField : MonoBehaviour
     public float impactFlashDuration = 0.15f;
 
     [Header("Ring visual")]
-    public Color ringColor = new Color(0.3f, 0.6f, 1f, 0.25f);
-    public Color telegraphColor = new Color(0.5f, 0.85f, 1f, 0.85f);
-    public Color impactColor = new Color(0.9f, 0.95f, 1f, 1f);
+    public PaletteSwatch ringColor = new PaletteSwatch(PaletteColor.StaticFieldRing, 0.25f);
+    public PaletteSwatch telegraphColor = new PaletteSwatch(PaletteColor.StaticFieldTelegraph, 0.85f);
+    public PaletteSwatch impactColor = new PaletteSwatch(PaletteColor.StaticFieldImpact);
     public float ringWidth = 0.06f;
     public float telegraphWidth = 0.14f;
     public float telegraphPulseSpeed = 12f;

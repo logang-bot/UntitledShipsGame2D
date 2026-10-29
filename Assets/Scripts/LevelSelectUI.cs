@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 // LevelSelection to decide which boss to spawn.
 public class LevelSelectUI : MonoBehaviour
 {
+    public MenuScreen screen;
+
     public void SelectLevel1() { LoadLevel(Level.Level1); }
     public void SelectLevel2() { LoadLevel(Level.Level2); }
     public void SelectLevel3() { LoadLevel(Level.Level3); }
@@ -21,6 +23,6 @@ public class LevelSelectUI : MonoBehaviour
 
     public void Back()
     {
-        SceneManager.LoadScene("RoleSelect");
+        screen.GoBack("RoleSelect");
     }
 }

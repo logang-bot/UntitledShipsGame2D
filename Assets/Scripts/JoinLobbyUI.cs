@@ -3,7 +3,6 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Local co-op "press any button to join" screen, between Lobby and
@@ -14,6 +13,7 @@ using UnityEngine.UI;
 // PartySetupBootstrap to consume. See docs/systems/scene-flow.md.
 public class JoinLobbyUI : MonoBehaviour
 {
+    public MenuScreen screen;
     public PlayerInputManager playerInputManager;
     public TMP_Text[] slotTexts; // 4 rows, one per possible local player
     public Button continueButton;
@@ -75,11 +75,11 @@ public class JoinLobbyUI : MonoBehaviour
                 role = null
             });
         }
-        SceneManager.LoadScene("RoleSelect");
+        screen.GoTo("RoleSelect");
     }
 
     public void Back()
     {
-        SceneManager.LoadScene("Lobby");
+        screen.GoBack("Lobby");
     }
 }

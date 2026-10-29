@@ -43,7 +43,7 @@ public class Enemy : MonoBehaviour
     public int fragmentCount = 8;
     public float fragmentSpeed = 5f;
     public float fragmentDamage = 1f;      // must stay >= 1 - same rounding footgun as contactDamage
-    public Color explosiveTintColor = new Color(1f, 0.45f, 0.1f);
+    public PaletteSwatch explosiveTintColor = new PaletteSwatch(PaletteColor.ExplosiveTint);
 
     public Vector2 HalfExtents { get; private set; }
 

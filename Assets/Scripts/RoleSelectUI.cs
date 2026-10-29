@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Routes to one of two panels depending on how many local humans joined via
@@ -9,6 +8,7 @@ using UnityEngine.UI;
 // docs/systems/player-roles.md's "Role Select scene" section.
 public class RoleSelectUI : MonoBehaviour
 {
+    public MenuScreen screen;
     public GameObject singlePickerPanel;
     public GameObject multiPickerPanel;
     public Button startButton;
@@ -53,7 +53,7 @@ public class RoleSelectUI : MonoBehaviour
         {
             PartyRoleAssignment.HumanRole = selectedRole.Value;
         }
-        SceneManager.LoadScene("LevelSelect");
+        screen.GoTo("LevelSelect");
     }
 
     public void Back()
@@ -61,6 +61,6 @@ public class RoleSelectUI : MonoBehaviour
         // JoinLobby precedes RoleSelect now whenever the co-op flow was
         // used; a direct-open (CoOpRoster.Players == null) still has
         // somewhere sane to go back to.
-        SceneManager.LoadScene(CoOpRoster.Players != null ? "JoinLobby" : "Lobby");
+        screen.GoBack(CoOpRoster.Players != null ? "JoinLobby" : "Lobby");
     }
 }

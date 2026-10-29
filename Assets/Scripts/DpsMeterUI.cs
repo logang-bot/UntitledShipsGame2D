@@ -37,14 +37,14 @@ public class DpsMeterUI : MonoBehaviour
     public float refreshInterval = 0.2f;
 
     [Header("Colors")]
-    public Color panelColor = new Color(0.05f, 0.05f, 0.08f, 0.85f); // matches PartyFrame.prefab's root Image
-    public Color titleColor = new Color(0.66f, 0.66f, 0.72f);
-    public Color barTrackColor = new Color(1f, 1f, 1f, 0.07f);
-    public Color rowTextColor = Color.white;
+    public PaletteSwatch panelColor = new PaletteSwatch(PaletteColor.HudPanel, 0.85f);
+    public PaletteSwatch titleColor = new PaletteSwatch(PaletteColor.HudLabel);
+    public PaletteSwatch barTrackColor = new PaletteSwatch(PaletteColor.White, 0.07f);
+    public PaletteSwatch rowTextColor = new PaletteSwatch(PaletteColor.White);
     // Bars are tinted per role (PlayerRoleStats.tintColor) so a row reads as
     // the same ship as its party frame and its sprite. This is the fallback
     // for a row whose ship has no PlayerRoleComponent.
-    public Color fallbackBarColor = new Color(0.5f, 0.55f, 0.65f);
+    public PaletteSwatch fallbackBarColor = new PaletteSwatch(PaletteColor.HudBarFallback);
 
     private class Row
     {

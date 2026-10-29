@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LobbyUI : MonoBehaviour
 {
+    public MenuScreen screen;
     public Button onlineButton;
 
     void Awake()
@@ -18,11 +18,11 @@ public class LobbyUI : MonoBehaviour
         GameModeSelection.Mode = GameMode.Local;
         // JoinLobby (co-op device join screen) now precedes RoleSelect - see
         // docs/systems/scene-flow.md.
-        SceneManager.LoadScene("JoinLobby");
+        screen.GoTo("JoinLobby");
     }
 
     public void Back()
     {
-        SceneManager.LoadScene("MainMenu");
+        screen.GoBack("MainMenu");
     }
 }

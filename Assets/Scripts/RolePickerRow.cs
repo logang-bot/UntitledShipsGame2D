@@ -16,10 +16,10 @@ public class RolePickerRow : MonoBehaviour
     public Image[] roleSwatches; // 4, index = (int)PlayerRole
     public TMP_Text[] roleLabels; // 4
     public TMP_Text statusText;
-    public Color normalColor = new Color(1f, 1f, 1f, 0.15f);
-    public Color hoverColor = new Color(1f, 1f, 1f, 0.4f);
-    public Color lockedColor = new Color(0.3f, 1f, 0.4f, 0.8f);
-    public Color takenColor = new Color(1f, 0.3f, 0.3f, 0.3f);
+    public PaletteSwatch normalColor = new PaletteSwatch(PaletteColor.White, 0.15f);
+    public PaletteSwatch hoverColor = new PaletteSwatch(PaletteColor.White, 0.4f);
+    public PaletteSwatch lockedColor = new PaletteSwatch(PaletteColor.Medic, 0.8f);
+    public PaletteSwatch takenColor = new PaletteSwatch(PaletteColor.ShockwaveTelegraph, 0.3f);
 
     private RoleSelectMultiUI owner;
     private int slotIndex;

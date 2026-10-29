@@ -45,7 +45,7 @@ public class Minion : MonoBehaviour
     public int fragmentCount = 8;
     public float fragmentSpeed = 5f;
     public float fragmentDamage = 1f; // see bulletDamage comment - must stay >= 1, fractions round to 0
-    public Color explosiveTintColor = new Color(1f, 0.45f, 0.1f);
+    public PaletteSwatch explosiveTintColor = new PaletteSwatch(PaletteColor.ExplosiveTint);
 
     public Vector2 HalfExtents { get; private set; }
 

@@ -212,9 +212,15 @@ MonoBehaviour:
     knockback: 33
     cooldown: 3
     telegraphTime: 0.3
-    ringColor: {r: 1, g: 0.4, b: 0.1, a: 0.25}
-    ringTelegraphColor: {r: 1, g: 0.15, b: 0.1, a: 0.85}
-    ringImpactColor: {r: 1, g: 0.9, b: 0.3, a: 1}
+    ringColor:
+      key: 50
+      alpha: 0.25
+    ringTelegraphColor:
+      key: 51
+      alpha: 0.85
+    ringImpactColor:
+      key: 52
+      alpha: 1
     ringWidth: 0.06
     ringTelegraphWidth: 0.14
     telegraphPulseSpeed: 12

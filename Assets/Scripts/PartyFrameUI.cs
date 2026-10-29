@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class PartyFrameUI : MonoBehaviour
 {
+    private static readonly string LabelHex = NeonPalette.RichTextHex(PaletteColor.HudLabel);
+
     public Image healthBarFill;
     public Image shieldBarFill;
     public Image avatarImage;
@@ -78,13 +80,13 @@ public void Initialize(GameObject player, string displayName, bool isHumanPlayer
         int health = Mathf.Max(0, playerHealth.CurrentHealth);
         int shield = Mathf.Max(0, playerHealth.CurrentShield);
         healthBarFill.fillAmount = (float)health / playerHealth.maxHealth;
-        healthText.text = $"<b><color=#A8A8B8>HP:</color></b> {health}/{playerHealth.maxHealth}";
+        healthText.text = $"<b><color={LabelHex}>HP:</color></b> {health}/{playerHealth.maxHealth}";
         shieldBarFill.fillAmount = (float)shield / playerHealth.maxShield;
-        if (shieldText != null) shieldText.text = $"<b><color=#A8A8B8>SH:</color></b> {shield}/{playerHealth.maxShield}";
+        if (shieldText != null) shieldText.text = $"<b><color={LabelHex}>SH:</color></b> {shield}/{playerHealth.maxShield}";
 
         isDead = true;
-        healthBarFill.color = Color.gray;
-        shieldBarFill.color = Color.gray;
+        healthBarFill.color = NeonPalette.Get(PaletteColor.HudInactive);
+        shieldBarFill.color = NeonPalette.Get(PaletteColor.HudInactive);
     }
 
 void Update()
@@ -93,11 +95,11 @@ void Update()
         if (isDead) return;
 
         healthBarFill.fillAmount = (float)playerHealth.CurrentHealth / playerHealth.maxHealth;
-        healthText.text = $"<b><color=#A8A8B8>HP:</color></b> {playerHealth.CurrentHealth}/{playerHealth.maxHealth}";
+        healthText.text = $"<b><color={LabelHex}>HP:</color></b> {playerHealth.CurrentHealth}/{playerHealth.maxHealth}";
         shieldBarFill.fillAmount = (float)playerHealth.CurrentShield / playerHealth.maxShield;
-        if (shieldText != null) shieldText.text = $"<b><color=#A8A8B8>SH:</color></b> {playerHealth.CurrentShield}/{playerHealth.maxShield}";
-        moveSpeedText.text = $"<b><color=#A8A8B8>Move Speed:</color></b> {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
-        fireRateText.text = $"<b><color=#A8A8B8>Fire Rate:</color></b> {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
+        if (shieldText != null) shieldText.text = $"<b><color={LabelHex}>SH:</color></b> {playerHealth.CurrentShield}/{playerHealth.maxShield}";
+        moveSpeedText.text = $"<b><color={LabelHex}>Move Speed:</color></b> {playerController.moveSpeed * playerController.speedBuffMultiplier:0.0}";
+        fireRateText.text = $"<b><color={LabelHex}>Fire Rate:</color></b> {playerController.shotsPerSecond * playerController.fireRateBuffMultiplier:0.0}/s";
         // Null-guarded like shieldText above, so an older PartyFrame instance
         // that hasn't had the line added yet keeps working instead of NREing.
         //
@@ -113,9 +115,9 @@ void Update()
             float dps = (boss != null && boss.CombatElapsed > 0f)
                 ? boss.GetDamageDealt(shipObject) / boss.CombatElapsed
                 : 0f;
-            dpsText.text = $"<b><color=#A8A8B8>DPS:</color></b> {dps:0.0}";
+            dpsText.text = $"<b><color={LabelHex}>DPS:</color></b> {dps:0.0}";
         }
-        abilityText.text = $"<b><color=#A8A8B8>{playerAbility.AbilityName}:</color></b> {playerAbility.StatusText}";
+        abilityText.text = $"<b><color={LabelHex}>{playerAbility.AbilityName}:</color></b> {playerAbility.StatusText}";
         if (abilityButton != null && !isHuman) abilityButton.interactable = playerAbility.CooldownRemaining <= 0f;
     }
 }

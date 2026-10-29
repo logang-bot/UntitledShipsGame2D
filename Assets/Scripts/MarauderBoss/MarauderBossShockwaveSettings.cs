@@ -17,9 +17,9 @@ public class MarauderBossShockwaveSettings
     // ever triggers; pulses to a bright warning color during the telegraph
     // wind-up, then flashes on the frame it actually hits. See
     // MarauderBossShockwave for the LineRenderer setup.
-    public Color ringColor = new Color(1f, 0.4f, 0.1f, 0.25f);
-    public Color ringTelegraphColor = new Color(1f, 0.15f, 0.1f, 0.85f);
-    public Color ringImpactColor = new Color(1f, 0.9f, 0.3f, 1f);
+    public PaletteSwatch ringColor = new PaletteSwatch(PaletteColor.ShockwaveRing, 0.25f);
+    public PaletteSwatch ringTelegraphColor = new PaletteSwatch(PaletteColor.ShockwaveTelegraph, 0.85f);
+    public PaletteSwatch ringImpactColor = new PaletteSwatch(PaletteColor.ShockwaveImpact);
     public float ringWidth = 0.06f;
     public float ringTelegraphWidth = 0.14f;
     public float telegraphPulseSpeed = 12f;
