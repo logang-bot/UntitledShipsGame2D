@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // One of Level Select's boss cards: level number and fight type, the boss
-// art slot (placeholder glyph until the boss renders exist), name,
+// portrait (Art/Bosses/<Boss>/<boss>_portrait.png), name,
 // description and threat pips. Hover or focus lights the frame in the boss
 // magenta and switches the footer to "▸ LAUNCH"; keyboard/gamepad focus also
 // adds the white outline.

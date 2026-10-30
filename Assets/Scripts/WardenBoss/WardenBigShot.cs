@@ -2,8 +2,9 @@ using UnityEngine;
 
 // Sibling component on the Boss GameObject: a boss-side mirror of the
 // Attacker's Big Shot - one wide, heavy bullet fired straight down on a
-// long, jittered cooldown, after a sprite-flash telegraph. Update-driven
-// (no coroutine), same idle -> telegraph -> fire shape as HalcyonSurge.
+// long, jittered cooldown, after a telegraph that WardenModelStates shows
+// as the Big Shot charge on the model. Update-driven (no coroutine), same
+// idle -> telegraph -> fire shape as HalcyonSurge.
 public class WardenBigShot : MonoBehaviour
 {
     [Header("Timing")]
@@ -19,24 +20,17 @@ public class WardenBigShot : MonoBehaviour
     public float bulletSpeed = 5f;
     public float muzzleOffset = 0.9f;
 
-    [Header("Telegraph")]
-    public PaletteSwatch telegraphColor = new PaletteSwatch(PaletteColor.WardenBigShotTelegraph);
-    public float telegraphPulseSpeed = 14f;
-
     public bool IsTelegraphing { get; private set; }
+    public float TelegraphProgress => IsTelegraphing ? 1f - Mathf.Clamp01((telegraphEndTime - Time.time) / telegraphTime) : 0f;
     public float CooldownRemaining => IsTelegraphing ? 0f : Mathf.Max(0f, nextShotTime - Time.time);
 
     private WardenBoss boss;
-    private SpriteRenderer sr;
-    private Color baseColor;
     private float nextShotTime;
     private float telegraphEndTime;
 
     void Awake()
     {
         boss = GetComponent<WardenBoss>();
-        sr = GetComponent<SpriteRenderer>();
-        if (sr != null) baseColor = sr.color;
     }
 
     void OnEnable()
@@ -75,23 +69,15 @@ public class WardenBigShot : MonoBehaviour
 
     private void UpdateTelegraph()
     {
-        if (Time.time < telegraphEndTime) { PulseTint(); return; }
+        if (Time.time < telegraphEndTime) return;
         EndTelegraph();
         SpawnWideBullet();
         ScheduleNextShot();
     }
 
-    private void PulseTint()
-    {
-        if (sr == null) return;
-        float pulse = (Mathf.Sin(Time.time * telegraphPulseSpeed) + 1f) * 0.5f;
-        sr.color = Color.Lerp(baseColor, telegraphColor, pulse);
-    }
-
     private void EndTelegraph()
     {
         IsTelegraphing = false;
-        if (sr != null) sr.color = baseColor;
     }
 
     public Bullet SpawnWideBullet()

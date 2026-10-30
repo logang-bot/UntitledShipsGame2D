@@ -19,6 +19,8 @@ public class MarauderBossShockwave
     /// </summary>
     public float CooldownRemaining => Mathf.Max(0f, nextCheckTime - Time.time);
 
+    public bool IsTelegraphing => isTelegraphing;
+
     public void ResetCooldown(float until)
     {
         nextCheckTime = until;

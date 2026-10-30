@@ -83,4 +83,10 @@ public enum PaletteColor
     HalcyonBg = 105,
     WardenDim = 106,
     WardenBg = 107,
+    MarauderPale = 108,
+    HalcyonTrim = 109,
+    HalcyonPale = 110,
+    WardenIce = 111,
+    WardenPale = 112,
+    WardenSocket = 113,
 }

@@ -32,8 +32,13 @@ and dim/bg shades for Halcyon and Warden (Marauder's are `BossDim` /
 `BossBg`). `BossPalette` is the boss-side twin of `RolePalette`: each boss's
 signature / dim / bg tokens and glow alpha, plus its panel frame look.
 
-**Known exception:** the ship model materials (`Assets/Art/Ships/Materials/`,
-e.g. `edge_FF8A3D`) carry their own emission colors from the GLB import.
+**Known exception:** the ship and boss model materials
+(`Assets/Art/Ships/Materials/`, e.g. `edge_FF8A3D`, and
+`Assets/Art/Bosses/<Boss>/Materials/`) carry their own emission colors from
+the GLB import. The boss models' runtime state changes do use tokens
+(`BossModel.Glow`). Session 58 added these: `MarauderPale`, `HalcyonTrim`,
+`HalcyonPale`, `WardenIce`, `WardenPale` and `WardenSocket`. Marauder's trim
+reuses `BossSoft`, which has the same value.
 
 **Linear color space:** the project renders in linear space, so a
 translucent layer blends brighter than the design's CSS (which blends in

@@ -92,6 +92,12 @@ public static class NeonPalette
         { PaletteColor.HalcyonBg, Hex(0x14120A) },
         { PaletteColor.WardenDim, Hex(0x1C2552) },
         { PaletteColor.WardenBg, Hex(0x0A0D1E) },
+        { PaletteColor.MarauderPale, Hex(0xFFD1E8) },
+        { PaletteColor.HalcyonTrim, Hex(0xFFF3A8) },
+        { PaletteColor.HalcyonPale, Hex(0xFFFBE0) },
+        { PaletteColor.WardenIce, Hex(0xA9B8FF) },
+        { PaletteColor.WardenPale, Hex(0xDCE3FF) },
+        { PaletteColor.WardenSocket, Hex(0x2C3878) },
     };
 
     public static Color Get(PaletteColor key) => colors[key];

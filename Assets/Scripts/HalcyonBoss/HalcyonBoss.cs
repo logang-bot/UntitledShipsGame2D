@@ -27,7 +27,8 @@ public class HalcyonBoss : MonoBehaviour, IBoss
     public bool IsPhase2 { get; private set; }
 
     private readonly Dictionary<GameObject, float> lastContactDamageTime = new Dictionary<GameObject, float>();
-    private SpriteRenderer sr;
+    private BossModel model;
+    private BossHitFlash hitFlash;
     private Collider2D col;
     private HalcyonStaticField staticField;
     private Behaviour[] mechanics;
@@ -41,7 +42,8 @@ public class HalcyonBoss : MonoBehaviour, IBoss
 
     private void CacheComponents()
     {
-        sr = GetComponent<SpriteRenderer>();
+        model = GetComponentInChildren<BossModel>(true);
+        hitFlash = GetComponent<BossHitFlash>();
         col = GetComponent<Collider2D>();
         staticField = GetComponent<HalcyonStaticField>();
         mechanics = new Behaviour[] { GetComponent<HalcyonRoam>(), GetComponent<HalcyonSurge>(), staticField };
@@ -66,13 +68,13 @@ public class HalcyonBoss : MonoBehaviour, IBoss
     }
 
     /// <summary>
-    /// Hides/shows sprite + collider + the Static Field ring together,
+    /// Hides/shows the model + collider + the Static Field ring together,
     /// without touching the GameObject's active state - same reasoning as
     /// MarauderBoss.SetVisible (see docs/systems/level-sequencing.md).
     /// </summary>
     public void SetVisible(bool visible)
     {
-        if (sr != null) sr.enabled = visible;
+        if (model != null) model.SetVisible(visible);
         if (col != null) col.enabled = visible;
         if (staticField != null) staticField.SetRingVisible(visible);
     }
@@ -94,6 +96,7 @@ public class HalcyonBoss : MonoBehaviour, IBoss
     {
         CurrentHealth -= Mathf.RoundToInt(amount);
         DamageLedger.Record(source, amount);
+        if (hitFlash != null) hitFlash.Flash();
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2) EnterPhase2();
         if (CurrentHealth <= 0) Die();
     }

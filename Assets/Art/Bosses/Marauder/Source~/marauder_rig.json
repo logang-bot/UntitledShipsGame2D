@@ -1,0 +1,1113 @@
+{
+ "root": "marauder",
+ "scale": 0.034483,
+ "nodes": [
+  {
+   "name": "marauder",
+   "parent": null,
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_hull",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_hull_edge",
+   "parent": "marauder_hull",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_armor_plate_FR",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_armor_plate_FR_edge",
+   "parent": "marauder_armor_plate_FR",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_armor_plate_FL",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_armor_plate_FL_edge",
+   "parent": "marauder_armor_plate_FL",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_armor_plate_RR",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_armor_plate_RR_edge",
+   "parent": "marauder_armor_plate_RR",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_armor_plate_RL",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_armor_plate_RL_edge",
+   "parent": "marauder_armor_plate_RL",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_charge_core",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_core_housing",
+   "parent": "marauder_charge_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_charge_core_orb",
+   "parent": "marauder_charge_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_charge_ring",
+   "parent": "marauder_charge_core",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_charge_ring_band",
+   "parent": "marauder_charge_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_charge_vane_0",
+   "parent": "marauder_charge_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_charge_vane_1",
+   "parent": "marauder_charge_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_charge_vane_2",
+   "parent": "marauder_charge_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_radius",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "marauder_shockwave_ring",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_fill",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_0",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_1",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_2",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_3",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_4",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_5",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_6",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_7",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_8",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_9",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_10",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_11",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_12",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_13",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_14",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_15",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_16",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_17",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_18",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_19",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_20",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_21",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_22",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_shockwave_tick_23",
+   "parent": "marauder_shockwave_radius",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_pod_R",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_pod_body_R",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_pod_body_R_edge",
+   "parent": "marauder_missile_pod_body_R",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_R0",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_R0",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_R1",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_R1",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_R2",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_R2",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_R3",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_R3",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_R4",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_R4",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_R5",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_R5",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_hatch_R",
+   "parent": "marauder_missile_pod_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_hatch_R_edge",
+   "parent": "marauder_missile_hatch_R",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_R",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_mount_R",
+   "parent": "marauder_cannon_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_mount_R_edge",
+   "parent": "marauder_cannon_mount_R",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_barrel_R",
+   "parent": "marauder_cannon_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_muzzle_R",
+   "parent": "marauder_cannon_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_heat_R0",
+   "parent": "marauder_cannon_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_heat_R1",
+   "parent": "marauder_cannon_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_heat_R2",
+   "parent": "marauder_cannon_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_launch_bay_R",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_launch_bay_hull_R",
+   "parent": "marauder_launch_bay_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_launch_bay_hull_R_edge",
+   "parent": "marauder_launch_bay_hull_R",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_glow_R0",
+   "parent": "marauder_launch_bay_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_door_R0",
+   "parent": "marauder_launch_bay_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_glow_R1",
+   "parent": "marauder_launch_bay_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_door_R1",
+   "parent": "marauder_launch_bay_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_glow_R2",
+   "parent": "marauder_launch_bay_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_door_R2",
+   "parent": "marauder_launch_bay_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_lip_R",
+   "parent": "marauder_launch_bay_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_pylon_R",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_mandible_R",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_mandible_R_edge",
+   "parent": "marauder_mandible_R",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_pod_L",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_pod_body_L",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_pod_body_L_edge",
+   "parent": "marauder_missile_pod_body_L",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_L0",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_L0",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_L1",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_L1",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_L2",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_L2",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_L3",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_L3",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_L4",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_L4",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tube_L5",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_tip_L5",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_hatch_L",
+   "parent": "marauder_missile_pod_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_missile_hatch_L_edge",
+   "parent": "marauder_missile_hatch_L",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_L",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_mount_L",
+   "parent": "marauder_cannon_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_mount_L_edge",
+   "parent": "marauder_cannon_mount_L",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_barrel_L",
+   "parent": "marauder_cannon_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_muzzle_L",
+   "parent": "marauder_cannon_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_heat_L0",
+   "parent": "marauder_cannon_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_heat_L1",
+   "parent": "marauder_cannon_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_cannon_heat_L2",
+   "parent": "marauder_cannon_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_launch_bay_L",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_launch_bay_hull_L",
+   "parent": "marauder_launch_bay_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_launch_bay_hull_L_edge",
+   "parent": "marauder_launch_bay_hull_L",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_glow_L0",
+   "parent": "marauder_launch_bay_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_door_L0",
+   "parent": "marauder_launch_bay_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_glow_L1",
+   "parent": "marauder_launch_bay_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_door_L1",
+   "parent": "marauder_launch_bay_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_glow_L2",
+   "parent": "marauder_launch_bay_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_door_L2",
+   "parent": "marauder_launch_bay_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_lip_L",
+   "parent": "marauder_launch_bay_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_bay_pylon_L",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_mandible_L",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_mandible_L_edge",
+   "parent": "marauder_mandible_L",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_turret",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_turret_base",
+   "parent": "marauder_aim_turret",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_barrel_0",
+   "parent": "marauder_aim_turret",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_barrel_tube_0",
+   "parent": "marauder_aim_barrel_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_muzzle_0",
+   "parent": "marauder_aim_barrel_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_barrel_1",
+   "parent": "marauder_aim_turret",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_barrel_tube_1",
+   "parent": "marauder_aim_barrel_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_muzzle_1",
+   "parent": "marauder_aim_barrel_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_barrel_2",
+   "parent": "marauder_aim_turret",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_barrel_tube_2",
+   "parent": "marauder_aim_barrel_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_aim_muzzle_2",
+   "parent": "marauder_aim_barrel_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_0",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_0_nacelle",
+   "parent": "marauder_engine_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_0_collar",
+   "parent": "marauder_engine_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_0_glow",
+   "parent": "marauder_engine_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_0_plume",
+   "parent": "marauder_engine_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_1",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_1_nacelle",
+   "parent": "marauder_engine_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_1_collar",
+   "parent": "marauder_engine_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_1_glow",
+   "parent": "marauder_engine_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_1_plume",
+   "parent": "marauder_engine_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_2",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_2_nacelle",
+   "parent": "marauder_engine_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_2_collar",
+   "parent": "marauder_engine_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_2_glow",
+   "parent": "marauder_engine_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_engine_2_plume",
+   "parent": "marauder_engine_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_greeble_0",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_greeble_1",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_greeble_2",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_greeble_3",
+   "parent": "marauder",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_phase2_damage",
+   "parent": "marauder",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "marauder_p2_breach_glow",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_p2_breach_rib_0",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_p2_breach_rib_1",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_p2_breach_rib_2",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_p2_crack_0",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_p2_crack_1",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_p2_crack_2",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_p2_crack_3",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "marauder_p2_fire",
+   "parent": "marauder_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  }
+ ],
+ "materials": [
+  {
+   "name": "marauder_hull",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#3a4458",
+   "additive": false
+  },
+  {
+   "name": "marauder_trim_edge",
+   "emissive": null,
+   "intensity": null,
+   "color": "#ff2d95",
+   "additive": false
+  },
+  {
+   "name": "marauder_plate",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#46536f",
+   "additive": false
+  },
+  {
+   "name": "marauder_trim_edge_2",
+   "emissive": null,
+   "intensity": null,
+   "color": "#ff7abe",
+   "additive": false
+  },
+  {
+   "name": "marauder_dark",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#10151f",
+   "additive": false
+  },
+  {
+   "name": "marauder_core_glow",
+   "emissive": "#ff2d95",
+   "intensity": 1.5869238154390977,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "marauder_pink",
+   "emissive": "#ff7abe",
+   "intensity": 1.3,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "marauder_shockwave_fx",
+   "emissive": "#ff2d95",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "marauder_shockwave_fill_fx",
+   "emissive": "#ff2d95",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "marauder_missile_glow",
+   "emissive": "#ff7abe",
+   "intensity": 0.5,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "marauder_cannon_muzzle",
+   "emissive": "#ff2d95",
+   "intensity": 1.1,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "marauder_cannon_heat",
+   "emissive": "#ff7abe",
+   "intensity": 0.6,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "marauder_bay_glow",
+   "emissive": "#ff7abe",
+   "intensity": 0.4,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "marauder_magenta",
+   "emissive": "#ff2d95",
+   "intensity": 1.1,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "marauder_white",
+   "emissive": "#ffd1e8",
+   "intensity": 1.6,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "marauder_engine_0_plume_fx",
+   "emissive": "#ff7abe",
+   "intensity": 1.3,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "marauder_engine_1_plume_fx",
+   "emissive": "#ff7abe",
+   "intensity": 1.3,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "marauder_engine_2_plume_fx",
+   "emissive": "#ff7abe",
+   "intensity": 1.3,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "marauder_fire_fx",
+   "emissive": "#ff2d95",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  }
+ ]
+}

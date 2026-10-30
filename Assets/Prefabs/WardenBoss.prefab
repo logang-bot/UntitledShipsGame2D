@@ -122,10 +122,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3031065326897520597}
-  - component: {fileID: 2477092725704230899}
   - component: {fileID: 1873029709280339461}
   - component: {fileID: 7900735744124980627}
   - component: {fileID: 8291578820539261959}
+  - component: {fileID: 6967259235134825881}
+  - component: {fileID: 1770103003957629105}
   m_Layer: 0
   m_Name: ArmA
   m_TagString: Enemy
@@ -142,72 +143,12 @@ Transform:
   m_GameObject: {fileID: 924738973313101380}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.2, y: 0, z: 0}
+  m_LocalPosition: {x: -0.23162423, y: -0.21651834, z: 0}
   m_LocalScale: {x: 0.625, y: 0.625, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1056681803579479942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &2477092725704230899
-SpriteRenderer:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 924738973313101380}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.2, g: 0.8, b: 0.9, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
-  m_BlendShapeWeights: []
 --- !u!114 &1873029709280339461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,7 +203,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -272,7 +213,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.3, y: 0.5}
   m_EdgeRadius: 0
 --- !u!114 &8291578820539261959
 MonoBehaviour:
@@ -288,9 +229,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
   maxHealth: 20
   downDuration: 15
-  downColor:
-    key: 100
-    alpha: 1
+--- !u!114 &6967259235134825881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 924738973313101380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69eee607ca23a64589b434f2032f629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmModel
+  model: {fileID: 5577494566886675006}
+  armNode: warden_arm_a
+  sweepOffset: 0
+--- !u!114 &1770103003957629105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 924738973313101380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4acf620f63cba7540a837778b028b504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::BossHitFlash
+  model: {fileID: 5577494566886675006}
+  node: warden_arm_a
+  flashColor:
+    key: 12
+    alpha: 0.55
+  flashDuration: 0.08
 --- !u!1 &1990896620938820717
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,7 +271,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1056681803579479942}
-  - component: {fileID: 7342040337403757580}
   - component: {fileID: 2542918792098575779}
   - component: {fileID: 6576846442655130558}
   - component: {fileID: 8834932725997055609}
@@ -308,6 +278,9 @@ GameObject:
   - component: {fileID: 2420722956795524120}
   - component: {fileID: 9052571288932468627}
   - component: {fileID: 7766344868905688931}
+  - component: {fileID: 3651540100768377130}
+  - component: {fileID: 7141830768548580786}
+  - component: {fileID: 6963411236789842482}
   m_Layer: 0
   m_Name: WardenBoss
   m_TagString: Enemy
@@ -332,68 +305,9 @@ Transform:
   - {fileID: 5083383687095767069}
   - {fileID: 409400386346156349}
   - {fileID: 235873583727595495}
+  - {fileID: 2444232530525591408}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &7342040337403757580
-SpriteRenderer:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1990896620938820717}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6, g: 0.1, b: 0.85, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
-  m_BlendShapeWeights: []
 --- !u!50 &2542918792098575779
 Rigidbody2D:
   serializedVersion: 5
@@ -455,7 +369,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -465,7 +379,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.76, y: 0.6}
   m_EdgeRadius: 0
 --- !u!114 &8834932725997055609
 MonoBehaviour:
@@ -574,10 +488,50 @@ MonoBehaviour:
   damageMultiplier: 2
   bulletSpeed: 5
   muzzleOffset: 0.9
-  telegraphColor:
-    key: 101
-    alpha: 1
-  telegraphPulseSpeed: 14
+--- !u!114 &3651540100768377130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f33ec7627f04aff42b26c98532722ecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenModelStates
+  model: {fileID: 5577494566886675006}
+--- !u!114 &7141830768548580786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d856c7bc757ff549955dcc6f66d4295, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenBigShotCharge
+  model: {fileID: 5577494566886675006}
+--- !u!114 &6963411236789842482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4acf620f63cba7540a837778b028b504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::BossHitFlash
+  model: {fileID: 5577494566886675006}
+  node: warden_body
+  flashColor:
+    key: 12
+    alpha: 0.55
+  flashDuration: 0.08
 --- !u!1 &2710160347954273755
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,10 +541,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 409400386346156349}
-  - component: {fileID: 3579038000326805746}
   - component: {fileID: 3573983202033119790}
   - component: {fileID: 6308983263234194571}
   - component: {fileID: 1880693445934549842}
+  - component: {fileID: 3792126789239346585}
+  - component: {fileID: 119094472899013079}
   m_Layer: 0
   m_Name: ArmC
   m_TagString: Enemy
@@ -607,72 +562,12 @@ Transform:
   m_GameObject: {fileID: 2710160347954273755}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.2, z: 0}
+  m_LocalPosition: {x: 0, y: -0.31218916, z: 0}
   m_LocalScale: {x: 0.625, y: 0.625, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1056681803579479942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &3579038000326805746
-SpriteRenderer:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2710160347954273755}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.9, g: 0.2, b: 0.5, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
-  m_BlendShapeWeights: []
 --- !u!114 &3573983202033119790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -727,7 +622,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -737,7 +632,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.3, y: 0.5}
   m_EdgeRadius: 0
 --- !u!114 &1880693445934549842
 MonoBehaviour:
@@ -753,9 +648,84 @@ MonoBehaviour:
   m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
   maxHealth: 20
   downDuration: 15
-  downColor:
-    key: 100
-    alpha: 1
+--- !u!114 &3792126789239346585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2710160347954273755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69eee607ca23a64589b434f2032f629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmModel
+  model: {fileID: 5577494566886675006}
+  armNode: warden_arm_c
+  sweepOffset: 2.6
+--- !u!114 &119094472899013079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2710160347954273755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4acf620f63cba7540a837778b028b504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::BossHitFlash
+  model: {fileID: 5577494566886675006}
+  node: warden_arm_c
+  flashColor:
+    key: 12
+    alpha: 0.55
+  flashDuration: 0.08
+--- !u!1 &4045611573333736663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2444232530525591408}
+  - component: {fileID: 5577494566886675006}
+  m_Layer: 0
+  m_Name: Visual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2444232530525591408
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4045611573333736663}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 0.625, y: 0.625, z: 0.625}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8973847247469253440}
+  m_Father: {fileID: 1056681803579479942}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5577494566886675006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4045611573333736663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2857b83063717044facbd5cf49bd9afb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::BossModel
 --- !u!1 &7682265837547947820
 GameObject:
   m_ObjectHideFlags: 0
@@ -765,10 +735,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5083383687095767069}
-  - component: {fileID: 4857705841442452895}
   - component: {fileID: 2766172513232264407}
   - component: {fileID: 8426111801405651601}
   - component: {fileID: 5167008742891955966}
+  - component: {fileID: 4383241304929192459}
+  - component: {fileID: 5073772028347027930}
   m_Layer: 0
   m_Name: ArmB
   m_TagString: Enemy
@@ -785,72 +756,12 @@ Transform:
   m_GameObject: {fileID: 7682265837547947820}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.2, y: 0, z: 0}
+  m_LocalPosition: {x: 0.23162423, y: -0.21651834, z: 0}
   m_LocalScale: {x: 0.625, y: 0.625, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1056681803579479942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &4857705841442452895
-SpriteRenderer:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7682265837547947820}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.9, g: 0.7, b: 0.1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
-  m_BlendShapeWeights: []
 --- !u!114 &2766172513232264407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -905,7 +816,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -915,7 +826,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.3, y: 0.5}
   m_EdgeRadius: 0
 --- !u!114 &5167008742891955966
 MonoBehaviour:
@@ -931,6 +842,110 @@ MonoBehaviour:
   m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
   maxHealth: 20
   downDuration: 15
-  downColor:
-    key: 100
-    alpha: 1
+--- !u!114 &4383241304929192459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7682265837547947820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b69eee607ca23a64589b434f2032f629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmModel
+  model: {fileID: 5577494566886675006}
+  armNode: warden_arm_b
+  sweepOffset: 1.3
+--- !u!114 &5073772028347027930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7682265837547947820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4acf620f63cba7540a837778b028b504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::BossHitFlash
+  model: {fileID: 5577494566886675006}
+  node: warden_arm_b
+  flashColor:
+    key: 12
+    alpha: 0.55
+  flashDuration: 0.08
+--- !u!1001 &6833391610339736428
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2444232530525591408}
+    m_Modifications:
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.040282466
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.040282466
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.040282466
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4695316234608288382, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+      propertyPath: m_Name
+      value: WardenModel
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+--- !u!4 &8973847247469253440 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2476020953661483052, guid: cbd9d857b79c9a14da90c9a13b1a38fd, type: 3}
+  m_PrefabInstance: {fileID: 6833391610339736428}
+  m_PrefabAsset: {fileID: 0}

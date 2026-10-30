@@ -82,12 +82,14 @@ public class MarauderBoss : MonoBehaviour, IBoss
     public PlayerRole? GuidedMissileTargetRole => attacks.GuidedMissileTargetRole;
     public MarauderBossAttacks.BulletPattern? PatternBarrageActivePattern => attacks.PatternBarrageActivePattern;
     public float ShockwaveCooldownRemaining => shockwave.CooldownRemaining;
+    public bool IsShockwaveTelegraphing => shockwave.IsTelegraphing;
     public float GuidedMissileCooldownRemaining => attacks.GuidedMissileCooldownRemaining;
     public float PatternBarrageCooldownRemaining => attacks.PatternBarrageCooldownRemaining;
 
     private readonly Dictionary<GameObject, float> lastContactDamageTime = new Dictionary<GameObject, float>();
     private float nextFireTime;
-    private SpriteRenderer sr;
+    private BossModel model;
+    private BossHitFlash hitFlash;
     private Collider2D col;
     private MinionSpawner minionSpawner;
     private MarauderBossMovement movement;
@@ -105,7 +107,8 @@ public class MarauderBoss : MonoBehaviour, IBoss
 
     private void CacheComponents()
     {
-        sr = GetComponent<SpriteRenderer>();
+        model = GetComponentInChildren<BossModel>(true);
+        hitFlash = GetComponent<BossHitFlash>();
         col = GetComponent<Collider2D>();
         minionSpawner = GetComponent<MinionSpawner>();
         if (minionSpawner != null) minionSpawner.enabled = false;
@@ -120,7 +123,7 @@ public class MarauderBoss : MonoBehaviour, IBoss
     }
 
     /// <summary>
-    /// Hides/shows sprite + ring + collider without touching the GameObject's
+    /// Hides/shows the model + ring + collider without touching the GameObject's
     /// active state (SetActive(false) was tried and rejected - see
     /// docs/systems/level-sequencing.md). The collider must toggle too, since
     /// Bullet.cs's OnTriggerEnter2D needs it disabled to stop early hits.
@@ -129,7 +132,7 @@ public class MarauderBoss : MonoBehaviour, IBoss
     /// </summary>
     public void SetVisible(bool visible)
     {
-        if (sr != null) sr.enabled = visible;
+        if (model != null) model.SetVisible(visible);
         if (col != null) col.enabled = visible;
         shockwave.SetVisible(visible);
     }
@@ -217,6 +220,7 @@ public class MarauderBoss : MonoBehaviour, IBoss
         CurrentHealth -= Mathf.RoundToInt(amount);
         aggroSystem.RegisterDamage(amount, source);
         DamageLedger.Record(source, amount);
+        if (hitFlash != null) hitFlash.Flash();
 
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2)
         {

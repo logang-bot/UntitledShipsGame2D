@@ -213,13 +213,13 @@ the file-size cap.
 - When HP reaches 0, `KnockDown()` runs:
   - disables `WardenArm`, so the arm stops firing;
   - disables the arm's collider, so bullets pass through;
-  - tints the sprite `downColor` (gray);
+  - shows the arm's "down" look on the model (`WardenArmModel`, see
+    "Model" below; it replaced the gray `downColor` tint in Session 58);
   - starts a `downDuration` timer (15s).
 
   Damage taken while down is ignored.
 - `Update()` calls `Recover()` once the timer runs out. `Recover()`:
   - restores full HP;
-  - restores the arm's original tint, cached in `Awake()`;
   - re-enables the collider;
   - re-enables `WardenArm`, whose `OnEnable()` restarts it at Idle.
 - Public API: `IsDown`, `DownRemaining`, `CurrentHealth`, and
@@ -287,14 +287,14 @@ coroutine), same idle → telegraph → fire shape as `HalcyonSurge`:
 
 1. **Idle** until `nextShotTime`: `cooldown` (8s) or `cooldownPhase2` (6s,
    read live off `WardenBoss.IsPhase2`), ± `cooldownJitter` (1.5s).
-2. **Telegraph** (`telegraphTime`, 0.6s): the boss sprite pulses toward
-   `telegraphColor` (orange-red), the same sin-lerp idiom as
-   `HalcyonSurgeTint`.
+2. **Telegraph** (`telegraphTime`, 0.6s): the model shows the Big Shot
+   charge (`WardenBigShotCharge`, driven by `TelegraphProgress`). Before
+   Session 58 the sprite pulsed orange-red here.
 3. **Fire**: `SpawnWideBullet()` copies `PlayerController.SpawnBullet`'s Big
    Shot shape — `EnemyBullet.prefab` at `muzzleOffset` (0.9) below the
    boss, x-scale × `widthMultiplier` (3), damage `bulletDamage ×
    damageMultiplier` (1 × 2 = 2), `Init(Vector2.down, bulletSpeed 5,
-   "Enemy")`. Sprite color resets, next shot scheduled.
+   "Enemy")`. Next shot scheduled.
 
 Shots land 7.1–10.1s apart in Phase 1 (5.1–8.1s in Phase 2) — the cooldown
 plus the 0.6s telegraph. Holds entirely while `LevelSequencer.ShipsFrozen`
@@ -342,6 +342,57 @@ defaults). The one change: Big Shot now fires the designed
 `widthMultiplier` 1, per `art-roadmap.md`'s Combat FX plan, instead of the
 old generic `EnemyBullet` stretched ×3.
 
+## Model (Session 58)
+
+Warden is its live 3D design model (art Phase 5, see
+[art-roadmap.md](../../art-roadmap.md)): `WardenBoss.prefab` > `Visual`
+(`BossModel`) > `WardenModel` (the GLB wrapper). The root's placeholder
+sprite is gone, and `SetVisible` toggles the model. Three scripts show the
+state. Each one only reads gameplay:
+
+- **`WardenModelStates`** (boss root):
+  - phase 2: `warden_arm_c` deploys, `warden_mount_c_seal` blows,
+    `warden_phase2_damage` cracks show, and the trim and socket brighten;
+  - the Lockdown warning: the chevrons for `IncomingEdge`
+    (`warden_lockdown_ind_top/left/right`), with a strobing armour band and
+    bastion lamps;
+  - the core: a pulsing glow, and shutters at 3.1, 3.9 in phase 2 and 4.6
+    while the Big Shot charges.
+- **`WardenBigShotCharge`** (boss root): `warden_bigshot` during the
+  telegraph. The flash grows from 0.3× to 1.6× and four spikes converge.
+- **`WardenArmModel`** (one per `ArmX`, `armNode` = `warden_arm_a/b/c`):
+  - the look comes from `LookFor(isDown, isTelegraphing, isFiring)`:
+    - **Idle:** a slow ±26° sweep;
+    - **Locked:** a white lamp and the aim line;
+    - **Firing:** the muzzle flashes;
+    - **Down:** a slumped turret, dark trim, sparks, and `RebootTicksLit`
+      of 12 ticks, one per 1.25 s;
+  - the arm node yaws toward `WardenArm.CurrentTarget`.
+
+  `WardenArm` gained the read-only `CurrentTarget`, `IsTelegraphing` and
+  `IsFiring`; `WardenBigShot` gained `TelegraphProgress`.
+
+**Hit flash:** `BossHitFlash` on the root (node `warden_body`) and on each
+arm (its own `warden_arm_X`), called by `WardenBoss.TakeDamage` and
+`WardenArmHealth.TakeDamage` only when the hit lands. A shielded body
+doesn't flash.
+
+**Arm positions and hitboxes changed:**
+
+- **Arms:** `ArmA`/`ArmB`/`ArmC` now sit on the model's hull mounts:
+  - local (∓0.23, −0.22) and (0, −0.31);
+  - world (∓0.37, −0.35) and (0, −0.50) from the boss centre;
+  - they were (∓1.2, 0) / (0, −1.2) local before.
+
+  Their `SpriteRenderer`s are gone. Each trigger `BoxCollider2D` is now the
+  turret footprint, 0.3 × 0.5, offset (0, −0.1).
+- **Body:** the root's solid `BoxCollider2D` shrank to the keep: 0.76 × 0.6,
+  offset (0, 0.1).
+
+Player bullets fly straight up, so the body's lower edge (−0.32 world) now
+sits above the arms. Shots aimed at an arm reach it instead of being
+soaked by the shielded body. This needs a playtest.
+
 ## Scene wiring
 
 ### Boss
@@ -366,13 +417,17 @@ Three child GameObjects were created under `Boss`, each with a
 | `ArmB` | `(1.2, 0, 0)` | gold | active from scene start |
 | `ArmC` | `(0, -1.2, 0)` | magenta | GameObject starts **inactive** — `WardenBoss.OnPhase2` calls `SetActive(true)` |
 
+The positions, tints and 1×1 colliders above are the original build.
+Session 58 moved the arms onto the model's hull and removed their sprites
+(see "Model" above).
+
 Since Session 43, each arm is also set up as follows:
 - Tagged `Enemy`, which `Bullet.cs` requires before it will damage anything.
 - A `BoxCollider2D` (1×1, matching the sprite) with **`isTrigger` on**, so
   it never physically pushes ships. Ship–boss collision reads only the
   `Boss` root's own `BoxCollider2D`, and nothing besides `Bullet` reacts
   to triggers.
-- A `WardenArmHealth` at its defaults (20 HP, 15s down, gray).
+- A `WardenArmHealth` at its defaults (20 HP, 15s down).
 
 `WardenBoss`'s own fields: `armA`/`armB`/`armC` → the three components
 above; `ships` → `[Player, Teammate_Tank, Teammate_Medic, Teammate_Support]`.

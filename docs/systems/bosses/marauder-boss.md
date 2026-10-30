@@ -49,7 +49,8 @@ once by `LevelSetup` when Level 1 is picked (a boss is a one-off, not a
 wave, so it doesn't go through `EnemySpawner.cs`). The GameObject
 itself keeps the generic name `Boss`; only the script/class/prefab carry
 the `MarauderBoss` name. `LevelSequencer` calls the new `public
-SetVisible(bool)` to hide the boss's `SpriteRenderer`/`Collider2D`/
+SetVisible(bool)` to hide the boss's model (a `SpriteRenderer` before Session
+58)/`Collider2D`/
 shockwave ring until its own entrance begins — not `SetActive(false)` on
 the whole GameObject, which was tried first and had a real side effect:
 `MinionSpawner.cs` lives on this same GameObject, and deactivating it also
@@ -238,7 +239,7 @@ below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
 - `TauntedBy(GameObject taunter)` — see above.
 - `OnPhase2`, `OnDefeated` — `UnityEvent`s (`OnDefeated` has two listeners:
   `BossPanelUI.ShowDefeated()` and `VictoryUI.Show()`).
-- `SetVisible(bool)` — called by `LevelSequencer` to hide/show the sprite,
+- `SetVisible(bool)` — called by `LevelSequencer` to hide/show the model,
   `Collider2D`, and shockwave ring together without touching the
   GameObject's active state (see [level-sequencing.md](../level-sequencing.md)'s
   "Boss visibility/collision"). Disabling the collider isn't just cosmetic:
@@ -952,11 +953,39 @@ tool calls — worked around by reactivating/healing all 4 ships via
 `FindObjectsByType<PlayerHealth>(FindObjectsInactive.Include, ...)` before
 testing, not by changing any game code.)
 
+## Model (Session 58)
+
+Marauder is its live 3D design model (art Phase 5, see
+[art-roadmap.md](../../art-roadmap.md)): `MarauderBoss.prefab` > `Visual`
+(`BossModel`) > `MarauderModel` (the GLB wrapper). The root's placeholder
+sprite is gone. Two scripts on the boss root show the state, and each one
+only reads gameplay:
+
+- **`MarauderModelStates`:**
+  - phase 2 drops `marauder_armor_plate_FR` and shows
+    `marauder_phase2_damage` (the breach, cracks and fire);
+  - the aim barrels splay ±9° for the 3-bullet spread;
+  - the charge core pulses and its ring turns, both faster in phase 2;
+  - while the shockwave winds up (the new read-only
+    `MarauderBoss.IsShockwaveTelegraphing`), the core goes white, swells,
+    and its ring spins 4×.
+- **`MarauderModelWeapons`:**
+  - the missile hatches slide open while `GuidedMissileTargetRole` is set;
+  - the cannons go white-hot while `PatternBarrageActivePattern` is set;
+  - the flank bay doors open for 1.2 s whenever `Minion.Active` grows.
+    Minions are off today, and keep their Combat FX sprites.
+
+The model's own `marauder_shockwave_radius` stays off. The
+`ShockwaveRing` child keeps drawing the radius.
+
+**Hit flash:** a `BossHitFlash` on the root (node `Visual`, the whole
+model) flashes it white when `TakeDamage` lands. See art-roadmap Phase 5.
+
 ## Scene wiring
 
 ### Boss
 
-**Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/MarauderBoss.prefab` (SpriteRenderer,
+**Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/MarauderBoss.prefab` (a `Visual` model child since Session 58,
 Rigidbody2D at Gravity Scale 0, non-trigger BoxCollider2D — same physical
 setup as `Enemy.prefab`). One instance in `Level1.unity`, positioned at
 `(0, 4.2, 0)` — must stay within the camera's visible range (Main Camera is

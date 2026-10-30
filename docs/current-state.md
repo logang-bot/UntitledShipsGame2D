@@ -8,6 +8,17 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Boss models (Session 58)** — Marauder, Halcyon and Warden are the
+  finished Claude Design boss models, rendered live in 3D like the ships.
+  Every phase and telegraph shows on the model: Marauder's shockwave core,
+  missile hatches, white-hot barrage cannons and minion bay doors; Halcyon's
+  static arcs and its Opening (chevrons, then a split shell and weak-point
+  reticle); Warden's Lockdown chevrons, Big Shot charge, arm C in phase 2,
+  and per-arm idle / locked / firing / down looks with reboot ticks. Each
+  boss has a phase 2 damage look. Hits flash the model (a shielded Warden
+  body doesn't). Warden's arms now sit on its hull, with smaller hitboxes
+  (needs a playtest). Level Select shows each boss's portrait. See
+  [art-roadmap.md](art-roadmap.md)'s Phase 5.
 - **In-level HUD in the neon style (Session 57, PC)** — `Level.unity`'s
   HUD follows the Claude Design "Neon Fleet HUD v2" design. Left rail:
   four squad frames in fixed role order (who-tag, HP pips, shield segments,
@@ -297,7 +308,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   with a couple of gaps in it — built specifically to reward standing in
   it behind Tank's Shield Arc, which blocks whichever lanes cross its
   width for free, rather than trying to dodge it. Every ~8s (6s in phase
-  2) it also flashes orange-red for 0.6s and fires a **Big Shot** — one
+  2) it also charges for 0.6s (white core, flash ring and lane on the
+  model) and fires a **Big Shot** — one
   3×-wide, 2-damage bullet straight down, like the Attacker's own Big
   Shot. It glides in from above the screen like the other bosses and is
   the slowest mover of the three (eased legs, 1.5–2.5 u/s average). **The
@@ -328,7 +340,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   are same-scene UI overlays within `Level`, not separate scenes (see
   [systems/combat.md](systems/combat.md)).
 - The menus have no mobile layout yet (PC only), the Main Menu wordmark is
-  a placeholder block, and Level Select's boss art is a placeholder glyph.
+  a placeholder block. Level Select's cards show each boss's portrait.
 - Art is only started: the four player ships are their 3D design models
   (see [art-roadmap.md](art-roadmap.md)), the menus are restyled (see
   above), and each boss fight scrolls its
@@ -337,8 +349,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   are in (Session 55): designed bullets for players, Marauder, Warden and
   the waves, wave-enemy and Marauder-minion hulls with death bursts, the
   Medic aura, Tank shield arc, Support speed ring, the three bosses' danger
-  rings, and a sprite effect for each role's ability. The bosses themselves
-  and the avatar slot are still placeholder shapes. No audio.
+  rings, and a sprite effect for each role's ability. The three bosses are
+  their live 3D design models with every phase and telegraph state
+  (Session 58). The avatar slot is still a placeholder shape. No audio.
 - Some imported Combat FX art isn't used yet: the Halcyon and Warden
   minions and their death bursts (those fights have no minions), the
   Halcyon bullet set, several spare orb sizes, the standalone aggro mark,

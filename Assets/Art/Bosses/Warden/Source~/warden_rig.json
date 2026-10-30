@@ -1,0 +1,1610 @@
+{
+ "root": "warden",
+ "scale": 0.040282,
+ "nodes": [
+  {
+   "name": "warden",
+   "parent": null,
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_body",
+   "parent": "warden",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_fortress_hull",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_fortress_hull_edge",
+   "parent": "warden_fortress_hull",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_armor_band",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_armor_band_strip",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_upper_keep",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_upper_keep_edge",
+   "parent": "warden_upper_keep",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_battlement_0",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_battlement_1",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_battlement_2",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_battlement_3",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_battlement_4",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_battlement_5",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_battlement_6",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_battlement_7",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_core",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_core_orb",
+   "parent": "warden_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_core_collar",
+   "parent": "warden_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_core_shutter_0",
+   "parent": "warden_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_core_shutter_1",
+   "parent": "warden_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_core_shutter_2",
+   "parent": "warden_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_core_shutter_3",
+   "parent": "warden_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_R",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_block_R",
+   "parent": "warden_bastion_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_block_R_edge",
+   "parent": "warden_bastion_block_R",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_roof_R",
+   "parent": "warden_bastion_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_lamp_R",
+   "parent": "warden_bastion_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_L",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_block_L",
+   "parent": "warden_bastion_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_block_L_edge",
+   "parent": "warden_bastion_block_L",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_roof_L",
+   "parent": "warden_bastion_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bastion_lamp_L",
+   "parent": "warden_bastion_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_mount_c",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_mount_c_collar",
+   "parent": "warden_mount_c",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_mount_c_socket",
+   "parent": "warden_mount_c",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_mount_c_seal",
+   "parent": "warden_mount_c",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_seal_plate_0",
+   "parent": "warden_mount_c_seal",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_seal_plate_0_edge",
+   "parent": "warden_seal_plate_0",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_seal_plate_1",
+   "parent": "warden_mount_c_seal",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_seal_plate_1_edge",
+   "parent": "warden_seal_plate_1",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_seal_plate_2",
+   "parent": "warden_mount_c_seal",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_seal_plate_2_edge",
+   "parent": "warden_seal_plate_2",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_seal_plate_3",
+   "parent": "warden_mount_c_seal",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_seal_plate_3_edge",
+   "parent": "warden_seal_plate_3",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_0",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_0_nacelle",
+   "parent": "warden_engine_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_0_collar",
+   "parent": "warden_engine_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_0_glow",
+   "parent": "warden_engine_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_0_plume",
+   "parent": "warden_engine_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_1",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_1_nacelle",
+   "parent": "warden_engine_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_1_collar",
+   "parent": "warden_engine_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_1_glow",
+   "parent": "warden_engine_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_1_plume",
+   "parent": "warden_engine_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_2",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_2_nacelle",
+   "parent": "warden_engine_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_2_collar",
+   "parent": "warden_engine_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_2_glow",
+   "parent": "warden_engine_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_engine_2_plume",
+   "parent": "warden_engine_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_greeble_0",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_greeble_1",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_greeble_2",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_greeble_3",
+   "parent": "warden_body",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_lockdown_ind_top_0",
+   "parent": "warden_lockdown_ind_top",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top_0_R",
+   "parent": "warden_lockdown_ind_top_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top_0_L",
+   "parent": "warden_lockdown_ind_top_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top_1",
+   "parent": "warden_lockdown_ind_top",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top_1_R",
+   "parent": "warden_lockdown_ind_top_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top_1_L",
+   "parent": "warden_lockdown_ind_top_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top_2",
+   "parent": "warden_lockdown_ind_top",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top_2_R",
+   "parent": "warden_lockdown_ind_top_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_top_2_L",
+   "parent": "warden_lockdown_ind_top_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_lockdown_ind_left_0",
+   "parent": "warden_lockdown_ind_left",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left_0_R",
+   "parent": "warden_lockdown_ind_left_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left_0_L",
+   "parent": "warden_lockdown_ind_left_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left_1",
+   "parent": "warden_lockdown_ind_left",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left_1_R",
+   "parent": "warden_lockdown_ind_left_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left_1_L",
+   "parent": "warden_lockdown_ind_left_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left_2",
+   "parent": "warden_lockdown_ind_left",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left_2_R",
+   "parent": "warden_lockdown_ind_left_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_left_2_L",
+   "parent": "warden_lockdown_ind_left_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_lockdown_ind_right_0",
+   "parent": "warden_lockdown_ind_right",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right_0_R",
+   "parent": "warden_lockdown_ind_right_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right_0_L",
+   "parent": "warden_lockdown_ind_right_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right_1",
+   "parent": "warden_lockdown_ind_right",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right_1_R",
+   "parent": "warden_lockdown_ind_right_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right_1_L",
+   "parent": "warden_lockdown_ind_right_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right_2",
+   "parent": "warden_lockdown_ind_right",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right_2_R",
+   "parent": "warden_lockdown_ind_right_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_lockdown_ind_right_2_L",
+   "parent": "warden_lockdown_ind_right_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_bigshot_flash",
+   "parent": "warden_bigshot",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_flash_disc",
+   "parent": "warden_bigshot_flash",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_flash_ring",
+   "parent": "warden_bigshot_flash",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_spike_0",
+   "parent": "warden_bigshot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_spike_1",
+   "parent": "warden_bigshot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_spike_2",
+   "parent": "warden_bigshot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_spike_3",
+   "parent": "warden_bigshot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_lane",
+   "parent": "warden_bigshot",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_lane_fill",
+   "parent": "warden_bigshot_lane",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_lane_edge_R",
+   "parent": "warden_bigshot_lane",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_bigshot_lane_edge_L",
+   "parent": "warden_bigshot_lane",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_phase2_damage",
+   "parent": "warden_body",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_p2_crack_0",
+   "parent": "warden_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_p2_crack_1",
+   "parent": "warden_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_p2_crack_2",
+   "parent": "warden_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_p2_crack_3",
+   "parent": "warden_phase2_damage",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a",
+   "parent": "warden",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_ring",
+   "parent": "warden_arm_a",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_status_ring",
+   "parent": "warden_arm_a",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_turret",
+   "parent": "warden_arm_a",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_housing",
+   "parent": "warden_arm_a_turret",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_housing_edge",
+   "parent": "warden_arm_a_housing",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_barrels",
+   "parent": "warden_arm_a_turret",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_barrel_0",
+   "parent": "warden_arm_a_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_barrel_0_edge",
+   "parent": "warden_arm_a_barrel_0",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_muzzle_0",
+   "parent": "warden_arm_a_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_muzzle_flash_0",
+   "parent": "warden_arm_a_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_barrel_1",
+   "parent": "warden_arm_a_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_barrel_1_edge",
+   "parent": "warden_arm_a_barrel_1",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_muzzle_1",
+   "parent": "warden_arm_a_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_muzzle_flash_1",
+   "parent": "warden_arm_a_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_aim_line",
+   "parent": "warden_arm_a_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_lock_lamp",
+   "parent": "warden_arm_a_turret",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_sparks",
+   "parent": "warden_arm_a_turret",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_spark_0",
+   "parent": "warden_arm_a_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_spark_1",
+   "parent": "warden_arm_a_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_spark_2",
+   "parent": "warden_arm_a_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_spark_3",
+   "parent": "warden_arm_a_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_spark_4",
+   "parent": "warden_arm_a_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_spark_5",
+   "parent": "warden_arm_a_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_spark_6",
+   "parent": "warden_arm_a_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_reboot",
+   "parent": "warden_arm_a",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_reboot_00",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_reboot_01",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_reboot_02",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_reboot_03",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_a_reboot_04",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_reboot_05",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_reboot_06",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_reboot_07",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_reboot_08",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_reboot_09",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_reboot_10",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_a_reboot_11",
+   "parent": "warden_arm_a_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b",
+   "parent": "warden",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_ring",
+   "parent": "warden_arm_b",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_status_ring",
+   "parent": "warden_arm_b",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_turret",
+   "parent": "warden_arm_b",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_housing",
+   "parent": "warden_arm_b_turret",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_housing_edge",
+   "parent": "warden_arm_b_housing",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_barrels",
+   "parent": "warden_arm_b_turret",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_barrel_0",
+   "parent": "warden_arm_b_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_barrel_0_edge",
+   "parent": "warden_arm_b_barrel_0",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_muzzle_0",
+   "parent": "warden_arm_b_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_muzzle_flash_0",
+   "parent": "warden_arm_b_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_barrel_1",
+   "parent": "warden_arm_b_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_barrel_1_edge",
+   "parent": "warden_arm_b_barrel_1",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_muzzle_1",
+   "parent": "warden_arm_b_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_muzzle_flash_1",
+   "parent": "warden_arm_b_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_aim_line",
+   "parent": "warden_arm_b_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_lock_lamp",
+   "parent": "warden_arm_b_turret",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_sparks",
+   "parent": "warden_arm_b_turret",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_spark_0",
+   "parent": "warden_arm_b_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_spark_1",
+   "parent": "warden_arm_b_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_spark_2",
+   "parent": "warden_arm_b_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_spark_3",
+   "parent": "warden_arm_b_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_spark_4",
+   "parent": "warden_arm_b_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_spark_5",
+   "parent": "warden_arm_b_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_spark_6",
+   "parent": "warden_arm_b_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_reboot",
+   "parent": "warden_arm_b",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_reboot_00",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_reboot_01",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_reboot_02",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_reboot_03",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_b_reboot_04",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_reboot_05",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_reboot_06",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_reboot_07",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_reboot_08",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_reboot_09",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_reboot_10",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_b_reboot_11",
+   "parent": "warden_arm_b_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c",
+   "parent": "warden",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_ring",
+   "parent": "warden_arm_c",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_status_ring",
+   "parent": "warden_arm_c",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_turret",
+   "parent": "warden_arm_c",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_housing",
+   "parent": "warden_arm_c_turret",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_housing_edge",
+   "parent": "warden_arm_c_housing",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_barrels",
+   "parent": "warden_arm_c_turret",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_barrel_0",
+   "parent": "warden_arm_c_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_barrel_0_edge",
+   "parent": "warden_arm_c_barrel_0",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_muzzle_0",
+   "parent": "warden_arm_c_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_muzzle_flash_0",
+   "parent": "warden_arm_c_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_barrel_1",
+   "parent": "warden_arm_c_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_barrel_1_edge",
+   "parent": "warden_arm_c_barrel_1",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_muzzle_1",
+   "parent": "warden_arm_c_barrels",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_muzzle_flash_1",
+   "parent": "warden_arm_c_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_aim_line",
+   "parent": "warden_arm_c_barrels",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_lock_lamp",
+   "parent": "warden_arm_c_turret",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_sparks",
+   "parent": "warden_arm_c_turret",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_spark_0",
+   "parent": "warden_arm_c_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_spark_1",
+   "parent": "warden_arm_c_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_spark_2",
+   "parent": "warden_arm_c_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_spark_3",
+   "parent": "warden_arm_c_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_spark_4",
+   "parent": "warden_arm_c_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_spark_5",
+   "parent": "warden_arm_c_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_spark_6",
+   "parent": "warden_arm_c_sparks",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_reboot",
+   "parent": "warden_arm_c",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_reboot_00",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_reboot_01",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_reboot_02",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_reboot_03",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "warden_arm_c_reboot_04",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_reboot_05",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_reboot_06",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_reboot_07",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_reboot_08",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_reboot_09",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_reboot_10",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  },
+  {
+   "name": "warden_arm_c_reboot_11",
+   "parent": "warden_arm_c_reboot",
+   "type": "Mesh",
+   "defaultActive": false
+  }
+ ],
+ "materials": [
+  {
+   "name": "warden_hull",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#3a4458",
+   "additive": false
+  },
+  {
+   "name": "warden_trim_edge",
+   "emissive": null,
+   "intensity": null,
+   "color": "#5470ff",
+   "additive": false
+  },
+  {
+   "name": "warden_dark",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#10151f",
+   "additive": false
+  },
+  {
+   "name": "warden_armor_band_glow",
+   "emissive": "#5470ff",
+   "intensity": 0,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_plate",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#46536f",
+   "additive": false
+  },
+  {
+   "name": "warden_trim_edge_2",
+   "emissive": null,
+   "intensity": null,
+   "color": "#a9b8ff",
+   "additive": false
+  },
+  {
+   "name": "warden_core_glow",
+   "emissive": "#5470ff",
+   "intensity": 1.4902893431306636,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_bastion_lamp",
+   "emissive": "#a9b8ff",
+   "intensity": 1.2,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_mount_c_glow",
+   "emissive": "#2c3878",
+   "intensity": 0.5,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_ice",
+   "emissive": "#a9b8ff",
+   "intensity": 1.2,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_engine_0_plume_fx",
+   "emissive": "#a9b8ff",
+   "intensity": 1.2,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_engine_1_plume_fx",
+   "emissive": "#a9b8ff",
+   "intensity": 1.2,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_engine_2_plume_fx",
+   "emissive": "#a9b8ff",
+   "intensity": 1.2,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_lockdown_glow",
+   "emissive": "#dce3ff",
+   "intensity": 2.4,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_bigshot_flash_fx",
+   "emissive": "#dce3ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_bigshot_ring_fx",
+   "emissive": "#dce3ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_bigshot_lane_fx",
+   "emissive": "#a9b8ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_bigshot_lane_edge_fx",
+   "emissive": "#a9b8ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_arm_a_glow",
+   "emissive": "#5470ff",
+   "intensity": 1,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_a_edge",
+   "emissive": null,
+   "intensity": null,
+   "color": "#a9b8ff",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_a_flash_fx",
+   "emissive": "#dce3ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_arm_a_aim_fx",
+   "emissive": "#a9b8ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_arm_a_lamp",
+   "emissive": "#a9b8ff",
+   "intensity": 0.5,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_a_reboot",
+   "emissive": "#a9b8ff",
+   "intensity": 1.6,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_b_glow",
+   "emissive": "#5470ff",
+   "intensity": 1,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_b_edge",
+   "emissive": null,
+   "intensity": null,
+   "color": "#a9b8ff",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_b_flash_fx",
+   "emissive": "#dce3ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_arm_b_aim_fx",
+   "emissive": "#a9b8ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_arm_b_lamp",
+   "emissive": "#a9b8ff",
+   "intensity": 0.5,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_b_reboot",
+   "emissive": "#a9b8ff",
+   "intensity": 1.6,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_c_glow",
+   "emissive": "#5470ff",
+   "intensity": 1,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_c_edge",
+   "emissive": null,
+   "intensity": null,
+   "color": "#a9b8ff",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_c_flash_fx",
+   "emissive": "#dce3ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_arm_c_aim_fx",
+   "emissive": "#a9b8ff",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "warden_arm_c_lamp",
+   "emissive": "#a9b8ff",
+   "intensity": 0.5,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "warden_arm_c_reboot",
+   "emissive": "#a9b8ff",
+   "intensity": 1.6,
+   "color": "#000000",
+   "additive": false
+  }
+ ]
+}

@@ -2181,3 +2181,81 @@ missile lock-on → FIRED, NOW tiles, meter sorting) and Halcyon (entry
 callout, panel reveal, cooldowns, meter). Warden's panel, every row state,
 and the three overlays were checked with their states pushed in directly.
 No console errors.
+
+## Session 58 — Boss Models from "Boss Designs" (Art Phase 5)
+
+Claude Design finished the boss designs, and all three bosses replaced
+their placeholder squares as live 3D models, the same route as the ships.
+See `art-roadmap.md`'s Phase 5.
+
+- **Source.** The designs were read through the Claude Design project:
+  `Boss Designs.dc.html`, `bossStates.js`, `bosses3d.js` (each rig's
+  `apply()` / `pose()` is the reference for every state) and
+  `Boss State Wiring.dc.html`. The page builds its GLBs in the browser, so
+  its "Download all (ZIP)" export was staged in a temporary folder at the
+  project root, sorted into `Assets/Art/Bosses/`, then deleted. State PNGs and
+  rig JSONs went into `Source~` folders, which are kept in git but not
+  imported. The design's minion GLBs and PNGs were deleted: the minions
+  keep their Combat FX sprites by choice.
+- **Materials and wrappers** were generated through Unity MCP from each
+  `<boss>_rig.json`:
+  - one `ShipMesh` material per glTF material, with emission = color ×
+    intensity × 1.6, and additive FX also × the glTF opacity;
+  - the hulls reuse the ships' materials;
+  - wrapper prefabs with the rig's hidden nodes off, and the ship
+    pulse / spin components on the constantly moving parts.
+
+  No editor code was committed.
+- **Runtime.**
+  - `BossModel` (nodes by name, `Show`, `Glow` through a
+    MaterialPropertyBlock) sits on a `Visual` child of each boss prefab.
+    The placeholder `SpriteRenderer`s are gone, and `SetVisible` toggles
+    the model.
+  - Seven state scripts read gameplay and show it. Gameplay only gained
+    read-only getters: `IsShockwaveTelegraphing`,
+    `HalcyonStaticField.IsTelegraphing`, `WardenArm.CurrentTarget` /
+    `IsTelegraphing` / `IsFiring`, and `WardenBigShot.TelegraphProgress`.
+  - Removed: `WardenArmHealth.downColor`, `WardenBigShot`'s sprite pulse,
+    and the never-attached `HalcyonSurgeTint.cs`.
+  - Six palette tokens were added for the state colors.
+- **Gotchas:**
+  - glTFast mirrors the design's X axis, so the scripts negate x for
+    every position they set.
+  - The wrapper's GLB root carries the model's scale (≈0.04); overwriting
+    it with 1 made the first Warden attempt 25× too big.
+  - The `Visual` rotation is `LookRotation(down, toward camera)`.
+- **Warden's arms moved** onto the design's hull mounts, about 0.5 units
+  from the centre instead of 1.9. Player bullets fly straight up and the
+  old 1.6-unit body box covered the arms, so a shielded body would have
+  soaked every shot. The body box now covers only the keep, and the arm
+  boxes are the turret footprint. **Needs a real playtest.**
+- **Level Select** shows each boss's 768 px portrait in its card's
+  `BossArt`.
+- **Hit flash.** New `BossHitFlash` flashes a model node through
+  `ShipMesh`'s `_FlashColor`: white at alpha 0.55 for 0.08 s, softer than
+  the ships' because the party shoots the boss constantly.
+  - **Placement:** the whole model on Marauder and Halcyon, `warden_body` on
+    Warden, and each Warden arm on its own.
+  - **Trigger:** the four `TakeDamage` methods call it only when the hit
+    lands, so a shielded Warden body stays dark.
+  - **`BossModel.ResetGlow`:** now writes the material's emission back
+    instead of clearing the whole property block, which would have cut a
+    flash short.
+
+### Verified
+
+All 176 EditMode tests pass (new: `BossModelTests` with the flash cases,
+`WardenArmModelTests`;
+`WardenArmHealthTests` lost its sprite-color asserts). Played each level in
+the editor and rendered the boss up close:
+- **Warden:** idle; arm firing and aimed; phase 2 with arm C; Big Shot
+  charge; arm down with reboot ticks. Hit flash: an arm hit flashes only
+  that arm; a shielded body doesn't flash; with both arms down, a body hit
+  flashes the keep.
+- **Marauder:** phase 1 and phase 2.
+- **Halcyon:** roaming; the Opening telegraph; exposed, forced through
+  `IsActive` because the window kept being missed.
+
+No console errors. Not checked live: Marauder's missile, barrage and bay
+looks (minions are off), Warden's Lockdown chevrons, and bloom on the
+boss glow in a full fight.

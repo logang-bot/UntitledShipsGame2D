@@ -514,8 +514,10 @@ reference docs live under `systems/`.
 - **Halcyon playtest tuning + Victory on every boss** — first round of real
   playtest feedback on Halcyon. Roam speed is now randomized per leg and
   mid-glide (`HalcyonRoamPhaseSettings`, faster in phase 2). Surge is
-  presented to players as an **Opening** (`HalcyonSurgeTint.cs` flashes
-  the boss green; HUD reads "Opening!" / "OPENING — FIRE!"). Static Field
+  presented to players as an **Opening** (`HalcyonSurgeTint.cs` flashed
+  the boss green, though it was never attached and was deleted in Session
+  58, when the boss model's Opening look replaced it; HUD reads
+  "Opening!" / "OPENING — FIRE!"). Static Field
   now also hits a lone ship in range, for less (1 vs. 3 per clustered
   partner). `VictoryUI.Show` is now wired to `OnDefeated` in `Level2.unity`
   and `Level3.unity` too — previously only Level 1 showed a Victory screen.
@@ -626,6 +628,19 @@ reference docs live under `systems/`.
   boss. HUD icons and sprites baked from the design's SVGs into
   `Assets/Art/UI/HUD/`. Phone layout and the PLANNED deck parts deferred.
   See `systems/hud-layout.md`.
+- **Boss models (Session 58)** — art Phase 5. Marauder, Halcyon and Warden
+  are the finished Claude Design rigs, rendered live like the ships
+  (`Assets/Art/Bosses/`, `ShipMesh` materials, a `Visual` child holding
+  `BossModel`). Per-boss state scripts show every phase and telegraph on
+  the model: Marauder's shockwave core, missile hatches, barrage cannons
+  and bay doors; Halcyon's static arcs and Opening (chevrons, then split
+  shell and weak-point reticle); Warden's Lockdown chevrons, Big Shot
+  charge, phase 2 arm C, and per-arm idle / locked / firing / down looks
+  with reboot ticks. Warden's arms moved onto the hull mounts, with
+  smaller arm and body hitboxes. Bosses flash on hit (`BossHitFlash`).
+  Marauder's minions stay Combat FX sprites. The old sprite tints are
+  gone. Level Select shows each boss's portrait. See `art-roadmap.md`'s
+  Phase 5.
 
 ## In Progress
 
@@ -706,12 +721,11 @@ is independently testable and the one before it de-risks the next.
   - effects (Combat FX sprites done: Session 55, Sprite Atlases tested and
     dropped: Session 56; grid and particles open);
   - powers (role ability effects done: Session 55; black hole open);
-  - bosses, designed in Claude Design alongside the backgrounds — **not
-    in the game yet** (still placeholder squares). **Next step: a Claude
-    Design session** to finish the draft `Boss Designs.dc.html` (separate
-    Warden arm parts with idle / lock / down looks, Warden Big Shot charge,
-    Halcyon OPENING) and export it for Unity, then build art Phase 5. See
-    `art-roadmap.md`'s Phase 5 "Step 1";
+  - bosses, designed in Claude Design alongside the backgrounds — **in the
+    game as live 3D models** (Session 58), with every phase and telegraph
+    state on the model and portraits on the Level Select cards. Warden's
+    arms moved onto the hull and need a playtest. See `art-roadmap.md`'s
+    Phase 5;
   - anime cut-ins;
   - the pre-level screens (main menu through level select) on a shared UI
     kit;

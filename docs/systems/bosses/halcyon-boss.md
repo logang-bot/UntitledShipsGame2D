@@ -141,15 +141,17 @@ otherwise always moving, so this is the one consistent window to land
 hits — no damage-taken multiplier is applied.
 
 Public API: `IsTelegraphing`, `IsActive`, `CooldownRemaining` — read by
-`HalcyonRoam` (to freeze), `HalcyonSurgeTint` and `HalcyonBossPanelUI`.
+`HalcyonRoam` (to freeze), `HalcyonModelOpening` and the boss panel.
 
 **Player-facing name: "Opening".** Playtesting found "Surge!" read as an
 incoming attack, the opposite of what the window is. The C# names stay
 `HalcyonSurge`/`surge*`; only what the player sees changed:
 
-- `HalcyonSurgeTint.cs` (sibling component, purely visual) pulses the
-  boss sprite toward `openingColor` (green) during the telegraph and holds
-  it solid while active, back to the base sprite color otherwise.
+- The model shows it (Session 58, `HalcyonModelOpening`, see "Model"
+  below). The telegraph slides chevrons in and overcharges the coils.
+  While exposed, the shell splits open around a white-hot core with a
+  weak-point reticle. This replaced `HalcyonSurgeTint.cs`, a green sprite
+  tint that was never attached to the prefab and was deleted.
 - `HalcyonBossPanelUI` shows "Opening!" (yellow, `telegraphTextColor`)
   during the telegraph, "OPENING — FIRE!" (green, `openingTextColor`)
   while active, and an "Opening: Xs" cooldown.
@@ -205,6 +207,30 @@ Field still has no named warning: its ring is the tell. Halcyon has no
 aggro row. Its `BossDamageLedger` now records every hit, so the damage
 meter works in this fight too.
 
+## Model (Session 58)
+
+Halcyon is its live 3D design model (art Phase 5, see
+[art-roadmap.md](../../art-roadmap.md)): `HalcyonBoss.prefab` > `Visual`
+(`BossModel`) > `HalcyonModel` (the GLB wrapper). The root's placeholder
+sprite is gone, and `SetVisible` toggles the model. Two scripts on the
+boss root show the state. Each one only reads gameplay:
+
+- **`HalcyonModelStates`:**
+  - phase 2 (`halcyon_phase2_overcharge`: the outer ring, scorch marks,
+    core halo and wingtip arcs);
+  - the coil ring's spin: 2.2× faster in phase 2, slowed during the
+    Opening telegraph, stopped while exposed;
+  - `halcyon_static_arcs` while `HalcyonStaticField.IsTelegraphing` (a new
+    read-only getter), except while exposed.
+- **`HalcyonModelOpening`:** the core's glow, plus the Opening's
+  telegraph and exposed looks (see "HalcyonSurge.cs").
+
+The model's own `halcyon_static_field_ring` stays off. The
+`StaticFieldRing` child keeps drawing the field at its gameplay radius.
+
+**Hit flash:** a `BossHitFlash` on the root (node `Visual`, the whole
+model) flashes it white when `TakeDamage` lands. See art-roadmap Phase 5.
+
 ## Scene wiring
 
 ### Boss
@@ -222,7 +248,6 @@ per level, same treatment `MarauderBoss.prefab` gets in `Level1.unity`.
 | **HalcyonBoss.cs** | `maxHealth`: 110; component starts **disabled**; `OnDefeated` → `HalcyonBossPanelUI.ShowDefeated` + `VictoryUI.Show` |
 | **HalcyonRoam.cs** | `phase1`/`phase2`: see the table under "HalcyonRoam.cs" |
 | **HalcyonSurge.cs** | `cooldown`/`telegraphTime`/`activeTime`: 8/1/2 |
-| **HalcyonSurgeTint.cs** | `openingColor`: green `(0.35, 1, 0.45)` |
 | **HalcyonStaticField.cs** | `pulseCooldown`/`pulseCooldownPhase2`: 6/4; `bossRange`/`clusterRange`: 1.8/0.6; `damageMultiplier`/`soloDamageMultiplier`: 3/1; `ships`: `Player` + all 3 `Teammate_*` |
 
 `OnDefeated` had **no** listeners before this was fixed — the persistent

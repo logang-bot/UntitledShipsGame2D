@@ -29,6 +29,7 @@ public class HalcyonStaticField : MonoBehaviour
     public float fadeDuration = 0.3f;
 
     public float CooldownRemaining => Mathf.Max(0f, nextPulseTime - Time.time);
+    public bool IsTelegraphing => isTelegraphing;
 
     private HalcyonBoss boss;
     private bool isTelegraphing;
