@@ -279,7 +279,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1eec6ffb2e35b648a0a22d4f341028e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDamageFlash
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashColor:
+    key: 12
+    alpha: 1
   flashDuration: 0.12
 --- !u!114 &5457261672654467984
 MonoBehaviour:
@@ -342,11 +344,17 @@ MonoBehaviour:
   auraBoostTickInterval: 0.25
   auraBoostDuration: 4
   auraBoostCooldown: 10
-  auraRingColor: {r: 0.3, g: 1, b: 0.4, a: 0.35}
-  auraRingBoostedColor: {r: 0.3, g: 1, b: 0.4, a: 0.7}
+  auraRingColor:
+    key: 32
+    alpha: 0.35
+  auraRingBoostedColor:
+    key: 32
+    alpha: 0.7
   auraRingWidth: 0.05
   auraRingBoostedWidth: 0.12
-  healFlashColor: {r: 0.5, g: 1, b: 0.6, a: 1}
+  healFlashColor:
+    key: 34
+    alpha: 1
   speedBoostCooldown: 15
   speedBoostDuration: 4
   speedBoostMultiplier: 1.5
@@ -357,7 +365,9 @@ MonoBehaviour:
   shieldArcWidthMultiplier: 3
   shieldArcHeight: 0.4
   shieldArcYOffset: 0.3
-  shieldArcColor: {r: 0.3, g: 0.5, b: 1, a: 0.5}
+  shieldArcColor:
+    key: 31
+    alpha: 0.5
   shieldArcLineWidth: 0.08
   partyBuffRingRadius: 0.6
   partyBuffRingWidth: 0.08

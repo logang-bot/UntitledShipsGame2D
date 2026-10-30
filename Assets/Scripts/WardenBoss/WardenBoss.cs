@@ -41,7 +41,8 @@ public class WardenBoss : MonoBehaviour, IBoss
     public bool IsShielded => ArmShields(armA) || ArmShields(armB) || ArmShields(armC);
 
     private readonly Dictionary<GameObject, float> lastContactDamageTime = new Dictionary<GameObject, float>();
-    private SpriteRenderer sr;
+    private BossModel model;
+    private BossHitFlash hitFlash;
     private Collider2D col;
     private WardenShockwave shockwave;
     private Behaviour[] mechanics;
@@ -55,7 +56,8 @@ public class WardenBoss : MonoBehaviour, IBoss
 
     private void CacheComponents()
     {
-        sr = GetComponent<SpriteRenderer>();
+        model = GetComponentInChildren<BossModel>(true);
+        hitFlash = GetComponent<BossHitFlash>();
         col = GetComponent<Collider2D>();
         shockwave = GetComponent<WardenShockwave>();
         mechanics = new Behaviour[] { GetComponent<WardenMovement>(), shockwave, GetComponent<WardenLockdownVolley>(), GetComponent<WardenBigShot>(), armA, armB };
@@ -74,13 +76,14 @@ public class WardenBoss : MonoBehaviour, IBoss
     /// </summary>
     void OnEnable()
     {
+        DamageLedger.BeginCombat();
         foreach (Behaviour mechanic in mechanics)
             if (mechanic != null) mechanic.enabled = true;
     }
 
     public void SetVisible(bool visible)
     {
-        if (sr != null) sr.enabled = visible;
+        if (model != null) model.SetVisible(visible);
         if (col != null) col.enabled = visible;
         if (shockwave != null) shockwave.SetVisible(visible);
         if (armA != null) armA.SetVisible(visible);
@@ -98,10 +101,18 @@ public class WardenBoss : MonoBehaviour, IBoss
         health.TakeDamage(Mathf.RoundToInt(bulletDamage * bodyContactDamageMultiplier));
     }
 
-    public void TakeDamage(float amount)
+    /// <summary>
+    /// Arm hits are recorded here too (see WardenArmHealth.TakeDamage): while
+    /// the core is shielded the arms are the fight's only damage target.
+    /// </summary>
+    public BossDamageLedger DamageLedger { get; } = new BossDamageLedger();
+
+    public void TakeDamage(float amount, GameObject source = null)
     {
         if (IsShielded) return;
         CurrentHealth -= Mathf.RoundToInt(amount);
+        DamageLedger.Record(source, amount);
+        if (hitFlash != null) hitFlash.Flash();
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2) EnterPhase2();
         if (CurrentHealth <= 0) Die();
     }
@@ -138,6 +149,7 @@ public class WardenBoss : MonoBehaviour, IBoss
 
     private void Die()
     {
+        DamageLedger.EndCombat();
         OnDefeated?.Invoke();
         Destroy(gameObject);
     }

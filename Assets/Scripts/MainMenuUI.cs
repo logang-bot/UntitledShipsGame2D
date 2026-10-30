@@ -1,11 +1,12 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenuUI : MonoBehaviour
 {
+    public MenuScreen screen;
+
     public void Play()
     {
-        SceneManager.LoadScene("Lobby");
+        screen.GoTo("Lobby");
     }
 
     public void Quit()

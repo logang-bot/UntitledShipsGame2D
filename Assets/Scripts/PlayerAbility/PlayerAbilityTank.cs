@@ -3,6 +3,9 @@ using UnityEngine;
 public class PlayerAbilityTank
 {
     private const int ShieldArcSegments = 16;
+    private const int ArcSortingOrder = -5;
+    private const float SpriteArcWidthPx = 360f;
+    private const float SpriteArcEndsBelowCenterPx = 37f;
 
     private readonly PlayerAbility ability;
 
@@ -17,7 +20,7 @@ public class PlayerAbilityTank
     }
 
     /// <summary>
-    /// Wide, curved shield in front of Tank - both a visual (LineRenderer)
+    /// Wide, curved shield in front of Tank - both a visual (Combat FX arc sprite)
     /// and a real trigger (EdgeCollider2D, tagged Player, no PlayerHealth of
     /// its own) that blocks enemy bullets across a width wider than Tank's
     /// own body, per Bullet.cs's GetComponentInParent fix routing the hit to
@@ -30,7 +33,7 @@ public class PlayerAbilityTank
         Vector2[] points = BuildArcPoints();
         GameObject arcObj = CreateArcGameObject();
         AddArcCollider(arcObj, points);
-        AddArcLineRenderer(arcObj, points);
+        AddArcSprite(arcObj, points);
     }
 
     private Vector2[] BuildArcPoints()
@@ -65,22 +68,26 @@ public class PlayerAbilityTank
         arcCollider.points = points;
     }
 
-    private void AddArcLineRenderer(GameObject arcObj, Vector2[] points)
+    /// <summary>
+    /// The design's arc sprite spans SpriteArcWidthPx between its two end
+    /// caps, which sit SpriteArcEndsBelowCenterPx below the sprite's centre.
+    /// It's scaled so the caps land on the collider's first and last point.
+    /// </summary>
+    private void AddArcSprite(GameObject arcObj, Vector2[] points)
     {
-        LineRenderer arcLine = arcObj.AddComponent<LineRenderer>();
-        arcLine.useWorldSpace = false;
-        arcLine.loop = false;
-        arcLine.positionCount = ShieldArcSegments;
-        arcLine.material = new Material(Shader.Find("Sprites/Default"));
-        arcLine.sortingLayerName = "Default";
-        arcLine.sortingOrder = -1;
-        arcLine.startColor = ability.shieldArcColor;
-        arcLine.endColor = ability.shieldArcColor;
-        arcLine.startWidth = ability.shieldArcLineWidth;
-        arcLine.endWidth = ability.shieldArcLineWidth;
-        for (int i = 0; i < ShieldArcSegments; i++)
-        {
-            arcLine.SetPosition(i, points[i]);
-        }
+        if (ability.Fx == null) return;
+        SpriteRenderer sprite = FxSprites.CreateChild(arcObj.transform, "ShieldArcSprite", ArcSortingOrder);
+        float scale = (points[points.Length - 1].x - points[0].x) / (SpriteArcWidthPx / FxSprites.PixelsPerUnit);
+        sprite.transform.localScale = Vector3.one * scale;
+        sprite.transform.localPosition = new Vector3(0f, points[0].y + SpriteArcEndsBelowCenterPx / FxSprites.PixelsPerUnit * scale, 0f);
+        AddBlockFlash(arcObj, sprite);
+    }
+
+    private void AddBlockFlash(GameObject arcObj, SpriteRenderer sprite)
+    {
+        ShieldArcBlockFlash flash = arcObj.AddComponent<ShieldArcBlockFlash>();
+        flash.arc = sprite;
+        flash.idle = ability.Fx.shieldIdle;
+        flash.block = ability.Fx.shieldBlock;
     }
 }

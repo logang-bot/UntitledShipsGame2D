@@ -1,0 +1,910 @@
+fileFormatVersion: 2
+guid: dfa8859e67d8df343aa18d133d53bc56
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8756700179965892385
+    second: tank_taunt_1_windup_0
+  - first:
+      213: -6464804651613775599
+    second: tank_taunt_1_windup_1
+  - first:
+      213: 3615127665369789360
+    second: tank_taunt_1_windup_2
+  - first:
+      213: -4897514323658127207
+    second: tank_taunt_1_windup_3
+  - first:
+      213: 8627339594856627157
+    second: tank_taunt_1_windup_4
+  - first:
+      213: -8032369226621171811
+    second: tank_taunt_1_windup_5
+  - first:
+      213: -9133844874276968619
+    second: tank_taunt_1_windup_6
+  - first:
+      213: -4668111777002311948
+    second: tank_taunt_1_windup_7
+  - first:
+      213: 6293384947698447336
+    second: tank_taunt_1_windup_8
+  - first:
+      213: 9138498218194924237
+    second: tank_taunt_1_windup_9
+  - first:
+      213: 3705905042675044520
+    second: tank_taunt_1_windup_10
+  - first:
+      213: 148378537717111513
+    second: tank_taunt_1_windup_11
+  - first:
+      213: 7372398618380673253
+    second: tank_taunt_1_windup_12
+  - first:
+      213: 5784284781507917515
+    second: tank_taunt_1_windup_13
+  - first:
+      213: -111407999181399176
+    second: tank_taunt_1_windup_14
+  - first:
+      213: 6287989621578330652
+    second: tank_taunt_1_windup_15
+  - first:
+      213: -8388259782031916180
+    second: tank_taunt_1_windup_16
+  - first:
+      213: 7916389242422385504
+    second: tank_taunt_1_windup_17
+  - first:
+      213: -7159093916819077335
+    second: tank_taunt_1_windup_18
+  - first:
+      213: 8452358093815318946
+    second: tank_taunt_1_windup_19
+  - first:
+      213: -8246062199273351204
+    second: tank_taunt_1_windup_20
+  - first:
+      213: -7546219301582997098
+    second: tank_taunt_1_windup_21
+  - first:
+      213: -5398013057355689115
+    second: tank_taunt_1_windup_22
+  - first:
+      213: 1172148432228912012
+    second: tank_taunt_1_windup_23
+  - first:
+      213: 4576279881689264002
+    second: tank_taunt_1_windup_24
+  - first:
+      213: 6413680666388641573
+    second: tank_taunt_1_windup_25
+  - first:
+      213: -4786947189218430041
+    second: tank_taunt_1_windup_26
+  - first:
+      213: 1545096506156388106
+    second: tank_taunt_1_windup_27
+  - first:
+      213: -3944339561100850973
+    second: tank_taunt_1_windup_28
+  - first:
+      213: 3311785945303045709
+    second: tank_taunt_1_windup_29
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_0
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 329
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 127577f2b6c068970800000000000000
+      internalID: 8756700179965892385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_1
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 332
+        width: 36
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 119944edb666846a0800000000000000
+      internalID: -6464804651613775599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_2
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 329
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b3bd0835738b2230800000000000000
+      internalID: 3615127665369789360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_3
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 321
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99848f7bba8880cb0800000000000000
+      internalID: -4897514323658127207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_4
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 325
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5db7714e6a77ab770800000000000000
+      internalID: 8627339594856627157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_5
+      rect:
+        serializedVersion: 2
+        x: 286
+        y: 325
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d974776eeba478090800000000000000
+      internalID: -8032369226621171811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_6
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 321
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 557e233ea701e3180800000000000000
+      internalID: -9133844874276968619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_7
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 294
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4fea5ff4219873fb0800000000000000
+      internalID: -4668111777002311948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_8
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 300
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e33b522448965750800000000000000
+      internalID: 6293384947698447336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_9
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 191
+        width: 130
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc27c0c26b772de70800000000000000
+      internalID: 9138498218194924237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_10
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 300
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a099f760050e6330800000000000000
+      internalID: 3705905042675044520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_11
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 294
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9da9be07e752f0200800000000000000
+      internalID: 148378537717111513
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_12
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 291
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e029279b75005660800000000000000
+      internalID: 7372398618380673253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_13
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 291
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc63a71cc58e54050800000000000000
+      internalID: 5784284781507917515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_14
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 233
+        width: 11
+        height: 56
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87bd7a7d303347ef0800000000000000
+      internalID: -111407999181399176
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_15
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 250
+        width: 11
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c12f481ee3d634750800000000000000
+      internalID: 6287989621578330652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_16
+      rect:
+        serializedVersion: 2
+        x: 179
+        y: 215
+        width: 9
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c63ca40db2ae69b80800000000000000
+      internalID: -8388259782031916180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_17
+      rect:
+        serializedVersion: 2
+        x: 330
+        y: 231
+        width: 8
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06b5f4ab21aacdd60800000000000000
+      internalID: 7916389242422385504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_18
+      rect:
+        serializedVersion: 2
+        x: 327
+        y: 221
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 927c65e530ac5ac90800000000000000
+      internalID: -7159093916819077335
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_19
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 202
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a9824067eecc4570800000000000000
+      internalID: 8452358093815318946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_20
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 206
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd719888e1a109d80800000000000000
+      internalID: -8246062199273351204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_21
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 212
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 699f2fbd681764790800000000000000
+      internalID: -7546219301582997098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_22
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 202
+        width: 14
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 563d46769b76615b0800000000000000
+      internalID: -5398013057355689115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_23
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 204
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8b090fe9ce444010800000000000000
+      internalID: 1172148432228912012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_24
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 186
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28fead46e46328f30800000000000000
+      internalID: 4576279881689264002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_25
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 185
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 527b2eeb598f10950800000000000000
+      internalID: 6413680666388641573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_26
+      rect:
+        serializedVersion: 2
+        x: 302
+        y: 190
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a3b41cc4e8519db0800000000000000
+      internalID: -4786947189218430041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_27
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 175
+        width: 26
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0f06290619417510800000000000000
+      internalID: 1545096506156388106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_28
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 161
+        width: 19
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e840133114e249c0800000000000000
+      internalID: -3944339561100850973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_1_windup_29
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 175
+        width: 26
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d465be945c3d5fd20800000000000000
+      internalID: 3311785945303045709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tank_taunt_1_windup_0: 8756700179965892385
+      tank_taunt_1_windup_1: -6464804651613775599
+      tank_taunt_1_windup_10: 3705905042675044520
+      tank_taunt_1_windup_11: 148378537717111513
+      tank_taunt_1_windup_12: 7372398618380673253
+      tank_taunt_1_windup_13: 5784284781507917515
+      tank_taunt_1_windup_14: -111407999181399176
+      tank_taunt_1_windup_15: 6287989621578330652
+      tank_taunt_1_windup_16: -8388259782031916180
+      tank_taunt_1_windup_17: 7916389242422385504
+      tank_taunt_1_windup_18: -7159093916819077335
+      tank_taunt_1_windup_19: 8452358093815318946
+      tank_taunt_1_windup_2: 3615127665369789360
+      tank_taunt_1_windup_20: -8246062199273351204
+      tank_taunt_1_windup_21: -7546219301582997098
+      tank_taunt_1_windup_22: -5398013057355689115
+      tank_taunt_1_windup_23: 1172148432228912012
+      tank_taunt_1_windup_24: 4576279881689264002
+      tank_taunt_1_windup_25: 6413680666388641573
+      tank_taunt_1_windup_26: -4786947189218430041
+      tank_taunt_1_windup_27: 1545096506156388106
+      tank_taunt_1_windup_28: -3944339561100850973
+      tank_taunt_1_windup_29: 3311785945303045709
+      tank_taunt_1_windup_3: -4897514323658127207
+      tank_taunt_1_windup_4: 8627339594856627157
+      tank_taunt_1_windup_5: -8032369226621171811
+      tank_taunt_1_windup_6: -9133844874276968619
+      tank_taunt_1_windup_7: -4668111777002311948
+      tank_taunt_1_windup_8: 6293384947698447336
+      tank_taunt_1_windup_9: 9138498218194924237
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

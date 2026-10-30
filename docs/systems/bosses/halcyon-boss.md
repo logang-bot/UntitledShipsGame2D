@@ -141,15 +141,17 @@ otherwise always moving, so this is the one consistent window to land
 hits — no damage-taken multiplier is applied.
 
 Public API: `IsTelegraphing`, `IsActive`, `CooldownRemaining` — read by
-`HalcyonRoam` (to freeze), `HalcyonSurgeTint` and `HalcyonBossPanelUI`.
+`HalcyonRoam` (to freeze), `HalcyonModelOpening` and the boss panel.
 
 **Player-facing name: "Opening".** Playtesting found "Surge!" read as an
 incoming attack, the opposite of what the window is. The C# names stay
 `HalcyonSurge`/`surge*`; only what the player sees changed:
 
-- `HalcyonSurgeTint.cs` (sibling component, purely visual) pulses the
-  boss sprite toward `openingColor` (green) during the telegraph and holds
-  it solid while active, back to the base sprite color otherwise.
+- The model shows it (Session 58, `HalcyonModelOpening`, see "Model"
+  below). The telegraph slides chevrons in and overcharges the coils.
+  While exposed, the shell splits open around a white-hot core with a
+  weak-point reticle. This replaced `HalcyonSurgeTint.cs`, a green sprite
+  tint that was never attached to the prefab and was deleted.
 - `HalcyonBossPanelUI` shows "Opening!" (yellow, `telegraphTextColor`)
   during the telegraph, "OPENING — FIRE!" (green, `openingTextColor`)
   while active, and an "Opening: Xs" cooldown.
@@ -185,28 +187,49 @@ candidate. `BossEvents.AssignShips` (called by `PartyBossWiring`) sets
 `ships` on the spawned boss's `HalcyonStaticField`, the same place
 `MarauderBoss.targets` gets its equivalent fix.
 
-**Ring visual**: same always-dim / brighter-during-telegraph /
-impact-flash-on-hit `LineRenderer` idiom as Marauder's shockwave ring, at
-radius `bossRange`, built once in `Awake()` and toggled by
+**Ring visual**: a `StaticFieldRing` child with a `DangerZoneVisual`
+(Combat FX sprites, wired as `visual`) at radius `bossRange`: the charge
+ring at half alpha when idle and full while telegraphing, the pulse frame
+on impact, then the fade frame for `fadeDuration` (0.3 s). Toggled by
 `HalcyonBoss.SetVisible` via `SetRingVisible(bool)`.
 
 **Public API**: `CooldownRemaining`, `SetRingVisible(bool)`.
 
-## HalcyonBossPanelUI.cs
+## Boss panel: HalcyonPanelFeed.cs
 
-**Attached to:** `Level2.unity`'s `BossPanel` (replacing `BossPanelUI` —
-each level's `BossPanel` script matches its own boss type, not a shared
-reusable component). Same "HUD only reads, never owns game state" pattern
-as `BossPanelUI.cs`, against Halcyon's much smaller public surface: HP bar
-+ text, phase text, a Surge warning + cooldown text, a Static Field
-cooldown text only (no named warning — same "the ring itself is the tell"
-choice Marauder's own Shockwave already makes). No target text, no
-guided-missile/pattern-barrage text — none of that exists for this boss;
-`Level2.unity`'s now-unused `BossTargetText`/`BossPatternBarrageWarningText`/
-`BossPatternBarrageCooldownText` rows are deactivated rather than left
-showing stale text. `BossWarningText` and `BossShockwaveCooldownText`/
-`BossGuidedMissileCooldownText` are reused (by content, not by name) as
-Halcyon's Surge warning/cooldown and Static Field cooldown rows.
+Since Session 57 the shared `BossPanel` is filled by `HalcyonPanelFeed`
+(replacing `HalcyonBossPanelUI`; see [hud-layout.md](../hud-layout.md)'s
+"Right rail: boss"): the header from `HalcyonBoss`, a `SURGE · GET CLEAR OF
+THE BOSS` warning while `HalcyonSurge.IsTelegraphing` (counting down its
+`telegraphTime`), the white `OPENING! BOSS EXPOSED` row while
+`HalcyonSurge.IsActive`, and Surge / Static Field cooldown tiles. The Static
+Field still has no named warning: its ring is the tell. Halcyon has no
+aggro row. Its `BossDamageLedger` now records every hit, so the damage
+meter works in this fight too.
+
+## Model (Session 58)
+
+Halcyon is its live 3D design model (art Phase 5, see
+[art-roadmap.md](../../art-roadmap.md)): `HalcyonBoss.prefab` > `Visual`
+(`BossModel`) > `HalcyonModel` (the GLB wrapper). The root's placeholder
+sprite is gone, and `SetVisible` toggles the model. Two scripts on the
+boss root show the state. Each one only reads gameplay:
+
+- **`HalcyonModelStates`:**
+  - phase 2 (`halcyon_phase2_overcharge`: the outer ring, scorch marks,
+    core halo and wingtip arcs);
+  - the coil ring's spin: 2.2× faster in phase 2, slowed during the
+    Opening telegraph, stopped while exposed;
+  - `halcyon_static_arcs` while `HalcyonStaticField.IsTelegraphing` (a new
+    read-only getter), except while exposed.
+- **`HalcyonModelOpening`:** the core's glow, plus the Opening's
+  telegraph and exposed looks (see "HalcyonSurge.cs").
+
+The model's own `halcyon_static_field_ring` stays off. The
+`StaticFieldRing` child keeps drawing the field at its gameplay radius.
+
+**Hit flash:** a `BossHitFlash` on the root (node `Visual`, the whole
+model) flashes it white when `TakeDamage` lands. See art-roadmap Phase 5.
 
 ## Scene wiring
 
@@ -225,7 +248,6 @@ per level, same treatment `MarauderBoss.prefab` gets in `Level1.unity`.
 | **HalcyonBoss.cs** | `maxHealth`: 110; component starts **disabled**; `OnDefeated` → `HalcyonBossPanelUI.ShowDefeated` + `VictoryUI.Show` |
 | **HalcyonRoam.cs** | `phase1`/`phase2`: see the table under "HalcyonRoam.cs" |
 | **HalcyonSurge.cs** | `cooldown`/`telegraphTime`/`activeTime`: 8/1/2 |
-| **HalcyonSurgeTint.cs** | `openingColor`: green `(0.35, 1, 0.45)` |
 | **HalcyonStaticField.cs** | `pulseCooldown`/`pulseCooldownPhase2`: 6/4; `bossRange`/`clusterRange`: 1.8/0.6; `damageMultiplier`/`soloDamageMultiplier`: 3/1; `ships`: `Player` + all 3 `Teammate_*` |
 
 `OnDefeated` had **no** listeners before this was fixed — the persistent

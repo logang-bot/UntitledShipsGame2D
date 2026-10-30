@@ -28,16 +28,24 @@ classes it alone constructs (e.g. `MarauderBoss/` holds `MarauderBoss.cs`
 plus `MarauderBossMovement`/`Shockwave`/`Attacks`/`Aggro`/its two
 `[System.Serializable]` settings classes; `HalcyonBoss/` holds
 `HalcyonBoss.cs` plus its three sibling `MonoBehaviour`s;
-`AIController/`/`PlayerAbility/` follow the same shape). At 58 scripts
-across a handful of these feature folders plus the flat majority, this is
-still easy to scan; a `Managers/`/`Controllers/`/`UI/`-style regrouping
-remains something to revisit only if that stops being true.
+`AIController/`/`PlayerAbility/` follow the same shape). The Session 54
+menus added ~60 small one-purpose files (the `Menu*`, `Palette*`,
+`Role*`/`Level*` view, `TagChip*`, `Join*` families), bringing it to ~140
+scripts. They stayed flat because they're shared by several screens
+rather than owned by one `MonoBehaviour`; the name prefixes keep them
+findable. A `Managers/`/`Controllers/`/`UI/`-style regrouping remains
+something to revisit if the flat folder stops being easy to scan.
 
 ## Component Model: Plain MonoBehaviours Only
 
-Nearly every class is a plain `MonoBehaviour`. The only exceptions are
-`PlayerRole.cs`'s static lookup (`PlayerRoleStats`) and
-`PartyRoleAssignment`'s static nullable field. There are no component
+Nearly every class is a plain `MonoBehaviour`. The exceptions are plain
+data and lookups: static lookup tables (`PlayerRoleStats`, `NeonPalette`,
+`RolePalette`, the `*Looks`/`*Styles`/`*Text` presets), static carriers
+(`PartyRoleAssignment`, `CoOpRoster`, `GameModeSelection`,
+`LevelSelection`, `MenuTransitionState`), pure helpers (`MenuTween`,
+`MenuEase`, `RoleStatScale`, `SquadLineup`, `JoinPressRouter`), small
+value structs (`PaletteSwatch`, `NeonFrameLook`, `TweenSpec`…), and the
+plain helper classes a feature folder's `MonoBehaviour` constructs. There are no component
 hierarchies. The only interfaces or base classes are the two documented
 exceptions below: `IBoss`, and the `AIBossTactics` strategy.
 
@@ -120,9 +128,11 @@ is normally wired. Examples: `PlayerHealth.OnDeath`/`OnDamaged`,
 
 **Documented exceptions**, all for the same reason — the target only
 exists at runtime, so there's nothing to drag into an Inspector slot:
-- `PartyFrameUI`'s ability-click handler (`onClick.AddListener(...)`): a
-  `PartyFrame` prefab instance only learns which ship's `PlayerAbility` it
-  owns inside `Initialize()`.
+- The party frame's ability-click handler (`AbilityCellView.Bind`,
+  `onClick.AddListener(...)`): a `PartyFrame` prefab instance only learns
+  which ship's `PlayerAbility` it owns inside `PartyFrameUI.Initialize()`.
+- `LevelCallouts.Bind` adds its phase-2 callout to the spawned boss's
+  `OnPhase2` (`BossEvents.Phase2`).
 - The level's boss is spawned from a prefab by `LevelSetup` (Session 51),
   so `LevelSetup` forwards its `OnPhase2`/`OnDefeated` to the matching
   `BossEntry`'s events, and `PartyBossWiring` adds each ship's
@@ -172,6 +182,40 @@ teammates.
 `SceneManager.LoadScene` call. It's explicitly a plain static rather than a singleton
 `MonoBehaviour` with `DontDestroyOnLoad` — no persistent GameObject to
 manage, and it resets cleanly to `null` on a domain reload.
+
+## One Palette: Color Literals Only in `NeonPalette`
+
+Every color in the project is a `PaletteColor` token resolved by
+`NeonPalette` (Session 54). Code calls `NeonPalette.Get(...)` (role
+families through `RolePalette`); Inspector fields that used to be `Color`
+are `PaletteSwatch` (token + alpha, implicitly a `Color`); scene and prefab
+Graphics, SpriteRenderers and camera backgrounds take theirs from a
+`PaletteTint` component. So changing the scheme is one file. Rules:
+
+- No `new Color(...)`, `Color32`, `Color.white` or hex string outside
+  `NeonPalette`. `Color.clear` as "no flash" (`ShipVisual`) is the one
+  semantic exception.
+- `PaletteColor` values are explicit numbers and are serialized, so append
+  tokens with fresh numbers; never renumber.
+- The ship GLB materials are the documented exception (they carry their
+  own emission colors from import).
+
+See [systems/ui-kit.md](systems/ui-kit.md).
+
+## Additive Menu Scenes
+
+The five menu screens stay separate scenes, but load **additively** over a
+persistent `MenuBackground.unity` (camera, EventSystem, grid, drifting
+fleet, ship portrait cameras) instead of replacing each other (Session 54).
+Each screen's `MenuScreen` loads the background itself if it's missing, so
+no singleton or `DontDestroyOnLoad` is involved: a screen never references
+the background scene, and the background only reads the active scene's
+name (`MenuFleet`) or is read through asset references (the portrait
+render textures). Direction of travel crosses scenes through the static
+carrier `MenuTransitionState`, same pattern as `GameModeSelection`. Levels
+still load with a plain `LoadScene`, which closes everything. See
+[systems/scene-flow.md](systems/scene-flow.md)'s "Menu background and
+transitions".
 
 ## Dual Entry-Point Pattern: AI vs. Human Control
 

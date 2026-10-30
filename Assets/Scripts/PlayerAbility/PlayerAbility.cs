@@ -36,11 +36,9 @@ public class PlayerAbility : MonoBehaviour
     public float auraBoostCooldown = 10f;
 
     [Header("Medic - Aura Visual")]
-    public Color auraRingColor = new Color(0.3f, 1f, 0.4f, 0.35f);
-    public Color auraRingBoostedColor = new Color(0.3f, 1f, 0.4f, 0.7f);
-    public float auraRingWidth = 0.05f;
-    public float auraRingBoostedWidth = 0.12f;
-    public Color healFlashColor = new Color(0.5f, 1f, 0.6f);
+    /// <summary>Seconds per half-beat of the boosted ring's pulse (boost / boost-peak sprites).</summary>
+    public float auraPulseInterval = 0.25f;
+    public PaletteSwatch healFlashColor = new PaletteSwatch(PaletteColor.MedicSoft);
 
     [Header("Support - Speed Boost")]
     /// <summary>Up from 8s - flagged overpowered, round placeholder, tunable.</summary>
@@ -86,23 +84,17 @@ public class PlayerAbility : MonoBehaviour
     public float shieldArcHeight = 0.4f;
     /// <summary>Local offset above the ship.</summary>
     public float shieldArcYOffset = 0.3f;
-    public Color shieldArcColor = new Color(0.3f, 0.5f, 1f, 0.5f);
-    public float shieldArcLineWidth = 0.08f;
-
-    [Header("Party Buff Visual")]
-    public float partyBuffRingRadius = 0.6f;
-    public float partyBuffRingWidth = 0.08f;
-    private const int PartyBuffRingSegments = 24;
 
     private PlayerRoleComponent roleComponent;
     private PlayerController playerController;
     private PlayerHealth playerHealth;
     private float nextAbilityTime;
-    private LineRenderer partyBuffRing;
+    private PlayerAbilityPartyBuffRing partyBuffRing;
     private PlayerAbilityTank tank;
     private PlayerAbilityMedic medic;
     private PlayerAbilitySupport support;
     private PlayerAbilityAttacker attacker;
+    private ShipCombatFx fx;
 
     public float CooldownRemaining => Mathf.Max(0f, nextAbilityTime - Time.time);
     public bool IsSpeedBoostActive => support.IsActive;
@@ -110,47 +102,23 @@ public class PlayerAbility : MonoBehaviour
     public bool IsAuraBoosted => medic.IsBoosted;
     public float AuraBoostRemaining => medic.BoostRemaining;
     public PlayerController PlayerController => playerController;
+    public ShipCombatFx Fx => fx;
     public Color TintColor => roleComponent.Stats.tintColor;
     // Which combo key (1/2/3) continues the rotation correctly right now -
     // read by the HUD and by AIController so Attacker bots always feed
     // TryComboAttack() the right slot.
     public int AttackerComboExpectedSlot => attacker.ExpectedSlot;
+    public float AttackerComboBrokenAt => attacker.LastBreakTime;
+    public float AttackerComboFinishedAt => attacker.LastFinishTime;
 
-    public string AbilityName
-    {
-        get
-        {
-            switch (roleComponent.role)
-            {
-                case PlayerRole.Tank: return "Taunt";
-                case PlayerRole.Medic: return "Aura Boost";
-                case PlayerRole.Support: return "Speed Boost";
-                case PlayerRole.Attacker: return "Big Shot";
-                default: return "None";
-            }
-        }
-    }
-
-    public string StatusText
-    {
-        get
-        {
-            if (roleComponent.role == PlayerRole.Support && IsSpeedBoostActive)
-                return $"+{(speedBoostMultiplier - 1f) * 100f:0}% Spd/Rate ({SpeedBoostRemaining:0.0}s)";
-            if (roleComponent.role == PlayerRole.Medic && IsAuraBoosted)
-                return $"Boosted ({AuraBoostRemaining:0.0}s)";
-            string cooldownText = CooldownRemaining > 0f ? $"{CooldownRemaining:0.0}s" : "Ready";
-            if (roleComponent.role == PlayerRole.Attacker)
-                return $"{cooldownText}  |  Combo next: {AttackerComboExpectedSlot}";
-            return cooldownText;
-        }
-    }
+    public string AbilityName => PlayerAbilityLabels.NameFor(roleComponent.role);
+    public string StatusText => PlayerAbilityLabels.StatusFor(this, roleComponent.role);
 
     void Awake()
     {
         CacheComponents();
         CreateHelpers();
-        CreatePartyBuffRing();
+        partyBuffRing.Create();
     }
 
     private void CacheComponents()
@@ -158,6 +126,7 @@ public class PlayerAbility : MonoBehaviour
         roleComponent = GetComponent<PlayerRoleComponent>();
         playerController = GetComponent<PlayerController>();
         playerHealth = GetComponent<PlayerHealth>();
+        fx = GetComponent<ShipCombatFx>();
     }
 
     private void CreateHelpers()
@@ -166,6 +135,7 @@ public class PlayerAbility : MonoBehaviour
         medic = new PlayerAbilityMedic(this);
         support = new PlayerAbilitySupport(this);
         attacker = new PlayerAbilityAttacker(this);
+        partyBuffRing = new PlayerAbilityPartyBuffRing(this);
     }
 
     /// <summary>
@@ -173,7 +143,7 @@ public class PlayerAbility : MonoBehaviour
     /// role-dependent setup below needs the real assigned role, which a
     /// dynamically-Instantiate()'d ship (co-op spawner) only has after
     /// Instantiate() returns, i.e. after Awake() already ran. The ref
-    /// caching/CreatePartyBuffRing above stay in Awake since they're
+    /// caching and party-buff ring above stay in Awake since they're
     /// role-agnostic.
     /// </summary>
     void Start()
@@ -188,7 +158,7 @@ public class PlayerAbility : MonoBehaviour
     /// spawn (see Start()) and to reset it each time TryUseAbility() actually
     /// triggers an effect.
     /// </summary>
-    float CooldownFor(PlayerRole role)
+    public float CooldownFor(PlayerRole role)
     {
         switch (role)
         {
@@ -208,46 +178,10 @@ public class PlayerAbility : MonoBehaviour
     }
 
     /// <summary>
-    /// Generic, initially-hidden ring on every ship (not role-gated) that
-    /// Support's party-wide speed boost toggles on/off, tinted to match
-    /// whichever role cast it. Local-space and built once - a fixed-radius
-    /// circle has nothing to recompute per frame.
-    /// </summary>
-    private void CreatePartyBuffRing()
-    {
-        GameObject ringObj = new GameObject("PartyBuffRing");
-        ringObj.transform.SetParent(transform, false);
-        partyBuffRing = ringObj.AddComponent<LineRenderer>();
-        partyBuffRing.useWorldSpace = false;
-        partyBuffRing.loop = true;
-        partyBuffRing.positionCount = PartyBuffRingSegments;
-        partyBuffRing.material = new Material(Shader.Find("Sprites/Default"));
-        partyBuffRing.sortingLayerName = "Default";
-        partyBuffRing.sortingOrder = -1;
-        partyBuffRing.startWidth = partyBuffRingWidth;
-        partyBuffRing.endWidth = partyBuffRingWidth;
-        for (int i = 0; i < PartyBuffRingSegments; i++)
-        {
-            float angle = (i / (float)PartyBuffRingSegments) * Mathf.PI * 2f;
-            partyBuffRing.SetPosition(i, new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * partyBuffRingRadius);
-        }
-        ringObj.SetActive(false);
-    }
-
-    /// <summary>
     /// Called on every ally by Support's speed boost - shows/hides this
-    /// ship's party-buff ring in the caster's tint color.
+    /// ship's party-buff ring (always Support purple, per the design).
     /// </summary>
-    public void SetPartyBuffVisual(bool active, Color color)
-    {
-        if (partyBuffRing == null) return;
-        if (active)
-        {
-            partyBuffRing.startColor = color;
-            partyBuffRing.endColor = color;
-        }
-        partyBuffRing.gameObject.SetActive(active);
-    }
+    public void SetPartyBuffVisual(bool active) => partyBuffRing?.Show(active);
 
     public void OnAbility(InputValue value)
     {
@@ -263,6 +197,12 @@ public class PlayerAbility : MonoBehaviour
     {
         if (Time.time < nextAbilityTime) return;
         nextAbilityTime = Time.time + CooldownFor(roleComponent.role);
+        TriggerRoleAbility();
+        if (fx != null) fx.PlayAbility(roleComponent.role);
+    }
+
+    private void TriggerRoleAbility()
+    {
         switch (roleComponent.role)
         {
             case PlayerRole.Tank: tank.Trigger(); break;

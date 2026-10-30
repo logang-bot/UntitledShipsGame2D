@@ -18,7 +18,7 @@ Two rules keep the parallel work safe:
 | Topic | Decision | Why |
 | --- | --- | --- |
 | Player ships | **Live 3D models** (Session 51): the four "Ship Designs" GLBs (`Assets/Art/Ships/Models/`), imported with glTFast and rendered as meshes under the URP 2D Renderer. | The models already existed, so nothing needed modeling, and live meshes give banking and animated parts (halo, gyros, reactor core) for free. Chosen over baking them to sprites first. |
-| Bosses | **Designed in Claude Design** (Session 52 prompt): each boss as a 2D sprite and a 3D GLB model built like the ships, with named parts (separate nodes for anything that moves, e.g. Warden's arms), a phase 2 look, and a **signature neon color** distinct from the four role colors. In game they follow the ships' live-model route. | Same pipeline as the ships, so nothing new to learn. The signature color is also the boss's bullet color, which keeps bullets readable. |
+| Bosses | **Designed in Claude Design** (Session 52 prompt): each boss as a 2D sprite and a 3D GLB model built like the ships, with named parts (separate nodes for anything that moves, e.g. Warden's arms), a phase 2 look, and a **signature neon color** distinct from the four role colors. In game they follow the ships' live-model route: done in Session 58, all three as live GLB models (see Phase 5). | Same pipeline as the ships, so nothing new to learn. The signature color is also the boss's bullet color, which keeps bullets readable. |
 | Backgrounds | **One per boss** (Session 52, first draft): dark, with stars and small city buildings seen from above, far below, scrolling vertically in **parallax layers** (far stars → near buildings). Each boss's background has its own identity. | Gives each fight a sense of place and motion without competing with bullets. Layers are separate so the game scrolls them at different speeds. |
 | Phone work | **Deferred** (Session 52): no phone builds or tuning until the art is further along. | Keeps the focus on the look first. The quality-tier plan below still stands. |
 | Baking to sprites | **Not planned; a possible phone optimization.** If the live meshes cost too much on low-end phones, an editor script can render them to sprite frames later. | Gameplay code never sees how a ship is drawn, so swapping is local to the ship visual. |
@@ -28,7 +28,7 @@ Two rules keep the parallel work safe:
 | Anime ability cut-ins | **Decided at the start of Phase 6**, between two routes, neither needing Blender: **2D illustrated** characters animated in Unity, or **VRoid → Unity** through UniVRM and its toon shader (MToon). | 2D matches 2D ships, and it's how Touhou's own spell-card cut-ins work. VRoid → Unity keeps the anime-3D look while skipping Blender entirely. |
 | Mobile | **One project** with per-platform quality settings | No duplicated code, and it keeps crossplay possible. Sprites cost a phone the same however they were made. |
 | Priority | Ships, bosses, effects and powers first; then the pre-level screens (main menu through level select); then the in-level HUD | The screens before the level show the ships and bosses, so they come after those exist. |
-| Screens and HUD style | One shared **UI kit** built from the `Neon Fleet HUD` design: dark panels, neon role-colored frames, **Chakra Petch** and **JetBrains Mono** fonts. Every menu and the HUD use it. | One look across all screens, built once. Both fonts are free Google Fonts (SIL Open Font License), usable in Unity through TextMesh Pro. |
+| Screens and HUD style | One shared **UI kit**, first from the `Neon Fleet HUD` design and built from the `Pre-Fight Menus` design (Session 54, see `systems/ui-kit.md`): dark panels, neon role-colored frames, **Chakra Petch** and **JetBrains Mono** fonts. Every menu and the HUD use it. | One look across all screens, built once. Both fonts are free Google Fonts (SIL Open Font License), usable in Unity through TextMesh Pro. |
 
 **Readability at real size.** At in-game size (about 65 px tall on a 1080p
 desktop, 115 px on a 1080×1920 phone) the 3D ships' fine detail (surface
@@ -45,9 +45,10 @@ The ship designs live in the Claude Design project "Ship Designs"
 | --- | --- |
 | `Ship Designs.dc.html` | The four ships as 2D SVG line art (set 1a), with 96/48/32 px scale previews, and the 3D set (1b) embedded |
 | `Ship Models 3D.html` + `ships3d.js` | The 3D models, built from simple shapes in three.js, with GLB/OBJ download. **Saved and in use:** `Assets/Art/Ships/Models/aegis-04.glb`, `nova-11.glb`, `lumen-02.glb`, `echo-07.glb` |
-| `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the UI kit (Phase 7) and the HUD (Phase 8). There are **no designs yet** for the screens before a level. |
-| `Boss Designs.dc.html` + `bossBackgrounds.js` | The three bosses (2D + 3D, phase 2 looks, signature colors: Marauder `#FF2D95`, Halcyon `#FFE14A`, Warden `#5470FF`), Marauder's minions, and the four-layer parallax background per boss, from the prompt summarized in Phase 2c. **Backgrounds in use** (Session 53, PNGs in `Assets/Art/Backgrounds/`); the bosses aren't in the game yet (Phase 5). |
-| *(requested, Session 53)* | `Combat FX Designs.dc.html`: bullets, auras and rings, the role abilities' activation effects, and every boss's minions plus the wave enemies, each shown over the three backgrounds, with PNG and particle-texture exports. Feeds Phases 3–5. Not designed yet. |
+| `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the HUD (Phase 8) and the starting point of the UI kit. |
+| `Pre-Fight Menus.dc.html` + `Menu Button.dc.html` + `Hint Bar.dc.html` | The five screens before a level (Main Menu, Lobby, Join Lobby, Role Select single and multi, Level Select) at PC 1600×900 and mobile 390×844, the UI kit (frames, button states, slot frames, icons, colour tokens, type scale) and the screen transitions. **PC built** (Session 54, Phase 7); mobile waits for the phone work. Icons exported as PNGs to `Assets/Art/UI/Import/`. |
+| `Boss Designs.dc.html` + `bossBackgrounds.js` | The three bosses (2D + 3D, phase 2 looks, signature colors: Marauder `#FF2D95`, Halcyon `#FFE14A`, Warden `#5470FF`), Marauder's minions, and the four-layer parallax background per boss, from the prompt summarized in Phase 2c. **Backgrounds in use** (Session 53, PNGs in `Assets/Art/Backgrounds/`). **Bosses in use** (Session 58): the second turn adds `bossStates.js`, `Boss Models 3D.html` / `bosses3d.js` (the rigs) and `Boss State Wiring.dc.html` (every state and its trigger); its ZIP export is in `Assets/Art/Bosses/`. See Phase 5. |
+| `Combat FX Designs.dc.html` | Bullets, auras and rings, the four role abilities as wind-up / activate / sustain / end frames, every boss's minions plus the wave enemies with death bursts, Marauder and Warden shockwave rings, Halcyon's Static Field, and four white particle textures, each shown over the three backgrounds. **In use** (Session 55): its "Download all (ZIP)" export, 108 PNGs, in `Assets/Art/CombatFX/`. See Phase 3. |
 
 | Role | Ship | Shape | Design color |
 | --- | --- | --- | --- |
@@ -127,8 +128,8 @@ Built straight from the 3D models instead of the planned 2D sprites first.
     that background, at in-game size.
   - Engine flames that react to speed, and the Tank shield-emitter pulse
     (the design pulses its glow, which needs per-renderer emission).
-  - Visuals for the Tank's **Shield Arc** and the Medic's **aura ring**
-    (still `LineRenderer`s); the designs show a dashed arc and ring.
+  - ~~Visuals for the Tank's **Shield Arc** and the Medic's **aura ring**.~~
+    Done with the Combat FX sprites (Session 55, see Phase 3).
   - Whether a roll also gives invulnerability frames is a gameplay decision
     for the phase 3 developer.
 - **Mobile check (deferred, Session 52):** four ships on screen with bloom
@@ -198,9 +199,9 @@ Built straight from the 3D models instead of the planned 2D sprites first.
   - **Bullet looks** that follow the readability rule, for player bullets,
     each boss's bullets, and the wide Big Shot. Designs requested in
     Session 53 (`Combat FX Designs.dc.html`, with the auras, ability
-    effects and minions). That prompt colors Explosive minions and their
-    fragments in the boss color, so `explosiveTintColor` (orange today,
-    close to the Attacker's `#FF8A3D`) changes when that art goes in.
+    effects and minions). **Done, Session 55** (below). Explosive minions
+    and their fragments now carry the boss colour in the sprites, so
+    `explosiveTintColor` is gone.
   - **Hit sparks and explosions:** particles in **Stretched Billboard** mode,
     so fast particles become streaks, with additive blending.
   - **The warping background grid**: a spring-mass grid that explosions push
@@ -210,6 +211,68 @@ Built straight from the 3D models instead of the planned 2D sprites first.
   a reacting grid, with enemy bullets still easy to read.
 - **Mobile check:** a lower-resolution grid and a capped particle count on
   the low tier.
+- **In place (Session 55): the Combat FX sprites.**
+  - **Import:** 108 PNGs from the design's ZIP in `Assets/Art/CombatFX/`
+    (`Bullets/`, `Auras/`, `Superpowers/`, `Minions/`, `Particles/`), as
+    sprites at **192 px/unit** (the design's 1080 px playfield), no mipmaps,
+    uncompressed, pivot centre (`support_speed_ring` pivots on its ring
+    centre, 0.5 / 0.609). Every effect uses `Sprite-Unlit-Default`, like
+    the backgrounds.
+  - **Sorting:** auras and danger rings −5, ability effects −2, player
+    bullets 5, death bursts 8, enemy bullets **10**.
+  - **Bullets:** one prefab per look in `Assets/Prefabs/Bullets/` (table in
+    `systems/combat.md`). Enemy hitboxes now match the visible coloured
+    body (was a 0.05 × 0.5 box for everything); player hitboxes are
+    unchanged. `Bullet.alignToDirection` turns missiles, capsules, rods and
+    shards along their flight.
+  - **Minions and waves:** `HostileLook` picks the hull per movement
+    pattern and standard/explosive type, and spawns the 3-frame death burst
+    (`Assets/Prefabs/FX/<Set>Death[Explosive]`, a `SpriteSequence`).
+    Prefab scales went to 1 with colliders resized to keep the old world
+    hitboxes.
+  - **Role visuals:** `ShipCombatFx` on `Ship.prefab` holds the sprites:
+    the Medic aura (idle, boosted, pulsing) is scaled to the real heal
+    radius; the Tank shield arc fits the collider, whose depth went 0.4 →
+    0.2 to match the sprite, and flashes on a block; Support's speed ring
+    is always purple; healed allies show a heal flash. Each ability plays
+    its frame sequence (`TauntFx`, `AuraBoostFx`, `SpeedBoostFx`,
+    `BigShotFx`).
+  - **Boss rings:** `DangerZoneVisual` children for the Marauder and
+    Warden shockwaves (the Warden frames were added to the design for this)
+    and Halcyon's Static Field, scaled so the drawn ring sits on the damage
+    radius.
+  - **No sprite atlases (Session 56):** each PNG stays its own texture.
+    Packing them didn't cut batches, since the SRP Batcher already batches
+    across textures, and doubled texture memory. See "Mobile quality tiers".
+  - **Imported, not used yet:** see the list just below.
+  - **Still open in this phase:** bloom tuning, hit sparks and explosions,
+    the warping grid. (`WardenBigShot` was restored on `WardenBoss.prefab` in
+    Session 57 and fires the `WardenBigShotBullet` orb.)
+
+#### Combat FX imported but not used yet
+
+Everything below is imported (192 px/unit, same settings as the rest)
+but nothing in the game spawns it yet. Paths are under
+`Assets/Art/CombatFX/`. Check this list first when a matching mechanic
+lands, and update it when an asset gets wired.
+
+| Asset(s) | Why it's unused | Where it would go |
+| --- | --- | --- |
+| `Minions/Halcyon/halcyon_minion`, `halcyon_minion_explosive` | Halcyon's fight has no minions (`MinionSpawner` only works with `MarauderBoss`) | A `HostileLook` on a Halcyon minion prefab, if that fight gets minions |
+| `Minions/Warden/warden_minion`, `warden_minion_explosive` | Same: Warden's fight has no minions | Same, for Warden |
+| `Minions/Halcyon/halcyon_death_1–3`, `halcyon_death_explosive_1–3` | Already built into `Prefabs/FX/HalcyonDeath` and `HalcyonDeathExplosive`, but nothing spawns those prefabs | `HostileLook.deathFxPrefab` / `explosiveDeathFxPrefab` on a Halcyon minion |
+| `Minions/Warden/warden_death_1–3`, `warden_death_explosive_1–3` | Already built into `Prefabs/FX/WardenDeath` and `WardenDeathExplosive`; unused | Same, for Warden |
+| `Bullets/Halcyon/halcyon_bullet_s`, `_m`, `_l`, `halcyon_fragment_shard`, `halcyon_fragment_ring` | Halcyon fires no bullets (the design calls this set "a reserve") | Halcyon minion fire and fragments, or any future Halcyon bullet attack |
+| `Bullets/Warden/warden_bullet_s`, `_m` | Warden's arms fire the turret capsules and Lockdown fires rods, so no orbs | Any future Warden aimed or ring attack |
+| `Bullets/Warden/warden_fragment_shard`, `warden_fragment_ring` | No Warden explosive minions | Warden explosive-minion fragments |
+| `Bullets/Warden/warden_lockdown_wall_segment` | 8 rods in one sprite; Lockdown spawns rods one by one, since each rod is its own `Bullet` | Only if Lockdown is ever rebuilt as one moving wall object |
+| `Bullets/Marauder/marauder_bullet_l` | All Marauder fire uses the medium orb, the minions the small one | A heavier Marauder attack, e.g. a slower big round in Pattern Barrage |
+| `Bullets/Wave/wave_bullet_m`, `wave_bullet_l` | Wave enemies fire the small orb | Tougher wave enemy types |
+| `Bullets/*/*_fragment_ring` (Marauder, Wave; plus Halcyon and Warden above) | A preview of 8 shards in a ring, from the design; in game each fragment is its own `Bullet` with the shard sprite | Nothing planned; reference only |
+| `Superpowers/Tank/tank_aggro_mark` | The mark already appears inside `tank_taunt_2_activate` / `_3_sustain` | An aggro indicator shown separately, e.g. above whichever ship the boss is targeting |
+| `Superpowers/Medic/medic_aura_boost_3_sustain`, `_4_end` | `AuraBoostFx` plays only wind-up and activate; the boosted aura ring (`medic_aura_boost`) already covers the sustain, and the ring returning to idle is the end | A visible "boost ending" beat if the aura's return to idle feels too abrupt |
+| `Superpowers/Support/support_speed_boost_3_sustain` | The party ring (`Auras/Player/support_speed_ring`) is the same picture and is what every ship shows | Nothing planned; duplicate of the ring |
+| `Particles/particle_glow_dot`, `particle_streak`, `particle_ring`, `particle_shard` | No particle systems yet. `FX-Additive.mat` (URP Particles/Unlit, additive, glow dot as its texture) is ready | Hit sparks and explosions (Stretched Billboard), tinted with Start Color, per the Phase 3 "Make" list above |
 
 ### Phase 4: Powers
 
@@ -228,30 +291,75 @@ Built straight from the 3D models instead of the planned 2D sprites first.
 
 ### Phase 5: Bosses
 
-- **Make:**
-  - **Marauder**, **Halcyon** and **Warden**, from the Claude Design boss
-    designs (see Phase 2c's "Design first"). The prompt describes each
-    fight as built: Marauder the brawler (M-pattern hops, aimed shots,
-    shockwave, guided missile, Pattern Barrage, flanking minions, aggro);
-    Halcyon the storm (no bullets, full-arena roam, Surge stillness window,
-    Static Field pulse); Warden the fortress (two turret arms, a third in
-    phase 2, Lockdown wall, shockwave). A boss is about 3× a ship's size.
-  - The 3D models follow the ships' live-model route (glTFast +
-    `ShipMesh.shader` + a visual child on each boss prefab); a drawn boss
-    goes in as a sprite.
-  - Each boss's **signature color** becomes its bullet color (see the
-    readability rule).
-  - **Warden's arms** as separate sprites, which matches their existing child
-    GameObjects (`ArmA`/`ArmB`/`ArmC`). The arms' "down" look replaces the
-    gray tint `WardenArmHealth` applies today.
-  - **Telegraph visuals:**
-    - Marauder/Warden: the shockwave ring.
-    - Warden: the Lockdown volley warning and the Big Shot flash.
-    - Halcyon: the Opening and the Static Field pulse.
-  - **A Phase 2 visual change** for each boss, such as damage or a color
-    shift.
+- **Done (Session 58): all three bosses are their live 3D design models.**
+  The source is the finished Claude Design project ("Neon Fleet":
+  `Boss Designs.dc.html`, `Boss Models 3D.html` / `bosses3d.js`,
+  `bossStates.js`, and the one-page `Boss State Wiring.dc.html`). Its
+  "Download all (ZIP)" export, from one rig per boss, is:
+  - `Assets/Art/Bosses/<Boss>/<boss>.glb`: glTFast, same importer settings
+    as the ships. Each GLB root is already scaled to 1.6 units wide.
+  - `<boss>_portrait.png` (768 px): the Level Select card art.
+  - `Source~/` (in git, skipped by Unity): every state as a 192 px/unit PNG
+    (the 2D fallback if phones can't afford the live models) and
+    `<boss>_rig.json` (each node's
+    start-active flag, each material's emissive color and intensity).
+    `Assets/Art/Bosses/Source~/wiring.json` lists every state per boss.
+- **Materials:** `Assets/Art/Bosses/<Boss>/Materials/`, one `ShipMesh`
+  material per glTF material name. Hulls reuse the ships' `ShipHull` /
+  `ShipPlate` / `ShipDark`. Emission = design color × intensity × 1.6
+  (`BossModel.GlowScale`); additive `*_fx` materials also × their glTF
+  opacity, blend One/One, queue 3010.
+- **Wrapper prefabs** `Assets/Art/Bosses/Prefabs/<Boss>Model.prefab`, built
+  like the ships': the GLB nested, every renderer's material overridden,
+  shadows off, the rig's hidden-by-default nodes inactive, and
+  `ShipPartPulse` / `ShipPartSpinner` on the always-moving parts (engine
+  plumes, Warden's arm lamps, Halcyon's phase 2 outer ring and reticle).
+  Halcyon's `static_field_ring` stays off, as does Marauder's
+  `shockwave_radius`: the existing `DangerZoneVisual` rings draw those at
+  the gameplay radius.
+- **In the boss prefabs:** the placeholder `SpriteRenderer` is gone. A
+  `Visual` child (z 0.5, scale 0.625 to cancel the root's 1.6, rotation
+  mapping the model's up to the camera and its front to screen down) holds
+  `BossModel` and the wrapper. `SetVisible` toggles the model.
+- **States** (`BossModel` gives scripts nodes by name, `Show`, and `Glow`
+  through a MaterialPropertyBlock). Each script lives on the boss root,
+  only reads gameplay, and ports `bosses3d.js`'s `apply()` / `pose()`:
+  - **Marauder:** `MarauderModelStates` (phase 2 damage, barrel splay, core
+    pulse, white core on the shockwave wind-up) and `MarauderModelWeapons`
+    (missile hatches on lock-on, white-hot cannons during a Barrage, bay
+    doors for 1.2 s when minions launch).
+  - **Halcyon:** `HalcyonModelStates` (phase 2 overcharge, coil-ring spin,
+    static arcs during the Static Field wind-up) and `HalcyonModelOpening`
+    (telegraph chevrons and overcharged coils; exposed: split shell,
+    white-hot core, weak-point reticle). `HalcyonSurgeTint.cs`, which was
+    never attached, was deleted.
+  - **Warden:** `WardenModelStates` (phase 2: arm C deploys, seal blown,
+    cracks, brighter trim; Lockdown chevrons toward the incoming edge with a
+    strobing band; core shutters), `WardenBigShotCharge` (flash ring,
+    converging spikes, lane), and `WardenArmModel` per arm (idle sweep,
+    locked aim line, firing flashes, down: slumped, dark, sparks and 12
+    reboot ticks lit one per 1.25 s). These replace `WardenArmHealth`'s gray
+    tint and `WardenBigShot`'s orange-red sprite pulse.
+- **Gameplay change (Warden only):** the arms moved onto the design's hull
+  mounts (≈ (∓0.37, −0.35) and (0, −0.50) world from the boss centre, was
+  ±1.92). Their hitboxes are now the turret footprint (0.3 × 0.5, offset
+  down). The body hitbox shrank to the keep (0.76 × 0.6 local, offset up),
+  so bullets fired up at the arms reach them before the shielded body.
+  **Needs a playtest.**
+- **Level Select:** each card's `BossArt` shows `<boss>_portrait.png`.
+- **Hit flash:** `BossHitFlash` lerps a node's renderers toward white
+  (alpha 0.55, 0.08 s) through `ShipMesh`'s `_FlashColor`. It sits on each
+  boss root (Marauder and Halcyon flash the whole model, Warden its
+  `warden_body`) and on each Warden arm (just that arm). Each
+  `TakeDamage` calls it only when the hit lands, so a shielded Warden body
+  doesn't flash.
+- **Minions stay sprites, by choice:** the Combat FX minion sprites and
+  death bursts are kept. The design's dart / bomb minion GLBs were
+  dropped: live models cost more on phones for small, numerous enemies.
+- **Open:** bloom tuning of the boss glow in a real fight; the phone check.
 - **Done when:** all three fights play with final boss art, and every
-  telegraph is clear.
+  telegraph is clear. Met in editor play tests (Session 58); a full
+  playtest is still owed.
 - **Mobile check:** a boss fight at peak effect density.
 
 ### Phase 6: Anime cut-ins
@@ -280,8 +388,18 @@ Built straight from the 3D models instead of the planned 2D sprites first.
 ### Phase 7: Pre-level screens
 
 The screens a player passes through before a fight, in build order (see
-[systems/scene-flow.md](systems/scene-flow.md)). Today they're plain Unity
-UI buttons and text that work, so this is a restyle, not new behavior.
+[systems/scene-flow.md](systems/scene-flow.md)). They were plain Unity
+UI buttons and text that worked, so this was mostly a restyle.
+
+**Status (Session 54): PC done.** All five screens follow the
+`Pre-Fight Menus` design on PC, full window (layout 1a for the Main
+Menu), with the UI kit, the two fonts, one project-wide palette
+(`NeonPalette`), live 3D ships on the role cards, a persistent
+`MenuBackground` scene with the drifting fleet, and the design's
+transitions. Details in [systems/ui-kit.md](systems/ui-kit.md). Still
+open: the mobile layouts, a real logo for the wordmark slot, QUIT's
+confirm modal, and a check with real gamepads. The table below is the
+original brief.
 
 | Screen | What it does today | What the art adds |
 | --- | --- | --- |
@@ -310,9 +428,8 @@ UI buttons and text that work, so this is a restyle, not new behavior.
     feels like one piece.
 - **Depends on:** the ship models (done; shown in menus either live under
   a UI camera or as rendered portraits) and the Phase 5 boss art
-  (`LevelSelect`). Until those exist, the cards use
-  the current placeholders, and the art drops in later without changing
-  the layout.
+  (`LevelSelect`). Both are done: the boss portraits went onto the Level
+  Select cards in Session 58.
 - **Code touchpoint:** mostly none, since the scripts only reference
   buttons and text. Two small changes: `JoinLobbyUI` writes the slot text
   as a string and would need to show a device icon instead, and the
@@ -331,7 +448,12 @@ UI buttons and text that work, so this is a restyle, not new behavior.
 
 - **The in-level HUD:** the squad rail and party frames, the boss panel, the
   DPS meter, and the Pause, Game Over and Victory overlays, from the
-  `Neon Fleet HUD` design and with the Phase 7 UI kit.
+  `Neon Fleet HUD` design and with the Phase 7 UI kit. **PC done
+  (Session 57)** from `Neon Fleet HUD v2.dc.html`, plus the playfield
+  callouts; see `systems/hud-layout.md`. Still open: the phone layout
+  (top strip + squad chips), the design's PLANNED deck parts (card tray,
+  energy, spell card, focus hitbox and graze ring, with phase 3), and live
+  3D portraits on the frames.
 - **Later:** card art for the deck layer, once its design settles.
 
 ## Cross-cutting
@@ -344,7 +466,16 @@ UI buttons and text that work, so this is a restyle, not new behavior.
   - particle caps;
   - grid resolution.
 - **Android texture overrides:** a smaller max size, plus compression.
-- **Sprite Atlases**, to cut draw calls.
+- ~~**Sprite Atlases**, to cut draw calls.~~ **Tested, not needed
+  (Session 56).** URP 2D draws every sprite through the SRP Batcher, which
+  groups draws by shader, not by texture, so texture switches don't break
+  batches. With the Combat FX sprites packed into three atlases, a scripted
+  busy moment was still 3 sprite batches (with or without atlases), 112 vs
+  113 draw calls and 27 vs 27 SetPass with ship meshes hidden. The atlases
+  took 112 MB uncompressed against 54 MB for the source textures, so they
+  were removed. Revisit only if a phone tier turns the SRP Batcher off. The
+  real draw-call cost is the ship meshes: 155 separate draws outside the
+  SRP Batcher in that frame. Details in `progress-log.md`, Session 56.
 - Check on a real phone in **every phase**, not at the end.
 
 ### Asset organization
@@ -374,13 +505,13 @@ art:
   direction; reacting to `Light2D`s would need extra shader work.
 - **Cut-in route:** 2D illustrated or VRoid → Unity, decided at the start of
   Phase 6. Commissioning an artist later could raise the quality of either.
-- **Each boss's signature color** (its bullets and glow): proposed by the
-  Claude Design boss designs, then confirmed.
+- ~~**Each boss's signature color:**~~ **Decided (Session 58):** the boss
+  designs' colors are final: Marauder `#FF2D95`, Halcyon `#FFE14A`,
+  Warden `#5470FF`, used for each boss's bullets, glow and model.
 - **Backgrounds beyond the first draft:** per-phase changes, the warping
   grid on top, or more layers. Decided after seeing the first draft in game.
-- **Screens on desktop:** do the menus fill the whole window, or stay
-  inside the 9:16 playfield frame with the sidebars like the levels?
-  Decided with the Phase 7 mockups.
+- ~~**Screens on desktop:**~~ **Decided (Session 54):** the menus fill the
+  whole window (the design's layout 1a), not the 9:16 playfield frame.
 - **The game's title and logo,** needed for `MainMenu`.
 - **The roll mechanic:** purely visual, or does it give i-frames? That's the
   phase 3 developer's call.

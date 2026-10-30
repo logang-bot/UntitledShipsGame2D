@@ -514,8 +514,10 @@ reference docs live under `systems/`.
 - **Halcyon playtest tuning + Victory on every boss** — first round of real
   playtest feedback on Halcyon. Roam speed is now randomized per leg and
   mid-glide (`HalcyonRoamPhaseSettings`, faster in phase 2). Surge is
-  presented to players as an **Opening** (`HalcyonSurgeTint.cs` flashes
-  the boss green; HUD reads "Opening!" / "OPENING — FIRE!"). Static Field
+  presented to players as an **Opening** (`HalcyonSurgeTint.cs` flashed
+  the boss green, though it was never attached and was deleted in Session
+  58, when the boss model's Opening look replaced it; HUD reads
+  "Opening!" / "OPENING — FIRE!"). Static Field
   now also hits a lone ship in range, for less (1 vs. 3 per clustered
   partner). `VictoryUI.Show` is now wired to `OnDefeated` in `Level2.unity`
   and `Level3.unity` too — previously only Level 1 showed a Victory screen.
@@ -589,6 +591,56 @@ reference docs live under `systems/`.
   background left-to-right on a coin flip. `LevelSetup` spawns the picked
   boss's `BossEntry.backgroundPrefab`. The playfield camera is near-black.
   See `art-roadmap.md`'s Phase 2c.
+- **Combat FX (Session 55)** — art Phases 3–5 sprites from the "Combat
+  FX Designs" file (`Assets/Art/CombatFX/`, 192 px/unit): bullet prefabs
+  per boss and for the waves (`Assets/Prefabs/Bullets/`, enemy hitboxes
+  now match the visible bullet body), role-coloured player shots and the
+  Attacker's Big Shot / combo sprites (`PlayerShotLook`), wave-enemy and
+  Marauder-minion hulls with 3-frame death bursts (`HostileLook`,
+  `SpriteSequence`), the Medic aura, Tank shield arc (block flash), Support
+  speed ring, each role's ability effect (`ShipCombatFx`), and the
+  Marauder / Warden shockwave and Halcyon Static Field rings
+  (`DangerZoneVisual`). The procedural `LineRenderer` rings are gone. See
+  `art-roadmap.md`'s Phase 3.
+- **Pre-fight menus restyled, PC (Session 54)** — art Phase 7 on PC. The
+  five menu screens follow the "Pre-Fight Menus" design with a shared UI
+  kit (`MenuButton`, `NeonFrame`, `TagChip`, `MenuHeader`, hint bars,
+  toast), TMP fonts, and **one palette for every color in the project**
+  (`NeonPalette` + `PaletteSwatch` + `PaletteTint`; prefab colors
+  migrated, CPU teammates' aura/shield now match the human ships). Screens
+  load additively over a persistent `MenuBackground` scene (camera,
+  EventSystem, grid, drifting fleet, ship portrait render textures) with
+  `MenuScreen` slide transitions. Join Lobby joins manually through
+  `JoinPressRouter` so B/Esc can leave; Role Select shows live 3D ships,
+  shared-scale stats and a squad strip; Level Select launches with a grow
+  and cut to black. Mobile layouts deferred. See `systems/ui-kit.md` and
+  `systems/scene-flow.md`.
+- **In-level HUD restyled, PC (Session 57)** — art Phase 8 on PC, from the
+  "Neon Fleet HUD v2" design. `HUDCanvas` scales with screen height
+  (1920×1080 reference). Left rail: `PartyFrame` prefab (who-tag, HP pips,
+  shield segments, stats, ability sweep, Attacker combo, CPU
+  click-to-trigger, DOWN) in fixed role order, and the `DamageMeter`
+  prefab, replacing `DpsMeterUI`. Right rail: one shared `BossPanel` filled
+  by `MarauderPanelFeed` / `HalcyonPanelFeed` / `WardenPanelFeed`, replacing
+  the three text panels. `CalloutBanner` for wave / boss entry / phase 2,
+  and Pause / Game Over / Victory rebuilt on the menu kit. New
+  `BossDamageLedger` (`IBoss.DamageLedger`) tracks per-ship damage for every
+  boss. HUD icons and sprites baked from the design's SVGs into
+  `Assets/Art/UI/HUD/`. Phone layout and the PLANNED deck parts deferred.
+  See `systems/hud-layout.md`.
+- **Boss models (Session 58)** — art Phase 5. Marauder, Halcyon and Warden
+  are the finished Claude Design rigs, rendered live like the ships
+  (`Assets/Art/Bosses/`, `ShipMesh` materials, a `Visual` child holding
+  `BossModel`). Per-boss state scripts show every phase and telegraph on
+  the model: Marauder's shockwave core, missile hatches, barrage cannons
+  and bay doors; Halcyon's static arcs and Opening (chevrons, then split
+  shell and weak-point reticle); Warden's Lockdown chevrons, Big Shot
+  charge, phase 2 arm C, and per-arm idle / locked / firing / down looks
+  with reboot ticks. Warden's arms moved onto the hull mounts, with
+  smaller arm and body hitboxes. Bosses flash on hit (`BossHitFlash`).
+  Marauder's minions stay Combat FX sprites. The old sprite tints are
+  gone. Level Select shows each boss's portrait. See `art-roadmap.md`'s
+  Phase 5.
 
 ## In Progress
 
@@ -638,8 +690,9 @@ is independently testable and the one before it de-risks the next.
 - **Starter card set** — ~20 cards, five per role plus Neutral, split Passive
   and Active.
 - **`DeckBuild.unity` loadout scene** — appended at whatever the next
-  available Build Settings index is when it's built (currently 6, since
-  `LevelSelect`/`Level` occupy 4-5), between `RoleSelect` and `Level` in
+  available Build Settings index is when it's built (currently 7, since
+  `LevelSelect`/`Level`/`MenuBackground` occupy 4-6; it should be a
+  `MenuScreen` scene like the other menus), between `RoleSelect` and `Level` in
   flow order;
   single/multi picker mirroring `RoleSelect`; `PartyDeckAssignment` static
   carrying the result across the scene load.
@@ -654,9 +707,9 @@ is independently testable and the one before it de-risks the next.
   state, matchmaking for 1–4 players. Offline/host mode using the same
   simulation layer. Only starts once the CPU-AI boss loop above is proven
   fun; this is what upgrades AI-controlled teammates to real human players.
-  `Lobby.unity`'s Online button (see "Scene scaffolding" above) is already
-  in place as a disabled placeholder — this item is what wires it up for
-  real and gives it somewhere (a real lobby/matchmaking flow) to lead to.
+  `Lobby.unity`'s ONLINE card (see "Scene scaffolding" above) is already
+  in place as a locked "coming later" card — this item is what unlocks it
+  and gives it somewhere (a real lobby/matchmaking flow) to lead to.
 
 ### Art & audio
 
@@ -665,13 +718,18 @@ is independently testable and the one before it de-risks the next.
   - the four role ships as live 3D models (done: Session 51), plus motion;
   - one parallax background per boss: dark, stars, city rooftops far below
     (first draft done: Session 53);
-  - effects;
-  - powers (black hole);
-  - bosses, designed in Claude Design alongside the backgrounds;
+  - effects (Combat FX sprites done: Session 55, Sprite Atlases tested and
+    dropped: Session 56; grid and particles open);
+  - powers (role ability effects done: Session 55; black hole open);
+  - bosses, designed in Claude Design alongside the backgrounds — **in the
+    game as live 3D models** (Session 58), with every phase and telegraph
+    state on the model and portraits on the Level Select cards. Warden's
+    arms moved onto the hull and need a playtest. See `art-roadmap.md`'s
+    Phase 5;
   - anime cut-ins;
   - the pre-level screens (main menu through level select) on a shared UI
     kit;
-  - the in-level HUD last.
+  - the in-level HUD last (PC done: Session 57; phone layout open).
 
   Phone builds and tuning are deferred until the art is further along.
 

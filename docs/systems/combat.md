@@ -317,10 +317,10 @@ mechanic (see [marauder-boss.md](bosses/marauder-boss.md)'s "Minion.cs /
 MinionSpawner.cs"), same idiom: a nested `EnemyType` enum (`Standard`,
 `Explosive`), and a public `Init(MovementPattern, EnemyType)` — replacing
 `EnemySpawner`'s old bare `movementPattern = ...` field assignment — that
-sets both fields and, for `Explosive`, tints the `SpriteRenderer` to
-`explosiveTintColor` (safe to call right after `Instantiate()`, since Unity
-runs `Awake()` synchronously during `Instantiate` — the tint doesn't need to
-wait for `Start()`). `Die()` calls a new private `SpawnFragments()` before
+sets both fields and asks the sibling `HostileLook` (Combat FX art) for the
+hull sprite of that pattern and type (safe to call right after
+`Instantiate()`, since Unity runs `Awake()` synchronously during
+`Instantiate`). `Die()` calls a new private `SpawnFragments()` before
 `Destroy()` whenever `type == Explosive` — an evenly-spaced ring of
 `fragmentCount` (8) `Bullet`s, a single shared random start-offset per
 burst (not per-fragment), `fragmentDamage` (1) each, owner `"Enemy"`, using
@@ -328,17 +328,16 @@ burst (not per-fragment), `fragmentDamage` (1) each, owner `"Enemy"`, using
 `bulletPrefab` otherwise. Since both the gunfire (`TakeDamage`) and
 kamikaze (`ApplyContactDamage`) paths already funnel through this same
 `Die()`, either kill triggers the burst — no changes needed to either
-method. Each fragment's `SpriteRenderer` is also tinted to
-`explosiveTintColor` right after `Init()`, so it visually reads as a piece
-of the enemy that exploded rather than a plain bullet (same tweak applied
-to `Minion.cs`'s fragments — see [marauder-boss.md](bosses/marauder-boss.md)). A `Standard` enemy's `Die()` is unaffected (no burst).
+method. Fragments wear the `WaveFragment` shard sprite (no tint any more —
+the Combat FX sprites carry the colour). A `Standard` enemy's `Die()`
+spawns no fragments. Either way `Die()` also asks `HostileLook` to spawn
+the 3-frame death burst (standard or explosive).
 
 Key public fields: `moveSpeed`, `sineAmplitude`, `sineFrequency`,
 `movementPattern`, `zigzagInterval`, `zigzagSpeed`, `diveSpeedMultiplier`,
 `health`, `bulletPrefab`, `fireInterval`, `bulletSpeed`, `contactDamage`
 (1), `type` (`EnemyType`, default `Standard`), `fragmentPrefab`,
-`fragmentCount` (8), `fragmentSpeed` (5), `fragmentDamage` (1),
-`explosiveTintColor`. Key public methods: `ApplyContactDamage(GameObject)`,
+`fragmentCount` (8), `fragmentSpeed` (5), `fragmentDamage` (1). Key public methods: `ApplyContactDamage(GameObject)`,
 `Init(MovementPattern, EnemyType)`.
 
 ## EnemySpawner.cs
@@ -393,7 +392,7 @@ Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 | Component            | Key inspector values                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
 | **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, bulletSpeed: 12, recoilDamping: 8 (shotsPerSecond/fireDamage/moveSpeed all overwritten by role at `Start()` — see [player-roles.md](player-roles.md)) |
-| **PlayerHealth.cs**   | OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` (maxHealth/maxShield overwritten by role at `Awake()`) |
+| **PlayerHealth.cs**   | OnDeath: `GameOverUI` and `PartyFrameUI.OnPlayerDied()` (both added at runtime, by `GameOverUI` and `PartyFrameManager`), OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` (maxHealth/maxShield overwritten by role at `Awake()`) |
 | **PlayerDamageFlash.cs** | flashColor: white, flashDuration: 0.12 |
 
 ### Main Camera (combat-relevant components)
@@ -420,19 +419,35 @@ Empty GameObject positioned **above** the visible camera area (y ≈ 8).
 
 ### Prefabs
 
-**PlayerBullet**
+**Bullets (Combat FX art).** Every bullet prefab is `SpriteRenderer`
+(`Sprite-Unlit-Default`, sprites at 192 px/unit) + a trigger collider +
+`Bullet.cs`, at scale 1. `Bullet.cs` is initialized at spawn via
+`Init(direction, speed, ownerTag)` — no inspector values for
+direction/speed/owner, those come from the spawning script.
+`alignToDirection` rotates the (nose-down) sprite along its flight.
+Sorting order: player bullets 5, enemy bullets **10** (always on top).
 
-| Component       | Setting            |
-| ----------------- | ------------------- |
-| Sprite Renderer   | Any small sprite    |
-| Collider2D        | Is Trigger: **ON**  |
-| **Bullet.cs**     | lifeTime: 3          |
+Enemy hitboxes **match the visible coloured body** of the sprite, glow
+excluded (Combat FX pass; before it, every bullet was a 0.05 × 0.5 box).
 
-`Bullet.cs` is initialized at spawn via `Init(direction, speed, ownerTag)` —
-no inspector values for direction/speed/owner, those come from the spawning
-script.
+| Prefab | Sprite | Collider (world units) | Align | Used by |
+| --- | --- | --- | --- | --- |
+| `PlayerBullet` | set at spawn by `PlayerShotLook` | box 0.05 × 0.5 (unchanged) | no | every ship |
+| `EnemyBullet` | `marauder_bullet_m` | circle r 0.057 | no | Marauder aimed shots, fan, ring, barrage |
+| `Bullets/MarauderMissile` | `marauder_homing_missile` | capsule 0.06 × 0.18 | yes | guided missile (`guidedMissile.missilePrefab`) |
+| `Bullets/MarauderMinionBullet` | `marauder_bullet_s` | circle r 0.036 | no | `Minion` |
+| `Bullets/MarauderFragment` | `marauder_fragment_shard` | circle r 0.05 | yes | explosive minion |
+| `Bullets/WardenTurretBullet` | `warden_turret_bullet` | capsule 0.047 × 0.104 | yes | Warden arms |
+| `Bullets/WardenLockdownRod` | `warden_lockdown_bullet` | capsule 0.042 × 0.156 | yes | Lockdown wall |
+| `Bullets/WaveBullet` | `wave_bullet_s` | circle r 0.036 | no | `Enemy` |
+| `Bullets/WaveFragment` | `wave_fragment_shard` | circle r 0.05 | yes | explosive `Enemy` |
 
-**EnemyBullet** — identical setup to PlayerBullet. Reuses `Bullet.cs`.
+**Player shot look.** `PlayerShotLook` on `Ship.prefab` dresses each player
+bullet: the owner's role-coloured streak, or the Attacker's Big Shot /
+combo 1–3 / broken-combo sprite (`PlayerShotKind`, passed through
+`PlayerController.FireBigShot(width, damage, kind)`). A wider shot widens
+the **collider** (`size.x *= widthMultiplier`), not the transform, since
+the wide sprites are already drawn wide.
 
 **Enemy**
 
@@ -441,7 +456,8 @@ script.
 
 | Component        | Key inspector values                                                        |
 | ------------------ | ------------------------------------------------------------------------------ |
-| Transform          | scale (0.6, 0.6, 1) — matches every ship's scale (see [movement.md](movement.md)); was 1.0 ("too big" relative to the party) before the Level 1 rework |
-| Sprite Renderer    | Any placeholder sprite                                                        |
+| Transform          | scale 1, with the `BoxCollider2D` sized 0.6 — the same world hitbox as the old 0.6 scale, which matched every ship (see [movement.md](movement.md)) |
+| Sprite Renderer    | Combat FX hull sprite, `Sprite-Unlit-Default`                                  |
+| **HostileLook.cs** | standard: wave_sine / wave_zigzag / wave_dive (index = `MovementPattern`), explosive: the `_explosive` trio, death FX: `FX/WaveDeath` / `FX/WaveDeathExplosive` |
 | Collider2D         | Is Trigger: **ON** — was `OFF` until the Level 1 rework; a solid collider on a `Dynamic` `Rigidbody2D` let real Box2D physics push enemies and the boss around on contact (see [level-sequencing.md](level-sequencing.md)'s "Boss visibility/collision"). Trigger-vs-trigger and trigger-vs-solid pairs still fire `OnTriggerEnter2D` normally, so `Bullet.cs`'s hit detection is unaffected. Ship-vs-`Enemy` kamikaze contact damage (see `Enemy.cs` above) is a separate, unrelated mechanism — manual overlap math in `PlayerController.ResolveShipCollisions()`, not a Unity trigger/physics callback — so it isn't affected by this setting either. |
-| **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, movementPattern: SineWave (default, set per-instance by EnemySpawner), zigzagInterval: 0.4, zigzagSpeed: 3, diveSpeedMultiplier: 1.6, health: 3, bulletPrefab: EnemyBullet prefab, fireInterval: 1.5, bulletSpeed: 6, contactDamage: 1, type: Standard (default, set per-instance by EnemySpawner), fragmentPrefab: unassigned (falls back to bulletPrefab), fragmentCount: 8, fragmentSpeed: 5, fragmentDamage: 1, explosiveTintColor: orange |
+| **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, movementPattern: SineWave (default, set per-instance by EnemySpawner), zigzagInterval: 0.4, zigzagSpeed: 3, diveSpeedMultiplier: 1.6, health: 3, bulletPrefab: WaveBullet prefab, fireInterval: 1.5, bulletSpeed: 6, contactDamage: 1, type: Standard (default, set per-instance by EnemySpawner), fragmentPrefab: WaveFragment prefab, fragmentCount: 8, fragmentSpeed: 5, fragmentDamage: 1 |

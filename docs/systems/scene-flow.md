@@ -1,10 +1,13 @@
 # Scene Flow
 
-Six scenes exist, in this order (Build Settings index in parens):
+Seven scenes exist. The flow, with Build Settings index in parens:
 `MainMenu` (0) → `Lobby` (1) → `JoinLobby` (2) → `RoleSelect` (3) →
-`LevelSelect` (4) → `Level` (5). Game Over/Victory/Pause stay same-scene UI
+`LevelSelect` (4) → `Level` (5). `MenuBackground` (6) is loaded underneath
+all five menu screens and never on its own; see "Menu background and
+transitions" below. Game Over/Victory/Pause stay same-scene UI
 overlays inside `Level`, not separate scenes — see [combat.md](combat.md)
-for Game Over/Victory and "Pause overlay" below.
+for Game Over/Victory and "Pause overlay" below. The menus' look (palette,
+UI kit, fonts) is in [ui-kit.md](ui-kit.md).
 
 **One shared `Level` scene, one prefab per boss** (Session 51). All three
 levels play in `Level.unity`; only the boss differs, and each boss is its
@@ -46,13 +49,15 @@ Inspector-wired events reaching scene objects the prefab can't reference:
 
 | Entry | `onSpawned` | `onPhase2` | `onDefeated` |
 |---|---|---|---|
-| Level 1 Marauder | `BossPanel_Marauder` `SetActive(true)` + `BossPanelUI.Bind` | `EnemySpawner.StartSpawning` | `BossPanelUI.ShowDefeated`, `VictoryUI.Show` |
-| Level 2 Halcyon | `BossPanel_Halcyon` `SetActive(true)` + `HalcyonBossPanelUI.Bind` | — | `HalcyonBossPanelUI.ShowDefeated`, `VictoryUI.Show` |
-| Level 3 Warden | `BossPanel_Warden` `SetActive(true)` + `WardenBossPanelUI.Bind` | — | `WardenBossPanelUI.ShowDefeated`, `VictoryUI.Show` |
+| Level 1 Marauder | `MarauderPanelFeed.Bind` + the shared HUD binds (below) | `EnemySpawner.StartSpawning` | `MarauderPanelFeed.ShowDefeated`, `VictoryUI.Show` |
+| Level 2 Halcyon | `HalcyonPanelFeed.Bind` + the shared HUD binds | — | `HalcyonPanelFeed.ShowDefeated`, `VictoryUI.Show` |
+| Level 3 Warden | `WardenPanelFeed.Bind` + the shared HUD binds | — | `WardenPanelFeed.ShowDefeated`, `VictoryUI.Show` |
 
-The three boss panels sit side by side under `HUDCanvas`, all inactive
-until their entry's `onSpawned`. Each panel's `Bind(GameObject)` fills its
-typed fields from the spawned boss with `GetComponent`.
+Since Session 57 there is one shared `BossPanel` on the right rail, with
+one feed per boss on it; each feed's `Bind(GameObject)` reads its boss with
+`GetComponent`. Every entry's `onSpawned` also binds the damage meter
+(`DamageMeterView.Bind`), the callouts (`LevelCallouts.Bind`) and the
+overlays' `BossNameLabel`s. See [hud-layout.md](hud-layout.md).
 
 `BossEvents.cs` is the one place that switches on the concrete boss type
 (`Phase2`/`Defeated` events, `AssignShips` — Marauder `targets`, Halcyon's
@@ -63,11 +68,51 @@ and a runtime `OnTaunt` listener that calls `BossEvents.Taunt`.
 `Restart` (Pause, Game Over, Victory) reloads the active scene, and the
 static `LevelSelection` survives the reload, so it replays the same level.
 
+## Menu background and transitions (MenuScreen.cs)
+
+The five menu screens are separate scenes, loaded **additively** on top of
+one persistent scene, `MenuBackground.unity`, so the design's background
+never restarts between screens (Session 54):
+
+- **`MenuBackground`** holds what stays put: the Main Camera (bloom, `Bg`
+  through `PaletteTint`), the only `EventSystem` (`InputSystemUIInputModule`),
+  the Global Volume (`LevelVolumeProfile`), the grid and vignette sprites,
+  `MenuFleet` (the four ship prefabs drifting with `MenuShipDrift`; they
+  glide off to the right whenever the active scene isn't `MainMenu`), and
+  `ShipPortraitStudio` (four more ships on the `ShipPortrait` layer, far
+  off-camera, each with a camera rendering into
+  `Assets/Art/UI/Portraits/<Role>Portrait.renderTexture`, transparent
+  background). Role Select's cards show those render textures through
+  `RawImage`s, so no cross-scene reference is needed.
+- **Each screen scene** holds only its own Canvas (`CanvasScaler` 1600×900,
+  `MenuScreen`, `CanvasGroup`) and screen script. No camera or EventSystem.
+- **`MenuScreen`** (on each screen's Canvas):
+  - `Awake`: if `MenuBackground` isn't loaded, loads it additively. So
+    pressing Play on any screen scene in the editor works, and so does
+    `PauseUI` loading `MainMenu` or `RoleSelect` from a level, unchanged.
+  - `Start`: slides `slideGroups` (header, content, footer) in, then
+    selects `firstSelected` if `focusOnEnter` is on. It's **off on Role
+    Select and Level Select**, so those open with no option highlighted.
+    On every screen, a navigation press (arrows, D-pad, stick) while
+    nothing is selected focuses `firstSelected`, so keyboard and gamepad
+    players still get in with one press.
+  - `GoTo(scene)` / `GoBack(scene)`: blocks input, slides out, loads the
+    next scene additively, sets it active, unloads its own scene.
+    `MenuTransitionState.IsBack` (static carrier) tells the next screen
+    which side to enter from. Timings in [ui-kit.md](ui-kit.md).
+  - `TryBeginLeaving()`: for Level Select's own launch animation.
+- **Launching a level** is a normal `SceneManager.LoadScene("Level")`,
+  which closes every menu scene including `MenuBackground`.
+- **Shortcuts:** `MenuHotkey` (standalone `InputAction`, like `PauseUI`):
+  Esc / gamepad B → Back on Lobby, single-player Role Select and Level
+  Select; Backspace / B on multiplayer Role Select (Esc unlocks there);
+  gamepad Start → Start on both Role Select panels.
+
 ## MainMenuUI.cs
 
 **Attached to:** `Canvas` in `MainMenu.unity`.
 
-Two buttons: `Play` → `SceneManager.LoadScene("Lobby")`, `Quit` →
+Two buttons: `Play` → `screen.GoTo("Lobby")`, `Quit` →
 `Application.Quit()` (`#if UNITY_EDITOR` guarded to
 `EditorApplication.isPlaying = false` instead, so it does something
 observable when testing in-editor).
@@ -76,14 +121,13 @@ observable when testing in-editor).
 
 **Attached to:** `Canvas` in `Lobby.unity`.
 
-Two mode buttons plus a Back button: `Local` → sets
-`GameModeSelection.Mode = GameMode.Local`, then loads `JoinLobby` (the co-op
+Two mode cards plus a Back button: the `LOCAL` card (a `Button`) → sets
+`GameModeSelection.Mode = GameMode.Local`, then goes to `JoinLobby` (the co-op
 device-join screen, see below — previously loaded `RoleSelect` directly,
-before local co-op existed). `Online` → `interactable = false`, set in
-`Awake()` — there's no Nakama backend yet (see `roadmap.md`'s "Nakama
-networking"), so it's a placeholder until then, same "disable until ready"
-idiom `RoleSelectUI.Awake()` already uses for its own Start button. `Back` →
-loads `MainMenu`.
+before local co-op existed). `ONLINE` is a **locked card, not a button**:
+there's no Nakama backend yet (see `roadmap.md`'s "Nakama networking"), so
+keyboard/gamepad focus skips it and a click (`PointerClickEvent` →
+`ShowOnlineNotice()`) only shows a `MenuToast`. `Back` → `MainMenu`.
 
 `GameModeSelection.cs` is a plain `public static class` holding
 `GameMode? Mode` (`GameMode` enum: `Local`/`Online`) — built on exactly the
@@ -100,15 +144,31 @@ opening `Level` directly (bypassing
 
 **Attached to:** `Canvas` in `JoinLobby.unity` (new scene, between `Lobby`
 and `RoleSelect`). A `PlayerInputManager` GameObject in the same scene
-(`joinBehavior: JoinPlayersWhenButtonIsPressed`, `maxPlayerCount: 4`,
+(`joinBehavior: JoinPlayersManually` since Session 54, `maxPlayerCount: 4`,
 `playerPrefab: JoinSlotMarker.prefab` — a throwaway GameObject holding only a
-`PlayerInput`, never used for actual gameplay) auto-pairs any device that
-presses a button: keyboard/mouse together for one join (a `Keyboard&Mouse`
-control scheme requiring both, see [input.md](input.md)), or any individual
-gamepad for another (`Gamepad` scheme). `JoinLobbyUI.cs` polls
-`PlayerInput.all` every join/leave event, reflecting each paired player into
-one of 4 slot rows (`"Slot N: Empty"` / `"Slot N: {scheme}"`), and enables
-`Continue` once at least one player has joined.
+`PlayerInput`, never used for actual gameplay) pairs each joining device:
+keyboard/mouse together for one join (a `Keyboard&Mouse` control scheme
+requiring both, see [input.md](input.md)), or any individual gamepad for
+another (`Gamepad` scheme).
+
+Joining is manual because the design uses B / Esc to *leave*, and "join on
+any button" would also join on that press. `JoinDeviceInput` listens to
+every button press (`InputSystem.onAnyButtonPress`) and asks
+`JoinPressRouter` (pure, unit-tested) what it means:
+
+- any button on a new device → **join** (`PlayerInputManager.JoinPlayer`);
+- B / Esc on a joined device → **leave** (destroys that `PlayerInput`; the
+  slots to its right shift left);
+- B / Esc with nobody joined → **back** to `Lobby`; with others joined it
+  does nothing, so a stray B can't pull the squad back;
+- Start / Enter from a joined device → **continue**.
+
+`JoinLobbyUI.cs` reflects `PlayerInput.all` into four `JoinSlotView`s on
+every join/leave event (player number, KEYBOARD + MOUSE or GAMEPAD n in join
+order, leave hint), updates the n / 4 counter, and enables `Continue` once
+at least one player has joined. Focus moves to `Continue` only at 4 / 4;
+before that nothing is selected, so a new gamepad's A press can't also
+submit a button.
 
 `Continue()` snapshots `PlayerInput.all` into a new static
 `CoOpRoster.Players` list (`CoOpRoster.cs`, mirroring
@@ -120,7 +180,7 @@ pattern) — one `JoinedPlayer` struct per joined player holding
 application session independent of scene loads, so no `DontDestroyOnLoad` or
 persisted `PlayerInput` objects are needed — each later scene re-pairs the
 same physical devices fresh via `PlayerInput.Instantiate(...)` (see
-`PartySetupBootstrap.cs` below). `Back` → loads `Lobby`.
+`PartySetupBootstrap.cs` below). `Back` → `Lobby`.
 
 `CoOpRoster.Players == null` (e.g. `Level`/`RoleSelect` opened directly,
 bypassing `JoinLobby`) is treated as "co-op flow wasn't used" everywhere it's
@@ -141,22 +201,33 @@ single-vs-multi-picker mechanics. `StartGame()` (both the single-picker
 `RoleSelectUI` and the multi-picker `RoleSelectMultiUI`) now loads
 `LevelSelect` instead of a level scene directly — see below.
 
+The single picker is four `RoleCardView`s (live 3D ship, stats on the
+shared `RoleStatScale`, abilities from `RoleCardText`): Normal / Focus
+before a pick, then You for the pick and Cpu for the rest, with focus
+jumping to START. The multi picker's rows (`RolePickerRow`, same per-device
+input as before) show four `RoleTileView`s each (Normal, Hover, Locked,
+Taken, Muted), a `SquadStripView` of the resulting line-up (unlocked roles
+read as CPU), a "P3 · P4 NOT JOINED" line, and START's "WAITING FOR Pn TO
+LOCK" reason; focus jumps to START once everyone has locked. See
+[ui-kit.md](ui-kit.md).
+
 ## LevelSelectUI.cs + LevelSelection.cs
 
 **Attached to:** `Canvas` in `LevelSelect.unity` (new scene, between
 `RoleSelect` and each level's own scene).
 
-A card per level — **Marauder** / **Halcyon** / **Warden**, name plus a
-one-line flavor blurb each (see [marauder-boss.md](bosses/marauder-boss.md)'s "At a
-Glance" for Marauder's; Halcyon/Warden's mechanics aren't built yet, so
-their cards are a name/flavor placeholder for now) — one click per card, no
+A `LevelCardView` per level — **Marauder** / **Halcyon** / **Warden**: level
+number and fight type, the placeholder boss glyph in a dashed art slot,
+name, description and placeholder threat pips (`LevelCardText`), with the
+squad chips (`SquadLineup.Current()`) top-right — one click per card, no
 separate confirm step needed (unlike `RoleSelectUI`'s pick-then-Start flow,
 which exists specifically to gate on a variable-length multi-picker; here
 each card is already a complete, unambiguous choice, closer to
 `LobbyUI.SelectLocal()`'s shape). Each card's handler
 (`SelectLevel1()`/`SelectLevel2()`/`SelectLevel3()`) writes the pick to
-`LevelSelection.SelectedLevel` then loads the shared `"Level"` scene.
-`Back()` loads `RoleSelect`.
+`LevelSelection.SelectedLevel`, grows the picked card to fill the screen,
+fades to black, then loads the shared `"Level"` scene (a normal, non-additive
+load, which also closes `MenuBackground`). `Back()` → `RoleSelect`.
 
 `LevelSelection.cs` is a plain `public static class` holding `Level?
 SelectedLevel` (`Level` enum: `Level1`/`Level2`/`Level3`) — built on exactly
@@ -231,24 +302,29 @@ itself is attached to.
 
 | Scene | Key GameObjects |
 | --- | --- |
-| `MainMenu` | `Canvas` (`MainMenuUI`), `EventSystem`, `Main Camera` |
-| `Lobby` | `Canvas` (`LobbyUI`, `onlineButton` → `OnlineButton`), `EventSystem`, `Main Camera` |
-| `JoinLobby` | `Canvas` (`JoinLobbyUI`, 4 slot-text rows, `ContinueButton`/`BackButton`), `PlayerInputManager`, `EventSystem`, `Main Camera` |
-| `RoleSelect` | `Canvas` (`RoleSelectUI`, `singlePickerPanel` → `SinglePickerPanel` [original 4 role buttons + Start], `multiPickerPanel` → `MultiPickerPanel` [`RoleSelectMultiUI`, `RolePickerRow.prefab` instances]) plus `BackButton` |
-| `LevelSelect` | `Canvas` (`LevelSelectUI`, `MarauderButton`/`HalcyonButton`/`WardenButton` cards) plus `BackButton` |
-| `Level` | `LevelSetup` (three `BossEntry` rows — see "Level setup" above); `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons) and `BossPanel_Marauder`/`BossPanel_Halcyon`/`BossPanel_Warden`; standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`: the 4 scene ships plus the dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` (its `bossObject` is set at runtime by `LevelSetup`); `Global Volume` (Bloom, `Assets/Settings/LevelVolumeProfile.asset`) |
+| `MenuBackground` | `Main Camera` (`PaletteTint`, post-processing on), `EventSystem` (`InputSystemUIInputModule`), `Global Volume`, `Grid`, `Vignette`, `MenuFleet` (4 ships with `MenuShipDrift`), `ShipPortraitStudio` (4 ships + cameras → portrait render textures, layer `ShipPortrait`) |
+| `MainMenu` | `Canvas` (`MainMenuUI`, `MenuScreen`; `Content` [wordmark, PLAY/QUIT `MenuButton`s], `MenuFooter`) |
+| `Lobby` | `Canvas` (`LobbyUI`, `MenuScreen`; `MenuHeader`, `Content` [LOCAL card, ONLINE locked card, `Toast`], `Footer` [BACK, hints], `BackHotkey`) |
+| `JoinLobby` | `Canvas` (`JoinLobbyUI`, `JoinDeviceInput`, `MenuScreen`; `MenuHeader`, `Content` [title row + counter, 4 `JoinSlotView`s], `Footer` [BACK, CONTINUE, hints]), `PlayerInputManager` |
+| `RoleSelect` | `Canvas` (`RoleSelectUI`, `MenuScreen`; `MenuHeader`, `SinglePickerPanel` [4 `RoleCardView`s, BACK, START, `BackHotkey`, `StartGameHotkey`], `MultiPickerPanel` [`RoleSelectMultiUI`, squad strip, `RowContainer` of `RolePickerRow.prefab` instances, BACK, START, hotkeys]) |
+| `LevelSelect` | `Canvas` (`LevelSelectUI`, `MenuScreen`; `MenuHeader`, `Content` [title row + squad chips, 3 `LevelCardView`s], `Footer` [BACK, hints], `Blackout`, `BackHotkey`) |
+| `Level` | `LevelSetup` (three `BossEntry` rows — see "Level setup" above); `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons), `LeftSidebar` (party frames + damage meter) and `RightSidebar/BossPanel` (one shared panel with the three boss feeds — see [hud-layout.md](hud-layout.md)); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`: the 4 scene ships plus the dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` (its `bossObject` is set at runtime by `LevelSetup`); `Global Volume` (Bloom, `Assets/Settings/LevelVolumeProfile.asset`) |
 
 ## Not yet built
 
-- Online mode has no real backend — Lobby's `Online` button is a disabled
-  placeholder until Nakama networking lands (see `roadmap.md`'s "Nakama
+- Online mode has no real backend — Lobby's `ONLINE` card is locked
+  ("COMING LATER") until Nakama networking lands (see `roadmap.md`'s "Nakama
   networking").
+- Mobile layouts of the menus (the design has them) wait for the deferred
+  phone work; QUIT has no confirm modal yet.
 - No Settings/Credits screens — not yet needed (no audio system).
 - No `DeckBuild.unity` — the deck loadout screen is designed but not built.
   It will sit between `RoleSelect` and whichever level scene is chosen, in
   flow order, while being appended at whatever the next available Build
-  Settings index is when it's built (currently **6**, since `LevelSelect`
-  and `Level` occupy indices 4/5). Its exact position
+  Settings index is when it's built (currently **7**, since `LevelSelect`,
+  `Level` and `MenuBackground` occupy indices 4–6). It should be a
+  `MenuScreen` scene like the other menus, so it gets the persistent
+  background and transitions for free. Its exact position
   relative to `LevelSelect` (before or after level-picking) is a decision
   for that future work, not settled here. See [cards.md](cards.md)'s "Deck
   loadout scene".

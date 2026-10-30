@@ -8,11 +8,48 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Boss models (Session 58)** — Marauder, Halcyon and Warden are the
+  finished Claude Design boss models, rendered live in 3D like the ships.
+  Every phase and telegraph shows on the model: Marauder's shockwave core,
+  missile hatches, white-hot barrage cannons and minion bay doors; Halcyon's
+  static arcs and its Opening (chevrons, then a split shell and weak-point
+  reticle); Warden's Lockdown chevrons, Big Shot charge, arm C in phase 2,
+  and per-arm idle / locked / firing / down looks with reboot ticks. Each
+  boss has a phase 2 damage look. Hits flash the model (a shielded Warden
+  body doesn't). Warden's arms now sit on its hull, with smaller hitboxes
+  (needs a playtest). Level Select shows each boss's portrait. See
+  [art-roadmap.md](art-roadmap.md)'s Phase 5.
+- **In-level HUD in the neon style (Session 57, PC)** — `Level.unity`'s
+  HUD follows the Claude Design "Neon Fleet HUD v2" design. Left rail:
+  four squad frames in fixed role order (who-tag, HP pips, shield segments,
+  SPD / FIRE / DPS, the ability's square cooldown sweep, the Attacker's
+  1-2-3 combo, LOW HP / BROKEN / DOWN states; CPU abilities are still
+  click-to-trigger) and the damage meter. Right rail: one shared boss panel
+  (name, phase, HP, SHIELDED; warning bars for the missile lock-on,
+  barrages, Surge, lockdown and Big Shot; OPENING!; aggro and TAUNTED;
+  Warden's arm cards; cooldown tiles). Playfield callouts for the wave, the
+  boss entry and phase 2. Pause, Game Over (with the CPUs still fighting)
+  and Victory (per-ship damage summary) restyled on the menu kit. The
+  damage meter now works in all three fights (`BossDamageLedger`), and
+  Game Over now triggers when every human is down (its party reference
+  had never been wired). Warden's arm health / shield and Big Shot are
+  back (lost when the bosses became prefabs in Session 51); Big Shot now
+  fires the designed `WardenBigShotBullet` orb. Phone layout and the design's PLANNED deck parts
+  are not built. See [systems/hud-layout.md](systems/hud-layout.md).
+- **Pre-fight menus in the neon style (Session 54, PC)** — all five screens
+  before a level follow the Claude Design "Pre-Fight Menus" design: the
+  UI kit (buttons with focus/hover/pressed/disabled states, frames, tag
+  chips, hint bars), Chakra Petch and JetBrains Mono, and one palette for
+  the whole project (`NeonPalette`). A persistent `MenuBackground` scene
+  keeps the grid and the four live ships drifting while screens slide in
+  and out; Role Select's cards show the live 3D ships; Level Select's
+  launch grows the boss card and cuts to black. Keyboard, mouse and
+  gamepad all navigate. See [systems/ui-kit.md](systems/ui-kit.md).
 - **Main Menu / Lobby / Join / Pause** — the game now boots into
   `MainMenu.unity` (Build Settings index 0): Play → `Lobby`, Quit. Lobby
   offers **Local** (proceeds to `JoinLobby`, a co-op device-join screen —
-  see "Local co-op" below) or **Online** — Online is a disabled placeholder
-  button, since there's no Nakama backend yet. Role Select (now index 3)
+  see "Local co-op" below) or **Online** — Online is a locked "coming
+  later" card, since there's no Nakama backend yet. Role Select (now index 3)
   gained a Back button (to `JoinLobby` or `Lobby`). Mid-run, pressing
   **Escape** (or a gamepad's **Start**) during a level scene pauses (freezes the
   game via `Time.timeScale`, shows Resume/Restart/Change Roles/Quit to Main
@@ -21,8 +58,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   [systems/scene-flow.md](systems/scene-flow.md).
 - **Local co-op (up to 4 players, one machine)** — `Lobby`'s Local button
   leads to `JoinLobby.unity`: press any key/click (keyboard+mouse) or any
-  button on a gamepad to claim one of 4 slots, shown live; **Continue** once
-  at least one player has joined. `RoleSelect` then shows either the
+  button on a gamepad to claim one of 4 slots, shown live; a joined player
+  leaves with B (gamepad) or Esc (keyboard); **Continue** (or Start/Enter)
+  once at least one player has joined. `RoleSelect` then shows either the
   original single-picker (0-1 joined) or a per-player row picker (2+
   joined) — each row moves its own highlight and locks a role using that
   player's own device (dpad/stick or WASD, confirm with South/Enter), and
@@ -213,8 +251,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   nearby ship. See [systems/combat.md](systems/combat.md).
 
 - **DPS on the party frame** — each frame now shows a live `DPS:` line below
-  Fire Rate, driven by real damage dealt to the boss
-  (`MarauderBoss.GetDamageDealt(ship) / CombatElapsed`), not the theoretical
+  Fire Rate, driven by real damage dealt to the boss (since Session 57 the
+  boss's `BossDamageLedger.Dps(ship)`, in every fight), not the theoretical
   `fireDamage x shotsPerSecond` ceiling — switched once the Attacker combo
   landed, since combo/Big Shot hits bypass `fireDamage` and never moved the
   old number. See [systems/hud-layout.md](systems/hud-layout.md)'s "DPS line".
@@ -225,10 +263,10 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   enemies are deliberately not counted. The DPS denominator is time since
   boss combat began, so it reads 0 until the boss actually engages. When the
   boss dies the meter freezes on the final numbers and retitles to
-  `DAMAGE · BOSS DOWN`. Built procedurally by `DpsMeterUI.cs` — attach it to
-  an empty GameObject under `LeftSidebar` and drag the `Boss` in; it builds
-  its own panel, rows, and bars on `Start()`. See
-  [systems/hud-layout.md](systems/hud-layout.md)'s "DpsMeterUI.cs".
+  `DAMAGE · BOSS DOWN`. Since Session 57 it is the `DamageMeter` prefab
+  (`DamageMeterView`, bound by `LevelSetup`'s `onSpawned`), replacing the
+  procedural `DpsMeterUI.cs`. See
+  [systems/hud-layout.md](systems/hud-layout.md)'s "DamageMeterView.cs".
 - **Aggro now works on the normal route into the game** — previously
   `MarauderBoss` built its aggro table from the four Inspector-wired
   `targets[]` objects, which the co-op spawner deactivates and replaces with
@@ -270,7 +308,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   with a couple of gaps in it — built specifically to reward standing in
   it behind Tank's Shield Arc, which blocks whichever lanes cross its
   width for free, rather than trying to dodge it. Every ~8s (6s in phase
-  2) it also flashes orange-red for 0.6s and fires a **Big Shot** — one
+  2) it also charges for 0.6s (white core, flash ring and lane on the
+  model) and fires a **Big Shot** — one
   3×-wide, 2-damage bullet straight down, like the Attacker's own Big
   Shot. It glides in from above the screen like the other bosses and is
   the slowest mover of the three (eased legs, 1.5–2.5 u/s average). **The
@@ -289,22 +328,39 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 ## What's NOT there yet
 
 - No networked/authoritative multiplayer (multiple humans across *separate*
-  machines) — Lobby's **Online** option is a disabled placeholder until
+  machines) — Lobby's **Online** card is locked ("coming later") until
   Nakama networking lands. Local co-op (multiple humans on *one* machine) is
   implemented — see the "Local co-op" bullet above.
-- Six scenes exist: `MainMenu.unity` (0), `Lobby.unity` (1),
+- Seven scenes exist: `MainMenu.unity` (0), `Lobby.unity` (1),
   `JoinLobby.unity` (2), `RoleSelect.unity` (3), `LevelSelect.unity` (4),
-  and one shared `Level.unity` (5) that plays all three bosses, each
-  spawned from its own prefab — see
+  one shared `Level.unity` (5) that plays all three bosses, each
+  spawned from its own prefab, and `MenuBackground.unity` (6), loaded
+  underneath the five menu screens — see
   [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
   are same-scene UI overlays within `Level`, not separate scenes (see
   [systems/combat.md](systems/combat.md)).
+- The menus have no mobile layout yet (PC only), the Main Menu wordmark is
+  a placeholder block. Level Select's cards show each boss's portrait.
 - Art is only started: the four player ships are their 3D design models
-  (see [art-roadmap.md](art-roadmap.md)), and each boss fight scrolls its
+  (see [art-roadmap.md](art-roadmap.md)), the menus are restyled (see
+  above), and each boss fight scrolls its
   own four-layer parallax background (Marauder's burning foundry,
-  Halcyon's storm-drowned towers, Warden's walled garrison). Bosses,
-  minions, bullets and the avatar slot are still placeholder shapes. No
-  audio.
+  Halcyon's storm-drowned towers, Warden's walled garrison). Combat FX
+  are in (Session 55): designed bullets for players, Marauder, Warden and
+  the waves, wave-enemy and Marauder-minion hulls with death bursts, the
+  Medic aura, Tank shield arc, Support speed ring, the three bosses' danger
+  rings, and a sprite effect for each role's ability. The three bosses are
+  their live 3D design models with every phase and telegraph state
+  (Session 58). The avatar slot is still a placeholder shape. No audio.
+- Some imported Combat FX art isn't used yet: the Halcyon and Warden
+  minions and their death bursts (those fights have no minions), the
+  Halcyon bullet set, several spare orb sizes, the standalone aggro mark,
+  and the four particle textures. Full list, with where each would go, in
+  [art-roadmap.md](art-roadmap.md)'s "Combat FX imported but not used yet".
+- The Combat FX sprites are deliberately **not** in Sprite Atlases: tested
+  in Session 56, they made no batch difference under the SRP Batcher and
+  doubled texture memory (see [art-roadmap.md](art-roadmap.md)'s "Mobile
+  quality tiers").
 - **Known issue:** sometimes a white shape appears in the center of the
   screen for the moment a hit ship flashes. It's intermittent and not yet
   diagnosed; see [roadmap.md](roadmap.md)'s "Known issues".
@@ -319,31 +375,36 @@ real networking last, then art/audio.
 1. Open the project in Unity, with `MainMenu` (under `Assets/Scenes/`) as
    the open scene — it's Build Settings index 0, so this is also what a real
    build boots into.
-2. Press **Play**, click **Play** on the Main Menu to load `Lobby`, then
-   click **Local** (Online is a disabled placeholder for now) to load
-   `JoinLobby`. Press any key or click to join as Player 1 (Keyboard &
-   Mouse), then click **Continue** to load `RoleSelect`. Click one of the 4
-   role buttons (Attacker/Tank/Medic/Support — this is the role the human
-   `Player` will use), then click **Start** once it's enabled. This loads
-   `LevelSelect` — click a card (**Marauder**, **Halcyon**, or **Warden**;
+2. Press **Play** (the persistent `MenuBackground` loads underneath
+   automatically), click **Play** on the Main Menu to go to `Lobby`, then
+   click the **Local** card (Online is a locked "coming later" card) to go
+   to `JoinLobby`. Press any key or click to join as Player 1 (Keyboard &
+   Mouse; Esc leaves again), then click **Continue** to go to `RoleSelect`.
+   Click one of the 4 role cards (Attacker/Tank/Medic/Support — this is the
+   role the human `Player` will use; nothing is highlighted until you hover,
+   click or press an arrow/D-pad), then click **Start** once it's enabled.
+   This goes to `LevelSelect` — click a card (**Marauder**, **Halcyon**, or **Warden**;
    all three now have real boss mechanics, no placeholder remaining, see
    [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md),
    [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md), and
    [systems/bosses/warden-boss.md](systems/bosses/warden-boss.md)) to load that
    level's scene, which auto-assigns the 3 remaining roles to 3 AI ships (any
-   of the 4 you didn't pick, exactly once each). *(Opening `Level1`/
-   `Level2`/`Level3` directly instead and pressing Play still works too,
+   of the 4 you didn't pick, exactly once each). *(Opening `Level.unity`
+   directly instead and pressing Play still works too,
    bypassing every menu scene entirely, and falls back to whatever roles are
    currently hand-set on `Player`/`Teammate_*` in the Inspector — useful for
    quick iteration. A Back button on Lobby/JoinLobby/Role Select/Level Select
-   lets you step back a screen at a time instead.)*
+   (or B / Esc; Backspace on the multiplayer role picker) lets you step back
+   a screen at a time instead. Any single menu scene can also be opened and
+   played directly; it loads `MenuBackground` itself.)*
 3. *(Optional, local co-op)* At `JoinLobby`, connect one or more gamepads and
    press a button on each to join additional players (up to 4 total) — each
-   claims its own slot, shown live. Click **Continue** once everyone's
+   claims its own slot, shown live; B leaves. Click **Continue** once everyone's
    joined; with 2+ players, `RoleSelect` shows a row per player instead of
    the single picker — move each row's highlight with that player's own
-   dpad/stick or WASD and confirm with South/Enter to lock a role (no two
-   rows can lock the same one). Click **Start** once every row is locked,
+   dpad/stick or WASD and confirm with South/Enter to lock a role, X/Esc to
+   unlock (no two rows can lock the same one). Click **Start** (or gamepad
+   Start) once every row is locked,
    then pick a level at `LevelSelect` as above. Any role nobody picked is
    filled by AI, same as the single-player flow.
 4. Watch the opening sequence play out automatically: all 4 ships glide up

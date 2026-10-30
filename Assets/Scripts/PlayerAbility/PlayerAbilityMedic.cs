@@ -3,11 +3,12 @@ using UnityEngine;
 
 public class PlayerAbilityMedic
 {
-    private const int AuraRingSegments = 32;
-    private const int BehindSpriteSortingOrder = -1;
+    private const int AuraSortingOrder = -5;
+    private const float IdleRingRadiusPx = 80f;
+    private const float BoostRingRadiusPx = 240f;
 
     private readonly PlayerAbility ability;
-    private LineRenderer ring;
+    private SpriteRenderer ring;
     private float nextTickTime;
     private bool boosted;
     private Coroutine boostCoroutine;
@@ -71,57 +72,38 @@ public class PlayerAbilityMedic
         bool neededHeal = allyHealth.CurrentHealth < allyHealth.maxHealth || allyHealth.CurrentShield < allyHealth.maxShield;
         allyHealth.Heal(ability.auraHealPerTick);
         allyHealth.RestoreShield(ability.auraShieldPerTick);
-        if (neededHeal)
-        {
-            PlayerDamageFlash allyFlash = ally.GetComponent<PlayerDamageFlash>();
-            if (allyFlash != null) allyFlash.Flash(ability.healFlashColor);
-        }
+        if (neededHeal) FlashHealed(ally);
+    }
+
+    private void FlashHealed(Transform ally)
+    {
+        if (ally.TryGetComponent(out PlayerDamageFlash allyFlash)) allyFlash.Flash(ability.healFlashColor);
+        if (ally.TryGetComponent(out ShipCombatFx allyFx)) allyFx.PlayHealFlash();
     }
 
     /// <summary>
-    /// World-space ring around the Medic showing the aura's current reach -
-    /// tiny and dim by default, larger and brighter while boosted. Built
-    /// procedurally (Sprites/Default shader, no art asset) matching the
-    /// project's current placeholder-art phase.
+    /// Ring around the Medic showing the aura's current reach, from the
+    /// Combat FX sprites: a dim dashed idle ring, and while boosted a bright
+    /// ring pulsing between two frames. Scaled so the drawn ring sits exactly
+    /// on the heal radius.
     /// </summary>
     public void CreateAuraRing()
     {
-        GameObject ringObj = new GameObject("AuraRing");
-        ringObj.transform.SetParent(ability.transform, false);
-        ring = ringObj.AddComponent<LineRenderer>();
-        ring.useWorldSpace = true;
-        ring.loop = true;
-        ring.positionCount = AuraRingSegments;
-        ring.material = new Material(Shader.Find("Sprites/Default"));
-        ring.sortingLayerName = "Default";
-        ring.sortingOrder = BehindSpriteSortingOrder;
+        if (ability.Fx == null) return;
+        ring = FxSprites.CreateChild(ability.transform, "AuraRing", AuraSortingOrder);
     }
 
     public void UpdateRing()
     {
         if (ring == null) return;
-        ApplyRingStyle();
-        UpdateRingPositions();
-    }
-
-    private void ApplyRingStyle()
-    {
-        Color color = boosted ? ability.auraRingBoostedColor : ability.auraRingColor;
-        float width = boosted ? ability.auraRingBoostedWidth : ability.auraRingWidth;
-        ring.startColor = color;
-        ring.endColor = color;
-        ring.startWidth = width;
-        ring.endWidth = width;
-    }
-
-    private void UpdateRingPositions()
-    {
+        ring.sprite = boosted ? BoostSprite() : ability.Fx.auraIdle;
         float radius = boosted ? ability.auraBoostRadius : ability.auraRadius;
-        Vector3 center = ability.transform.position;
-        for (int i = 0; i < AuraRingSegments; i++)
-        {
-            float angle = (i / (float)AuraRingSegments) * Mathf.PI * 2f;
-            ring.SetPosition(i, center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * radius);
-        }
+        FxSprites.FitRingRadius(ring.transform, boosted ? BoostRingRadiusPx : IdleRingRadiusPx, radius);
+    }
+
+    private Sprite BoostSprite()
+    {
+        bool peak = Mathf.Repeat(Time.time, ability.auraPulseInterval * 2f) > ability.auraPulseInterval;
+        return peak ? ability.Fx.auraBoostPulse : ability.Fx.auraBoost;
     }
 }

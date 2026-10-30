@@ -1,0 +1,806 @@
+fileFormatVersion: 2
+guid: 3a0ade8b90d42e24a9ac44ac8c793078
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2099042540453188370
+    second: medic_aura_idle_0
+  - first:
+      213: -2336985876679029392
+    second: medic_aura_idle_1
+  - first:
+      213: -521867232524311030
+    second: medic_aura_idle_2
+  - first:
+      213: -6884647012018598935
+    second: medic_aura_idle_3
+  - first:
+      213: -7359002351029323869
+    second: medic_aura_idle_4
+  - first:
+      213: 5735724180984830520
+    second: medic_aura_idle_5
+  - first:
+      213: 6763964794388394211
+    second: medic_aura_idle_6
+  - first:
+      213: 2484957303841561070
+    second: medic_aura_idle_7
+  - first:
+      213: -691110276027266607
+    second: medic_aura_idle_8
+  - first:
+      213: -277628613427419479
+    second: medic_aura_idle_9
+  - first:
+      213: 4719807629019459896
+    second: medic_aura_idle_10
+  - first:
+      213: 399636391364872123
+    second: medic_aura_idle_11
+  - first:
+      213: 3621182819261659283
+    second: medic_aura_idle_12
+  - first:
+      213: -278817317014095413
+    second: medic_aura_idle_13
+  - first:
+      213: 6451491541868839058
+    second: medic_aura_idle_14
+  - first:
+      213: 9146121639334748622
+    second: medic_aura_idle_15
+  - first:
+      213: -7260574625369641340
+    second: medic_aura_idle_16
+  - first:
+      213: -6680204709060271657
+    second: medic_aura_idle_17
+  - first:
+      213: 8458211326997520877
+    second: medic_aura_idle_18
+  - first:
+      213: 512543730120470089
+    second: medic_aura_idle_19
+  - first:
+      213: -8608940706763010548
+    second: medic_aura_idle_20
+  - first:
+      213: 9187486004908977376
+    second: medic_aura_idle_21
+  - first:
+      213: -7697855137752042709
+    second: medic_aura_idle_22
+  - first:
+      213: -6652072955160954778
+    second: medic_aura_idle_23
+  - first:
+      213: -8945373665681944728
+    second: medic_aura_idle_24
+  - first:
+      213: -3798249759001060684
+    second: medic_aura_idle_25
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: medic_aura_idle_0
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 197
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eecaadf3ee3bed2e0800000000000000
+      internalID: -2099042540453188370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_1
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 203
+        width: 14
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07d017f1abb519fd0800000000000000
+      internalID: -2336985876679029392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_2
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 202
+        width: 30
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a06e8795484f1c8f0800000000000000
+      internalID: -521867232524311030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_3
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 195
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9eb4dacd402d470a0800000000000000
+      internalID: -6884647012018598935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_4
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 176
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a7f1a5f9529fd990800000000000000
+      internalID: -7359002351029323869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_5
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 188
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83a1831e0c2699f40800000000000000
+      internalID: 5735724180984830520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_6
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 186
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e0b4cab42e6edd50800000000000000
+      internalID: 6763964794388394211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_7
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 162
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee91d7180875c7220800000000000000
+      internalID: 2484957303841561070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_8
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 173
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d9c5c89ddea866f0800000000000000
+      internalID: -691110276027266607
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_9
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 147
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a6ac2d3f3aa52cf0800000000000000
+      internalID: -277628613427419479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_10
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 159
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 83132ef2800208140800000000000000
+      internalID: 4719807629019459896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_11
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 130
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb74f9a3e2bcb8500800000000000000
+      internalID: 399636391364872123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_12
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 143
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 398b6d89696014230800000000000000
+      internalID: 3621182819261659283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_13
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 113
+        width: 6
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc9b52e9021712cf0800000000000000
+      internalID: -278817317014095413
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_14
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 100
+        width: 9
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2908788306d488950800000000000000
+      internalID: 6451491541868839058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_15
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 96
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec1af093c2d8dee70800000000000000
+      internalID: 9146121639334748622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_16
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 84
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48ea0ada8d14d3b90800000000000000
+      internalID: -7260574625369641340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_17
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 81
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d12299d5352b43a0800000000000000
+      internalID: -6680204709060271657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_18
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 70
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de16fdc636a916570800000000000000
+      internalID: 8458211326997520877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_19
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 68
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94e2fa59ecbec1700800000000000000
+      internalID: 512543730120470089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_20
+      rect:
+        serializedVersion: 2
+        x: 76
+        y: 58
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0e8df01a06e68880800000000000000
+      internalID: -8608940706763010548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_21
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 59
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ece87518d1808f70800000000000000
+      internalID: 9187486004908977376
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_22
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 50
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b23bfd58989bb2590800000000000000
+      internalID: -7697855137752042709
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_23
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 46
+        width: 30
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 668f5a734e61fa3a0800000000000000
+      internalID: -6652072955160954778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_24
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 47
+        width: 13
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86fc4e1bb06abd380800000000000000
+      internalID: -8945373665681944728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: medic_aura_idle_25
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 51
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ba578ad7f7e94bc0800000000000000
+      internalID: -3798249759001060684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      medic_aura_idle_0: -2099042540453188370
+      medic_aura_idle_1: -2336985876679029392
+      medic_aura_idle_10: 4719807629019459896
+      medic_aura_idle_11: 399636391364872123
+      medic_aura_idle_12: 3621182819261659283
+      medic_aura_idle_13: -278817317014095413
+      medic_aura_idle_14: 6451491541868839058
+      medic_aura_idle_15: 9146121639334748622
+      medic_aura_idle_16: -7260574625369641340
+      medic_aura_idle_17: -6680204709060271657
+      medic_aura_idle_18: 8458211326997520877
+      medic_aura_idle_19: 512543730120470089
+      medic_aura_idle_2: -521867232524311030
+      medic_aura_idle_20: -8608940706763010548
+      medic_aura_idle_21: 9187486004908977376
+      medic_aura_idle_22: -7697855137752042709
+      medic_aura_idle_23: -6652072955160954778
+      medic_aura_idle_24: -8945373665681944728
+      medic_aura_idle_25: -3798249759001060684
+      medic_aura_idle_3: -6884647012018598935
+      medic_aura_idle_4: -7359002351029323869
+      medic_aura_idle_5: 5735724180984830520
+      medic_aura_idle_6: 6763964794388394211
+      medic_aura_idle_7: 2484957303841561070
+      medic_aura_idle_8: -691110276027266607
+      medic_aura_idle_9: -277628613427419479
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

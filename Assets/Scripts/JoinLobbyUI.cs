@@ -2,84 +2,120 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Local co-op "press any button to join" screen, between Lobby and
-// RoleSelect. PlayerInputManager (JoinPlayersWhenButtonIsPressed) pairs each
-// joining device to a throwaway JoinSlotMarker.prefab instance - this script
-// just reflects PlayerInput.all's live state into 4 slot rows and, on
-// Continue, snapshots it into CoOpRoster.Players for RoleSelect/
-// PartySetupBootstrap to consume. See docs/systems/scene-flow.md.
+// RoleSelect. JoinDeviceInput routes every button press here; joining pairs
+// the device to a throwaway JoinSlotMarker.prefab PlayerInput through
+// PlayerInputManager (JoinPlayersManually), and leaving destroys it. This
+// script reflects PlayerInput.all into the 4 slot views and, on Continue,
+// snapshots it into CoOpRoster.Players for RoleSelect/PartySetupBootstrap.
+// See docs/systems/scene-flow.md.
 public class JoinLobbyUI : MonoBehaviour
 {
+    private const int MaxPlayers = 4;
+    private const string KeyboardScheme = "Keyboard&Mouse";
+    private const string GamepadScheme = "Gamepad";
+
+    public MenuScreen screen;
     public PlayerInputManager playerInputManager;
-    public TMP_Text[] slotTexts; // 4 rows, one per possible local player
+    public JoinSlotView[] slots;
     public Button continueButton;
+    public TMP_Text counterText;
+
+    public int JoinedCount => PlayerInput.all.Count;
+    public bool AcceptsInput => !screen.IsLeaving;
 
     void Awake()
     {
-        continueButton.interactable = false;
-        if (playerInputManager != null)
-        {
-            playerInputManager.onPlayerJoined += OnPlayerChanged;
-            playerInputManager.onPlayerLeft += OnPlayerChanged;
-        }
-        RefreshSlots();
+        playerInputManager.onPlayerJoined += OnPlayerChanged;
+        playerInputManager.onPlayerLeft += OnPlayerChanged;
     }
+
+    void Start() => RefreshSlots();
 
     void OnDestroy()
     {
-        if (playerInputManager != null)
-        {
-            playerInputManager.onPlayerJoined -= OnPlayerChanged;
-            playerInputManager.onPlayerLeft -= OnPlayerChanged;
-        }
+        playerInputManager.onPlayerJoined -= OnPlayerChanged;
+        playerInputManager.onPlayerLeft -= OnPlayerChanged;
     }
 
-    void OnPlayerChanged(PlayerInput p)
-    {
-        RefreshSlots();
-    }
+    public bool IsJoined(InputDevice device) => PlayerInput.all.Any(p => p.devices.Contains(device));
 
-    void RefreshSlots()
+    public void Handle(JoinPressAction action, InputDevice device)
     {
-        IReadOnlyList<PlayerInput> joined = PlayerInput.all;
-        for (int i = 0; i < slotTexts.Length; i++)
-        {
-            if (slotTexts[i] == null) continue;
-            slotTexts[i].text = i < joined.Count
-                ? $"Slot {i + 1}: {joined[i].currentControlScheme}"
-                : $"Slot {i + 1}: Empty - press any button/key to join";
-        }
-        if (continueButton != null) continueButton.interactable = joined.Count > 0;
+        if (action == JoinPressAction.Join) Join(device);
+        else if (action == JoinPressAction.Leave) Leave(device);
+        else if (action == JoinPressAction.Back) Back();
+        else if (action == JoinPressAction.Continue) Continue();
     }
 
     // Snapshots the currently-paired devices into CoOpRoster and proceeds to
     // RoleSelect. Devices themselves (not the throwaway JoinSlotMarker
-    // PlayerInput instances, which don't survive the scene load) are what
+    // PlayerInput instances, which don't survive the scene change) are what
     // gets carried forward - see CoOpRoster.cs.
     public void Continue()
     {
-        IReadOnlyList<PlayerInput> joined = PlayerInput.all;
-        if (joined.Count == 0) return;
-
-        CoOpRoster.Players = new List<JoinedPlayer>();
-        foreach (PlayerInput pi in joined)
-        {
-            CoOpRoster.Players.Add(new JoinedPlayer
-            {
-                controlScheme = pi.currentControlScheme,
-                devices = pi.devices.ToArray(),
-                role = null
-            });
-        }
-        SceneManager.LoadScene("RoleSelect");
+        if (JoinedCount == 0) return;
+        CoOpRoster.Players = PlayerInput.all.Select(ToJoinedPlayer).ToList();
+        screen.GoTo("RoleSelect");
     }
 
-    public void Back()
+    public void Back() => screen.GoBack("Lobby");
+
+    private void Join(InputDevice device)
     {
-        SceneManager.LoadScene("Lobby");
+        if (JoinedCount >= MaxPlayers) return;
+        if (device is Gamepad) playerInputManager.JoinPlayer(-1, -1, GamepadScheme, device);
+        else playerInputManager.JoinPlayer(-1, -1, KeyboardScheme, KeyboardAndMouse());
     }
+
+    private static void Leave(InputDevice device)
+    {
+        PlayerInput player = PlayerInput.all.FirstOrDefault(p => p.devices.Contains(device));
+        if (player != null) Destroy(player.gameObject);
+    }
+
+    private void OnPlayerChanged(PlayerInput player) => RefreshSlots();
+
+    private void RefreshSlots()
+    {
+        IReadOnlyList<PlayerInput> joined = PlayerInput.all;
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (i < joined.Count) slots[i].ShowJoined(SlotInfo(joined, i));
+            else slots[i].ShowEmpty(i + 1);
+        }
+        counterText.text = $"{joined.Count}<color={NeonPalette.RichTextHex(PaletteColor.Muted)}> / {MaxPlayers}</color>";
+        continueButton.interactable = joined.Count > 0;
+        RefreshFocus(joined.Count);
+    }
+
+    private void RefreshFocus(int count)
+    {
+        if (EventSystem.current == null) return;
+        EventSystem.current.SetSelectedGameObject(count >= MaxPlayers ? continueButton.gameObject : null);
+    }
+
+    private static JoinSlotInfo SlotInfo(IReadOnlyList<PlayerInput> joined, int index)
+    {
+        bool keyboard = joined[index].currentControlScheme == KeyboardScheme;
+        int gamepadNumber = joined.Take(index + 1).Count(p => p.currentControlScheme != KeyboardScheme);
+        return new JoinSlotInfo { number = index + 1, isKeyboard = keyboard, gamepadNumber = gamepadNumber };
+    }
+
+    private static InputDevice[] KeyboardAndMouse()
+    {
+        if (Mouse.current == null) return new InputDevice[] { Keyboard.current };
+        return new InputDevice[] { Keyboard.current, Mouse.current };
+    }
+
+    private static JoinedPlayer ToJoinedPlayer(PlayerInput player) => new JoinedPlayer
+    {
+        controlScheme = player.currentControlScheme,
+        devices = player.devices.ToArray(),
+        role = null,
+    };
 }

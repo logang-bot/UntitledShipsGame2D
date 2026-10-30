@@ -13,4 +13,5 @@ public class MarauderBossGuidedMissileSettings
     public float turnRate = 90f; // degrees/second
     public float speed = 5f;
     public float warningLingerTime = 2f; // keep the HUD warning up briefly after firing
+    public GameObject missilePrefab; // falls back to MarauderBoss.bulletPrefab if unassigned
 }
