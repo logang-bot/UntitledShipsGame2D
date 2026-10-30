@@ -182,16 +182,17 @@ That taunt overwrite is exactly why the DPS meter can't read `aggro`: the
 instant Tank presses `E`, its aggro value becomes `highest + 100` and stops
 being a damage number at all.
 
-Public read API, consumed by `DpsMeterUI` (see
-[hud-layout.md](../hud-layout.md)):
+Since Session 57 the damage table lives in the boss's `BossDamageLedger`
+(`IBoss.DamageLedger`, shared by all three bosses; see
+[hud-layout.md](../hud-layout.md)'s "Damage tracking"). `TakeDamage`
+records into it alongside the aggro update. `MarauderBoss` still exposes
+the read API, now forwarding to the ledger:
 
 - `float GetDamageDealt(GameObject source)` — total damage that source has
-  dealt. A method rather than an exposed dictionary, so nothing outside can
-  mutate it and per-ship iteration allocates no enumerator.
-- `float CombatElapsed` — seconds since boss combat began, captured in
-  `OnEnable()` (the moment `LevelSequencer` enables the component, which is
-  the only point at which ships can both act and deal damage). Returns 0
-  before the fight starts, so callers can avoid dividing by it.
+  dealt.
+- `float CombatElapsed` — seconds since boss combat began (`BeginCombat()`
+  in `OnEnable()`, the moment `LevelSequencer` enables the component).
+  Returns 0 before the fight starts, and stops counting at `Die()`.
 
 `TakeDamage` accumulates via `TryGetValue` rather than gating on
 `ContainsKey` the way aggro does, so damage from a source that never made it
@@ -707,26 +708,20 @@ proximity shockwave is explicitly out of scope here (it's not a `Bullet`
 instance, so it never enters `Bullet.Active`) — already handled by the
 existing `minDistanceFromBoss` floor.
 
-## BossPanelUI.cs
+## Boss panel: MarauderPanelFeed.cs
 
-**Attached to:** `BossPanel` (child of `HUDCanvas` — see
-[hud-layout.md](../hud-layout.md)).
-**Requires:** a direct `boss` reference (this panel is scene-bound, not a
-reusable prefab like `PartyFrame.prefab`).
-
-Every `Update()`, reads `MarauderBoss.CurrentHealth/maxHealth` into a health-bar
-`Image.fillAmount` + `"HP: x/y"` text, `MarauderBoss.IsPhase2` into a `"Phase
-1"`/`"Phase 2"` text, `MarauderBoss.CurrentTarget`'s `PlayerRoleComponent.role` into
-a `"Target: {role}"` text, `MarauderBoss.GuidedMissileTargetRole` into a `"Guided
-missile: {role}"` warning text (empty string when `null`),
-`MarauderBoss.PatternBarrageActivePattern` into an `"Incoming: {shape} Barrage"`
-warning text (empty string when `null`), and
-`MarauderBoss.ShockwaveCooldownRemaining`/`MarauderBoss.GuidedMissileCooldownRemaining`/
-`MarauderBoss.PatternBarrageCooldownRemaining` into `"Shockwave: {n}s"`/`"Guided
-Missile: {n}s"`/`"Pattern Barrage: {n}s"` cooldown texts (`"Ready"` at
-0) — same "HUD only reads, never owns game state" pattern as
-`PartyFrameUI.cs`. `ShowDefeated()` (wired to `MarauderBoss.OnDefeated`) overwrites
-the phase text with `"DEFEATED"`.
+Since Session 57 the right rail's shared `BossPanel` is filled by
+`MarauderPanelFeed` (the old `BossPanelUI` text panel is gone; see
+[hud-layout.md](../hud-layout.md)'s "Right rail: boss"). Every `Update()` it
+reads `CurrentHealth`/`maxHealth`/`IsPhase2` into the header,
+`GuidedMissileTargetRole` into a `MISSILE LOCK-ON ▸ <role>` warning (then
+`MISSILE FIRED` for `guidedMissile.warningLingerTime`),
+`PatternBarrageActivePattern` into a `BARRAGE · <shape>` warning during the
+`patternBarrageTelegraphTime` wind-up, `CurrentTarget` into the aggro row
+(`TAUNTED` when it's the Tank), and the three `...CooldownRemaining` values
+into the Shockwave / Missile / Barrage tiles (`NOW` while the missile or
+barrage is running). `ShowDefeated()` (via `LevelSetup`'s `onDefeated`)
+shows the DEFEATED banner.
 
 `ShockwaveCooldownRemaining` reads `"Ready"` whenever no ship has gotten
 close enough to trigger it yet, not just after its cooldown elapses — it's

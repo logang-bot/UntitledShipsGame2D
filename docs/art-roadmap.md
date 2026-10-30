@@ -264,7 +264,6 @@ lands, and update it when an asset gets wired.
 | `Minions/Warden/warden_death_1–3`, `warden_death_explosive_1–3` | Already built into `Prefabs/FX/WardenDeath` and `WardenDeathExplosive`; unused | Same, for Warden |
 | `Bullets/Halcyon/halcyon_bullet_s`, `_m`, `_l`, `halcyon_fragment_shard`, `halcyon_fragment_ring` | Halcyon fires no bullets (the design calls this set "a reserve") | Halcyon minion fire and fragments, or any future Halcyon bullet attack |
 | `Bullets/Warden/warden_bullet_s`, `_m` | Warden's arms fire the turret capsules and Lockdown fires rods, so no orbs | Any future Warden aimed or ring attack |
-| `Bullets/Warden/warden_bullet_l` | Meant for `WardenBigShot`, which isn't attached to `WardenBoss.prefab` | A `WardenBigShotBullet` prefab, circle collider r 0.083 (set `widthMultiplier` to 1, since the orb is already big) |
 | `Bullets/Warden/warden_fragment_shard`, `warden_fragment_ring` | No Warden explosive minions | Warden explosive-minion fragments |
 | `Bullets/Warden/warden_lockdown_wall_segment` | 8 rods in one sprite; Lockdown spawns rods one by one, since each rod is its own `Bullet` | Only if Lockdown is ever rebuilt as one moving wall object |
 | `Bullets/Marauder/marauder_bullet_l` | All Marauder fire uses the medium orb, the minions the small one | A heavier Marauder attack, e.g. a slower big round in Pattern Barrage |
@@ -292,6 +291,29 @@ lands, and update it when an asset gets wired.
 
 ### Phase 5: Bosses
 
+- **Not started (as of Session 57): the bosses in the game are still
+  placeholder squares.** Step 1 is a Claude Design session; ask for it
+  before building anything here.
+- **Step 1, Claude Design: finish and export the boss designs.** There is
+  already a first draft in the Claude Design project ("Neon Fleet",
+  `Boss Designs.dc.html`, plus `Boss Models 3D.html` / `bosses3d.js`). Per
+  boss it has a base look, phase 1 and phase 2 looks, telegraph states
+  (`mar-charge`, `hal-field` / `hal-tele` / `hal-still`, `war-lock`),
+  damage FX and a 3D model. It also has Marauder's minions. Ask Claude
+  Design to:
+  - review that draft against the fights as they are now (the HUD design
+    and `systems/bosses/*.md` describe them), and fill the gaps:
+    - **Warden's arms as separate parts**, with idle / locked / down
+      looks (they are child objects that move and get knocked down, so
+      they can't be baked into the body);
+    - **Warden's Big Shot charge** flash (restored in Session 57; it fires
+      the `warden_bullet_l` orb);
+    - **Halcyon's OPENING** look (boss exposed during the Surge);
+  - decide 2D sprite vs live 3D model per boss (the ships use live GLB
+    models);
+  - **export them for Unity**, the way the backgrounds were exported: PNGs
+    at the playfield's 192 px per unit, or GLB models, with every state
+    as its own file.
 - **Make:**
   - **Marauder**, **Halcyon** and **Warden**, from the Claude Design boss
     designs (see Phase 2c's "Design first"). The prompt describes each
@@ -405,7 +427,12 @@ real gamepads. The table below is the original brief.
 
 - **The in-level HUD:** the squad rail and party frames, the boss panel, the
   DPS meter, and the Pause, Game Over and Victory overlays, from the
-  `Neon Fleet HUD` design and with the Phase 7 UI kit.
+  `Neon Fleet HUD` design and with the Phase 7 UI kit. **PC done
+  (Session 57)** from `Neon Fleet HUD v2.dc.html`, plus the playfield
+  callouts; see `systems/hud-layout.md`. Still open: the phone layout
+  (top strip + squad chips), the design's PLANNED deck parts (card tray,
+  energy, spell card, focus hitbox and graze ring, with phase 3), and live
+  3D portraits on the frames.
 - **Later:** card art for the deck layer, once its design settles.
 
 ## Cross-cutting

@@ -193,21 +193,17 @@ on impact, then the fade frame for `fadeDuration` (0.3 s). Toggled by
 
 **Public API**: `CooldownRemaining`, `SetRingVisible(bool)`.
 
-## HalcyonBossPanelUI.cs
+## Boss panel: HalcyonPanelFeed.cs
 
-**Attached to:** `Level2.unity`'s `BossPanel` (replacing `BossPanelUI` —
-each level's `BossPanel` script matches its own boss type, not a shared
-reusable component). Same "HUD only reads, never owns game state" pattern
-as `BossPanelUI.cs`, against Halcyon's much smaller public surface: HP bar
-+ text, phase text, a Surge warning + cooldown text, a Static Field
-cooldown text only (no named warning — same "the ring itself is the tell"
-choice Marauder's own Shockwave already makes). No target text, no
-guided-missile/pattern-barrage text — none of that exists for this boss;
-`Level2.unity`'s now-unused `BossTargetText`/`BossPatternBarrageWarningText`/
-`BossPatternBarrageCooldownText` rows are deactivated rather than left
-showing stale text. `BossWarningText` and `BossShockwaveCooldownText`/
-`BossGuidedMissileCooldownText` are reused (by content, not by name) as
-Halcyon's Surge warning/cooldown and Static Field cooldown rows.
+Since Session 57 the shared `BossPanel` is filled by `HalcyonPanelFeed`
+(replacing `HalcyonBossPanelUI`; see [hud-layout.md](../hud-layout.md)'s
+"Right rail: boss"): the header from `HalcyonBoss`, a `SURGE · GET CLEAR OF
+THE BOSS` warning while `HalcyonSurge.IsTelegraphing` (counting down its
+`telegraphTime`), the white `OPENING! BOSS EXPOSED` row while
+`HalcyonSurge.IsActive`, and Surge / Static Field cooldown tiles. The Static
+Field still has no named warning: its ring is the tell. Halcyon has no
+aggro row. Its `BossDamageLedger` now records every hit, so the damage
+meter works in this fight too.
 
 ## Scene wiring
 

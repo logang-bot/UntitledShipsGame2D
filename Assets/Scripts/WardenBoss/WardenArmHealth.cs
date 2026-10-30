@@ -14,6 +14,7 @@ public class WardenArmHealth : MonoBehaviour
     public float DownRemaining => IsDown ? Mathf.Max(0f, downUntil - Time.time) : 0f;
 
     private WardenArm arm;
+    private WardenBoss boss;
     private SpriteRenderer sr;
     private Collider2D col;
     private Color upColor;
@@ -22,6 +23,7 @@ public class WardenArmHealth : MonoBehaviour
     void Awake()
     {
         arm = GetComponent<WardenArm>();
+        boss = GetComponentInParent<WardenBoss>();
         sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
         if (sr != null) upColor = sr.color;
@@ -33,10 +35,11 @@ public class WardenArmHealth : MonoBehaviour
         if (IsDown && Time.time >= downUntil) Recover();
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, GameObject source = null)
     {
         if (IsDown) return;
         CurrentHealth -= amount;
+        if (boss != null) boss.DamageLedger.Record(source, amount);
         if (CurrentHealth <= 0f) KnockDown();
     }
 

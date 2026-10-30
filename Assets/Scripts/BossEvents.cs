@@ -23,6 +23,13 @@ public static class BossEvents
         _ => null
     };
 
+    public static Level LevelOf(MonoBehaviour boss) => boss switch
+    {
+        HalcyonBoss => Level.Level2,
+        WardenBoss => Level.Level3,
+        _ => Level.Level1
+    };
+
     public static void AssignShips(MonoBehaviour boss, GameObject[] ships)
     {
         if (boss is MarauderBoss marauder) marauder.targets = ships;

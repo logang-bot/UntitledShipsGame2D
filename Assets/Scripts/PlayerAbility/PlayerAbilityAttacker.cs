@@ -20,6 +20,11 @@ public class PlayerAbilityAttacker
     // Attacker bot the right slot, so bots execute a perfect rotation.
     public int ExpectedSlot => expectedSlot;
 
+    // When the rotation last broke on a wrong key / last completed - the
+    // HUD's combo box flashes BROKEN and COMBO ✓ off these. -1 = never.
+    public float LastBreakTime { get; private set; } = -1f;
+    public float LastFinishTime { get; private set; } = -1f;
+
     public void Trigger()
     {
         float damage = ability.PlayerController.fireDamage * ability.bigShotDamageMultiplier;
@@ -49,6 +54,7 @@ public class PlayerAbilityAttacker
     private AttackerComboShot AdvanceRotation()
     {
         int stepIndex = expectedSlot - 1;
+        if (expectedSlot == 3) LastFinishTime = Time.time;
         expectedSlot = expectedSlot == 3 ? 1 : expectedSlot + 1;
         return new AttackerComboShot(
             ability.comboStepDamageMultipliers[stepIndex],
@@ -59,6 +65,7 @@ public class PlayerAbilityAttacker
     private AttackerComboShot BreakRotation()
     {
         expectedSlot = 1;
+        LastBreakTime = Time.time;
         return new AttackerComboShot(ability.comboBreakDamageMultiplier, 1f, PlayerShotKind.ComboBroken);
     }
 }

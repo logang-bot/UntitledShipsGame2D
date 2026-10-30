@@ -60,6 +60,7 @@ public class HalcyonBoss : MonoBehaviour, IBoss
     /// </summary>
     void OnEnable()
     {
+        DamageLedger.BeginCombat();
         foreach (Behaviour mechanic in mechanics)
             if (mechanic != null) mechanic.enabled = true;
     }
@@ -87,9 +88,12 @@ public class HalcyonBoss : MonoBehaviour, IBoss
         health.TakeDamage(Mathf.RoundToInt(bulletDamage * bodyContactDamageMultiplier));
     }
 
-    public void TakeDamage(float amount)
+    public BossDamageLedger DamageLedger { get; } = new BossDamageLedger();
+
+    public void TakeDamage(float amount, GameObject source = null)
     {
         CurrentHealth -= Mathf.RoundToInt(amount);
+        DamageLedger.Record(source, amount);
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2) EnterPhase2();
         if (CurrentHealth <= 0) Die();
     }
@@ -102,6 +106,7 @@ public class HalcyonBoss : MonoBehaviour, IBoss
 
     private void Die()
     {
+        DamageLedger.EndCombat();
         OnDefeated?.Invoke();
         Destroy(gameObject);
     }

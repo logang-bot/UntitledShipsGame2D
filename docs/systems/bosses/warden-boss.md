@@ -305,40 +305,42 @@ Public API: `IsTelegraphing`, `CooldownRemaining`, `NextCooldown()`,
 `SpawnWideBullet()` — the last two public for
 `Assets/Tests/EditMode/WardenBigShotTests.cs`.
 
-## WardenBossPanelUI.cs
+## Boss panel: WardenPanelFeed.cs
 
-**Attached to:** `Level3.unity`'s `BossPanel` (replacing `BossPanelUI`, same
-"each level's `BossPanel` script matches its own boss type" convention
-Halcyon's build established). Same "HUD only reads, never owns game state"
-pattern as `BossPanelUI.cs`/`HalcyonBossPanelUI.cs`:
+Since Session 57 the shared `BossPanel` is filled by `WardenPanelFeed`
+(replacing `WardenBossPanelUI`; see [hud-layout.md](../hud-layout.md)'s
+"Right rail: boss"):
 
-- HP bar + `"HP: x/y"` text, phase text (`"Phase 1"`/`"Phase 2"`,
-  `"DEFEATED"` via `ShowDefeated()` on `OnDefeated`). While
-  `WardenBoss.IsShielded` the phase text reads `"Phase 1 · Shielded"`, so
-  players can see why the HP bar isn't moving.
-- A downed arm's line reads `"Arm A: DOWN 12s"`, counting down
-  `WardenArmHealth.DownRemaining`. This takes priority over the three
-  states described next.
-- One warning line per arm (`armAWarningText`/`armBWarningText`/
-  `armCWarningText`), with three distinct states — the two dashes are
-  deliberately different glyphs, not inconsistent formatting: `"Arm A: —"`
-  (em dash) while the arm's GameObject is inactive/disabled (relevant
-  pre-Phase-2, when `armC` exists but hasn't been activated yet); `"Arm A:
-  --"` (double hyphen) while the arm is active but currently idle, between
-  cycles with no `currentTarget` locked yet — this is the common case, since
-  `idleCooldown` (4s, ±jitter) is longer than `telegraphTime + firingDuration`
-  (3.5s); `"Arm A: Tank"` (the target's role name) once a target is actually
-  locked. Task 10's live verification observed exactly this progression:
-  `"--" → "Attacker"`/`"Support"` as arms picked targets.
-- Shockwave cooldown text (`"Shockwave: {n}s"` / `"Shockwave: Ready"`).
-- Lockdown-volley warning (`"Incoming: {Edge} Lockdown"` during telegraph,
-  blank otherwise) + its own cooldown text.
-- Big Shot row (`bigShotText`, scene object `BossBigShotText`, added after
-  the original rows): `"BIG SHOT!"` during its telegraph, otherwise
-  `"Big Shot: {n}s"` / `"Big Shot: Ready"`.
+- Header: HP, phase, and the `SHIELDED` tag plus a hatched HP bar
+  (`CORE SHIELDED · HP CAN'T DROP`) while `WardenBoss.IsShielded`.
+- Warnings: `INCOMING: <EDGE>` while `WardenLockdownVolley.IsTelegraphing`
+  (counting down its `telegraphTime`), `BIG SHOT!` while
+  `WardenBigShot.IsTelegraphing`.
+- Arm cards A/B/C (`WardenArmCard.Read`): NOT ACTIVE while the arm's
+  GameObject is inactive (Arm C before phase 2), DOWN with
+  `WardenArmHealth.DownRemaining` and a recovery bar, LOCK + the target's
+  role once `CurrentTargetRole` is set, IDLE otherwise.
+- Aggro row: the taunted ship's role with `TAUNTED` while the taunt window
+  (`TauntedShip` / `TauntActiveUntil`) is open; hidden otherwise, since
+  there's no single-target aggro in this fight.
+- Tiles: Shockwave, Big Shot, Lockdown.
 
-No single target/aggro text — there's no single-target concept in this
-fight, same reasoning `HalcyonBossPanelUI` already applies.
+Hits on the arms are recorded in Warden's `BossDamageLedger`
+(`WardenArmHealth.TakeDamage(amount, source)`), so the damage meter counts
+the work done while the core is shielded.
+
+**Prefab gap (found and restored Session 57):** when Session 51 turned the
+bosses into prefabs, `WardenBoss.prefab` was built from the old
+`Level3BossPlaceholder` asset plus hand-added arms. Everything Sessions 39
+and 43 had added only in `Level3.unity` was left behind: `WardenBigShot`, and
+each arm's `WardenArmHealth`, `Enemy` tag and 1×1 trigger `BoxCollider2D`.
+So in the shared `Level` scene the core was never shielded, bullets passed
+through the arms, and Big Shot never fired. All of it is restored from the
+pre-merge `Level3.unity` (`ed3d8bb^`) with its exact values (all script
+defaults). The one change: Big Shot now fires the designed
+`WardenBigShotBullet` orb (`warden_bullet_l`, circle collider r 0.083) with
+`widthMultiplier` 1, per `art-roadmap.md`'s Combat FX plan, instead of the
+old generic `EnemyBullet` stretched ×3.
 
 ## Scene wiring
 
@@ -425,9 +427,11 @@ using the per-boss Strategy described in `docs/architecture.md`'s
   When every arm is down, `FocusPoint()` returns to the boss for the
   damage window.
 
-### BossPanel
+### BossPanel (historical, pre-Session 57)
 
-`BossPanel`'s script swapped from `BossPanelUI` to `WardenBossPanelUI`, and
+Superseded by the shared panel and `WardenPanelFeed` above; kept as the
+record of the `Level3.unity` build. `BossPanel`'s script swapped from
+`BossPanelUI` to `WardenBossPanelUI`, and
 its pre-existing text objects were repurposed by content (not by name),
 same as Halcyon's build:
 

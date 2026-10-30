@@ -128,9 +128,11 @@ is normally wired. Examples: `PlayerHealth.OnDeath`/`OnDamaged`,
 
 **Documented exceptions**, all for the same reason — the target only
 exists at runtime, so there's nothing to drag into an Inspector slot:
-- `PartyFrameUI`'s ability-click handler (`onClick.AddListener(...)`): a
-  `PartyFrame` prefab instance only learns which ship's `PlayerAbility` it
-  owns inside `Initialize()`.
+- The party frame's ability-click handler (`AbilityCellView.Bind`,
+  `onClick.AddListener(...)`): a `PartyFrame` prefab instance only learns
+  which ship's `PlayerAbility` it owns inside `PartyFrameUI.Initialize()`.
+- `LevelCallouts.Bind` adds its phase-2 callout to the spawned boss's
+  `OnPhase2` (`BossEvents.Phase2`).
 - The level's boss is spawned from a prefab by `LevelSetup` (Session 51),
   so `LevelSetup` forwards its `OnPhase2`/`OnDefeated` to the matching
   `BossEntry`'s events, and `PartyBossWiring` adds each ship's

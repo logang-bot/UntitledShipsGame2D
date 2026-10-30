@@ -124,9 +124,11 @@ GameObject:
   - component: {fileID: 3031065326897520597}
   - component: {fileID: 2477092725704230899}
   - component: {fileID: 1873029709280339461}
+  - component: {fileID: 7900735744124980627}
+  - component: {fileID: 8291578820539261959}
   m_Layer: 0
   m_Name: ArmA
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -226,6 +228,69 @@ MonoBehaviour:
   tauntWeightMultiplier: 3
   bulletPrefab: {fileID: 2454154910025362242, guid: ad1bf9ba5fb5b604a8b3087e30951c22, type: 3}
   bulletSpeed: 6
+--- !u!61 &7900735744124980627
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 924738973313101380}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &8291578820539261959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 924738973313101380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5552a8787d9c7d4cb063d34e6c2cc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
+  maxHealth: 20
+  downDuration: 15
+  downColor:
+    key: 100
+    alpha: 1
 --- !u!1 &1990896620938820717
 GameObject:
   m_ObjectHideFlags: 0
@@ -242,6 +307,7 @@ GameObject:
   - component: {fileID: 5517543388431432009}
   - component: {fileID: 2420722956795524120}
   - component: {fileID: 9052571288932468627}
+  - component: {fileID: 7766344868905688931}
   m_Layer: 0
   m_Name: WardenBoss
   m_TagString: Enemy
@@ -487,6 +553,31 @@ MonoBehaviour:
   wallBulletCount: 12
   wallGapCount: 2
   spawnMargin: 1
+--- !u!114 &7766344868905688931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52e2dbc1dc288e647883e10ebd5584b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenBigShot
+  cooldown: 8
+  cooldownPhase2: 6
+  cooldownJitter: 1.5
+  telegraphTime: 0.6
+  bulletPrefab: {fileID: 2454154910025362242, guid: 2bc26f23143589349a895377b31b3303, type: 3}
+  widthMultiplier: 1
+  damageMultiplier: 2
+  bulletSpeed: 5
+  muzzleOffset: 0.9
+  telegraphColor:
+    key: 101
+    alpha: 1
+  telegraphPulseSpeed: 14
 --- !u!1 &2710160347954273755
 GameObject:
   m_ObjectHideFlags: 0
@@ -498,9 +589,11 @@ GameObject:
   - component: {fileID: 409400386346156349}
   - component: {fileID: 3579038000326805746}
   - component: {fileID: 3573983202033119790}
+  - component: {fileID: 6308983263234194571}
+  - component: {fileID: 1880693445934549842}
   m_Layer: 0
   m_Name: ArmC
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -600,6 +693,69 @@ MonoBehaviour:
   tauntWeightMultiplier: 3
   bulletPrefab: {fileID: 2454154910025362242, guid: ad1bf9ba5fb5b604a8b3087e30951c22, type: 3}
   bulletSpeed: 6
+--- !u!61 &6308983263234194571
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2710160347954273755}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &1880693445934549842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2710160347954273755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5552a8787d9c7d4cb063d34e6c2cc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
+  maxHealth: 20
+  downDuration: 15
+  downColor:
+    key: 100
+    alpha: 1
 --- !u!1 &7682265837547947820
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,9 +767,11 @@ GameObject:
   - component: {fileID: 5083383687095767069}
   - component: {fileID: 4857705841442452895}
   - component: {fileID: 2766172513232264407}
+  - component: {fileID: 8426111801405651601}
+  - component: {fileID: 5167008742891955966}
   m_Layer: 0
   m_Name: ArmB
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -713,3 +871,66 @@ MonoBehaviour:
   tauntWeightMultiplier: 3
   bulletPrefab: {fileID: 2454154910025362242, guid: ad1bf9ba5fb5b604a8b3087e30951c22, type: 3}
   bulletSpeed: 6
+--- !u!61 &8426111801405651601
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7682265837547947820}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!114 &5167008742891955966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7682265837547947820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5552a8787d9c7d4cb063d34e6c2cc69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::WardenArmHealth
+  maxHealth: 20
+  downDuration: 15
+  downColor:
+    key: 100
+    alpha: 1

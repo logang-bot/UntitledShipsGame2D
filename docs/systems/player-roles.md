@@ -280,7 +280,7 @@ one of its two inputs was tuned.
 
 This is a **ceiling, not a prediction**: ships fire straight up (`Vector2.up`)
 at a boss that moves side to side, so real output is this minus everything that
-missed. `DpsMeterUI` (see [hud-layout.md](hud-layout.md)) reports what actually
+missed. The damage meter (`DamageMeterView`, see [hud-layout.md](hud-layout.md)) reports what actually
 landed, and the gap between the two numbers is the positioning skill. Attacker's
 Big Shot widens its bullet 3x on top of doubling its damage, so part of that
 ability's value is accuracy against a moving target, not raw damage.

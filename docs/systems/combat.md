@@ -392,7 +392,7 @@ Key public fields: `enemyPrefab`, `enemiesPerWave`, `spawnInterval`,
 | Component            | Key inspector values                                                 |
 | --------------------- | ---------------------------------------------------------------------- |
 | **PlayerController.cs** | bulletPrefab: PlayerBullet prefab, firePoint: FirePoint child, bulletSpeed: 12, recoilDamping: 8 (shotsPerSecond/fireDamage/moveSpeed all overwritten by role at `Start()` — see [player-roles.md](player-roles.md)) |
-| **PlayerHealth.cs**   | OnDeath: `GameOverPanel/GameOverUI.Show()` + `PartyFrame_1/PartyFrameUI.OnPlayerDied()`, OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` (maxHealth/maxShield overwritten by role at `Awake()`) |
+| **PlayerHealth.cs**   | OnDeath: `GameOverUI` and `PartyFrameUI.OnPlayerDied()` (both added at runtime, by `GameOverUI` and `PartyFrameManager`), OnDamaged: `Player/PlayerDamageFlash.Flash()` + `Main Camera/CameraShake.Shake()` (maxHealth/maxShield overwritten by role at `Awake()`) |
 | **PlayerDamageFlash.cs** | flashColor: white, flashDuration: 0.12 |
 
 ### Main Camera (combat-relevant components)

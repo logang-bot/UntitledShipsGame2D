@@ -613,6 +613,19 @@ reference docs live under `systems/`.
   shared-scale stats and a squad strip; Level Select launches with a grow
   and cut to black. Mobile layouts deferred. See `systems/ui-kit.md` and
   `systems/scene-flow.md`.
+- **In-level HUD restyled, PC (Session 57)** — art Phase 8 on PC, from the
+  "Neon Fleet HUD v2" design. `HUDCanvas` scales with screen height
+  (1920×1080 reference). Left rail: `PartyFrame` prefab (who-tag, HP pips,
+  shield segments, stats, ability sweep, Attacker combo, CPU
+  click-to-trigger, DOWN) in fixed role order, and the `DamageMeter`
+  prefab, replacing `DpsMeterUI`. Right rail: one shared `BossPanel` filled
+  by `MarauderPanelFeed` / `HalcyonPanelFeed` / `WardenPanelFeed`, replacing
+  the three text panels. `CalloutBanner` for wave / boss entry / phase 2,
+  and Pause / Game Over / Victory rebuilt on the menu kit. New
+  `BossDamageLedger` (`IBoss.DamageLedger`) tracks per-ship damage for every
+  boss. HUD icons and sprites baked from the design's SVGs into
+  `Assets/Art/UI/HUD/`. Phone layout and the PLANNED deck parts deferred.
+  See `systems/hud-layout.md`.
 
 ## In Progress
 
@@ -693,11 +706,16 @@ is independently testable and the one before it de-risks the next.
   - effects (Combat FX sprites done: Session 55, Sprite Atlases tested and
     dropped: Session 56; grid and particles open);
   - powers (role ability effects done: Session 55; black hole open);
-  - bosses, designed in Claude Design alongside the backgrounds;
+  - bosses, designed in Claude Design alongside the backgrounds — **not
+    in the game yet** (still placeholder squares). **Next step: a Claude
+    Design session** to finish the draft `Boss Designs.dc.html` (separate
+    Warden arm parts with idle / lock / down looks, Warden Big Shot charge,
+    Halcyon OPENING) and export it for Unity, then build art Phase 5. See
+    `art-roadmap.md`'s Phase 5 "Step 1";
   - anime cut-ins;
   - the pre-level screens (main menu through level select) on a shared UI
     kit;
-  - the in-level HUD last.
+  - the in-level HUD last (PC done: Session 57; phone layout open).
 
   Phone builds and tuning are deferred until the art is further along.
 

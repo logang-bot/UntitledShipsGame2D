@@ -8,6 +8,23 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **In-level HUD in the neon style (Session 57, PC)** — `Level.unity`'s
+  HUD follows the Claude Design "Neon Fleet HUD v2" design. Left rail:
+  four squad frames in fixed role order (who-tag, HP pips, shield segments,
+  SPD / FIRE / DPS, the ability's square cooldown sweep, the Attacker's
+  1-2-3 combo, LOW HP / BROKEN / DOWN states; CPU abilities are still
+  click-to-trigger) and the damage meter. Right rail: one shared boss panel
+  (name, phase, HP, SHIELDED; warning bars for the missile lock-on,
+  barrages, Surge, lockdown and Big Shot; OPENING!; aggro and TAUNTED;
+  Warden's arm cards; cooldown tiles). Playfield callouts for the wave, the
+  boss entry and phase 2. Pause, Game Over (with the CPUs still fighting)
+  and Victory (per-ship damage summary) restyled on the menu kit. The
+  damage meter now works in all three fights (`BossDamageLedger`), and
+  Game Over now triggers when every human is down (its party reference
+  had never been wired). Warden's arm health / shield and Big Shot are
+  back (lost when the bosses became prefabs in Session 51); Big Shot now
+  fires the designed `WardenBigShotBullet` orb. Phone layout and the design's PLANNED deck parts
+  are not built. See [systems/hud-layout.md](systems/hud-layout.md).
 - **Pre-fight menus in the neon style (Session 54, PC)** — all five screens
   before a level follow the Claude Design "Pre-Fight Menus" design: the
   UI kit (buttons with focus/hover/pressed/disabled states, frames, tag
@@ -223,8 +240,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   nearby ship. See [systems/combat.md](systems/combat.md).
 
 - **DPS on the party frame** — each frame now shows a live `DPS:` line below
-  Fire Rate, driven by real damage dealt to the boss
-  (`MarauderBoss.GetDamageDealt(ship) / CombatElapsed`), not the theoretical
+  Fire Rate, driven by real damage dealt to the boss (since Session 57 the
+  boss's `BossDamageLedger.Dps(ship)`, in every fight), not the theoretical
   `fireDamage x shotsPerSecond` ceiling — switched once the Attacker combo
   landed, since combo/Big Shot hits bypass `fireDamage` and never moved the
   old number. See [systems/hud-layout.md](systems/hud-layout.md)'s "DPS line".
@@ -235,10 +252,10 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   enemies are deliberately not counted. The DPS denominator is time since
   boss combat began, so it reads 0 until the boss actually engages. When the
   boss dies the meter freezes on the final numbers and retitles to
-  `DAMAGE · BOSS DOWN`. Built procedurally by `DpsMeterUI.cs` — attach it to
-  an empty GameObject under `LeftSidebar` and drag the `Boss` in; it builds
-  its own panel, rows, and bars on `Start()`. See
-  [systems/hud-layout.md](systems/hud-layout.md)'s "DpsMeterUI.cs".
+  `DAMAGE · BOSS DOWN`. Since Session 57 it is the `DamageMeter` prefab
+  (`DamageMeterView`, bound by `LevelSetup`'s `onSpawned`), replacing the
+  procedural `DpsMeterUI.cs`. See
+  [systems/hud-layout.md](systems/hud-layout.md)'s "DamageMeterView.cs".
 - **Aggro now works on the normal route into the game** — previously
   `MarauderBoss` built its aggro table from the four Inspector-wired
   `targets[]` objects, which the co-op spawner deactivates and replaces with
@@ -324,8 +341,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   and the avatar slot are still placeholder shapes. No audio.
 - Some imported Combat FX art isn't used yet: the Halcyon and Warden
   minions and their death bursts (those fights have no minions), the
-  Halcyon bullet set, several spare orb sizes, the Warden Big Shot orb
-  (`WardenBigShot` isn't on the Warden prefab), the standalone aggro mark,
+  Halcyon bullet set, several spare orb sizes, the standalone aggro mark,
   and the four particle textures. Full list, with where each would go, in
   [art-roadmap.md](art-roadmap.md)'s "Combat FX imported but not used yet".
 - The Combat FX sprites are deliberately **not** in Sprite Atlases: tested

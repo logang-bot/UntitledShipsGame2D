@@ -2106,3 +2106,78 @@ atlases were removed. No code or import settings changed.
 
 All 128 EditMode tests pass; no console errors. The atlas folder is
 deleted and `EditorSettings.asset` is unchanged.
+
+## Session 57 — In-Level HUD from "Neon Fleet HUD v2" (Art Phase 8, PC)
+
+Built the Claude Design `Neon Fleet HUD v2.dc.html` (with its `HUD Party
+Frame` and `HUD Boss Panel` components) in `Level.unity`, PC only. The
+design's PLANNED deck parts (card tray, energy, spell card, focus hitbox
+and graze ring) were left for the phase 3 developer. See
+`systems/hud-layout.md`.
+
+- **Assets.** The design's 31 icons, role icons, boss marks and 9-slice /
+  fill sprites were baked into `Assets/Art/UI/HUD/` straight from its SVG
+  symbols (whitened the same way the design's ZIP export does), at 2×,
+  200 px per unit. `frame_glow` was dropped (its SVG blur doesn't
+  rasterize); `kit_glow` covers it.
+- **Canvas.** `HUDCanvas` now scales with screen height (1920×1080
+  reference), per the design's spec; `HUDSidebarFitter` divides the
+  pixel bar widths by the canvas scale. A new `RightSidebar` replaces the
+  three side-by-side boss panels (only `BossPanel_Marauder` had been
+  sized).
+- **Left rail.** New `PartyFrame` prefab driven by `PartyFrameUI` and its
+  views (`FrameIdentityView`, `FrameVitalsView` + `PipRowView`,
+  `FrameStatsView`, `AbilityCellView`, `ComboKeysView`). Frames run in role
+  order; seats are P1.. / CPU 1... The `DamageMeter` prefab
+  (`DamageMeterView`, `DamageMeterRows`) replaces the procedural
+  `DpsMeterUI`.
+- **Right rail.** One `BossPanel` prefab (`BossPanelView`: header, warning
+  bars, OPENING!, aggro, arm cards, cooldown tiles) filled by one feed per
+  boss, replacing `BossPanelUI` / `HalcyonBossPanelUI` /
+  `WardenBossPanelUI`. Feeds time telegraphs (`WarningClock`) and learn
+  cooldown totals (`CooldownClock`) themselves, so the boss mechanics
+  gained no timers.
+- **Damage for every boss.** `BossDamageLedger` (`IBoss.DamageLedger`)
+  holds per-ship damage and the fight clock. Halcyon, Warden and Warden's
+  arms now take the source ship in `TakeDamage`; `MarauderBossAggro` keeps
+  only aggro.
+- **Callouts and overlays.** `CalloutBanner` + `LevelCallouts` (wave, boss
+  entry with scrolling hazard bands, phase 2). Pause / Game Over / Victory
+  rebuilt with `MenuButton` and `HintBar`; Game Over lists the CPUs still
+  fighting, Victory shows the per-ship summary.
+- **Small gameplay-side additions:** `PlayerAbility.CooldownFor` made
+  public, Attacker combo break/finish timestamps exposed for the combo box.
+- **Removed:** `Assets/Prefabs/PartyFrame.prefab`, the old panel scripts,
+  `DpsMeterUI.cs`, and the already-run one-shot
+  `Editor/AddDpsLineToPartyFrame.cs`.
+
+### Found and fixed
+
+- Pip rows were built in `Awake()` from the prefab's default max HP/shield
+  (5/3), before `PlayerRoleComponent.Start()` applies the role's real
+  values; they now resize whenever the max changes.
+- `GameOverUI.partyFrameManager` was never wired in the scene, so Game Over
+  never showed when the human died. Wired to `LeftSidebar`.
+
+- `WardenBoss.prefab` had lost Warden's arm health and Big Shot. Session 51
+  built it from the old `Level3BossPlaceholder` asset plus hand-added arms,
+  but `WardenBigShot` (Session 39) and each arm's `WardenArmHealth`,
+  `Enemy` tag and trigger `BoxCollider2D` (Session 43) existed only in
+  `Level3.unity`, which was then deleted. So Warden was never shielded,
+  bullets passed through the arms, and Big Shot never fired. Restored from
+  `ed3d8bb^`'s `Level3.unity` with the same values. Big Shot now fires a new
+  `WardenBigShotBullet` prefab (the designed `warden_bullet_l` orb, circle
+  collider r 0.083, `widthMultiplier` 1), as `art-roadmap.md` had planned.
+  Checked in Play mode: the shield blocks core damage, arms take hits and
+  go down, the shield drops when the active arms are down, the ledger
+  counts arm hits, and Big Shot spawns the orb.
+
+### Verified
+
+All 163 EditMode tests pass (new: `BossDamageLedgerTests`,
+`AbilityCellStateTests`, `ComboDisplayTests`, `DamageMeterRowsTests`,
+`HudClockTests`). Played Marauder live (frames, DOWN, aggro + TAUNTED,
+missile lock-on → FIRED, NOW tiles, meter sorting) and Halcyon (entry
+callout, panel reveal, cooldowns, meter). Warden's panel, every row state,
+and the three overlays were checked with their states pushed in directly.
+No console errors.

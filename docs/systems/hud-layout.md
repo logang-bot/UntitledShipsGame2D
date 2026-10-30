@@ -1,332 +1,243 @@
 # HUD & Screen Layout
 
-## Design decision: fixed portrait aspect ratio on all platforms
+The in-level HUD follows the Claude Design "Neon Fleet HUD v2" design
+(`Neon Fleet HUD v2.dc.html`, with its `HUD Party Frame`, `HUD Boss Panel`,
+`Menu Button` and `Hint Bar` components), PC layout only (Session 57). The
+phone layout and everything the design marks **PLANNED** (card tray,
+energy cells, spell-card rows, focus hitbox and graze ring) are not built.
+The PLANNED parts belong to the deck layer (phase 3).
 
-Fixed portrait aspect ratio (9:16) gameplay area on all platforms — not just
-mobile. On phones this fills the screen naturally. On PC/desktop, the
-gameplay area stays centered with pillarbox bars on either side, and those
-bars are used as HUD space (party frames, boss info) rather than left empty.
-A single dynamic camera-viewport approach handles both cases automatically
-based on actual screen aspect at runtime; no separate build/project needed.
+Squad on the left rail, boss on the right, and nothing on the playfield
+except short callouts. Bullets are the only white-cored round glowing shapes
+on screen: the HUD uses square pips, square sweeps and flat fills.
 
-## AspectRatioFitter.cs
+## Fixed portrait playfield, pillarboxed on PC
 
-**Attached to:** `Main Camera`.
-**Requires:** nothing external — self-contained, reads
-`Screen.width`/`Screen.height`.
+The playfield is a fixed 9:16 portrait area on every platform. On PC it is
+centered with pillarbox bars on both sides, and those bars are the HUD
+rails.
 
-Keeps gameplay locked to a fixed portrait aspect ratio (default 9:16),
-centered on screen. Handles two cases:
-- **Pillarbox** (screen wider than target — the PC case): portrait game area
-  centered, bars on left/right used as HUD space.
-- **Letterbox** (screen narrower/taller than target): bars on top/bottom,
-  game area centered vertically. Unlikely in practice given the 9:16 target
-  and phone sizes, but handled automatically.
+### AspectRatioFitter.cs
 
-On phones already close to the target aspect, bars shrink to near-zero
-automatically. No platform branching needed; it's purely aspect-driven.
-Marked `[ExecuteAlways]` so it also runs in the Editor outside Play mode,
-letting Game view preview the pillarbox/letterbox live. Recalculates only on
-screen resize (not every frame).
+**Attached to:** `Main Camera`. Keeps gameplay locked to 9:16 (pillarbox on
+wide screens, letterbox on tall ones), `[ExecuteAlways]`, recalculates only
+on screen resize. The computed `Camera.rect` is snapped to whole pixels so
+the HUD rails and the viewport always agree on the same boundary (a
+sub-pixel seam showed up at 1920×1080 before, Session 34).
+`GetViewportPixelRect()` returns the viewport in screen pixels.
 
-**Whole-pixel snapping**: the computed `Camera.rect` is rounded to an exact
-integer pixel boundary (`Mathf.Round(rect.x * Screen.width) / Screen.width`,
-same for `y`/`width`/`height`) before being assigned. Without this, the
-pillarbox math lands on a fractional pixel at most screen sizes (e.g. at
-1920x1080 the boundary is `656.25px`) — `Camera.rect` drives the GPU
-viewport, which Unity rounds to an integer pixel internally, but
-`HUDSidebarFitter` reads the same rect back as an *unrounded* float
-(`GetViewportPixelRect()`) to size the HUD sidebars. Those two independent
-roundings could disagree by a sub-pixel sliver, visible as a thin seam at
-the sidebar/viewport edge — user-reported (see `progress-log.md`'s Session
-34), and only reproduced at screen sizes where the boundary isn't already a
-whole pixel by coincidence (2560x1440 happens to land exactly on `875px`,
-which is why it didn't show up in the first live check). Snapping here
-means both sides always agree on the same integer boundary, with nothing
-left to round independently downstream.
+### HUDSidebarFitter.cs
 
-Key public fields: `targetAspectWidth`, `targetAspectHeight`.
-Key public method: `GetViewportPixelRect()` — returns the current gameplay
-viewport in screen pixels (now always whole numbers, see above), used by
-`HUDSidebarFitter` to size the side HUD to match exactly.
+**Attached to:** `HUDCanvas`. Sizes `LeftSidebar` and `RightSidebar` to the
+pillarbox bars whenever the screen size or canvas scale changes. The bars
+are measured in screen pixels and divided by the canvas scale factor, since
+`HUDCanvas` scales with screen height. At 16:9 each rail is 656 units wide.
 
-## HUDSidebarFitter.cs
+## Canvases
 
-**Attached to:** `HUDCanvas`.
-**Requires:** a reference to the `AspectRatioFitter` on Main Camera, and
-`RectTransform` references to the left/right sidebar panels.
+| Canvas | Render mode | Scaler | Holds |
+| --- | --- | --- | --- |
+| `HUDCanvas` | Screen Space - Overlay | Scale With Screen Size, 1920×1080, match height | Both rails and the three overlays |
+| `GameplayCanvas` | Screen Space - Camera (Main Camera) | Scale With Screen Size, 608×1080, match height | The playfield callout banner |
 
-Dynamically resizes the sidebar panels every frame (on screen resize) to
-exactly match `AspectRatioFitter`'s computed pillarbox bar width, closing
-the gap between the gameplay viewport and the HUD. Also `[ExecuteAlways]`
-for Editor preview without Play.
+Every size below is in 1080p reference units, as the design specifies, so a
+1600×900 window draws the same layout at ×0.833.
 
-Key public fields: `aspectFitter`, `leftSidebar`, `rightSidebar`. Note:
-`rightSidebar` points directly at `BossPanel` — there's no separate
-`RightSidebar` wrapper GameObject (see Scene wiring below).
+## Parts
 
-## PartyFrameUI.cs
+All in `Assets/Prefabs/UI/HUD/`, built from the menu UI kit (`NeonFrame`,
+`TagChip`, `MenuButton`, `HintBar`, the Chakra Petch / JetBrains Mono TMP
+fonts, `PaletteTint`). Icons and sprites are in `Assets/Art/UI/HUD/`:
+white PNGs at 2× (200 px per unit), tinted in engine, baked once from the
+design's own SVG symbols (the same set the design's "Download HUD assets"
+ZIP holds). `frame_stroke`, `frame_stroke_2px`, `keycap` and `pip_empty` are
+9-sliced; `tile_hazard` repeats.
 
-**Attached to:** `PartyFrame.prefab` (see Prefabs below) — reusable, not
-scene-specific.
-**Requires:** `public void Initialize(GameObject player, string
-displayName, bool isHumanPlayer)` to be called before it does anything
-useful — see `PartyFrameManager.cs` below. Also holds Inspector-dragged references to
-the frame's own children: avatar `Image`, health bar `Image`, shield bar
-`Image` (`ShieldBar`), and seven `TextMeshProUGUI` children (name, role,
-health, move speed, fire rate, **DPS**, ability) — these bake into the prefab fine
-since they're internal to it.
+| Prefab | Script(s) | What it is |
+| --- | --- | --- |
+| `PartyFrame` | `PartyFrameUI` + child views | One squad frame |
+| `DamageMeter` | `DamageMeterView`, `DamageMeterRowView` ×4 | The live meter under the frames |
+| `BossPanel` | `BossPanelView` + row views + the three feeds | The one shared boss panel |
+| `CalloutBanner` | `CalloutBannerView` | Playfield callouts |
+| `VictorySummary` | `VictorySummaryView`, `DamageMeterRowView` ×4 (large) | Victory's per-ship table |
 
-`playerHealth`/`playerRole`/`playerController`/`playerAbility` are
-**private**, set only by `Initialize()` — not Inspector fields. A prefab
-asset can't hold a serialized reference to a specific scene's `Player`
-object, so `Initialize(GameObject player, string displayName, bool
-isHumanPlayer)` does the four `GetComponent<>()` lookups, then runs
-one-time setup: `nameText`'s text is set to the passed-in `displayName`
-(`PartyFrameManager.cs` decides what that string is — see below), role
-text set to `"Role: " + PlayerRole`, and tints
-avatar/health-bar/role-text to `Stats.tintColor`, matching the ship
-sprite's tint — `shieldBarFill` is deliberately **not** tinted, always
-shield-blue.
-`Update()` early-returns until `Initialize()` has run, then keeps health
-bar `fillAmount`, `"HP: current/max"` text, `shieldBarFill.fillAmount`
-(`CurrentShield`/`maxShield`, see [player-roles.md](player-roles.md)'s
-"Shield stat"), move-speed/fire-rate text (read live from
-`PlayerController` every frame — each ship's fixed per-role base times its
-current buff multiplier, e.g. `"Fire Rate: {shotsPerSecond *
-fireRateBuffMultiplier:0.0}/s"`, so the display updates live during
-Support's party-wide Speed Boost — see [player-roles.md](player-roles.md)'s
-"Fixed per-role stats"), and `abilityText` (`"{AbilityName}: {StatusText}"`,
-reading `PlayerAbility`'s public status getters — see
-[player-roles.md](player-roles.md)) up to date. `OnPlayerDied()` grays out
-`shieldBarFill` too, alongside `healthBarFill`. `PartyFrameUI` never
-computes cooldown/buff/shield math itself, only formats what
-`PlayerHealth`/`PlayerAbility` already expose — same "HUD only reads, never
-owns game state" pattern throughout. Only real, data-backed stats are
-shown — no "Attack"/"Defense" labels, since those aren't mechanics that
-exist yet.
+The HUD only reads game state. Nothing here owns or changes gameplay
+values; the one exception is the CPU ability button, which calls the same
+`PlayerAbility.TryUseAbility()` the AI already calls.
 
-Key public fields: `healthBarFill`, `shieldBarFill`, `avatarImage`,
-`nameText`, `roleText`, `healthText`, `moveSpeedText`, `fireRateText`,
-`abilityText`, `abilityButton`. Key public method: `Initialize(GameObject,
-string, bool)`.
+## Left rail: squad
 
-**Manual ability triggering**: `abilityText`'s GameObject also carries a
-`Button` component (`abilityButton`) — the text doubles as its own click
-surface rather than a separate button element, since it already shows
-exactly the state a trigger needs (e.g. `"Taunt: Ready"`). `Initialize()`
-hides/disables this button on the human's own frame (`isHumanPlayer`,
-computed by `PartyFrameManager.cs` from the same `AIController`-presence
-check it already used for the CPU display name) and, for teammate frames,
-wires its `onClick` to that ship's `PlayerAbility.TryUseAbility()` — the
-same public, cooldown-gated method `AIController.cs`'s auto-retry and the
-human `Player`'s own `OnAbility(InputValue)` already call. `Update()`
-additionally drives `abilityButton.interactable` off `CooldownRemaining`
-each frame, so it visibly greys out during cooldown rather than silently
-no-oping on click. See [player-roles.md](player-roles.md)'s
-"PlayerAbility.cs" for the full mechanics writeup, including why the
-`onClick` wiring happens in code rather than as an Inspector persistent
-listener.
+`LeftSidebar` (vertical layout, padding 18/24/20, gap 10) holds the
+`SQUAD · n PILOTS · n CPU` header, `PartyFrame_1..4`, a flexible spacer, and
+the `DamageMeter`.
 
-## PartyFrameManager.cs
+### PartyFrameManager.cs
 
-**Attached to:** `LeftSidebar`.
-**Requires:** `players[]` and `partyFrames[]` — parallel arrays,
-Inspector-dragged (index 0 = `Player`, 1-3 = `Teammate_Tank`/`Teammate_Medic`/
-`Teammate_Support`; matching `PartyFrame_1..4`), matching this project's
-explicit-wiring style (no `FindObjectOfType`).
+**Attached to:** `LeftSidebar`. `players[]` is overwritten with the live
+roster by `PartySetupBootstrap` before any `Awake()`. In `Awake()` it:
 
-In `Awake()`, loops over both arrays, computing a display name per slot
-before calling `Initialize`: whichever ship has no `AIController` component
-(present on all 3 `Teammate_*`, absent from `Player` — the same signal
-[marauder-boss.md](bosses/marauder-boss.md) uses for this distinction) is the human and shows
-`"Player 1"`; every other slot shows `"CPU " + n`, numbered in array order
-(so `"CPU 1"`/`"CPU 2"`/`"CPU 3"` for whichever 3 GameObjects aren't the
-human, independent of their current role). Using `AIController` presence
-rather than a raw index (`i == 0`) keeps this correct even if `players[]`'s
-wiring order ever changed. Using `Awake()` (not `Start()`) matters: Unity
-guarantees every object's `Awake()` finishes before any `Start()` begins,
-so this runs before anything could observe a half-initialized frame.
+- gives each ship a **seat** (`FrameSeat`): humans `P1`, `P2`... and CPUs
+  `CPU 1`, `CPU 2`... in `players[]` order. The first human is the local
+  player. Human vs CPU is `IsHuman(ship)` (its `PlayerInput` is enabled).
+- binds the frames in **role order** (Attacker, Tank, Medic, Support), so a
+  slot never moves; unused frames hide.
+- adds each ship's `PlayerHealth.OnDeath` → `PartyFrameUI.OnPlayerDied` at
+  runtime (spawned ships can't carry a persistent listener to the scene).
+- fills the squad summary text.
 
-Not a real runtime spawner — the 4 slots are fixed, hand-wired Inspector
-references, not a loop that reacts to however many players/teammates
-actually exist. `PartyFrameUI.cs` itself needs no changes to support a
-different player count, since `Initialize(GameObject, string, bool)` only
-does generic `GetComponent<>()` lookups (plus setting the passed-in
-display name and human/AI flag) that work on any player-shaped
-GameObject, human or AI-controlled —
-a "loop over connected players and `Instantiate()`s `PartyFrame.prefab`
-per player" version is the natural extension once local co-op (a variable
-player count) exists; that version would need its own human-vs-AI naming
-scheme too, since the current `AIController`-presence check is unaffected
-by player count.
+`SeatOf(ship)` is read by Game Over's CPU list and the Victory table.
 
-Key public fields: `players[]`, `partyFrames[]`.
+### PartyFrameUI.cs
 
-### DPS line
+The coordinator for one frame. `Initialize(ship, seat)` caches the ship's
+components and paints the seat look; every `Update()` hands live state to
+its child views. Frame looks (`PartyFrameLooks`): local player = solid
+role stroke, glow and a 3 px inset edge; other human = dim role stroke; CPU
+= dashed slate; DOWN = slate.
 
-`dpsText` (`DpsText`, directly below `FireRateText` in `InfoColumn`) shows
-this ship's **real** damage-per-second dealt to the boss —
-`MarauderBoss.GetDamageDealt(ship) / MarauderBoss.CombatElapsed`, read via
-`playerController.bossObject as MarauderBoss` (`bossObject` is already
-wired for contact-damage collision, so no extra Inspector reference was
-needed — see `../architecture.md`'s "Boss-type-agnostic orchestration:
-IBoss"). The cast is `null` for a Halcyon-side ship (no `GetDamageDealt`
-equivalent exists there), which the existing null guard already handles
-for free. It is **null-guarded** in `Update()`, matching `shieldText`, so a
-`PartyFrame` instance predating the line keeps working rather than
-throwing, and reads `0.0` before combat starts (`CombatElapsed` is `0`
-until then).
+| View | Shows |
+| --- | --- |
+| `FrameIdentityView` | Who-tag (`◤ P1` filled / `P2` outlined / `◇ CPU 1` dashed), ship name (`RoleCardText.ShipName`), role, `LOW HP` tag (≤ ⅓ HP), Speed Boost buff chip |
+| `FrameVitalsView` + 2× `PipRowView` | HP as 14 px square pips (amber when low), shield as 9×14 segments (fixed width per point), the n/max numbers, `BROKEN` at 0 shield. A shield over 12 points (the Tank's 20) moves to its own line |
+| `FrameStatsView` | SPD, FIRE (live, with buff multipliers) and real DPS from the boss's `BossDamageLedger`. Values boosted by Speed Boost turn light purple with a `+` (the design's ▲ isn't in the fonts) |
+| `AbilityCellView` | The square sweep around the icon (`AbilityCellState`): solid = ready, filling = active time left, grey track filling back up = cooldown; name, status, seconds, 3 px active bar |
+| `ComboKeysView` | Attacker only: the 1-2-3 keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`) |
 
-Originally showed `PlayerController.CurrentDps` (`fireDamage x
-shotsPerSecond` — a static "if every normal shot lands" ceiling) instead.
-Switched once the Attacker combo landed: combo/Big Shot hits fire through
-`FireBigShot()` with their own computed damage, entirely bypassing
-`fireDamage`, so `CurrentDps` never moved even while the boss was visibly
-taking bonus damage from a correctly-played rotation — indistinguishable
-from the number being broken. `CurrentDps` itself is untouched and still a
-valid stat (see `PlayerRole.cs`'s `RoleStats.Dps`), just no longer surfaced
-here.
+`PipRowView` resizes to the ship's max each time it changes, because
+`PlayerRoleComponent` applies the role's max HP and shield in `Start()`,
+after the frames are bound.
 
-Read it against the `DpsMeter` panel below: this line is one ship's own
-number, the meter is the whole party's damage compared side by side — same
-underlying data, different scope.
+**CPU ability trigger.** On a CPU's frame the ability cell is a button
+(the listener is added in code, since each frame is generic until it knows
+its ship): `CLICK` keycap when ready, white border and `TRIGGER` on hover,
+`WAIT` + lock while cooling. The human's own frame shows no key.
 
-## DpsMeterUI.cs
+**DOWN.** There is no revive, so a dead ship's frame stays in its slot,
+fades to 40% under a hatch and shows a `DOWN` badge; its ability reads
+`OFFLINE`.
 
-**Attached to:** an empty `RectTransform` GameObject under
-`HUDCanvas/LeftSidebar` (sibling of `PartyFrame_1..4`, below them).
-**Requires:** one Inspector reference — `boss`, the scene's `Boss` — exactly
-like `BossPanelUI.cs`. Nothing else needs wiring.
+`AbilityTimes.Read` takes the cooldown remaining and total from
+`PlayerAbility` (`CooldownRemaining`, `CooldownFor(role)`) and the active
+time from Speed Boost / Aura Boost. The Attacker combo reads
+`AttackerComboExpectedSlot`, `AttackerComboBrokenAt` and
+`AttackerComboFinishedAt`.
 
-A Recount-style damage/DPS meter for the boss fight: one bar per ship,
-sorted by damage descending, showing total damage, DPS, and percent of party
-damage. Bars are tinted with the ship's own `PlayerRoleStats.tintColor`, so a
-row reads as the same ship as its party frame and its sprite.
+### DamageMeterView.cs
 
-**Boss damage only.** Minion and wave-enemy damage is deliberately excluded —
-the meter exists to compare each role's contribution to the encounter that
-matters, and counting trash would drown that signal.
+A Recount-style meter: one row per ship (role icon, ship name, a role-color
+bar relative to the top dealer, TOTAL, DPS, %), sorted by damage
+(`DamageMeterRows`, ties keep role order), refreshed every 0.2 s. **Boss
+damage only**: minions and wave enemies are not counted. When the boss
+dies its ledger's clock stops, so the meter freezes as
+`DAMAGE · BOSS DOWN` with a lock icon. Bound by `LevelSetup`'s `onSpawned`.
 
-**Built procedurally**, not from a prefab with Inspector-dragged children —
-the one UI script here that does. Two reasons it's the exception: the row
-count is genuinely variable (1–4, however many ships the party ended up
-with), and a meter is telemetry rather than authored layout, so there's
-nothing to art-direct. It builds its own panel `Image`,
-`VerticalLayoutGroup`, `LayoutElement`, title, and rows in `Build()` on
-`Start()`, and declares its own `preferredHeight` so `LeftSidebar`'s vertical
-layout can size it.
+## Damage tracking: BossDamageLedger
 
-Bar length is anchor-driven (`RectTransform.anchorMax.x`), **not**
-`Image.fillAmount` — `fillAmount` needs a real sprite to behave, and these
-are sprite-less colored rects. Repaints are throttled to `refreshInterval`
-(0.2s) rather than running every frame, since reformatting four rows of text
-per frame is pure string garbage for no readability gain.
+Each boss owns a `BossDamageLedger` (`IBoss.DamageLedger`), a plain class
+holding raw damage per ship plus the fight clock: `Record(source, amount)`,
+`GetDamageDealt(ship)`, `Dps(ship)`, `CombatElapsed`, `BeginCombat()`
+(called in each boss's `OnEnable`, the moment `LevelSequencer` starts the
+fight) and `EndCombat()` (in `Die()`). It outlives the boss GameObject, so
+the HUD keeps reading the final numbers after the kill. `Bullet` passes its
+owner ship into every boss's `TakeDamage`. Warden also records hits on its
+arms, since the arms are the fight's only target while the core is
+shielded. Damage stays separate from Marauder's aggro table, because a
+taunt overwrites aggro.
 
-**Data source:** `MarauderBoss.GetDamageDealt(GameObject)` and
-`MarauderBoss.CombatElapsed` (see
-[marauder-boss.md](bosses/marauder-boss.md)'s "Damage tracking"). The DPS denominator is
-time since boss combat began, not since the scene loaded.
+## Right rail: boss
 
-When the boss dies its GameObject is destroyed, so the meter freezes on the
-final numbers and retitles to `DAMAGE · BOSS DOWN` rather than blanking —
-the end-of-fight totals are the point of having one.
+`RightSidebar` (padding 18/24/20, gap 12) holds the `BOSS` label, the
+`BossPanel`, a spacer and the `ESC  START  PAUSE` key hint.
 
-Key public fields: `boss`, `titleHeight`/`rowHeight`/`rowSpacing`/`padding`,
-`titleFontSize`/`rowFontSize`, `refreshInterval`, and the color set
-(`panelColor`/`titleColor`/`barTrackColor`/`rowTextColor`/`fallbackBarColor`),
-all `PaletteSwatch` palette tokens since Session 54 (see [ui-kit.md](ui-kit.md)).
+### BossPanelView.cs
 
-## Scene wiring
+The one shared panel. It only draws; each boss has a **feed** that reads the
+boss every frame and pushes plain states into it. Hidden until the
+boss-entry callout leaves (`Reveal()`, also on `BossCombat`).
 
-### Main Camera
+- **Header** (`BossHeaderView`): boss mark, fight kind (`RAID · 01`,
+  `POSITIONING · 02`, `COVERAGE · 03`), name, `PHASE n`, `SHIELDED` tag, HP
+  number / % / 28 px bar. While shielded the bar is hatched with
+  `CORE SHIELDED · HP CAN'T DROP`. `DEFEATED` banner on the kill.
+- **Warnings** (`WarningBarView`, up to 2): solid boss color, ink text,
+  hazard edge, draining base line, optional target role chip. The only
+  solid boss-color fill on the rail, so it can't be mistaken for a
+  cooldown. Flips to an outlined bar once the attack has fired.
+- **OPENING!** (white, the only good-news row), **aggro** (`AggroRowView`:
+  role chip, ship, `TAUNTED`), **arms** (`ArmCardView`, Warden: NOT ACTIVE /
+  IDLE / LOCK + role / DOWN n s), **cooldown tiles** (`CooldownTileView`,
+  3-up: radial ring filling in the boss color, `READY`, solid `NOW` disc
+  while the attack runs).
 
-| Component               | Setting                                        |
-| ------------------------ | ------------------------------------------------- |
-| Camera                   | Projection: Orthographic, Size: 5                  |
-| Tag                      | `MainCamera` (required — `Camera.main` depends on it) |
-| **AspectRatioFitter.cs** | targetAspectWidth: 9, targetAspectHeight: 16       |
+Colors come from `BossPalette` (signature / dim / bg per boss).
 
-### HUDCanvas
+| Feed | Warnings | Other rows | Tiles |
+| --- | --- | --- | --- |
+| `MarauderPanelFeed` | `MISSILE LOCK-ON` ▸ target, then `MISSILE FIRED` while it lingers; `BARRAGE · FAN/RING/SPIRAL` during the wind-up | Aggro on `CurrentTarget` (TAUNTED when it's the Tank) | Shockwave, Missile, Barrage |
+| `HalcyonPanelFeed` | `SURGE` while it telegraphs | OPENING! while the Surge is active | Surge, Static Field |
+| `WardenPanelFeed` | `INCOMING: LEFT/RIGHT/TOP`, `BIG SHOT!` | SHIELDED header, taunt window as aggro, arms A/B/C | Shockwave, Big Shot, Lockdown |
 
-Render Mode: **Screen Space - Overlay**. Spans the full window regardless of
-the pillarbox. Used for sidebar content visible outside the gameplay area.
+Feeds time warnings themselves (`WarningClock`: how long a telegraph flag
+has been on, against the mechanic's public `telegraphTime`) and learn each
+cooldown's total from the largest remaining time seen (`CooldownClock`,
+via `CooldownTileFeed`). So the boss mechanics needed no new timers.
 
-| Component               | Key inspector values                                                     |
-| ------------------------ | ---------------------------------------------------------------------------- |
-| Canvas                   | Render Mode: Screen Space - Overlay                                          |
-| Canvas Scaler            | UI Scale Mode: Constant Pixel Size (scale factor 1) — matters for the pixel-snapping note above: 1 canvas unit = 1 real screen pixel, no separate scale factor to account for |
-| **HUDSidebarFitter.cs**  | aspectFitter: drag Main Camera here, leftSidebar/rightSidebar: sidebar rect transforms |
-| **PartyFrameManager.cs** | `players[]`: `Player`, `Teammate_Tank`, `Teammate_Medic`, `Teammate_Support`; `partyFrames[]`: `PartyFrame_1..4`'s `PartyFrameUI` (matching index order) |
+## Playfield callouts
 
-**Children** (direct children of `HUDCanvas`, siblings of each other — there
-is no `RightSidebar` wrapper):
-- **LeftSidebar** — Vertical Layout Group, and also carries
-  `PartyFrameManager.cs` (table above). Contains **`PartyFrame_1..4`** — 4
-  instances of `PartyFrame.prefab` (see Prefabs below) — and, below them,
-  **`DpsMeter`**, an otherwise-empty GameObject carrying `DpsMeterUI.cs`
-  (see above), which builds its own contents at runtime. See
-  [../unity-notes.md](../unity-notes.md) for Layout Group configuration
-  details.
-- **BossPanel** — the boss's real HP bar, phase, current target,
-  guided-missile warning, and shockwave/guided-missile cooldowns, driven by
-  `BossPanelUI.cs`. Full reference: [marauder-boss.md](bosses/marauder-boss.md).
-- **GameOverPanel** — full-rect dark overlay + "Game Over" text + Restart/
-  Change Roles buttons, `GameOverUI.cs` attached. Hidden by default, shown
-  once every human-controlled ship is dead. `GameOverUI.partyFrameManager`
-  is dragged to `LeftSidebar`'s `PartyFrameManager` in every level scene,
-  and it reads the live roster from there. Lives here rather than `GameplayCanvas`
-  because it needs to cover the pillarbox bars too. See
-  [combat.md](combat.md#gameoverpanel) for the death/restart flow.
-- **VictoryPanel** — mirrors `GameOverPanel`, shown on each level's boss
-  `OnDefeated` (`MarauderBoss`/`HalcyonBoss`/`WardenBoss`, a persistent
-  `VictoryUI.Show` listener wired in each level scene) via `VictoryUI.cs`.
-  A new level's boss needs this listener wired too. See [player-roles.md](player-roles.md)'s "Role Select
-  scene".
+`LevelCallouts` (on `GameplayCanvas`) polls `LevelSequencer.CurrentState`
+and plays `CalloutBannerView`: a band in the upper third with kicker /
+title / sub, no backing panel. Timings from the design (`CalloutSpecs`):
 
-`GameOverUI.victoryPanelRoot` is dragged to `VictoryPanel` and
-`VictoryUI.gameOverPanelRoot` is dragged to `GameOverPanel` — a
-mutual-exclusion guard so the 3 CPU teammates defeating the boss after the
-human `Player` has already died (they keep fighting; only the human's death
-ends the test, see [marauder-boss.md](bosses/marauder-boss.md)'s "Death handling") can't pop
-`VictoryPanel` on top of an already-showing `GameOverPanel`, or vice versa.
-Each `Show()` early-returns before activating its own panel if the other's
-is already active — a true no-op, not a flash-then-hide. Boss combat itself
-is unaffected; it still resolves and the `Boss` GameObject still gets
-destroyed normally either way, only the end-screen popup is guarded.
+| Callout | When | Look | In / hold / out |
+| --- | --- | --- | --- |
+| `STAGE 01 · WAVE` | `MinionPhase1` | 1 px cyan lines | 160 / 1200 / 240 ms |
+| `WARNING · <BOSS> · <kind>` | `BossEntrance` | Hazard bands in the boss color, scrolling at 40 px/s | 200 / 1800 / 300 ms |
+| `<BOSS> · PHASE 2` | the boss's `OnPhase2` | Lines in the boss color (Warden: `SHIELDED`) | 120 / 900 / 200 ms |
 
-### Prefabs
+## Overlays
 
-**`Assets/Prefabs/PartyFrame.prefab`** — the party frame, avatar + role +
-live stats, `PartyFrameUI.cs` attached. `PartyFrame_1..4` are all instances
-of it (see `PartyFrameManager.cs` above). Root `Image` is a solid dark
-panel (`RGBA(0.05, 0.05, 0.08, 0.85)`, the palette's `HudPanel` token at 85%), consistent with the project's
-cyberpunk/dark-neon aesthetic (`../overview.md`).
+Full screen on `HUDCanvas`, covering both rails. Each uses the kit's
+`MenuButton` (primary LG 64 + secondary MD 52) and `HintBar`, and
+`OverlayFocus` puts focus on the first button.
 
-### GameplayCanvas
+- **PausePanel** (`PauseUI` on `PauseController`): 86% backdrop,
+  `<BOSS> · <kind>` kicker, PAUSED, Resume / Restart / Change Roles / Quit to
+  Main Menu.
+- **GameOverPanel** (`GameOverUI`): 80% backdrop so the CPUs can be seen
+  still fighting, `GAME OVER` / `ALL PILOTS DOWN`, the
+  `CPU STILL FIGHTING` list (`CpuStillFightingView`, hidden when no CPU is
+  alive), Restart / Change Roles.
+- **VictoryPanel** (`VictoryUI`): 90% backdrop, `VICTORY` in the boss color,
+  `<BOSS> DEFEATED`, the per-ship summary (`VictorySummaryView`: ship,
+  pilot, total, DPS, %), Restart / Change Roles.
 
-Render Mode: **Screen Space - Camera**, Camera: Main Camera. Confined to the
-pillarboxed viewport. Reserved for in-game overlay UI that should stay
-within the gameplay area (health bars above ships, floating damage numbers,
-etc.). Currently empty — no content attached yet.
+`BossNameLabel` fills the boss name into the kickers and titles, bound by
+`onSpawned`. The overlays' mutual-exclusion guards are unchanged.
+
+## Scene wiring (`Level.unity`)
+
+`LevelSetup.bosses[]`, per level:
+
+| Event | Listeners |
+| --- | --- |
+| `onSpawned` | that boss's feed `Bind`, `DamageMeterView.Bind`, `LevelCallouts.Bind`, the three `BossNameLabel.Bind` |
+| `onPhase2` | unchanged (Marauder: `EnemySpawner.StartSpawning`) |
+| `onDefeated` | that boss's feed `ShowDefeated`, `VictoryUI.Show` |
+
+`GameOverUI.partyFrameManager` → `LeftSidebar`. It was unset before Session
+57, so Game Over never triggered.
 
 ## Known Editor-only quirk: Scene view canvas visualization
 
 Screen Space - Overlay canvases (like `HUDCanvas`) render as an oversized
-flat plane near world origin in **Scene view only** — a known Unity editor
-quirk from visualizing screen-space UI and world-space gameplay objects in
-one 3D preview. Doesn't affect Game view or the actual build. Workflow fix:
-toggle the eye icon next to `HUDCanvas` in the Hierarchy to hide it from
-Scene view while doing world-space/gameplay work; toggle back on for UI
-work. Isolation View (crosshair icon in Scene view toolbar) works too for
-one-off focus.
+flat plane near world origin in **Scene view only**. Toggle `HUDCanvas`'s
+eye icon in the Hierarchy while doing world-space work.
 
 ## Not yet built
 
-- No runtime spawner for party frames — `PartyFrameManager.players[]`/
-  `partyFrames[]` are 4 fixed, hand-wired slots (`Player` + 3 `Teammate_*`),
-  not a "loop over however many players/teammates actually exist and
-  `Instantiate()`" spawner. Deferred until the player/teammate count needs
-  to vary at runtime (local co-op, or a different minion/teammate count).
-- Avatar is an untinted-sprite placeholder box (tinted to role color) — no
-  ship art exists yet.
+- The phone layout (top strip, squad chips) and the design's PLANNED deck
+  parts.
+- Live 3D ship portraits on the frames (they show the role icon).
+- The "in Medic aura" buff chip: nothing tracks which ships an aura is
+  reaching.
+- The PC rails sliding in with the level (`ui-kit.md`'s transitions).

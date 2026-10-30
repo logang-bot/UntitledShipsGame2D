@@ -74,6 +74,7 @@ public class WardenBoss : MonoBehaviour, IBoss
     /// </summary>
     void OnEnable()
     {
+        DamageLedger.BeginCombat();
         foreach (Behaviour mechanic in mechanics)
             if (mechanic != null) mechanic.enabled = true;
     }
@@ -98,10 +99,17 @@ public class WardenBoss : MonoBehaviour, IBoss
         health.TakeDamage(Mathf.RoundToInt(bulletDamage * bodyContactDamageMultiplier));
     }
 
-    public void TakeDamage(float amount)
+    /// <summary>
+    /// Arm hits are recorded here too (see WardenArmHealth.TakeDamage): while
+    /// the core is shielded the arms are the fight's only damage target.
+    /// </summary>
+    public BossDamageLedger DamageLedger { get; } = new BossDamageLedger();
+
+    public void TakeDamage(float amount, GameObject source = null)
     {
         if (IsShielded) return;
         CurrentHealth -= Mathf.RoundToInt(amount);
+        DamageLedger.Record(source, amount);
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2) EnterPhase2();
         if (CurrentHealth <= 0) Die();
     }
@@ -138,6 +146,7 @@ public class WardenBoss : MonoBehaviour, IBoss
 
     private void Die()
     {
+        DamageLedger.EndCombat();
         OnDefeated?.Invoke();
         Destroy(gameObject);
     }

@@ -4,8 +4,10 @@ The shared look of the pre-fight menus (art Phase 7), built from the Claude
 Design "Pre-Fight Menus" design (`Pre-Fight Menus.dc.html`, with its
 `Menu Button` and `Hint Bar` components). PC layouts only (1600×900
 reference); the mobile layouts wait for the deferred phone work. The
-in-level HUD (Phase 8) will reuse the same kit. For how the screens load
-and transition, see [scene-flow.md](scene-flow.md).
+in-level HUD (Phase 8, Session 57) reuses the same kit; its own parts are
+listed under "In-level HUD parts" below and documented in
+[hud-layout.md](hud-layout.md). For how the screens load and transition,
+see [scene-flow.md](scene-flow.md).
 
 ## One palette: `NeonPalette`
 
@@ -24,7 +26,11 @@ Token groups: UI neutrals (`Bg`, `Panel`, `Line`/`Line2`, `Slate`, `Muted`,
 `Text`…`Text5`, `TextSoft`, `Ink`), notice amber, boss magenta and its
 shades, the four roles with dim/bg shades, the three boss signature colors,
 gameplay colors (shockwave, static field, explosive tint), the old HUD
-greys, and kit shades (grid line, vignette, hatch, slot, bar track).
+greys, and kit shades (grid line, vignette, hatch, slot, bar track). The
+HUD added `Shield` (`#9CCBFF`), `SupportLight` (`#C79BF7`, a boosted stat)
+and dim/bg shades for Halcyon and Warden (Marauder's are `BossDim` /
+`BossBg`). `BossPalette` is the boss-side twin of `RolePalette`: each boss's
+signature / dim / bg tokens and glow alpha, plus its panel frame look.
 
 **Known exception:** the ship model materials (`Assets/Art/Ships/Materials/`,
 e.g. `edge_FF8A3D`) carry their own emission colors from the GLB import.
@@ -80,6 +86,20 @@ camera's bloom.
 | `CardFocusVisual`, `PointerClickEvent` | Focus outline/tag for a selectable card; a click handler for a non-selectable element (Lobby's locked ONLINE card). |
 | `MenuHotkey` | Screen shortcut on any device (B/Esc = Back, gamepad Start = Start), built like `PauseUI`'s standalone `InputAction`. |
 
+### In-level HUD parts (`Assets/Prefabs/UI/HUD/`)
+
+| Prefab | Use |
+| --- | --- |
+| `PartyFrame` | Squad frame: who-tag, HP pips, shield segments, stats, ability sweep, Attacker combo, DOWN state. Looks in `PartyFrameLooks` |
+| `DamageMeter` / `VictorySummary` | Damage meter rows (`DamageMeterRowView`), normal and large |
+| `BossPanel` | Header, warning bars, OPENING!, aggro, arm cards, cooldown tiles, and the three boss feeds |
+| `CalloutBanner` | Playfield callout band |
+
+Their icons and sprites (`Assets/Art/UI/HUD/icons`, `sprites`) were baked
+from the HUD design's SVG symbols at 2×, white, 200 px per unit, same
+sizes and 9-slice borders as the design's asset ZIP. `RoleChipView` is the
+role-icon chip the boss panel uses for targets.
+
 Role Select and Level Select views: `RoleCardView` (+ `StatBarView`,
 `AbilityLineView`), `RoleTileView`, `SquadChipView`/`SquadStripView`,
 `LevelCardView`. Data: `RoleCardText`, `RoleStatScale` (stat bars on one
@@ -117,4 +137,5 @@ From the design's "Transitions" section, in `MenuScreen` / `MenuTween`
   cuts through black (120 ms) into `Level`.
 
 Not built from the design: the 80 ms focus-glow fade-in, and the PC rails
-sliding in with the level HUD.
+sliding in with the level HUD (the boss panel only fades in as the
+boss-entry callout leaves).

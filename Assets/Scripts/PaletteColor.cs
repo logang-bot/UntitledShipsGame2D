@@ -77,4 +77,10 @@ public enum PaletteColor
     SurgeTelegraphText = 99,
     WardenArmDown = 100,
     WardenBigShotTelegraph = 101,
+    Shield = 102,
+    SupportLight = 103,
+    HalcyonDim = 104,
+    HalcyonBg = 105,
+    WardenDim = 106,
+    WardenBg = 107,
 }

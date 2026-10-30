@@ -144,7 +144,7 @@ public class MarauderBoss : MonoBehaviour, IBoss
         if (minionSpawner != null) minionSpawner.enabled = enableMinions;
         if (enableMovementPattern) movement.OnEnable();
 
-        aggroSystem.StartCombatClock();
+        DamageLedger.BeginCombat();
 
         float graceUntil = Time.time + postEntranceGracePeriod;
         nextFireTime = graceUntil;
@@ -216,6 +216,7 @@ public class MarauderBoss : MonoBehaviour, IBoss
     {
         CurrentHealth -= Mathf.RoundToInt(amount);
         aggroSystem.RegisterDamage(amount, source);
+        DamageLedger.Record(source, amount);
 
         if (!IsPhase2 && CurrentHealth <= maxHealth / 2)
         {
@@ -233,11 +234,14 @@ public class MarauderBoss : MonoBehaviour, IBoss
 
     void Die()
     {
+        DamageLedger.EndCombat();
         OnDefeated?.Invoke();
         Destroy(gameObject);
     }
 
-    public float CombatElapsed => aggroSystem.CombatElapsed;
+    public BossDamageLedger DamageLedger { get; } = new BossDamageLedger();
 
-    public float GetDamageDealt(GameObject source) => aggroSystem.GetDamageDealt(source);
+    public float CombatElapsed => DamageLedger.CombatElapsed;
+
+    public float GetDamageDealt(GameObject source) => DamageLedger.GetDamageDealt(source);
 }

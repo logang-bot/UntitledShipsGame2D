@@ -108,6 +108,8 @@ public class PlayerAbility : MonoBehaviour
     // read by the HUD and by AIController so Attacker bots always feed
     // TryComboAttack() the right slot.
     public int AttackerComboExpectedSlot => attacker.ExpectedSlot;
+    public float AttackerComboBrokenAt => attacker.LastBreakTime;
+    public float AttackerComboFinishedAt => attacker.LastFinishTime;
 
     public string AbilityName => PlayerAbilityLabels.NameFor(roleComponent.role);
     public string StatusText => PlayerAbilityLabels.StatusFor(this, roleComponent.role);
@@ -156,7 +158,7 @@ public class PlayerAbility : MonoBehaviour
     /// spawn (see Start()) and to reset it each time TryUseAbility() actually
     /// triggers an effect.
     /// </summary>
-    float CooldownFor(PlayerRole role)
+    public float CooldownFor(PlayerRole role)
     {
         switch (role)
         {

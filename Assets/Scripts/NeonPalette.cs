@@ -85,6 +85,13 @@ public static class NeonPalette
         { PaletteColor.SurgeTelegraphText, Hex(0xFFE64D) },
         { PaletteColor.WardenArmDown, Hex(0x595959) },
         { PaletteColor.WardenBigShotTelegraph, Hex(0xFF5926) },
+
+        { PaletteColor.Shield, Hex(0x9CCBFF) },
+        { PaletteColor.SupportLight, Hex(0xC79BF7) },
+        { PaletteColor.HalcyonDim, Hex(0x3D3510) },
+        { PaletteColor.HalcyonBg, Hex(0x14120A) },
+        { PaletteColor.WardenDim, Hex(0x1C2552) },
+        { PaletteColor.WardenBg, Hex(0x0A0D1E) },
     };
 
     public static Color Get(PaletteColor key) => colors[key];

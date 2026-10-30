@@ -49,13 +49,15 @@ Inspector-wired events reaching scene objects the prefab can't reference:
 
 | Entry | `onSpawned` | `onPhase2` | `onDefeated` |
 |---|---|---|---|
-| Level 1 Marauder | `BossPanel_Marauder` `SetActive(true)` + `BossPanelUI.Bind` | `EnemySpawner.StartSpawning` | `BossPanelUI.ShowDefeated`, `VictoryUI.Show` |
-| Level 2 Halcyon | `BossPanel_Halcyon` `SetActive(true)` + `HalcyonBossPanelUI.Bind` | — | `HalcyonBossPanelUI.ShowDefeated`, `VictoryUI.Show` |
-| Level 3 Warden | `BossPanel_Warden` `SetActive(true)` + `WardenBossPanelUI.Bind` | — | `WardenBossPanelUI.ShowDefeated`, `VictoryUI.Show` |
+| Level 1 Marauder | `MarauderPanelFeed.Bind` + the shared HUD binds (below) | `EnemySpawner.StartSpawning` | `MarauderPanelFeed.ShowDefeated`, `VictoryUI.Show` |
+| Level 2 Halcyon | `HalcyonPanelFeed.Bind` + the shared HUD binds | — | `HalcyonPanelFeed.ShowDefeated`, `VictoryUI.Show` |
+| Level 3 Warden | `WardenPanelFeed.Bind` + the shared HUD binds | — | `WardenPanelFeed.ShowDefeated`, `VictoryUI.Show` |
 
-The three boss panels sit side by side under `HUDCanvas`, all inactive
-until their entry's `onSpawned`. Each panel's `Bind(GameObject)` fills its
-typed fields from the spawned boss with `GetComponent`.
+Since Session 57 there is one shared `BossPanel` on the right rail, with
+one feed per boss on it; each feed's `Bind(GameObject)` reads its boss with
+`GetComponent`. Every entry's `onSpawned` also binds the damage meter
+(`DamageMeterView.Bind`), the callouts (`LevelCallouts.Bind`) and the
+overlays' `BossNameLabel`s. See [hud-layout.md](hud-layout.md).
 
 `BossEvents.cs` is the one place that switches on the concrete boss type
 (`Phase2`/`Defeated` events, `AssignShips` — Marauder `targets`, Halcyon's
@@ -306,7 +308,7 @@ itself is attached to.
 | `JoinLobby` | `Canvas` (`JoinLobbyUI`, `JoinDeviceInput`, `MenuScreen`; `MenuHeader`, `Content` [title row + counter, 4 `JoinSlotView`s], `Footer` [BACK, CONTINUE, hints]), `PlayerInputManager` |
 | `RoleSelect` | `Canvas` (`RoleSelectUI`, `MenuScreen`; `MenuHeader`, `SinglePickerPanel` [4 `RoleCardView`s, BACK, START, `BackHotkey`, `StartGameHotkey`], `MultiPickerPanel` [`RoleSelectMultiUI`, squad strip, `RowContainer` of `RolePickerRow.prefab` instances, BACK, START, hotkeys]) |
 | `LevelSelect` | `Canvas` (`LevelSelectUI`, `MenuScreen`; `MenuHeader`, `Content` [title row + squad chips, 3 `LevelCardView`s], `Footer` [BACK, hints], `Blackout`, `BackHotkey`) |
-| `Level` | `LevelSetup` (three `BossEntry` rows — see "Level setup" above); `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons) and `BossPanel_Marauder`/`BossPanel_Halcyon`/`BossPanel_Warden`; standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`: the 4 scene ships plus the dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` (its `bossObject` is set at runtime by `LevelSetup`); `Global Volume` (Bloom, `Assets/Settings/LevelVolumeProfile.asset`) |
+| `Level` | `LevelSetup` (three `BossEntry` rows — see "Level setup" above); `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons), `LeftSidebar` (party frames + damage meter) and `RightSidebar/BossPanel` (one shared panel with the three boss feeds — see [hud-layout.md](hud-layout.md)); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`: the 4 scene ships plus the dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` (its `bossObject` is set at runtime by `LevelSetup`); `Global Volume` (Bloom, `Assets/Settings/LevelVolumeProfile.asset`) |
 
 ## Not yet built
 
