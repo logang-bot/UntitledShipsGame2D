@@ -155,7 +155,7 @@ public class LevelSequencer : MonoBehaviour
 
     // Disabling only PlayerInput/AIController isn't enough to actually stop
     // a ship: PlayerController.HandleMovement() runs every FixedUpdate and
-    // its held-fire check runs every Update regardless of those driver
+    // its auto-fire runs every Update regardless of those driver
     // components' enabled state. So: disable the drivers first (blocks new
     // input), clear any stale input state, then disable PlayerController
     // itself last so nothing keeps acting on old values. Unfreeze in
@@ -177,7 +177,6 @@ public class LevelSequencer : MonoBehaviour
                 if (pi != null) pi.enabled = false;
                 if (ai != null) ai.enabled = false;
                 pc.SetMoveDirection(Vector2.zero);
-                pc.SetFiring(false);
                 pc.ResetVelocity(); // so the next unfreeze ramps up from rest, not leftover velocity
                 pc.enabled = false;
             }

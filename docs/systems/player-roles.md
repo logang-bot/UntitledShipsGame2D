@@ -138,22 +138,9 @@ blocks re-activation until the current role's cooldown elapses.
   See [combat.md](combat.md) for why recoil has to be a decaying velocity
   blended into `HandleMovement()` rather than a physics impulse
   (`MovePosition` overwrites plain `AddForce` every `FixedUpdate`).
-- **Attacker — 3-attack combo**: separate from Big Shot above, bound to
-  three dedicated inputs (`Combo1`/`Combo2`/`Combo3` — keyboard `1`/`2`/`3`,
-  gamepad North/L1/R1). `PlayerAbilityAttacker` tracks a single
-  `expectedSlot` (1→2→3→1…, the fixed "correct rotation"). Landing the
-  expected slot fires `FireBigShot` with that step's damage/width
-  multiplier (`comboStepDamageMultipliers`/`comboStepWidthMultipliers` —
-  escalating toward a finisher bonus on step 3) and advances `expectedSlot`;
-  landing the wrong slot ("bad execution") fires at
-  `comboBreakDamageMultiplier` (0.5x) instead and resets `expectedSlot` back
-  to 1, rather than dealing no damage at all. Each slot has its own short
-  `comboAttackCooldown` (0.5s) — independent of `bigShotCooldown` — so the
-  gate is "don't mash one key", not the sequencing itself; the sequencing is
-  entirely on the player picking the right key. `AIController` always feeds
-  `TryComboAttack()` the current `AttackerComboExpectedSlot`, so Attacker
-  bots play a perfect rotation every time — there's no "bad execution" mode
-  for bots yet, only for human input.
+- **Attacker — no manual attacks on this branch**: Big Shot is off via
+  `attackerBigShotEnabled`, and the 3-attack combo is removed. See
+  [roguelike-progression.md](roguelike-progression.md).
 
 Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
 (3), `shieldArcHeight` (0.2), `shieldArcYOffset` (0.3); `allies[]`, `auraRadius` (0.5),
@@ -162,10 +149,7 @@ Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
 (4s), `auraBoostCooldown` (10s), `auraPulseInterval` (0.25s), `healFlashColor`; `speedBoostCooldown`
 (15s), `speedBoostDuration` (4s), `speedBoostMultiplier` (1.5); `bigShotCooldown` (3s),
 `bigShotWidthMultiplier` (3), `bigShotDamageMultiplier` (2), `recoilForce`
-(6); `comboAttackCooldown` (0.5s), `comboStepDamageMultipliers` (`1, 1.3,
-1.8`), `comboStepWidthMultipliers` (`1, 1.5, 2.5`),
-`comboBreakDamageMultiplier` (0.5). Key public methods: `OnAbility(InputValue)`,
-`OnCombo1/2/3(InputValue)`.
+(6), `attackerBigShotEnabled` (false). Key public methods: `OnAbility(InputValue)`.
 
 **Ability effects (Combat FX).** `ShipCombatFx` on `Ship.prefab` holds every
 role's art: after a successful `TryUseAbility()`, `PlayerAbility` calls
@@ -188,10 +172,7 @@ cooldown math.
 point — `TryUseAbility()` — so `AIController.cs` (see [marauder-boss.md](bosses/marauder-boss.md))
 can trigger a CPU teammate's ability directly, through the exact same
 cooldown gate and role-dispatch switch as the human player. The `Trigger*`
-methods stay private. `OnCombo1/2/3(InputValue)` follow the same pattern
-via `TryComboAttack(int slot)`, which no-ops outside the Attacker role since
-every ship's `PlayerAbility` builds all four role helpers regardless of its
-actual role (see `CreateHelpers()`).
+methods stay private.
 
 **Manual teammate-ability triggering from the party frame**: each
 `PartyFrame_N`'s `AbilityText` line (see [hud-layout.md](hud-layout.md))

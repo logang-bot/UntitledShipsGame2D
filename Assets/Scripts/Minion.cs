@@ -138,6 +138,7 @@ public class Minion : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
+        MobKills.Report();
         if (type == MinionType.Explosive) SpawnFragments();
         if (TryGetComponent(out HostileLook look)) look.SpawnDeath(type == MinionType.Explosive);
         Destroy(gameObject);

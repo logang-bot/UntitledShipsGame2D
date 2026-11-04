@@ -101,7 +101,7 @@ role stroke, glow and a 3 px inset edge; other human = dim role stroke; CPU
 | `FrameVitalsView` + 2× `PipRowView` | HP as 14 px square pips (amber when low), shield as 9×14 segments (fixed width per point), the n/max numbers, `BROKEN` at 0 shield. A shield over 12 points (the Tank's 20) moves to its own line |
 | `FrameStatsView` | SPD, FIRE (live, with buff multipliers) and real DPS from the boss's `BossDamageLedger`. Values boosted by Speed Boost turn light purple with a `+` (the design's ▲ isn't in the fonts) |
 | `AbilityCellView` | The square sweep around the icon (`AbilityCellState`): solid = ready, filling = active time left, grey track filling back up = cooldown; name, status, seconds, 3 px active bar |
-| `ComboKeysView` | Attacker only: the 1-2-3 keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`) |
+| `ComboKeysView` | Attacker only: the 1-2-3 keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`). Hidden on this branch, where the combo is removed (see `roguelike-progression.md`); the view and `ComboDisplay` stay for when it returns |
 
 `PipRowView` resizes to the ship's max each time it changes, because
 `PlayerRoleComponent` applies the role's max HP and shield in `Start()`,
@@ -118,9 +118,10 @@ fades to 40% under a hatch and shows a `DOWN` badge; its ability reads
 
 `AbilityTimes.Read` takes the cooldown remaining and total from
 `PlayerAbility` (`CooldownRemaining`, `CooldownFor(role)`) and the active
-time from Speed Boost / Aura Boost. The Attacker combo reads
-`AttackerComboExpectedSlot`, `AttackerComboBrokenAt` and
-`AttackerComboFinishedAt`.
+time from Speed Boost / Aura Boost. A ship whose ability is switched off
+(`PlayerAbility.HasAbility` false: the Attacker while
+`attackerBigShotEnabled` is off) reads as down, so its cell shows `OFFLINE`
+and its name reads `ABILITY`.
 
 ### DamageMeterView.cs
 

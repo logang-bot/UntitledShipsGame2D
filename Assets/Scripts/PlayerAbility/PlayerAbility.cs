@@ -53,29 +53,8 @@ public class PlayerAbility : MonoBehaviour
     /// <summary>Live multiplier of the caster's current fireDamage, not a flat number.</summary>
     public float bigShotDamageMultiplier = 2f;
     public float recoilForce = 6f;
-
-    [Header("Attacker - Combo")]
-    /// <summary>
-    /// Per-slot cooldown on Combo1/2/3 - independent of bigShotCooldown
-    /// above. This is what stops mashing a single key instead of actually
-    /// playing the 1->2->3 rotation, not a timing/order requirement.
-    /// </summary>
-    public float comboAttackCooldown = 0.5f;
-    /// <summary>
-    /// Damage multiplier for each step of a correctly-played rotation, index
-    /// 0 = combo slot 1. The 3rd entry is the finisher bonus for actually
-    /// completing the sequence. Live multiplier of the caster's current
-    /// fireDamage, same convention as bigShotDamageMultiplier.
-    /// </summary>
-    public float[] comboStepDamageMultipliers = { 1f, 1.3f, 1.8f };
-    /// <summary>Bullet width per correct combo step, purely visual escalation toward the finisher.</summary>
-    public float[] comboStepWidthMultipliers = { 1f, 1.5f, 2.5f };
-    /// <summary>
-    /// Applied instead of the step multiplier when the wrong slot is
-    /// pressed - the "bad execution" penalty. Deliberately still deals some
-    /// damage rather than nothing, and resets the rotation to slot 1.
-    /// </summary>
-    public float comboBreakDamageMultiplier = 0.5f;
+    /// <summary>Off while testing the automatic, level-up driven Attacker - see docs/systems/roguelike-progression.md.</summary>
+    public bool attackerBigShotEnabled = false;
 
     [Header("Tank - Shield Arc")]
     /// <summary>Arc width = Tank's own collider width x this.</summary>
@@ -104,14 +83,10 @@ public class PlayerAbility : MonoBehaviour
     public PlayerController PlayerController => playerController;
     public ShipCombatFx Fx => fx;
     public Color TintColor => roleComponent.Stats.tintColor;
-    // Which combo key (1/2/3) continues the rotation correctly right now -
-    // read by the HUD and by AIController so Attacker bots always feed
-    // TryComboAttack() the right slot.
-    public int AttackerComboExpectedSlot => attacker.ExpectedSlot;
-    public float AttackerComboBrokenAt => attacker.LastBreakTime;
-    public float AttackerComboFinishedAt => attacker.LastFinishTime;
+    /// <summary>False only for an Attacker while Big Shot is switched off (attackerBigShotEnabled).</summary>
+    public bool HasAbility => roleComponent.role != PlayerRole.Attacker || attackerBigShotEnabled;
 
-    public string AbilityName => PlayerAbilityLabels.NameFor(roleComponent.role);
+    public string AbilityName => PlayerAbilityLabels.NameFor(roleComponent.role, HasAbility);
     public string StatusText => PlayerAbilityLabels.StatusFor(this, roleComponent.role);
 
     void Awake()
@@ -195,6 +170,7 @@ public class PlayerAbility : MonoBehaviour
     /// </summary>
     public void TryUseAbility()
     {
+        if (!HasAbility) return;
         if (Time.time < nextAbilityTime) return;
         nextAbilityTime = Time.time + CooldownFor(roleComponent.role);
         TriggerRoleAbility();
@@ -210,33 +186,5 @@ public class PlayerAbility : MonoBehaviour
             case PlayerRole.Support: support.Trigger(); break;
             case PlayerRole.Attacker: attacker.Trigger(); break;
         }
-    }
-
-    public void OnCombo1(InputValue value)
-    {
-        if (value.isPressed) TryComboAttack(1);
-    }
-
-    public void OnCombo2(InputValue value)
-    {
-        if (value.isPressed) TryComboAttack(2);
-    }
-
-    public void OnCombo3(InputValue value)
-    {
-        if (value.isPressed) TryComboAttack(3);
-    }
-
-    /// <summary>
-    /// Non-input entry point so AIController can drive the Attacker's combo
-    /// directly, same pattern as TryUseAbility(). Attacker-only: the other
-    /// roles' PlayerAbility instances still create an (unused) attacker
-    /// helper - see CreateHelpers() - so this needs its own role guard
-    /// rather than relying on the switch in TryUseAbility().
-    /// </summary>
-    public void TryComboAttack(int slot)
-    {
-        if (roleComponent.role != PlayerRole.Attacker) return;
-        attacker.TryComboAttack(slot);
     }
 }

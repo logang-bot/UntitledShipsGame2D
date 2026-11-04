@@ -72,7 +72,13 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   a fixed portrait viewport. The ship has a fixed orientation (no rotation,
   Galaga-style) and always fires straight up. See
   [systems/movement.md](systems/movement.md).
-- **Shooting & enemies** — hold Fire to auto-fire. Enemies spawn in waves
+- **Roguelike progression (Attacker test)** — a human Attacker earns XP from
+  every mob the party kills. Each of the 5 level-ups freezes the game for a
+  pick of 3 stacking cards: Attack Damage, Crit Strike (a red shot every 3s)
+  and Multishot (a cone). Cooldown icons and an XP bar sit at the bottom of
+  the playfield. See
+  [systems/roguelike-progression.md](systems/roguelike-progression.md).
+- **Shooting & enemies** — every ship fires automatically. Enemies spawn in waves
   from the top of the screen, drift down in a sine-wave pattern, and
   periodically fire straight down. Player and enemy bullets both deal
   collision damage in their respective directions. See
@@ -194,7 +200,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   fire-damage/fire-rate/move-speed values (see
   [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role
   stats") — Attacker hits hardest on regular fire (2.0, vs. Tank/Support's
-  1.0 and Medic's 0.7), on top of its Big Shot ability. `BossPanel` shows
+  1.0 and Medic's 0.7), with no manual ability on this branch. `BossPanel` shows
   the boss's live HP bar, phase, current target, guided-missile warning,
   pattern-barrage warning, and shockwave/guided-missile/pattern-barrage
   cooldowns. See
@@ -253,9 +259,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - **DPS on the party frame** — each frame now shows a live `DPS:` line below
   Fire Rate, driven by real damage dealt to the boss (since Session 57 the
   boss's `BossDamageLedger.Dps(ship)`, in every fight), not the theoretical
-  `fireDamage x shotsPerSecond` ceiling — switched once the Attacker combo
-  landed, since combo/Big Shot hits bypass `fireDamage` and never moved the
-  old number. See [systems/hud-layout.md](systems/hud-layout.md)'s "DPS line".
+  `fireDamage x shotsPerSecond` ceiling, which never moved for attacks other
+  than normal shots. See [systems/hud-layout.md](systems/hud-layout.md)'s "DPS line".
 - **DPS meter (Recount-style)** — the left sidebar now carries a damage
   meter below the party frames: one role-tinted bar per ship, sorted by
   damage descending, showing total damage, DPS, and percent of party damage,
@@ -417,10 +422,9 @@ real networking last, then art/audio.
    *(To iterate faster while testing, temporarily lower `LevelSequencer`'s
    `minionPhase1Duration` in the Inspector.)*
 5. Move with **WASD** (or a gamepad's left stick, if you joined that way).
-   Hold **Space**/**left mouse button** (or a gamepad's South button) to
-   fire — it auto-fires while held. Press **E** (or a gamepad's West
-   button) to use the current role's ability (see step 9 for what each role
-   does). Any AI-controlled ships fight alongside you fully autonomously —
+   Your ship fires by itself. Press **E** (or a gamepad's West button) to
+   use the current role's ability (see step 9 for what each role does; the
+   Attacker has none on this branch, it picks level-up cards instead). Any AI-controlled ships fight alongside you fully autonomously —
    no input needed for them.
 6. Watch the boss run its scripted pattern (snap to a side, advance toward
    the party, retreat, return to center, pause, repeat mirrored) — it fires at

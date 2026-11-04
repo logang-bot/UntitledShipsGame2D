@@ -2,7 +2,9 @@ using UnityEngine;
 
 // The raw timers behind one ship's ability cell, read off PlayerAbility so
 // AbilityCellState can stay a pure mapping. "Active" is the ability's own
-// running effect (Speed Boost, Aura Boost); instant abilities have none.
+// running effect (Speed Boost, Aura Boost); instant abilities have none. A
+// ship with its ability switched off (the roguelike Attacker's Big Shot)
+// reads as down, so its cell shows OFFLINE instead of a fake cooldown.
 public struct AbilityTimes
 {
     public float cooldownRemaining;
@@ -17,7 +19,7 @@ public struct AbilityTimes
         cooldownTotal = ability.CooldownFor(role),
         activeRemaining = ActiveRemaining(ability, role),
         activeTotal = ActiveTotal(ability, role),
-        down = down,
+        down = down || !ability.HasAbility,
     };
 
     private static float ActiveRemaining(PlayerAbility ability, PlayerRole role)

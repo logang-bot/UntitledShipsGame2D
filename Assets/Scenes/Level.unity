@@ -220,6 +220,7 @@ RectTransform:
   - {fileID: 2055462886}
   - {fileID: 1890823473}
   - {fileID: 1179743583}
+  - {fileID: 1090126226}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -339,6 +340,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1398150863}
+  - {fileID: 1137191424}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5533,6 +5535,7 @@ MonoBehaviour:
   panelRoot: {fileID: 1179743582}
   gameOverPanelRoot: {fileID: 2055462885}
   victoryPanelRoot: {fileID: 1890823469}
+  levelUpUI: {fileID: 1090126227}
 --- !u!4 &733208779
 Transform:
   m_ObjectHideFlags: 0
@@ -29272,6 +29275,171 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fad0e584e0d1f174a840c5bfd151a945, type: 3}
+--- !u!1 &1023640001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1023640003}
+  - component: {fileID: 1023640002}
+  m_Layer: 0
+  m_Name: AttackerProgression
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1023640002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023640001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8baa9a57229483443b53790c5977e2dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::AttackerProgression
+  partyFrameManager: {fileID: 952499542}
+  critInterval: 3
+  critWidthMultiplier: 1.5
+  critColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!4 &1023640003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023640001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1090126225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1090126226}
+  - component: {fileID: 1090126227}
+  m_Layer: 0
+  m_Name: LevelUpUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1090126226
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090126225}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 17387746}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1090126227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090126225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 201ba253c3e07a342b689540b0c8ee3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::LevelUpUI
+  progression: {fileID: 1023640002}
+  gameOverPanelRoot: {fileID: 2055462885}
+  victoryPanelRoot: {fileID: 1890823469}
+  cardSize: {x: 210, y: 280}
+  cardSpacing: 16
+  pickLockSeconds: 0.3
+  dimColor: {r: 0, g: 0, b: 0, a: 0.6}
+  cardColor: {r: 0.1, g: 0.1, b: 0.15, a: 0.95}
+  cardFocusColor: {r: 0.25, g: 0.25, b: 0.38, a: 1}
+--- !u!1 &1137191423
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1137191424}
+  - component: {fileID: 1137191425}
+  m_Layer: 0
+  m_Name: CooldownBarUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1137191424
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137191423}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 54581004}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1137191425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1137191423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 371d3309e24beea4fa40fe3fc26dbab5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::CooldownBarUI
+  progression: {fileID: 1023640002}
+  iconSize: 40
+  iconSpacing: 6
+  bottomMargin: 8
+  xpBarSize: {x: 140, y: 6}
+  attackColor: {r: 1, g: 0.5411765, b: 0.23921569, a: 0.6901961}
+  critColor: {r: 1, g: 0.15, b: 0.15, a: 0.7}
+  wipeColor: {r: 0, g: 0, b: 0, a: 0.65}
+  flashColor: {r: 1, g: 1, b: 1, a: 0.9}
+  xpTrackColor: {r: 1, g: 1, b: 1, a: 0.15}
+  xpFillColor: {r: 0.45, g: 0.85, b: 1, a: 0.9}
+  flashSeconds: 0.12
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -29292,3 +29460,4 @@ SceneRoots:
   - {fileID: 542596807}
   - {fileID: 477075366}
   - {fileID: 873389248}
+  - {fileID: 1023640003}

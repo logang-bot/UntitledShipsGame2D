@@ -26,6 +26,11 @@ public class PlayerController : MonoBehaviour
     public float fireDamage = 0.6f; // fixed per-role base, see PlayerRoleStats
     // Same non-destructive buff pattern as speedBuffMultiplier above.
     public float fireRateBuffMultiplier = 1f;
+    // Level-up card effects, set by AttackerProgression - same pattern, the
+    // role's base numbers are never mutated.
+    public float fireDamageBonus = 0f;
+    public int shotsPerAttack = 1;
+    public float multishotAngleStep = 15f; // degrees between neighbouring shots, so more shots means a wider cone
 
     [Header("Recoil")]
     public float recoilDamping = 8f;
@@ -37,7 +42,6 @@ public class PlayerController : MonoBehaviour
     private Camera cam;
     private Vector2 moveInput;
     private Vector2 currentVelocity;
-    private bool isFiring;
     private float nextFireTime;
     private Vector2 recoilVelocity;
     private BoxCollider2D selfCollider;
@@ -51,7 +55,11 @@ public class PlayerController : MonoBehaviour
     // Seconds until the next shot, derived from the live (possibly buffed)
     // shots/second - computed at point of use rather than stored, so
     // buffs never need to mutate a cached interval.
-    private float FireInterval => 1f / (shotsPerSecond * fireRateBuffMultiplier);
+    public float FireInterval => 1f / (shotsPerSecond * fireRateBuffMultiplier);
+
+    public float CurrentDamage => fireDamage + fireDamageBonus;
+    public float AttackCooldownRemaining => Mathf.Max(0f, nextFireTime - Time.time);
+    public float LastAttackTime { get; private set; } = float.NegativeInfinity;
 
     // This ship's live damage-per-second if every shot lands, including any
     // active fire-rate buff (Support's party-wide boost). Computed at the
@@ -59,7 +67,7 @@ public class PlayerController : MonoBehaviour
     // or ending needs no invalidation. Distinct from RoleStats.Dps, which is
     // the role's *designed* number from the static table - these differ
     // whenever a buff is up, or if a field was hand-tweaked in the Inspector.
-    public float CurrentDps => fireDamage * shotsPerSecond * fireRateBuffMultiplier;
+    public float CurrentDps => CurrentDamage * shotsPerAttack * shotsPerSecond * fireRateBuffMultiplier;
 
 void Start()
     {
@@ -97,8 +105,9 @@ void Start()
 
     void Update()
     {
-        // Handles held-down fire (auto-fire while button is held)
-        if (isFiring && Time.time >= nextFireTime)
+        // Every ship fires automatically. LevelSequencer's freeze stops this by
+        // disabling the whole component.
+        if (Time.time >= nextFireTime)
         {
             nextFireTime = Time.time + FireInterval;
             Fire();
@@ -221,26 +230,6 @@ void HandleMovement()
         currentVelocity = Vector2.zero;
     }
 
-    // Auto-called by PlayerInput whenever the "Fire" action is pressed/released.
-// Auto-called by PlayerInput whenever the "Fire" action is pressed/released.
-    public void OnFire(InputValue value)
-    {
-        SetFiring(value.isPressed);
-    }
-
-    // Non-input entry point so AIController can drive firing directly.
-    public void SetFiring(bool firing)
-    {
-        isFiring = firing;
-
-        // Fire immediately on press, then Update() handles repeat-fire while held
-        if (isFiring && Time.time >= nextFireTime)
-        {
-            nextFireTime = Time.time + FireInterval;
-            Fire();
-        }
-    }
-
     public void AddRecoil(Vector2 impulse)
     {
         recoilVelocity += impulse;
@@ -248,21 +237,36 @@ void HandleMovement()
 
     void Fire()
     {
-        SpawnBullet(1f, fireDamage, PlayerShotKind.Regular);
+        LastAttackTime = Time.time;
+        float firstAngle = -multishotAngleStep * (shotsPerAttack - 1) * 0.5f;
+        for (int i = 0; i < shotsPerAttack; i++)
+        {
+            SpawnBullet(1f, CurrentDamage, PlayerShotKind.Regular, Quaternion.Euler(0f, 0f, firstAngle + multishotAngleStep * i));
+        }
     }
 
     public void FireBigShot(float widthMultiplier, float damageAmount, PlayerShotKind kind)
     {
-        SpawnBullet(widthMultiplier, damageAmount, kind);
+        SpawnBullet(widthMultiplier, damageAmount, kind, Quaternion.identity);
     }
 
-void SpawnBullet(float widthMultiplier, float damageAmount, PlayerShotKind kind)
+    // A regular Attacker streak, tinted - its width goes to the collider like
+    // every other wide shot, since PlayerShotLook never stretches the sprite.
+    public void FireCrit(float damageAmount, float widthMultiplier, Color color)
     {
-        GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+        Bullet bullet = SpawnBullet(widthMultiplier, damageAmount, PlayerShotKind.Regular, Quaternion.identity);
+        SpriteRenderer sprite = bullet.GetComponent<SpriteRenderer>();
+        if (sprite != null) sprite.color = color;
+    }
+
+    Bullet SpawnBullet(float widthMultiplier, float damageAmount, PlayerShotKind kind, Quaternion aim)
+    {
+        GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, aim);
         if (TryGetComponent(out PlayerShotLook look)) look.Dress(bulletObj, kind, widthMultiplier);
         Bullet b = bulletObj.GetComponent<Bullet>();
         b.damage = damageAmount;
-        b.Init(Vector2.up, bulletSpeed, "Player", gameObject);
+        b.Init(aim * Vector2.up, bulletSpeed, "Player", gameObject);
+        return b;
     }
 
 }

@@ -36,7 +36,7 @@ public class PartyFrameUI : MonoBehaviour
         seat = frameSeat;
         ShowSeat();
         ability.Bind(role, !seat.isHuman, shipAbility);
-        combo.Bind(role);
+        combo.Hide(); // the 1-2-3 combo is off while the roguelike Attacker is tested
         downOverlay.SetActive(false);
     }
 
@@ -84,13 +84,9 @@ public class PartyFrameUI : MonoBehaviour
         identity.SetConditions(FrameVitalsView.IsLow(health), controller.speedBuffMultiplier > 1f);
         stats.Show(controller, Dps(), !seat.isHuman);
         ability.Show(AbilityCellState.From(AbilityTimes.Read(shipAbility, role, isDown)));
-        if (role == PlayerRole.Attacker && !isDown) combo.Show(ComboNow());
     }
 
     private float Dps() => controller.bossObject is IBoss boss ? boss.DamageLedger.Dps(ship) : 0f;
-
-    private ComboDisplay ComboNow() => ComboDisplay.From(
-        shipAbility.AttackerComboExpectedSlot, shipAbility.AttackerComboBrokenAt, shipAbility.AttackerComboFinishedAt, Time.time);
 
     private void ShowDown()
     {

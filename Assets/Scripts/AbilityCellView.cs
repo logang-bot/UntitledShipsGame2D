@@ -47,7 +47,7 @@ public class AbilityCellView : MonoBehaviour, IPointerEnterHandler, IPointerExit
         colors = RolePalette.For(role);
         cpu = isCpu;
         icon.sprite = roleIcons[(int)role];
-        abilityName.text = PlayerAbilityLabels.NameFor(role).ToUpperInvariant();
+        abilityName.text = PlayerAbilityLabels.NameFor(role, ability.HasAbility).ToUpperInvariant();
         button.onClick.RemoveAllListeners();
         if (cpu) button.onClick.AddListener(ability.TryUseAbility);
     }

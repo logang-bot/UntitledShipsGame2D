@@ -641,6 +641,11 @@ reference docs live under `systems/`.
   Marauder's minions stay Combat FX sprites. The old sprite tints are
   gone. Level Select shows each boss's portrait. See `art-roadmap.md`'s
   Phase 5.
+- **Roguelike progression test (Attacker)** — XP from mob kills, 5 level-ups,
+  a freeze-and-pick screen with 3 stacking cards, automatic firing for every
+  role, and a cooldown/XP bar. Attacker combo removed and Big Shot off on this
+  branch (the party frame hides the combo box and shows the Attacker's
+  ability as `OFFLINE`). See `systems/roguelike-progression.md`.
 
 ## In Progress
 

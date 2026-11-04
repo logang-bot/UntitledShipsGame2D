@@ -15,14 +15,12 @@ Select scene" for the co-op spawner that decides which).
 
 Custom-created (not Unity's auto-generated default) to keep exact control
 over action names, since `Player Input`'s Send Messages behavior matches
-methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
+methods by name (`Move` action → `OnMove`, `Ability` action → `OnAbility`).
 
 - Action map: `Player`
   - `Move` — Value / Vector2, 2D Vector composite (WASD, `Keyboard&Mouse`
     scheme) plus a `<Gamepad>/leftStick` binding (`Gamepad` scheme) — arrow
     keys are still **not** bound
-  - `Fire` — Button (Space and left mouse button, `Keyboard&Mouse`;
-    `<Gamepad>/buttonSouth`, `Gamepad`)
   - `Ability` — Button (`E`, `Keyboard&Mouse`; `<Gamepad>/buttonWest`,
     `Gamepad`)
 - Control schemes (added for local co-op — see
@@ -33,8 +31,9 @@ methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
   `Gamepad`-scheme player and a `Keyboard&Mouse`-scheme player active in the
   same scene don't both respond to every binding.
 
-`OnMove`/`OnFire` are consumed by `PlayerController.cs` — see
-[movement.md](movement.md) and [combat.md](combat.md). `OnAbility` is
+`OnMove` is consumed by `PlayerController.cs` — see
+[movement.md](movement.md). Firing has no input: every ship fires automatically
+(see [roguelike-progression.md](roguelike-progression.md)). `OnAbility` is
 consumed by `PlayerAbility.cs` — see [player-roles.md](player-roles.md). None
 of these consumers needed any code change for gamepad support — they already
 only handle input through `PlayerInput`'s Send Messages, agnostic to which
