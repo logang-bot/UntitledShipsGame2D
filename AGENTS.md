@@ -74,7 +74,8 @@ For the full reasoning behind each of these, see
   in parallel, as replacements for placeholders that already work. See
   [docs/art-roadmap.md](docs/art-roadmap.md).
 - Keep `docs/current-state.md` and `docs/roadmap.md`'s "Implemented" section
-  in sync whenever a feature ships.
+  in sync whenever a feature ships, and update `docs/player-guide/` whenever a
+  screen, a control or a rule the player can see changes.
 - Code conventions (flat `Assets/Scripts/`, one class per file, plain
   `MonoBehaviour`s, Inspector wiring, no singletons/DI/ScriptableObjects)
   are documented and deliberate — read

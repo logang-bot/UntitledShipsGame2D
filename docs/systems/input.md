@@ -6,6 +6,10 @@ why, and [../progress-log-archive.md](../progress-log-archive.md)
 (Session 1) for the full migration story and troubleshooting notes from
 switching over.
 
+This page is how input is wired. **Which key does what on each screen** is in
+the player guide: [../player-guide/README.md](../player-guide/README.md)'s
+"Controls at a glance".
+
 ## PlayerControls (Input Actions asset)
 
 **Assigned to:** the `Player Input` component on every ship — `Ship.prefab`
@@ -18,9 +22,10 @@ over action names, since `Player Input`'s Send Messages behavior matches
 methods by name (`Move` action → `OnMove`, `Ability` action → `OnAbility`).
 
 - Action map: `Player`
-  - `Move` — Value / Vector2, 2D Vector composite (WASD, `Keyboard&Mouse`
-    scheme) plus a `<Gamepad>/leftStick` binding (`Gamepad` scheme) — arrow
-    keys are still **not** bound
+  - `Move` — Value / Vector2, 2D Vector composite on the **arrow keys**
+    (`Keyboard&Mouse` scheme) plus a `<Gamepad>/leftStick` binding (`Gamepad`
+    scheme). WASD is **not** bound for movement (the co-op role picker reads
+    A / D itself, see below)
   - `Ability` — Button (`E`, `Keyboard&Mouse`; `<Gamepad>/buttonWest`,
     `Gamepad`)
 - Control schemes (added for local co-op — see

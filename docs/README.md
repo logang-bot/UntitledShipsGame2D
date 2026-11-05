@@ -4,8 +4,8 @@
 
 - [overview.md](overview.md) — concept, prior art, tech stack decisions,
   architecture principles.
-- [current-state.md](current-state.md) — **start here to see what's
-  playable right now** and how to test it in the Editor.
+- [current-state.md](current-state.md) — **start here**: what's built right
+  now, what isn't, known issues, and how to run it in the Editor.
 - [roadmap.md](roadmap.md) — current build status: implemented / in
   progress / planned.
 - [progress-log.md](progress-log.md) — session-by-session narrative history
@@ -19,6 +19,24 @@
   quality tiers). It runs in parallel with the gameplay work.
 - [architecture.md](architecture.md) — concrete code-level conventions:
   script organization, communication patterns, deliberate omissions.
+
+## Player guide
+
+What a player sees and can do on every screen, from the player's side.
+Update it whenever a screen, a control or a visible rule changes.
+
+- [player-guide/README.md](player-guide/README.md) — the screen map, controls
+  at a glance, settings (none yet), and the guide's pages.
+- [player-guide/menus.md](player-guide/menus.md) — Main Menu, Lobby, Join
+  Lobby, Role Select (solo and co-op), Level Select.
+- [player-guide/the-fight.md](player-guide/the-fight.md) — how a level runs,
+  reading the HUD, damage and survival, enemies, CPU teammates, level-ups.
+- [player-guide/roles.md](player-guide/roles.md) — the four roles: stats,
+  passives, abilities, how to play each.
+- [player-guide/bosses.md](player-guide/bosses.md) — Marauder, Halcyon and
+  Warden from the player's side.
+- [player-guide/overlays.md](player-guide/overlays.md) — Pause, Level-up,
+  Game Over, Victory.
 
 ## Systems
 
@@ -38,7 +56,9 @@ the scene is wired.
 - [systems/player-roles.md](systems/player-roles.md) — `PlayerRole`
   enum/stats/component.
 - [systems/roguelike-progression.md](systems/roguelike-progression.md) — the
-  Attacker's in-fight XP, level-ups and upgrade cards (test build).
+  Attacker's in-fight XP, level-ups and upgrade cards (test build, this branch
+  only): what changes from `main`, the exact numbers, how to play-test it, the
+  tuning knobs and the questions the playtest should answer.
 - [systems/cards.md](systems/cards.md) — **design spec, not yet built**: the
   deckbuilding layer merged in from `tohou_deck`. Grazing/energy, the 3-slot
   hand, deck rules, the `DeckBuild` loadout scene, and boss spell cards.
