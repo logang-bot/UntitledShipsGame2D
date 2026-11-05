@@ -7,7 +7,13 @@ test values, chosen so the loop can be felt quickly.
 **Status: approved and built.** Items marked **(proposed)** were not in the brief
 and were accepted by the developer. See
 [roguelike-progression.md](../../systems/roguelike-progression.md) for the current
-build.
+build and how to play-test it.
+
+**Changed since (Session 59):** the HUD was designed in Claude Design and no
+longer matches the "Cooldown bar" section below. The attack and crit timers and
+the XP bar moved into the Attacker's party frame (the playfield stays clear), the
+level-up screen got designed cards, and the crit shot is a vermilion lance
+instead of a red streak.
 
 ## The loop
 
