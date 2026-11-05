@@ -11,7 +11,6 @@ public class AttackerProgression : MonoBehaviour
     [Header("Crit Strike")]
     public float critInterval = 3f;
     public float critWidthMultiplier = 1.5f;
-    public Color critColor = Color.red;
 
     public PlayerController Ship { get; private set; }
     public AttackerXpTrack Xp { get; } = new AttackerXpTrack();
@@ -34,6 +33,13 @@ public class AttackerProgression : MonoBehaviour
             if (candidate.GetComponent<PlayerRoleComponent>().role == PlayerRole.Attacker)
                 Ship = candidate.GetComponent<PlayerController>();
         }
+    }
+
+    // Start, not Awake: PartyFrameManager binds its frames in its own Awake.
+    void Start()
+    {
+        PartyFrameUI frame = partyFrameManager != null ? partyFrameManager.FrameFor(PlayerRole.Attacker) : null;
+        if (frame != null) frame.BindRogue(this);
     }
 
     void OnEnable() { MobKills.Killed += OnMobKilled; }
@@ -63,6 +69,7 @@ public class AttackerProgression : MonoBehaviour
 
         nextCritTime = Time.time + critInterval;
         LastCritTime = Time.time;
-        Ship.FireCrit(Upgrades.CritDamage(Ship.CurrentDamage), critWidthMultiplier, critColor);
+        Ship.FireCrit(Upgrades.CritDamage(Ship.CurrentDamage), critWidthMultiplier);
+        if (Ship.TryGetComponent(out ShipCombatFx fx)) fx.PlayCritMuzzle(Ship.firePoint);
     }
 }

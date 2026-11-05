@@ -6,5 +6,6 @@ public enum PlayerShotKind
     Combo1,
     Combo2,
     Combo3,
-    ComboBroken
+    ComboBroken,
+    Crit
 }

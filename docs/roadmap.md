@@ -644,8 +644,12 @@ reference docs live under `systems/`.
 - **Roguelike progression test (Attacker)** — XP from mob kills, 5 level-ups,
   a freeze-and-pick screen with 3 stacking cards, automatic firing for every
   role, and a cooldown/XP bar. Attacker combo removed and Big Shot off on this
-  branch (the party frame hides the combo box and shows the Attacker's
-  ability as `OFFLINE`). See `systems/roguelike-progression.md`.
+  branch. The HUD follows the Claude Design "Roguelike Test" section: Attack /
+  Crit cells and an XP row with upgrade chips in the Attacker's party frame, a
+  playfield-only level-up screen with designed upgrade cards (input lock,
+  focus, 250 ms pick confirm, banked picks back to back), dimmed rails, and a
+  vermilion Crit Strike lance with muzzle and impact.
+  See `systems/roguelike-progression.md`.
 
 ## In Progress
 

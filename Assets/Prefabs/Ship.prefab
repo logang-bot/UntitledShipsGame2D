@@ -172,6 +172,9 @@ MonoBehaviour:
   bulletSpeed: 12
   fireDamage: 0.6
   fireRateBuffMultiplier: 1
+  fireDamageBonus: 0
+  shotsPerAttack: 1
+  multishotAngleStep: 15
   recoilDamping: 8
   bossObject: {fileID: 0}
 --- !u!114 &2608024192315523643
@@ -365,16 +368,7 @@ MonoBehaviour:
   bigShotWidthMultiplier: 3
   bigShotDamageMultiplier: 2
   recoilForce: 6
-  comboAttackCooldown: 0.5
-  comboStepDamageMultipliers:
-  - 1
-  - 1.3
-  - 1.8
-  comboStepWidthMultipliers:
-  - 1
-  - 1.5
-  - 2.5
-  comboBreakDamageMultiplier: 0.5
+  attackerBigShotEnabled: 0
   shieldArcWidthMultiplier: 3
   shieldArcHeight: 0.2
   shieldArcYOffset: 0.3
@@ -463,6 +457,7 @@ MonoBehaviour:
   speedBoostFx: {fileID: 7150154136931267945, guid: ab5fff2e1438f8e4cafa8bcc92d0d880, type: 3}
   bigShotFx: {fileID: 2941659134109857387, guid: 503df054baa2267459a3f5eef4438c98, type: 3}
   healFlashFx: {fileID: 5675639555758628126, guid: 92c3e180f5a444943a0746131b1a8a17, type: 3}
+  critMuzzleFx: {fileID: 5675639555758628126, guid: cc493a4320786cd4e994d4e32d0b00fd, type: 3}
   auraIdle: {fileID: 21300000, guid: 3a0ade8b90d42e24a9ac44ac8c793078, type: 3}
   auraBoost: {fileID: 21300000, guid: a542ebd060b1e5c4e972bab5a46697b2, type: 3}
   auraBoostPulse: {fileID: 21300000, guid: 6eab25adfeaa823468176ae4311f5a56, type: 3}
@@ -491,6 +486,8 @@ MonoBehaviour:
   combo2: {fileID: 21300000, guid: 56b70289478c5944cb38db84cb413a42, type: 3}
   combo3: {fileID: 21300000, guid: 9e5033a86b3e0864f810c56478a9a7cf, type: 3}
   comboBroken: {fileID: 21300000, guid: dec70b2e185de3f469f7ffd8906c8e23, type: 3}
+  crit: {fileID: 21300000, guid: c40871ed3591efc4a898d48d04f7c878, type: 3}
+  critImpactFx: {fileID: 3290155587259647624, guid: b72de0ad255573740bc75d8b8ccdf34f, type: 3}
 --- !u!1 &8713791423059384962
 GameObject:
   m_ObjectHideFlags: 0

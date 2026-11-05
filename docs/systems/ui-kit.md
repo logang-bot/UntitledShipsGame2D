@@ -30,7 +30,10 @@ greys, and kit shades (grid line, vignette, hatch, slot, bar track). The
 HUD added `Shield` (`#9CCBFF`), `SupportLight` (`#C79BF7`, a boosted stat)
 and dim/bg shades for Halcyon and Warden (Marauder's are `BossDim` /
 `BossBg`). `BossPalette` is the boss-side twin of `RolePalette`: each boss's
-signature / dim / bg tokens and glow alpha, plus its panel frame look.
+signature / dim / bg tokens and glow alpha, plus its panel frame look. The
+roguelike Attacker test added `Crit` (`#FF5A1F`, vermilion, kept off pure
+red so it never reads as enemy fire) and `CritDim` (`#4A1A0C`), used by the
+Crit Strike shot, its HUD cell, chip and card icon.
 
 **Known exception:** the ship and boss model materials
 (`Assets/Art/Ships/Materials/`, e.g. `edge_FF8A3D`, and

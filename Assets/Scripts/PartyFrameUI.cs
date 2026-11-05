@@ -17,8 +17,10 @@ public class PartyFrameUI : MonoBehaviour
     public FrameIdentityView identity;
     public FrameVitalsView vitals;
     public FrameStatsView stats;
+    public GameObject abilityRow;
     public AbilityCellView ability;
     public ComboKeysView combo;
+    public RogueFrameView rogue;
     public GameObject downOverlay;
     public CanvasGroup content;
 
@@ -36,8 +38,22 @@ public class PartyFrameUI : MonoBehaviour
         seat = frameSeat;
         ShowSeat();
         ability.Bind(role, !seat.isHuman, shipAbility);
-        combo.Hide(); // the 1-2-3 combo is off while the roguelike Attacker is tested
+        combo.Hide();
+        rogue.gameObject.SetActive(false);
         downOverlay.SetActive(false);
+    }
+
+    public PlayerRole Role => role;
+    public bool IsBound => ship != null;
+
+    /// <summary>
+    /// Roguelike Attacker test: the Attack/Crit cells and XP row (or the CPU
+    /// note) take the place of the ability cell and combo box.
+    /// </summary>
+    public void BindRogue(AttackerProgression progression)
+    {
+        abilityRow.SetActive(false);
+        rogue.Bind(progression, seat.isHuman);
     }
 
     /// <summary>
@@ -83,7 +99,14 @@ public class PartyFrameUI : MonoBehaviour
         vitals.Show(health);
         identity.SetConditions(FrameVitalsView.IsLow(health), controller.speedBuffMultiplier > 1f);
         stats.Show(controller, Dps(), !seat.isHuman);
-        ability.Show(AbilityCellState.From(AbilityTimes.Read(shipAbility, role, isDown)));
+        if (abilityRow.activeSelf) ability.Show(AbilityCellState.From(AbilityTimes.Read(shipAbility, role, isDown)));
+        else PaintRogue();
+    }
+
+    private void PaintRogue()
+    {
+        rogue.Show();
+        identity.SetLevelUpPending(rogue.LevelUpPending);
     }
 
     private float Dps() => controller.bossObject is IBoss boss ? boss.DamageLedger.Dps(ship) : 0f;
@@ -97,5 +120,6 @@ public class PartyFrameUI : MonoBehaviour
         identity.ShowDown();
         stats.ShowDown();
         combo.Hide();
+        rogue.gameObject.SetActive(false);
     }
 }

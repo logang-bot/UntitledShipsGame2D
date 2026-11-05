@@ -1,9 +1,9 @@
 using UnityEngine;
 
 // Dresses a freshly spawned player bullet: the owner's role-coloured streak,
-// or one of the Attacker's Big Shot / combo sprites. A wider shot widens the
-// collider, not the transform, because the wide sprites are already drawn
-// wide.
+// or one of the Attacker's Big Shot / combo / crit sprites. A wider shot
+// widens the collider, not the transform, because the wide sprites are
+// already drawn wide. Only the crit carries an impact burst.
 public class PlayerShotLook : MonoBehaviour
 {
     [Header("Regular shot per role")]
@@ -19,11 +19,16 @@ public class PlayerShotLook : MonoBehaviour
     public Sprite combo3;
     public Sprite comboBroken;
 
+    [Header("Attacker - Crit Strike (roguelike test)")]
+    public Sprite crit;
+    public GameObject critImpactFx;
+
     public void Dress(GameObject bullet, PlayerShotKind kind, float widthMultiplier)
     {
         Sprite sprite = SpriteFor(kind);
         if (sprite != null && bullet.TryGetComponent(out SpriteRenderer sr)) sr.sprite = sprite;
         if (bullet.TryGetComponent(out BoxCollider2D box)) box.size = new Vector2(box.size.x * widthMultiplier, box.size.y);
+        if (kind == PlayerShotKind.Crit && bullet.TryGetComponent(out Bullet shot)) shot.impactFx = critImpactFx;
     }
 
     private Sprite SpriteFor(PlayerShotKind kind)
@@ -35,6 +40,7 @@ public class PlayerShotLook : MonoBehaviour
             case PlayerShotKind.Combo2: return combo2;
             case PlayerShotKind.Combo3: return combo3;
             case PlayerShotKind.ComboBroken: return comboBroken;
+            case PlayerShotKind.Crit: return crit;
             default: return RoleShot();
         }
     }

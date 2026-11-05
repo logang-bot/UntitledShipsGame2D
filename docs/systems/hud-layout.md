@@ -102,6 +102,7 @@ role stroke, glow and a 3 px inset edge; other human = dim role stroke; CPU
 | `FrameStatsView` | SPD, FIRE (live, with buff multipliers) and real DPS from the boss's `BossDamageLedger`. Values boosted by Speed Boost turn light purple with a `+` (the design's ▲ isn't in the fonts) |
 | `AbilityCellView` | The square sweep around the icon (`AbilityCellState`): solid = ready, filling = active time left, grey track filling back up = cooldown; name, status, seconds, 3 px active bar |
 | `ComboKeysView` | Attacker only: the 1-2-3 keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`). Hidden on this branch, where the combo is removed (see `roguelike-progression.md`); the view and `ComboDisplay` stay for when it returns |
+| `RogueFrameView` | Roguelike Attacker test only: replaces the ability row (`PartyFrameUI.BindRogue`) with the Attack / Crit cells and XP row, or the CPU note. See `roguelike-progression.md`'s "HUD" |
 
 `PipRowView` resizes to the ship's max each time it changes, because
 `PlayerRoleComponent` applies the role's max HP and shield in `Start()`,
@@ -118,10 +119,10 @@ fades to 40% under a hatch and shows a `DOWN` badge; its ability reads
 
 `AbilityTimes.Read` takes the cooldown remaining and total from
 `PlayerAbility` (`CooldownRemaining`, `CooldownFor(role)`) and the active
-time from Speed Boost / Aura Boost. A ship whose ability is switched off
-(`PlayerAbility.HasAbility` false: the Attacker while
-`attackerBigShotEnabled` is off) reads as down, so its cell shows `OFFLINE`
-and its name reads `ABILITY`.
+time from Speed Boost / Aura Boost.
+
+The frame's root `CanvasGroup` is for `HudFreezeDimmer` (35% while the
+level-up screen is open); `Content`'s is for DOWN.
 
 ### DamageMeterView.cs
 
@@ -214,6 +215,13 @@ Full screen on `HUDCanvas`, covering both rails. Each uses the kit's
 
 `BossNameLabel` fills the boss name into the kickers and titles, bound by
 `onSpawned`. The overlays' mutual-exclusion guards are unchanged.
+
+The roguelike Attacker test adds a fourth, the **level-up screen**
+(`LevelUpUI`), which covers the playfield only: a 608-wide column centred on
+`HUDCanvas`, which always matches the playfield since the canvas scales with
+height. It is not on `GameplayCanvas`, whose camera-space rendering goes
+through bloom and sorts under the playfield sprites. While it is open the
+rails dim and Pause is blocked. See `roguelike-progression.md`.
 
 ## Scene wiring (`Level.unity`)
 

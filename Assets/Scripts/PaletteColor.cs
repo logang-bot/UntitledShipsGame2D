@@ -89,4 +89,6 @@ public enum PaletteColor
     WardenIce = 111,
     WardenPale = 112,
     WardenSocket = 113,
+    Crit = 114,
+    CritDim = 115,
 }

@@ -4,7 +4,7 @@ public class AttackerUpgrades
 {
     // Whole numbers only: Enemy/Minion.TakeDamage round to int, so a fractional
     // bonus could round away to nothing against mobs.
-    private const int DamagePerPick = 1;
+    public const int DamagePerPick = 1;
     private const float CritBonusPerPick = 1f; // +100% of attack damage
     private const int FirstMultishotShots = 3;
     private const int ShotsPerExtraPick = 2;
@@ -15,8 +15,22 @@ public class AttackerUpgrades
 
     public int DamageBonus => damagePicks * DamagePerPick;
     public bool CritUnlocked => critPicks > 0;
-    public float CritBonusFraction => critPicks * CritBonusPerPick;
-    public int ShotCount => multishotPicks == 0 ? 1 : FirstMultishotShots + (multishotPicks - 1) * ShotsPerExtraPick;
+    public float CritBonusFraction => CritBonusFor(critPicks);
+    public int ShotCount => ShotsFor(multishotPicks);
+
+    public static float CritBonusFor(int picks) => picks * CritBonusPerPick;
+
+    public static int ShotsFor(int picks) => picks == 0 ? 1 : FirstMultishotShots + (picks - 1) * ShotsPerExtraPick;
+
+    public int PicksOf(UpgradeCard card)
+    {
+        switch (card)
+        {
+            case UpgradeCard.AttackDamage: return damagePicks;
+            case UpgradeCard.CritStrike: return critPicks;
+            default: return multishotPicks;
+        }
+    }
 
     public void Apply(UpgradeCard card)
     {

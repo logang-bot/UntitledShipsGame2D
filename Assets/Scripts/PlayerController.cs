@@ -250,13 +250,9 @@ void HandleMovement()
         SpawnBullet(widthMultiplier, damageAmount, kind, Quaternion.identity);
     }
 
-    // A regular Attacker streak, tinted - its width goes to the collider like
-    // every other wide shot, since PlayerShotLook never stretches the sprite.
-    public void FireCrit(float damageAmount, float widthMultiplier, Color color)
+    public void FireCrit(float damageAmount, float widthMultiplier)
     {
-        Bullet bullet = SpawnBullet(widthMultiplier, damageAmount, PlayerShotKind.Regular, Quaternion.identity);
-        SpriteRenderer sprite = bullet.GetComponent<SpriteRenderer>();
-        if (sprite != null) sprite.color = color;
+        SpawnBullet(widthMultiplier, damageAmount, PlayerShotKind.Crit, Quaternion.identity);
     }
 
     Bullet SpawnBullet(float widthMultiplier, float damageAmount, PlayerShotKind kind, Quaternion aim)

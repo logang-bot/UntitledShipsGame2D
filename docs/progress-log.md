@@ -2259,3 +2259,65 @@ the editor and rendered the boss up close:
 No console errors. Not checked live: Marauder's missile, barrage and bay
 looks (minions are off), Warden's Lockdown chevrons, and bloom on the
 boss glow in a full fight.
+
+## Session 59 — Roguelike Attacker UI from "Neon Fleet HUD v2" Section 10
+
+On `feature/roguelike-attacker-progression`, rebased onto the art second
+draft. The roguelike test's code-built placeholders (`LevelUpUI`'s procedural
+cards and `CooldownBarUI`) were replaced by the Claude Design "Roguelike Test"
+designs. See `systems/roguelike-progression.md`'s "HUD".
+
+- **Source.** Read through the Claude Design project: `Neon Fleet HUD v2.dc.html`
+  section 10, the new `HUD Upgrade Card.dc.html`, the roguelike variant in
+  `HUD Party Frame.dc.html`, and the Crit Strike shot in
+  `Combat FX Designs.dc.html`. Both "Download all (ZIP)" exports were staged at
+  the project root, only the new files were imported, then the ZIPs were
+  deleted: `attacker_crit_shot` / `_muzzle` / `_impact` (PPU 192) and
+  `ico_attack`, `ico_critshot`, `ico_dmg`, `ico_crit`, `ico_multi` (PPU 200).
+- **Design decisions followed.** Attack + XP live in the Attacker's party
+  frame (the playfield stays clear), so `CooldownBarUI` is gone. The ability
+  cell and combo box are removed for the Attacker rather than reading
+  `ABILITY / OFFLINE` (the rebase-time `AbilityTimes` tweak was reverted). Crit
+  moved off pure red to vermilion `#FF5A1F` (new `Crit` / `CritDim` tokens).
+  The level-up screen covers the playfield only; the rails dim to 35%.
+- **Party frame.** `PartyFrame.prefab` gains a `RogueRow` (`RogueFrameView`:
+  `CooldownCellView` ×2, `XpRowView` with `UpgradeChipView` chips, CPU note), a
+  `LevelUpTag` beside `LOW HP`, and a root `CanvasGroup` for the dimmer.
+  `AttackerProgression` binds the Attacker's frame in `Start` through
+  `PartyFrameManager.FrameFor`. `PipRowView.Tint` paints the white "new XP" cell.
+- **Level-up screen.** `UpgradeCard.prefab` (`UpgradeCardView`, a `Selectable`
+  so hover, arrows / D-pad and Enter / A share one focus) and a `LevelUpPanel`
+  on `HUDCanvas`. `LevelUpUI` keeps its name and the `PauseUI` wiring and is now
+  only the controller; `LevelUpFlow` (0.3 s lock, 150 ms slide-in, 250 ms
+  confirm) and `PickStreak` (`PICK i / n`) are tested plain classes.
+  `HudFreezeDimmer` dims the rails and shows `PAUSE · LOCKED`.
+- **Crit Strike.** `PlayerShotKind.Crit` and `PlayerShotLook.crit`;
+  `FireCrit` lost its colour parameter. New `CritMuzzleFx` (spawned at the
+  fire point by `ShipCombatFx.PlayCritMuzzle`) and `CritImpactFx` (spawned by
+  `Bullet.impactFx`, the first bullet hit effect in the project, set only on
+  the crit).
+- **Role Select.** The Attacker's line now reads `LEVEL UP` — "Fires on its
+  own. Kills earn XP; each level-up adds an upgrade."
+- **Placement gotcha.** The panel first went on `GameplayCanvas` (playfield
+  size), but that camera-space canvas sorts under the playfield sprites and
+  goes through bloom, so it rendered washed out and behind the ships. It now
+  sits on `HUDCanvas` as a 608-wide centred column, which always matches the
+  playfield because the canvas scales with height.
+
+### Verified
+
+All 203 EditMode tests pass (new: `UpgradeCardCopyTests`, `LevelUpFlowTests`,
+`PickStreakTests`, `CooldownCellStateTests`, `XpRowStateTests`,
+`UpgradeChipsTests`). Played `Level.unity` as the human Attacker with three
+kills reported through `MobKills`: two banked level-ups opened back to back
+(`PICK 1 / 2` → `PICK 2 / 2`, `LV 0 → 1` → `LV 1 → 2`), the input-lock bar
+drained, focus landed on card 1, picks applied (Multishot ×3, Crit +100%),
+the rails dimmed to 35% with `PAUSE · LOCKED`, and closing restored time scale
+and the rails. The frame showed `ATTACK ×3`, the `CRIT` cell and the
+`CRIT ×1` / `MULTI ×3` chips; a crit bullet carried the lance sprite and
+`CritImpactFx`. No console errors.
+
+Not checked live: a CPU Attacker's `AUTO-FIRE · NO UPGRADES` line (the scene's
+default roster has a human Attacker), mouse hover and gamepad navigation on
+the cards, the crit muzzle / impact frames on screen, and the MAX state at
+level 5.

@@ -7,7 +7,7 @@ public static class RoleCardText
 {
     private static readonly Dictionary<PlayerRole, RoleAbilityLine[]> abilities = new Dictionary<PlayerRole, RoleAbilityLine[]>
     {
-        { PlayerRole.Attacker, new[] { new RoleAbilityLine("ABILITY", "BIG SHOT", "A wide, heavy shot. Plus a 3-attack combo.") } },
+        { PlayerRole.Attacker, new[] { new RoleAbilityLine("ABILITY", "LEVEL UP", "Fires on its own. Kills earn XP; each level-up adds an upgrade.") } },
         { PlayerRole.Tank, new[] { new RoleAbilityLine("ABILITY", "TAUNT", "Pulls the boss’s attention."), new RoleAbilityLine("PASSIVE", "SHIELD ARC", "An arc in front of the ship that blocks bullets.") } },
         { PlayerRole.Medic, new[] { new RoleAbilityLine("ABILITY", "AURA BOOST", "Heals and recharges shields of nearby allies.") } },
         { PlayerRole.Support, new[] { new RoleAbilityLine("ABILITY", "SPEED BOOST", "Speeds up the whole party.") } },
