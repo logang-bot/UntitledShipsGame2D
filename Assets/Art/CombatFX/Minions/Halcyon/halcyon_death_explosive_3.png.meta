@@ -1,0 +1,1326 @@
+fileFormatVersion: 2
+guid: 1b70a5a78aa155544be1aad2acf545cc
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6082502247804257605
+    second: halcyon_death_explosive_3_0
+  - first:
+      213: -4468806354977834328
+    second: halcyon_death_explosive_3_1
+  - first:
+      213: 8265576248714372080
+    second: halcyon_death_explosive_3_2
+  - first:
+      213: 8567556728311980725
+    second: halcyon_death_explosive_3_3
+  - first:
+      213: -2879098522382965661
+    second: halcyon_death_explosive_3_4
+  - first:
+      213: -2580664521256287483
+    second: halcyon_death_explosive_3_5
+  - first:
+      213: 5887021484993480796
+    second: halcyon_death_explosive_3_6
+  - first:
+      213: -7461119078913816574
+    second: halcyon_death_explosive_3_7
+  - first:
+      213: -41669593793814377
+    second: halcyon_death_explosive_3_8
+  - first:
+      213: -161924785215019064
+    second: halcyon_death_explosive_3_9
+  - first:
+      213: 8146608362226629290
+    second: halcyon_death_explosive_3_10
+  - first:
+      213: 6549513394016757323
+    second: halcyon_death_explosive_3_11
+  - first:
+      213: -6229068240189333417
+    second: halcyon_death_explosive_3_12
+  - first:
+      213: 920348684439559255
+    second: halcyon_death_explosive_3_13
+  - first:
+      213: 3944342423582944735
+    second: halcyon_death_explosive_3_14
+  - first:
+      213: -3835141386424296531
+    second: halcyon_death_explosive_3_15
+  - first:
+      213: 7672659589820990550
+    second: halcyon_death_explosive_3_16
+  - first:
+      213: 2894116479868511267
+    second: halcyon_death_explosive_3_17
+  - first:
+      213: 4801426188707963344
+    second: halcyon_death_explosive_3_18
+  - first:
+      213: 9111673656916652519
+    second: halcyon_death_explosive_3_19
+  - first:
+      213: 7044590179015313887
+    second: halcyon_death_explosive_3_20
+  - first:
+      213: 1411001953294832932
+    second: halcyon_death_explosive_3_21
+  - first:
+      213: -6661866746251851259
+    second: halcyon_death_explosive_3_22
+  - first:
+      213: -2254657711738995160
+    second: halcyon_death_explosive_3_23
+  - first:
+      213: 7911747995224305606
+    second: halcyon_death_explosive_3_24
+  - first:
+      213: 440006405949057203
+    second: halcyon_death_explosive_3_25
+  - first:
+      213: 397837246200992446
+    second: halcyon_death_explosive_3_26
+  - first:
+      213: 2927327760250071152
+    second: halcyon_death_explosive_3_27
+  - first:
+      213: 489376133658025569
+    second: halcyon_death_explosive_3_28
+  - first:
+      213: 8254828180454732755
+    second: halcyon_death_explosive_3_29
+  - first:
+      213: 1645054849189894934
+    second: halcyon_death_explosive_3_30
+  - first:
+      213: -8650780920170310227
+    second: halcyon_death_explosive_3_31
+  - first:
+      213: -1486067294577838987
+    second: halcyon_death_explosive_3_32
+  - first:
+      213: 2161093882460980347
+    second: halcyon_death_explosive_3_33
+  - first:
+      213: -2780736312587206685
+    second: halcyon_death_explosive_3_34
+  - first:
+      213: 3716524263126921467
+    second: halcyon_death_explosive_3_35
+  - first:
+      213: 2155958486127903143
+    second: halcyon_death_explosive_3_36
+  - first:
+      213: -2703413726715559504
+    second: halcyon_death_explosive_3_37
+  - first:
+      213: -7679841605219210791
+    second: halcyon_death_explosive_3_38
+  - first:
+      213: -1259211488255194621
+    second: halcyon_death_explosive_3_39
+  - first:
+      213: -8132435739388139291
+    second: halcyon_death_explosive_3_40
+  - first:
+      213: -4453281062731812524
+    second: halcyon_death_explosive_3_41
+  - first:
+      213: 7797996187357756705
+    second: halcyon_death_explosive_3_42
+  - first:
+      213: -547760486818742342
+    second: halcyon_death_explosive_3_43
+  - first:
+      213: 7435718466418342496
+    second: halcyon_death_explosive_3_44
+  - first:
+      213: -4593482074814389144
+    second: halcyon_death_explosive_3_45
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_0
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 216
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbabc1e9e6c969ba0800000000000000
+      internalID: -6082502247804257605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_1
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 220
+        width: 23
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8aab9810c4c9bf1c0800000000000000
+      internalID: -4468806354977834328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_2
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 220
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f3a6882ec935b270800000000000000
+      internalID: 8265576248714372080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_3
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 217
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b22b08937316e670800000000000000
+      internalID: 8567556728311980725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_4
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 211
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 364e204e5236b08d0800000000000000
+      internalID: -2879098522382965661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_5
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 165
+        width: 29
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 503c0167a43af2cd0800000000000000
+      internalID: -2580664521256287483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_6
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 165
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c58012e89d6e2b150800000000000000
+      internalID: 5887021484993480796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_7
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 212
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 208c37a7ab7c47890800000000000000
+      internalID: -7461119078913816574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_8
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 205
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7902cf7a9b5fb6ff0800000000000000
+      internalID: -41669593793814377
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_9
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 194
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c76de8044ab0cdf0800000000000000
+      internalID: -161924785215019064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_10
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 203
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aaabeb294219e0170800000000000000
+      internalID: 8146608362226629290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_11
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 196
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4628062bbb84ea50800000000000000
+      internalID: 6549513394016757323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_12
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 184
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 750e8d54077ed89a0800000000000000
+      internalID: -6229068240189333417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_13
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 186
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75c9485904cb5cc00800000000000000
+      internalID: 920348684439559255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_14
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 173
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdd2a26498e1db630800000000000000
+      internalID: 3944342423582944735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_15
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 175
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dabd7ce7a37d6cac0800000000000000
+      internalID: -3835141386424296531
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_16
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 160
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65446c5de33ca7a60800000000000000
+      internalID: 7672659589820990550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_17
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 139
+        width: 47
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 324aa21da97f92820800000000000000
+      internalID: 2894116479868511267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_18
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 139
+        width: 47
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d12239fda712a240800000000000000
+      internalID: 4801426188707963344
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_19
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 163
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e13dcd4aea237e70800000000000000
+      internalID: 9111673656916652519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_20
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 133
+        width: 8
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd9c968a17963c160800000000000000
+      internalID: 7044590179015313887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_21
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 97
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 425558bfcc2e49310800000000000000
+      internalID: 1411001953294832932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_22
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 149
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50acba88d7b4c83a0800000000000000
+      internalID: -6661866746251851259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_23
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 136
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82eb3b1c1c8d5b0e0800000000000000
+      internalID: -2254657711738995160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_24
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 105
+        width: 7
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cfe0c722ec2ccd60800000000000000
+      internalID: 7911747995224305606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_25
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 88
+        width: 47
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b86d75be773b1600800000000000000
+      internalID: 440006405949057203
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_26
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 86
+        width: 47
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb2da3a1ed6658500800000000000000
+      internalID: 397837246200992446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_27
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 107
+        width: 7
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07868da9615ff9820800000000000000
+      internalID: 2927327760250071152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_28
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 91
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16e9d30300d9ac600800000000000000
+      internalID: 489376133658025569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_29
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 93
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d373e18e7a0f8270800000000000000
+      internalID: 8254828180454732755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_30
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 79
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61b5ff16ba864d610800000000000000
+      internalID: 1645054849189894934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_31
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 44
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da5958f369042f780800000000000000
+      internalID: -8650780920170310227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_32
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 44
+        width: 29
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 574bc5a4bad606be0800000000000000
+      internalID: -1486067294577838987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_33
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 80
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b744b56af6fbdfd10800000000000000
+      internalID: 2161093882460980347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_34
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 67
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3efb5328e07d869d0800000000000000
+      internalID: -2780736312587206685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_35
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 68
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf0fcc6502fb39330800000000000000
+      internalID: 3716524263126921467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_36
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 57
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a1842402d08bed10800000000000000
+      internalID: 2155958486127903143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_37
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 58
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b14432f98b8b7ad0800000000000000
+      internalID: -2703413726715559504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_38
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 48
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d9a4a5efb8bb6590800000000000000
+      internalID: -7679841605219210791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_39
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 40
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30a4571b2d1668ee0800000000000000
+      internalID: -1259211488255194621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_40
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 41
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e8241358c8c32f80800000000000000
+      internalID: -8132435739388139291
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_41
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 48
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45175eac774c232c0800000000000000
+      internalID: -4453281062731812524
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_42
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 35
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12d3f43873c083c60800000000000000
+      internalID: 7797996187357756705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_43
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 30
+        width: 23
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abf7c294db6f568f0800000000000000
+      internalID: -547760486818742342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_44
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 30
+        width: 23
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06a7da09c8af03760800000000000000
+      internalID: 7435718466418342496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: halcyon_death_explosive_3_45
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 35
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8646098e36ca040c0800000000000000
+      internalID: -4593482074814389144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      halcyon_death_explosive_3_0: -6082502247804257605
+      halcyon_death_explosive_3_1: -4468806354977834328
+      halcyon_death_explosive_3_10: 8146608362226629290
+      halcyon_death_explosive_3_11: 6549513394016757323
+      halcyon_death_explosive_3_12: -6229068240189333417
+      halcyon_death_explosive_3_13: 920348684439559255
+      halcyon_death_explosive_3_14: 3944342423582944735
+      halcyon_death_explosive_3_15: -3835141386424296531
+      halcyon_death_explosive_3_16: 7672659589820990550
+      halcyon_death_explosive_3_17: 2894116479868511267
+      halcyon_death_explosive_3_18: 4801426188707963344
+      halcyon_death_explosive_3_19: 9111673656916652519
+      halcyon_death_explosive_3_2: 8265576248714372080
+      halcyon_death_explosive_3_20: 7044590179015313887
+      halcyon_death_explosive_3_21: 1411001953294832932
+      halcyon_death_explosive_3_22: -6661866746251851259
+      halcyon_death_explosive_3_23: -2254657711738995160
+      halcyon_death_explosive_3_24: 7911747995224305606
+      halcyon_death_explosive_3_25: 440006405949057203
+      halcyon_death_explosive_3_26: 397837246200992446
+      halcyon_death_explosive_3_27: 2927327760250071152
+      halcyon_death_explosive_3_28: 489376133658025569
+      halcyon_death_explosive_3_29: 8254828180454732755
+      halcyon_death_explosive_3_3: 8567556728311980725
+      halcyon_death_explosive_3_30: 1645054849189894934
+      halcyon_death_explosive_3_31: -8650780920170310227
+      halcyon_death_explosive_3_32: -1486067294577838987
+      halcyon_death_explosive_3_33: 2161093882460980347
+      halcyon_death_explosive_3_34: -2780736312587206685
+      halcyon_death_explosive_3_35: 3716524263126921467
+      halcyon_death_explosive_3_36: 2155958486127903143
+      halcyon_death_explosive_3_37: -2703413726715559504
+      halcyon_death_explosive_3_38: -7679841605219210791
+      halcyon_death_explosive_3_39: -1259211488255194621
+      halcyon_death_explosive_3_4: -2879098522382965661
+      halcyon_death_explosive_3_40: -8132435739388139291
+      halcyon_death_explosive_3_41: -4453281062731812524
+      halcyon_death_explosive_3_42: 7797996187357756705
+      halcyon_death_explosive_3_43: -547760486818742342
+      halcyon_death_explosive_3_44: 7435718466418342496
+      halcyon_death_explosive_3_45: -4593482074814389144
+      halcyon_death_explosive_3_5: -2580664521256287483
+      halcyon_death_explosive_3_6: 5887021484993480796
+      halcyon_death_explosive_3_7: -7461119078913816574
+      halcyon_death_explosive_3_8: -41669593793814377
+      halcyon_death_explosive_3_9: -161924785215019064
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -49,7 +49,8 @@ once by `LevelSetup` when Level 1 is picked (a boss is a one-off, not a
 wave, so it doesn't go through `EnemySpawner.cs`). The GameObject
 itself keeps the generic name `Boss`; only the script/class/prefab carry
 the `MarauderBoss` name. `LevelSequencer` calls the new `public
-SetVisible(bool)` to hide the boss's `SpriteRenderer`/`Collider2D`/
+SetVisible(bool)` to hide the boss's model (a `SpriteRenderer` before Session
+58)/`Collider2D`/
 shockwave ring until its own entrance begins — not `SetActive(false)` on
 the whole GameObject, which was tried first and had a real side effect:
 `MinionSpawner.cs` lives on this same GameObject, and deactivating it also
@@ -182,16 +183,17 @@ That taunt overwrite is exactly why the DPS meter can't read `aggro`: the
 instant Tank presses `E`, its aggro value becomes `highest + 100` and stops
 being a damage number at all.
 
-Public read API, consumed by `DpsMeterUI` (see
-[hud-layout.md](../hud-layout.md)):
+Since Session 57 the damage table lives in the boss's `BossDamageLedger`
+(`IBoss.DamageLedger`, shared by all three bosses; see
+[hud-layout.md](../hud-layout.md)'s "Damage tracking"). `TakeDamage`
+records into it alongside the aggro update. `MarauderBoss` still exposes
+the read API, now forwarding to the ledger:
 
 - `float GetDamageDealt(GameObject source)` — total damage that source has
-  dealt. A method rather than an exposed dictionary, so nothing outside can
-  mutate it and per-ship iteration allocates no enumerator.
-- `float CombatElapsed` — seconds since boss combat began, captured in
-  `OnEnable()` (the moment `LevelSequencer` enables the component, which is
-  the only point at which ships can both act and deal damage). Returns 0
-  before the fight starts, so callers can avoid dividing by it.
+  dealt.
+- `float CombatElapsed` — seconds since boss combat began (`BeginCombat()`
+  in `OnEnable()`, the moment `LevelSequencer` enables the component).
+  Returns 0 before the fight starts, and stops counting at `Die()`.
 
 `TakeDamage` accumulates via `TryGetValue` rather than gating on
 `ContainsKey` the way aggro does, so damage from a source that never made it
@@ -237,7 +239,7 @@ below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
 - `TauntedBy(GameObject taunter)` — see above.
 - `OnPhase2`, `OnDefeated` — `UnityEvent`s (`OnDefeated` has two listeners:
   `BossPanelUI.ShowDefeated()` and `VictoryUI.Show()`).
-- `SetVisible(bool)` — called by `LevelSequencer` to hide/show the sprite,
+- `SetVisible(bool)` — called by `LevelSequencer` to hide/show the model,
   `Collider2D`, and shockwave ring together without touching the
   GameObject's active state (see [level-sequencing.md](../level-sequencing.md)'s
   "Boss visibility/collision"). Disabling the collider isn't just cosmetic:
@@ -368,16 +370,14 @@ displacement works out to roughly `impulse × 0.105` — so `33` gives ~3.5
 units of actual push (~5.8 ship-widths, ~62% of the 5.625-unit playable
 width).
 
-**Visual**: a world-space ring at `shockwaveSettings.radius`, built the
-same procedural-`LineRenderer` way as `PlayerAbility.cs`'s Medic aura ring
-— dim and always visible so the danger zone reads before it ever triggers
-(`shockwaveSettings.ringColor`), pulses to a bright warning color
-(`shockwaveSettings.ringTelegraphColor`) at `shockwaveSettings.telegraphPulseSpeed`
-during the telegraph wind-up, then flashes a distinct impact color
-(`shockwaveSettings.ringImpactColor`) for `shockwaveSettings.impactFlashDuration`
-on the exact frame it hits. `CreateRing()` builds it once in `Awake()`;
-`UpdateRing()` runs every `Update()`, re-centering it on the boss's live
-(erratically-moving) position.
+**Visual**: a `ShockwaveRing` child on the boss prefab with a
+`DangerZoneVisual` (Combat FX sprites), wired as `shockwaveSettings.visual`.
+`UpdateRing()` reports the state every `Update()`: the dim dashed idle zone,
+always visible so the danger zone reads before it ever triggers; the two
+warning frames alternating during the telegraph wind-up; then the impact
+flash for `shockwaveSettings.impactFlashDuration` on the exact frame it
+hits. The sprite is scaled so its drawn ring (183 px) sits exactly on
+`shockwaveSettings.radius`. As a child it follows the boss for free.
 
 ### Guided missile
 
@@ -611,8 +611,8 @@ and can't be reused for something that must also heal the human.
 `FindHurtAlly()` reuses this same array (`ability.allies`, read from
 `AIController` via its cached `PlayerAbility` reference).
 
-A dim, thin `LineRenderer` ring around the Medic shows the aura's current
-radius live — bigger and brighter while boosted. Allies actually healed by
+A Combat FX ring around the Medic shows the aura's current radius live —
+bigger and brighter while boosted (see [player-roles.md](../player-roles.md)). Allies actually healed by
 a tick get a distinct green flash via `PlayerDamageFlash.Flash(Color)`.
 
 ### Support roaming positioning
@@ -709,26 +709,20 @@ proximity shockwave is explicitly out of scope here (it's not a `Bullet`
 instance, so it never enters `Bullet.Active`) — already handled by the
 existing `minDistanceFromBoss` floor.
 
-## BossPanelUI.cs
+## Boss panel: MarauderPanelFeed.cs
 
-**Attached to:** `BossPanel` (child of `HUDCanvas` — see
-[hud-layout.md](../hud-layout.md)).
-**Requires:** a direct `boss` reference (this panel is scene-bound, not a
-reusable prefab like `PartyFrame.prefab`).
-
-Every `Update()`, reads `MarauderBoss.CurrentHealth/maxHealth` into a health-bar
-`Image.fillAmount` + `"HP: x/y"` text, `MarauderBoss.IsPhase2` into a `"Phase
-1"`/`"Phase 2"` text, `MarauderBoss.CurrentTarget`'s `PlayerRoleComponent.role` into
-a `"Target: {role}"` text, `MarauderBoss.GuidedMissileTargetRole` into a `"Guided
-missile: {role}"` warning text (empty string when `null`),
-`MarauderBoss.PatternBarrageActivePattern` into an `"Incoming: {shape} Barrage"`
-warning text (empty string when `null`), and
-`MarauderBoss.ShockwaveCooldownRemaining`/`MarauderBoss.GuidedMissileCooldownRemaining`/
-`MarauderBoss.PatternBarrageCooldownRemaining` into `"Shockwave: {n}s"`/`"Guided
-Missile: {n}s"`/`"Pattern Barrage: {n}s"` cooldown texts (`"Ready"` at
-0) — same "HUD only reads, never owns game state" pattern as
-`PartyFrameUI.cs`. `ShowDefeated()` (wired to `MarauderBoss.OnDefeated`) overwrites
-the phase text with `"DEFEATED"`.
+Since Session 57 the right rail's shared `BossPanel` is filled by
+`MarauderPanelFeed` (the old `BossPanelUI` text panel is gone; see
+[hud-layout.md](../hud-layout.md)'s "Right rail: boss"). Every `Update()` it
+reads `CurrentHealth`/`maxHealth`/`IsPhase2` into the header,
+`GuidedMissileTargetRole` into a `MISSILE LOCK-ON ▸ <role>` warning (then
+`MISSILE FIRED` for `guidedMissile.warningLingerTime`),
+`PatternBarrageActivePattern` into a `BARRAGE · <shape>` warning during the
+`patternBarrageTelegraphTime` wind-up, `CurrentTarget` into the aggro row
+(`TAUNTED` when it's the Tank), and the three `...CooldownRemaining` values
+into the Shockwave / Missile / Barrage tiles (`NOW` while the missile or
+barrage is running). `ShowDefeated()` (via `LevelSetup`'s `onDefeated`)
+shows the DEFEATED banner.
 
 `ShockwaveCooldownRemaining` reads `"Ready"` whenever no ship has gotten
 close enough to trigger it yet, not just after its cooldown elapses — it's
@@ -893,16 +887,14 @@ already ran by then) decides what `Die()` does next:
   bullet from a distance is exactly as dangerous as letting it touch you, by
   design, so players can't just snipe them safely. `fragmentPrefab` is
   optional and falls back to the minion's own `bulletPrefab` if left
-  unassigned, so no dedicated prefab is required to use this. Each spawned
-  fragment also gets its `SpriteRenderer` tinted to the minion's own
-  `explosiveTintColor` (added after an initial pass shipped fragments in the
-  bullet prefab's default color, indistinguishable from any other shot on
-  screen) — one line right after `Init()`, so a fragment now visually reads
-  as "piece of the thing that just exploded" rather than a generic bullet.
+  unassigned. On `Minion.prefab` it is `Bullets/MarauderFragment`, a
+  Marauder-coloured shard sprite (Combat FX), so a fragment reads as a
+  piece of the thing that just exploded. (Before the Combat FX art, each
+  fragment was tinted `explosiveTintColor`; that tint is gone.)
 
 An Explosive minion is visually distinct the instant it spawns: `Init()`
-tints its `SpriteRenderer` to `explosiveTintColor` (orange, `(1, 0.45,
-0.1)`) — consistent with this project's standing rule of always giving a new
+asks its `HostileLook` for the `marauder_minion_explosive` sprite (dashed
+blast ring and bright core) — consistent with this project's standing rule of always giving a new
 hazard a visible tell (shockwave ring, aura ring, party-buff ring) rather
 than a mechanic with no on-screen cue.
 
@@ -961,11 +953,39 @@ tool calls — worked around by reactivating/healing all 4 ships via
 `FindObjectsByType<PlayerHealth>(FindObjectsInactive.Include, ...)` before
 testing, not by changing any game code.)
 
+## Model (Session 58)
+
+Marauder is its live 3D design model (art Phase 5, see
+[art-roadmap.md](../../art-roadmap.md)): `MarauderBoss.prefab` > `Visual`
+(`BossModel`) > `MarauderModel` (the GLB wrapper). The root's placeholder
+sprite is gone. Two scripts on the boss root show the state, and each one
+only reads gameplay:
+
+- **`MarauderModelStates`:**
+  - phase 2 drops `marauder_armor_plate_FR` and shows
+    `marauder_phase2_damage` (the breach, cracks and fire);
+  - the aim barrels splay ±9° for the 3-bullet spread;
+  - the charge core pulses and its ring turns, both faster in phase 2;
+  - while the shockwave winds up (the new read-only
+    `MarauderBoss.IsShockwaveTelegraphing`), the core goes white, swells,
+    and its ring spins 4×.
+- **`MarauderModelWeapons`:**
+  - the missile hatches slide open while `GuidedMissileTargetRole` is set;
+  - the cannons go white-hot while `PatternBarrageActivePattern` is set;
+  - the flank bay doors open for 1.2 s whenever `Minion.Active` grows.
+    Minions are off today, and keep their Combat FX sprites.
+
+The model's own `marauder_shockwave_radius` stays off. The
+`ShockwaveRing` child keeps drawing the radius.
+
+**Hit flash:** a `BossHitFlash` on the root (node `Visual`, the whole
+model) flashes it white when `TakeDamage` lands. See art-roadmap Phase 5.
+
 ## Scene wiring
 
 ### Boss
 
-**Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/MarauderBoss.prefab` (SpriteRenderer,
+**Tag:** `Enemy`. **Prefab:** `Assets/Prefabs/MarauderBoss.prefab` (a `Visual` model child since Session 58,
 Rigidbody2D at Gravity Scale 0, non-trigger BoxCollider2D — same physical
 setup as `Enemy.prefab`). One instance in `Level1.unity`, positioned at
 `(0, 4.2, 0)` — must stay within the camera's visible range (Main Camera is

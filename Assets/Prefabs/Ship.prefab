@@ -51,6 +51,8 @@ GameObject:
   - component: {fileID: 523717138145725323}
   - component: {fileID: 3639143379226586379}
   - component: {fileID: 5883566481210704653}
+  - component: {fileID: 5803027871074571646}
+  - component: {fileID: 4152285164259849233}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Player
@@ -295,7 +297,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1eec6ffb2e35b648a0a22d4f341028e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDamageFlash
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashColor:
+    key: 12
+    alpha: 1
   flashDuration: 0.12
 --- !u!114 &6478665696923355503
 MonoBehaviour:
@@ -350,11 +354,10 @@ MonoBehaviour:
   auraBoostTickInterval: 0.25
   auraBoostDuration: 4
   auraBoostCooldown: 10
-  auraRingColor: {r: 0.7137255, g: 1, b: 0.23529412, a: 0.35}
-  auraRingBoostedColor: {r: 0.7137255, g: 1, b: 0.23529412, a: 0.7}
-  auraRingWidth: 0.05
-  auraRingBoostedWidth: 0.12
-  healFlashColor: {r: 0.8745098, g: 1, b: 0.6117647, a: 1}
+  auraPulseInterval: 0.25
+  healFlashColor:
+    key: 34
+    alpha: 1
   speedBoostCooldown: 15
   speedBoostDuration: 4
   speedBoostMultiplier: 1.5
@@ -373,12 +376,8 @@ MonoBehaviour:
   - 2.5
   comboBreakDamageMultiplier: 0.5
   shieldArcWidthMultiplier: 3
-  shieldArcHeight: 0.4
+  shieldArcHeight: 0.2
   shieldArcYOffset: 0.3
-  shieldArcColor: {r: 0, g: 0.8980392, b: 1, a: 0.5}
-  shieldArcLineWidth: 0.08
-  partyBuffRingRadius: 0.6
-  partyBuffRingWidth: 0.08
 --- !u!114 &523717138145725323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -447,6 +446,51 @@ MonoBehaviour:
   maxBankAngle: 35
   fullBankSpeed: 3
   bankSharpness: 10
+--- !u!114 &5803027871074571646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039737173953149718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4739defb047cd0144a21ff50f0766f93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::ShipCombatFx
+  tauntFx: {fileID: 2591409455247927361, guid: e2f7c8f5b4119fe4ab56378fc7ca2ba5, type: 3}
+  auraBoostFx: {fileID: 8042989756503457828, guid: 37863ba741bc0fd4d83bd29b01ccee0d, type: 3}
+  speedBoostFx: {fileID: 7150154136931267945, guid: ab5fff2e1438f8e4cafa8bcc92d0d880, type: 3}
+  bigShotFx: {fileID: 2941659134109857387, guid: 503df054baa2267459a3f5eef4438c98, type: 3}
+  healFlashFx: {fileID: 5675639555758628126, guid: 92c3e180f5a444943a0746131b1a8a17, type: 3}
+  auraIdle: {fileID: 21300000, guid: 3a0ade8b90d42e24a9ac44ac8c793078, type: 3}
+  auraBoost: {fileID: 21300000, guid: a542ebd060b1e5c4e972bab5a46697b2, type: 3}
+  auraBoostPulse: {fileID: 21300000, guid: 6eab25adfeaa823468176ae4311f5a56, type: 3}
+  shieldIdle: {fileID: 21300000, guid: 9c5a22ae8ac48b145baf7db967a07cea, type: 3}
+  shieldBlock: {fileID: 21300000, guid: 59629d29f76f33e4fb7b61fdd7621f87, type: 3}
+  speedRing: {fileID: 21300000, guid: 393659913c20b9343af5a7b57bcdb518, type: 3}
+  speedRingEnd: {fileID: 21300000, guid: bebfc6f9f44789a44b2f921e3718b04d, type: 3}
+--- !u!114 &4152285164259849233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039737173953149718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46b0428015eac434197cfda26e8d2658, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::PlayerShotLook
+  attackerShot: {fileID: 21300000, guid: 390d3d848507f4b4ea455f880135a173, type: 3}
+  tankShot: {fileID: 21300000, guid: 7c7304e45d011f141a7ed3edd3d13165, type: 3}
+  medicShot: {fileID: 21300000, guid: 45906f9cdc484f54f944577d08368f48, type: 3}
+  supportShot: {fileID: 21300000, guid: c492b4d73fc48d742b1cd90db7a72779, type: 3}
+  bigShot: {fileID: 21300000, guid: bee4946b77ff59040b2f20c6b5cf7b2d, type: 3}
+  combo1: {fileID: 21300000, guid: 3788733c3f6a21c46884d7718fa6c0e6, type: 3}
+  combo2: {fileID: 21300000, guid: 56b70289478c5944cb38db84cb413a42, type: 3}
+  combo3: {fileID: 21300000, guid: 9e5033a86b3e0864f810c56478a9a7cf, type: 3}
+  comboBroken: {fileID: 21300000, guid: dec70b2e185de3f469f7ffd8906c8e23, type: 3}
 --- !u!1 &8713791423059384962
 GameObject:
   m_ObjectHideFlags: 0

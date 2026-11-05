@@ -2,29 +2,29 @@ using UnityEngine;
 
 // Lives beside WardenArm on each arm. While any active arm is up, WardenBoss
 // ignores damage (see WardenBoss.IsShielded). Enough hits knock the arm down:
-// it stops firing, grays out, and loses its hitbox until downDuration passes.
+// it stops firing, shows its "down" look (WardenArmModel), and loses its
+// hitbox until downDuration passes.
 public class WardenArmHealth : MonoBehaviour
 {
     public float maxHealth = 20f;
     public float downDuration = 15f;
-    public Color downColor = new Color(0.35f, 0.35f, 0.35f);
 
     public float CurrentHealth { get; private set; }
     public bool IsDown { get; private set; }
     public float DownRemaining => IsDown ? Mathf.Max(0f, downUntil - Time.time) : 0f;
 
     private WardenArm arm;
-    private SpriteRenderer sr;
+    private WardenBoss boss;
     private Collider2D col;
-    private Color upColor;
+    private BossHitFlash hitFlash;
     private float downUntil;
 
     void Awake()
     {
         arm = GetComponent<WardenArm>();
-        sr = GetComponent<SpriteRenderer>();
+        boss = GetComponentInParent<WardenBoss>();
         col = GetComponent<Collider2D>();
-        if (sr != null) upColor = sr.color;
+        hitFlash = GetComponent<BossHitFlash>();
         CurrentHealth = maxHealth;
     }
 
@@ -33,10 +33,12 @@ public class WardenArmHealth : MonoBehaviour
         if (IsDown && Time.time >= downUntil) Recover();
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, GameObject source = null)
     {
         if (IsDown) return;
         CurrentHealth -= amount;
+        if (boss != null) boss.DamageLedger.Record(source, amount);
+        if (hitFlash != null) hitFlash.Flash();
         if (CurrentHealth <= 0f) KnockDown();
     }
 
@@ -45,7 +47,6 @@ public class WardenArmHealth : MonoBehaviour
         IsDown = true;
         downUntil = Time.time + downDuration;
         SetArmUp(false);
-        if (sr != null) sr.color = downColor;
     }
 
     private void Recover()
@@ -53,7 +54,6 @@ public class WardenArmHealth : MonoBehaviour
         IsDown = false;
         CurrentHealth = maxHealth;
         SetArmUp(true);
-        if (sr != null) sr.color = upColor;
     }
 
     private void SetArmUp(bool up)

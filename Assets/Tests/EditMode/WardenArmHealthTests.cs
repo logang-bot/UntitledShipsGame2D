@@ -21,7 +21,6 @@ public class WardenArmHealthTests
         GameObject go = new GameObject("TestArm");
         created.Add(go);
         go.transform.SetParent(parent);
-        go.AddComponent<SpriteRenderer>().color = Color.cyan;
         go.AddComponent<BoxCollider2D>();
         go.AddComponent<WardenArm>();
         WardenArmHealth health = go.AddComponent<WardenArmHealth>();
@@ -66,7 +65,6 @@ public class WardenArmHealthTests
         Assert.IsTrue(arm.IsDown);
         Assert.IsFalse(arm.GetComponent<WardenArm>().enabled, "A downed arm must stop firing.");
         Assert.IsFalse(arm.GetComponent<Collider2D>().enabled, "A downed arm must lose its hitbox.");
-        Assert.AreEqual(arm.downColor, arm.GetComponent<SpriteRenderer>().color);
     }
 
     [Test]
@@ -96,7 +94,7 @@ public class WardenArmHealthTests
     }
 
     [Test]
-    public void Recover_RestoresHealthColorHitboxAndFiring()
+    public void Recover_RestoresHealthHitboxAndFiring()
     {
         WardenArmHealth arm = CreateArm();
         arm.TakeDamage(arm.maxHealth);
@@ -107,7 +105,6 @@ public class WardenArmHealthTests
         Assert.AreEqual(arm.maxHealth, arm.CurrentHealth);
         Assert.IsTrue(arm.GetComponent<WardenArm>().enabled);
         Assert.IsTrue(arm.GetComponent<Collider2D>().enabled);
-        Assert.AreEqual(Color.cyan, arm.GetComponent<SpriteRenderer>().color);
     }
 
     [Test]

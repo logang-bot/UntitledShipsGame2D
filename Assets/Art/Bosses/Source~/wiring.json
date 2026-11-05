@@ -1,0 +1,447 @@
+[
+ {
+  "id": "marauder",
+  "parts": [
+   {
+    "part": "body",
+    "node": "marauder",
+    "glb": "marauder.glb",
+    "frame": 2.5,
+    "pivot": "Frame centre = root origin (boss centre). Front (+Z) = screen down."
+   },
+   {
+    "part": "dart",
+    "node": "marauder_dart",
+    "glb": "marauder_dart.glb",
+    "frame": 0.625,
+    "pivot": "Frame centre = minion origin. Nose +Z."
+   },
+   {
+    "part": "bomb",
+    "node": "marauder_bomb",
+    "glb": "marauder_bomb.glb",
+    "frame": 0.625,
+    "pivot": "Frame centre = minion origin. Nose +Z."
+   }
+  ],
+  "states": [
+   {
+    "key": "p1",
+    "part": "body",
+    "kind": "phase",
+    "label": "PHASE 1",
+    "trigger": "Fight start",
+    "ends": "HP ≤ 50%",
+    "look": "Armour intact. Core pulses magenta.",
+    "on": [],
+    "off": [
+     "marauder_phase2_damage"
+    ]
+   },
+   {
+    "key": "p2",
+    "part": "body",
+    "kind": "phase",
+    "label": "PHASE 2",
+    "trigger": "HP ≤ 50% (one-shot, persists)",
+    "ends": "Death",
+    "look": "Right shoulder plate blown off, breach glows, cracks and fire. Core hotter. Aim-turret barrels splay for the 3-bullet spread.",
+    "on": [
+     "marauder_phase2_damage"
+    ],
+    "off": [
+     "marauder_armor_plate_FR"
+    ],
+    "mats": [
+     "marauder_white ×2.4",
+     "marauder_aim_barrel_0/2 yaw ±0.16"
+    ]
+   },
+   {
+    "key": "shockwave",
+    "part": "body",
+    "kind": "overlay",
+    "label": "SHOCKWAVE TELEGRAPH",
+    "trigger": "Shockwave wind-up starts",
+    "ends": "Shockwave fires (knockback)",
+    "look": "Core turns white and swells, charge ring spins ×4, knockback radius ring draws in.",
+    "on": [
+     "marauder_shockwave_radius"
+    ],
+    "mats": [
+     "marauder_core_glow → #FFD1E8 ×3",
+     "scale marauder_shockwave_radius to gameplay radius"
+    ]
+   },
+   {
+    "key": "missilelock",
+    "part": "body",
+    "kind": "overlay",
+    "label": "MISSILE LOCK",
+    "trigger": "Guided missile locks a ship",
+    "ends": "Missile launched",
+    "look": "Missile pod hatches slide open, tube tips flare.",
+    "on": [],
+    "mats": [
+     "marauder_missile_hatch_L/R z +2.2",
+     "marauder_missile_glow ×2.6"
+    ]
+   },
+   {
+    "key": "barrage",
+    "part": "body",
+    "kind": "overlay",
+    "label": "PATTERN BARRAGE",
+    "trigger": "Barrage (fan / ring / spiral) starts",
+    "ends": "Barrage ends",
+    "look": "Cannon heat strips and muzzles go white-hot.",
+    "on": [],
+    "mats": [
+     "marauder_cannon_heat ×2.4",
+     "marauder_cannon_muzzle → #FFD1E8"
+    ]
+   },
+   {
+    "key": "minions",
+    "part": "body",
+    "kind": "overlay",
+    "label": "MINION LAUNCH",
+    "trigger": "Minion wave spawns",
+    "ends": "+1.2 s",
+    "look": "Flank bay doors slide open, bay glow up.",
+    "on": [],
+    "mats": [
+     "marauder_bay_door_[L|R][0-2] x ±3.2",
+     "marauder_bay_glow ×2.4"
+    ]
+   },
+   {
+    "key": "base",
+    "part": "dart",
+    "kind": "single",
+    "label": "MINION · DART",
+    "trigger": "Spawned from a launch bay",
+    "ends": "Hits a ship / shot down",
+    "look": "Plain kamikaze dart.",
+    "on": []
+   },
+   {
+    "key": "base",
+    "part": "bomb",
+    "kind": "single",
+    "label": "MINION · BOMB",
+    "trigger": "Explosive minion spawned",
+    "ends": "Detonates / shot down",
+    "look": "Bigger hot core and a dashed blast-radius ring.",
+    "on": [
+     "marauder_bomb_blast_radius"
+    ]
+   }
+  ],
+  "files": [
+   "marauder_body_p1.png",
+   "marauder_body_p2.png",
+   "marauder_body_shockwave-p1.png",
+   "marauder_body_shockwave-p2.png",
+   "marauder_body_missilelock-p1.png",
+   "marauder_body_missilelock-p2.png",
+   "marauder_body_barrage-p1.png",
+   "marauder_body_barrage-p2.png",
+   "marauder_body_minions-p1.png",
+   "marauder_body_minions-p2.png",
+   "marauder_dart_base.png",
+   "marauder_bomb_base.png"
+  ]
+ },
+ {
+  "id": "halcyon",
+  "parts": [
+   {
+    "part": "body",
+    "node": "halcyon",
+    "glb": "halcyon.glb",
+    "frame": 2.5,
+    "pivot": "Frame centre = root origin (boss centre)."
+   }
+  ],
+  "states": [
+   {
+    "key": "p1",
+    "part": "body",
+    "kind": "phase",
+    "label": "PHASE 1 · ROAMING",
+    "trigger": "Fight start",
+    "ends": "HP ≤ 50%",
+    "look": "Coil ring turning, coils at rest, field faint.",
+    "on": [],
+    "off": [
+     "halcyon_phase2_overcharge"
+    ]
+   },
+   {
+    "key": "p2",
+    "part": "body",
+    "kind": "phase",
+    "label": "PHASE 2",
+    "trigger": "HP ≤ 50% (one-shot)",
+    "ends": "Death",
+    "look": "Second outer ring, scorch marks, core halo, arcs crawling on the wingtips. Ring spins ×2.2.",
+    "on": [
+     "halcyon_phase2_overcharge"
+    ],
+    "mats": [
+     "halcyon_core_glow ×1.5"
+    ]
+   },
+   {
+    "key": "field",
+    "part": "body",
+    "kind": "overlay",
+    "label": "STATIC FIELD PULSE",
+    "trigger": "Static Field pulse wind-up",
+    "ends": "Pulse fires",
+    "look": "Arcs jump coil to coil, field ring fills in to the pulse radius.",
+    "on": [
+     "halcyon_static_arcs"
+    ],
+    "mats": [
+     "halcyon_static_field_fx opacity .35"
+    ]
+   },
+   {
+    "key": "opentele",
+    "part": "body",
+    "kind": "overlay",
+    "label": "OPENING · TELEGRAPH",
+    "trigger": "OPENING cycle start (every 8 s)",
+    "ends": "Stillness begins",
+    "look": "Field ring collapses toward the body, chevrons slide inward, coils overcharge white, core brightens. Movement slows to a stop.",
+    "on": [
+     "halcyon_opening_chevrons"
+    ],
+    "mats": [
+     "halcyon_static_field_fx scale 1 → 0.45 loop",
+     "halcyon_coil_tip ×3"
+    ]
+   },
+   {
+    "key": "openexposed",
+    "part": "body",
+    "kind": "overlay",
+    "label": "OPENING · EXPOSED",
+    "trigger": "Stillness window starts",
+    "ends": "Window ends → back to roaming",
+    "look": "Everything else goes dark; core shell splits open, white-hot core with a weak-point reticle. Reads as “shoot now”.",
+    "on": [
+     "halcyon_weakpoint_reticle"
+    ],
+    "off": [
+     "halcyon_static_arcs",
+     "halcyon_static_field_ring"
+    ],
+    "mats": [
+     "halcyon_core_shell_L/R x ±1.8",
+     "halcyon_core_glow → #FFFBE0 ×3",
+     "halcyon_coil_glow ×0.06"
+    ]
+   }
+  ],
+  "files": [
+   "halcyon_body_p1.png",
+   "halcyon_body_p2.png",
+   "halcyon_body_field-p1.png",
+   "halcyon_body_field-p2.png",
+   "halcyon_body_opentele-p1.png",
+   "halcyon_body_opentele-p2.png",
+   "halcyon_body_openexposed-p1.png",
+   "halcyon_body_openexposed-p2.png"
+  ]
+ },
+ {
+  "id": "warden",
+  "parts": [
+   {
+    "part": "body",
+    "node": "warden_body",
+    "glb": "warden.glb",
+    "frame": 2.5,
+    "pivot": "Frame centre = root origin. Arms excluded; place arm sprites at the mount points."
+   },
+   {
+    "part": "arm",
+    "node": "warden_arm_a / _b / _c",
+    "glb": "warden.glb",
+    "frame": 1,
+    "pivot": "Frame centre = arm mount (yaw pivot). Barrels point +Z (screen down) at yaw 0. One sprite set shared by A, B, C."
+   }
+  ],
+  "states": [
+   {
+    "key": "p1",
+    "part": "body",
+    "kind": "phase",
+    "label": "PHASE 1",
+    "trigger": "Fight start",
+    "ends": "HP ≤ 50%",
+    "look": "Arms A and B. Mount C sealed by a 4-plate hatch with a dim socket ring.",
+    "on": [
+     "warden_mount_c_seal"
+    ],
+    "off": [
+     "warden_arm_c",
+     "warden_phase2_damage"
+    ]
+   },
+   {
+    "key": "p2",
+    "part": "body",
+    "kind": "phase",
+    "label": "PHASE 2",
+    "trigger": "HP ≤ 50% (one-shot)",
+    "ends": "Death",
+    "look": "Hatch blows, arm C deploys on the front mount permanently, socket glows, core shutters pulled back, trim brightens, armour cracked.",
+    "on": [
+     "warden_arm_c",
+     "warden_phase2_damage"
+    ],
+    "off": [
+     "warden_mount_c_seal"
+    ],
+    "mats": [
+     "warden_mount_c_glow ×2",
+     "warden_trim_edge → #A9B8FF"
+    ]
+   },
+   {
+    "key": "lockdown-top",
+    "part": "body",
+    "kind": "overlay",
+    "label": "LOCKDOWN · TOP",
+    "trigger": "Lockdown warning (1 s), edge = top",
+    "ends": "Wall spawns",
+    "look": "Armour band strobes, bastion lamps flare, chevrons point at the incoming edge.",
+    "on": [
+     "warden_lockdown_ind_top"
+    ],
+    "mats": [
+     "warden_armor_band_glow strobe",
+     "warden_bastion_lamp ×3"
+    ]
+   },
+   {
+    "key": "lockdown-left",
+    "part": "body",
+    "kind": "overlay",
+    "label": "LOCKDOWN · LEFT",
+    "trigger": "Lockdown warning (1 s), edge = left",
+    "ends": "Wall spawns",
+    "look": "As above, chevrons on the left flank.",
+    "on": [
+     "warden_lockdown_ind_left"
+    ]
+   },
+   {
+    "key": "lockdown-right",
+    "part": "body",
+    "kind": "overlay",
+    "label": "LOCKDOWN · RIGHT",
+    "trigger": "Lockdown warning (1 s), edge = right",
+    "ends": "Wall spawns",
+    "look": "As above, chevrons on the right flank.",
+    "on": [
+     "warden_lockdown_ind_right"
+    ]
+   },
+   {
+    "key": "bigshot",
+    "part": "body",
+    "kind": "overlay",
+    "label": "BIG SHOT CHARGE",
+    "trigger": "Big Shot charge starts (0.6 s)",
+    "ends": "Orb fires straight down",
+    "look": "Shutters snap fully open, core goes white and swells, flash ring grows 0.3 → 1.6 and spikes converge; a faint lane shows the orb path.",
+    "on": [
+     "warden_bigshot"
+    ],
+    "mats": [
+     "warden_core_glow → #DCE3FF ×3.5",
+     "warden_bigshot_flash scale over 0.6 s"
+    ]
+   },
+   {
+    "key": "idle",
+    "part": "arm",
+    "kind": "arm",
+    "label": "ARM · IDLE",
+    "trigger": "Default; arm recovered",
+    "ends": "Lock-on",
+    "look": "Dim cobalt status ring, lamp low, slow sweep.",
+    "on": []
+   },
+   {
+    "key": "locked",
+    "part": "arm",
+    "kind": "arm",
+    "label": "ARM · LOCKED",
+    "trigger": "Arm locks a ship (0.5 s telegraph)",
+    "ends": "Stream starts",
+    "look": "Lamp white, status ring bright, aim line to the target.",
+    "on": [
+     "warden_arm_X_aim_line"
+    ],
+    "mats": [
+     "warden_arm_X_lamp ×3.2",
+     "warden_arm_X_glow → #A9B8FF ×2.2"
+    ]
+   },
+   {
+    "key": "firing",
+    "part": "arm",
+    "kind": "arm",
+    "label": "ARM · FIRING",
+    "trigger": "3 s stream",
+    "ends": "Stream ends → idle",
+    "look": "As locked, aim line off, muzzle flashes flicker.",
+    "on": [
+     "warden_arm_X_muzzle_flash_0/1"
+    ],
+    "off": [
+     "warden_arm_X_aim_line"
+    ]
+   },
+   {
+    "key": "down",
+    "part": "arm",
+    "kind": "arm",
+    "label": "ARM · DOWN",
+    "trigger": "Arm HP reaches 0",
+    "ends": "15 s → idle (arm HP refilled)",
+    "look": "Turret slumps, barrels droop, all trim dark, sparks. 12 reboot ticks light one per 1.25 s.",
+    "on": [
+     "warden_arm_X_sparks",
+     "warden_arm_X_reboot"
+    ],
+    "mats": [
+     "warden_arm_X_glow / _lamp / _edge → #2C3878",
+     "warden_arm_X_reboot_00-11: enable one per 1.25 s"
+    ]
+   }
+  ],
+  "files": [
+   "warden_body_p1.png",
+   "warden_body_p2.png",
+   "warden_body_lockdown-top-p1.png",
+   "warden_body_lockdown-top-p2.png",
+   "warden_body_lockdown-left-p1.png",
+   "warden_body_lockdown-left-p2.png",
+   "warden_body_lockdown-right-p1.png",
+   "warden_body_lockdown-right-p2.png",
+   "warden_body_bigshot-p1.png",
+   "warden_body_bigshot-p2.png",
+   "warden_arm_idle.png",
+   "warden_arm_locked.png",
+   "warden_arm_firing.png",
+   "warden_arm_down.png"
+  ]
+ }
+]

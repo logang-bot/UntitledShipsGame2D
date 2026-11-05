@@ -1952,3 +1952,310 @@ Speed Boost ring, the shockwave and Static Field zones), the role
 abilities as 3–4 frame activation strips, and Standard/Explosive minions
 per boss plus the wave enemies. Not designed yet. It moves Explosive
 minions from today's orange tint to the boss color.
+
+## Session 54 — Pre-Fight Menus, One Palette (Art Phase 7, PC)
+
+Built the Claude Design `Pre-Fight Menus.dc.html` (plus its `Menu Button`
+and `Hint Bar` components) for PC. Mobile layouts are deferred with the
+rest of the phone work. Details in `systems/ui-kit.md` and
+`systems/scene-flow.md`.
+
+### Decisions
+
+- **One source of truth for every color.** `NeonPalette` holds every color
+  as a `PaletteColor` token; code uses `Get()`, Inspector fields became
+  `PaletteSwatch` (token + alpha, implicitly a `Color`), and scene objects
+  use `PaletteTint`. The prefab values were migrated as-is, except that
+  `Teammate.prefab`'s Medic aura and Tank shield arc used an older green and
+  blue while `Ship.prefab` already used the role colors; both now use the
+  role colors. Menu cameras went from `(0.05, 0.05, 0.08)` to `Bg`
+  `#04050A`. The colors that arrived with the Warden fixes from `main`
+  (Halcyon surge tint and panel text, Warden arm "down" grey, Big Shot
+  telegraph) were migrated too, unchanged in value. The ship GLB materials
+  are the one documented exception.
+- **Menus fill the window on PC** (design layout 1a), closing the
+  art-roadmap open question.
+- **Five scenes kept, plus a persistent `MenuBackground`.** Screens load
+  additively over it, so the grid and fleet never restart and screens can
+  slide in and out; `MenuScreen` loads it if a screen is opened on its own,
+  so `PauseUI` needed no change. Chosen over merging the five scenes into
+  one (same transitions, but one shared scene file the deck-screen work
+  would also edit) and over plain fades (the background would restart).
+- **Live 3D ships on the role cards**, through four portrait cameras in
+  `MenuBackground` rendering into render textures.
+- **Join Lobby joins manually.** `PlayerInputManager`'s "join on any
+  button" also joined on the B / Esc press the design uses to leave, so
+  `JoinDeviceInput` + `JoinPressRouter` now decide join / leave / back /
+  continue per press.
+- **Choice screens open unhighlighted** (user feedback): Role Select and
+  Level Select no longer focus their first card on entry
+  (`MenuScreen.focusOnEnter` off); the first navigation press focuses it.
+- **No JS ported.** The design's SVG icons came in as PNGs exported from
+  Claude Design; Chakra Petch and JetBrains Mono as TTFs from Google Fonts.
+  Neither font has ✓ or ◤, so those are kit sprites.
+
+### Made
+
+- Palette: `PaletteColor`, `NeonPalette`, `PaletteSwatch`, `PaletteTint`,
+  `RoleColors`, `RolePalette`. `PlayerAbility.cs` was over the file-size
+  cap and was split (`PlayerAbilityPartyBuffRing`, `PlayerAbilityLabels`).
+- UI kit: `MenuButton` (+ variant/state/look/styles), `NeonFrame`
+  (+ looks), `TagChip` (+ looks, glyph), `MenuHeader`, `MenuFooter` /
+  `HintBar`, `MenuToast`, `MenuHotkey`, `TextGlow`, `CardFocusVisual`,
+  `PointerClickEvent`; TMP font assets; generated kit textures.
+- Transitions: `MenuScreen`, `MenuTween`, `MenuEase`, `TweenSpec`,
+  `SlideTarget`, `MenuTransitionState`; `MenuBackground.unity` with
+  `MenuFleet`, `MenuShipDrift` and `ShipPortraitStudio`. Build index 6.
+- Screens: Main Menu (1a), Lobby (2a, locked ONLINE card + toast), Join
+  Lobby (3a–c, `JoinSlotView`), Role Select (4a `RoleCardView` with
+  `StatBarView`/`AbilityLineView`; 4b `RoleTileView`, `SquadStripView`,
+  rewritten `RolePickerRow` visuals with the same input logic), Level
+  Select (5a `LevelCardView`, launch grow + blackout). Data:
+  `RoleCardText`, `RoleStatScale`, `SquadLineup`, `LevelCardText`.
+
+### Verified
+
+Play mode through the MCP bridge, with screenshots of the game view
+compared against the design: every screen and the main states (role
+picked, 2 players with one locked, 4 players all locked, level card
+focused). The flow forward and back, launching a level (only `Level` stays
+loaded), and Pause → Change Roles back into the menus with the background.
+Joining a keyboard and a virtual gamepad, leaving, and Continue carrying
+the roster. The MCP camera-rendered screenshots misreport UI colors; the
+ScreenCapture path (no camera given) matches the game view. Game time
+freezes while the Editor is unfocused, so the toast, join wipe, prompt
+pulse and card pulse weren't seen animating. Not tried: real keyboard
+presses and real gamepads.
+
+### Tests
+
+New `NeonPaletteTests`, `PaletteSwatchTests`, `MenuEaseTests`,
+`JoinPressRouterTests`, `SquadLineupTests`, `RoleStatScaleTests`. All 128
+EditMode tests pass (the old `PlayerRoleStatsTests` / `MarauderBossDamageTests`
+failures were fixed on `main` by the Warden fixes this branch now sits on).
+
+## Session 55 — Combat FX Sprites (Art Phases 3–5)
+
+Built the Claude Design `Combat FX Designs.dc.html` into the game. The
+user exported its ZIP (108 PNGs) into `Assets/Art/CombatFX/`; a Warden
+shockwave was added to the design for this pass, since only Marauder had
+one. Decisions: enemy hitboxes match the visible bullet body (glow
+excluded); Halcyon/Warden minion art is imported only, since those fights
+have no minions. Details in `art-roadmap.md`'s Phase 3.
+
+- New: `SpriteSequence` (+ `SpriteSequenceStep`), `DangerZoneVisual` (+
+  `DangerZoneState`), `HostileLook`, `PlayerShotLook` (+ `PlayerShotKind`),
+  `ShipCombatFx`, `ShieldArcBlockFlash`, `FxSprites`, `AttackerComboShot`.
+- Changed: `Bullet.alignToDirection`; `FireBigShot` takes a shot kind and
+  widens the collider instead of the transform; Medic aura, Tank shield arc,
+  party speed ring and the Marauder/Warden/Halcyon rings draw sprites
+  instead of `LineRenderer`s; `Enemy`/`Minion` lost `explosiveTintColor`;
+  `guidedMissile.missilePrefab`; Tank `shieldArcHeight` 0.4 → 0.2.
+- Prefabs: 8 new bullets in `Prefabs/Bullets/`, 13 sequences in
+  `Prefabs/FX/`; `EnemyBullet`, `PlayerBullet`, `Minion`, `Enemy`, `Ship`
+  and the three boss prefabs rewired.
+- Imported but unused (28 sprites, plus the Halcyon/Warden death prefabs):
+  listed with reasons in `art-roadmap.md`'s "Combat FX imported but not
+  used yet".
+
+### Verified
+
+All 128 EditMode tests pass; no console errors. Played the Marauder level:
+the wave enemies (all three patterns, standard and explosive), every bullet
+type (rotated along flight), death bursts plus an 8-shard fragment ring,
+all four abilities, the Medic/Support/Tank visuals and the Marauder
+shockwave ring render. The Halcyon and Warden fights weren't played; their
+rings use the same code path as Marauder's.
+
+## Session 56 — Sprite Atlases Tested and Dropped (Mobile Quality Tiers)
+
+Tried the "Sprite Atlases" item from `art-roadmap.md`'s "Mobile quality
+tiers" on the Combat FX sprites. It made no batch difference, so the
+atlases were removed. No code or import settings changed.
+
+- Built three Sprite Atlas V2 assets (packer mode was already Sprite Atlas
+  V2): `CombatFX_Small` (`Bullets/`, `Minions/`, the small player auras and
+  aggro mark; one 2048² page, 16 MB), `CombatFX_Rings` (boss rings and the
+  1024² boosted Medic aura; 4096×2048, 32 MB) and `CombatFX_Abilities`
+  (ability frames; 4096², 64 MB). `Particles/` was left out. Rotation and
+  tight packing off, padding 4, no mipmaps, Bilinear, uncompressed. All 104
+  sprites landed in exactly one atlas. Total 112 MB, against 54 MB for the
+  source textures: the padding stops the 512 and 1024 px frames from tiling.
+- Measured in Play Mode on `Level.unity` (Marauder) with a scripted, frozen
+  busy moment: 6 wave enemies (every pattern, standard and explosive), a
+  minion, 54 bullets of all nine prefabs, 7 death/heal sequences, the
+  Marauder ring, and all four abilities. For the no-atlas run the packer
+  was set to Disabled and then restored.
+
+| | No atlases | Atlases |
+| --- | --- | --- |
+| Sprite SRP batches (Frame Debugger) | 3 | 3 |
+| Draw calls / SetPass, ship meshes hidden | 113 / 27 | 112 / 27 |
+| Draw calls / SetPass, full frame | 268 / 143 | 267 / 135 |
+
+- Why: URP 2D draws sprites through the SRP Batcher, which batches by
+  shader variant rather than by texture, so a texture switch doesn't start
+  a new batch. The 3 sprite batches come from the ship meshes interleaving
+  by sort order. The ship meshes themselves are 155 separate draws outside
+  the SRP Batcher, which is where draw calls could actually be saved.
+- Visual check while atlased: sprite sizes and pivots unchanged (including
+  `support_speed_ring`'s 0.5 / 0.609), the Marauder ring drawn at exactly
+  its 1.7 radius, and no edge bleeding in cropped supersized captures.
+
+### Verified
+
+All 128 EditMode tests pass; no console errors. The atlas folder is
+deleted and `EditorSettings.asset` is unchanged.
+
+## Session 57 — In-Level HUD from "Neon Fleet HUD v2" (Art Phase 8, PC)
+
+Built the Claude Design `Neon Fleet HUD v2.dc.html` (with its `HUD Party
+Frame` and `HUD Boss Panel` components) in `Level.unity`, PC only. The
+design's PLANNED deck parts (card tray, energy, spell card, focus hitbox
+and graze ring) were left for the phase 3 developer. See
+`systems/hud-layout.md`.
+
+- **Assets.** The design's 31 icons, role icons, boss marks and 9-slice /
+  fill sprites were baked into `Assets/Art/UI/HUD/` straight from its SVG
+  symbols (whitened the same way the design's ZIP export does), at 2×,
+  200 px per unit. `frame_glow` was dropped (its SVG blur doesn't
+  rasterize); `kit_glow` covers it.
+- **Canvas.** `HUDCanvas` now scales with screen height (1920×1080
+  reference), per the design's spec; `HUDSidebarFitter` divides the
+  pixel bar widths by the canvas scale. A new `RightSidebar` replaces the
+  three side-by-side boss panels (only `BossPanel_Marauder` had been
+  sized).
+- **Left rail.** New `PartyFrame` prefab driven by `PartyFrameUI` and its
+  views (`FrameIdentityView`, `FrameVitalsView` + `PipRowView`,
+  `FrameStatsView`, `AbilityCellView`, `ComboKeysView`). Frames run in role
+  order; seats are P1.. / CPU 1... The `DamageMeter` prefab
+  (`DamageMeterView`, `DamageMeterRows`) replaces the procedural
+  `DpsMeterUI`.
+- **Right rail.** One `BossPanel` prefab (`BossPanelView`: header, warning
+  bars, OPENING!, aggro, arm cards, cooldown tiles) filled by one feed per
+  boss, replacing `BossPanelUI` / `HalcyonBossPanelUI` /
+  `WardenBossPanelUI`. Feeds time telegraphs (`WarningClock`) and learn
+  cooldown totals (`CooldownClock`) themselves, so the boss mechanics
+  gained no timers.
+- **Damage for every boss.** `BossDamageLedger` (`IBoss.DamageLedger`)
+  holds per-ship damage and the fight clock. Halcyon, Warden and Warden's
+  arms now take the source ship in `TakeDamage`; `MarauderBossAggro` keeps
+  only aggro.
+- **Callouts and overlays.** `CalloutBanner` + `LevelCallouts` (wave, boss
+  entry with scrolling hazard bands, phase 2). Pause / Game Over / Victory
+  rebuilt with `MenuButton` and `HintBar`; Game Over lists the CPUs still
+  fighting, Victory shows the per-ship summary.
+- **Small gameplay-side additions:** `PlayerAbility.CooldownFor` made
+  public, Attacker combo break/finish timestamps exposed for the combo box.
+- **Removed:** `Assets/Prefabs/PartyFrame.prefab`, the old panel scripts,
+  `DpsMeterUI.cs`, and the already-run one-shot
+  `Editor/AddDpsLineToPartyFrame.cs`.
+
+### Found and fixed
+
+- Pip rows were built in `Awake()` from the prefab's default max HP/shield
+  (5/3), before `PlayerRoleComponent.Start()` applies the role's real
+  values; they now resize whenever the max changes.
+- `GameOverUI.partyFrameManager` was never wired in the scene, so Game Over
+  never showed when the human died. Wired to `LeftSidebar`.
+
+- `WardenBoss.prefab` had lost Warden's arm health and Big Shot. Session 51
+  built it from the old `Level3BossPlaceholder` asset plus hand-added arms,
+  but `WardenBigShot` (Session 39) and each arm's `WardenArmHealth`,
+  `Enemy` tag and trigger `BoxCollider2D` (Session 43) existed only in
+  `Level3.unity`, which was then deleted. So Warden was never shielded,
+  bullets passed through the arms, and Big Shot never fired. Restored from
+  `ed3d8bb^`'s `Level3.unity` with the same values. Big Shot now fires a new
+  `WardenBigShotBullet` prefab (the designed `warden_bullet_l` orb, circle
+  collider r 0.083, `widthMultiplier` 1), as `art-roadmap.md` had planned.
+  Checked in Play mode: the shield blocks core damage, arms take hits and
+  go down, the shield drops when the active arms are down, the ledger
+  counts arm hits, and Big Shot spawns the orb.
+
+### Verified
+
+All 163 EditMode tests pass (new: `BossDamageLedgerTests`,
+`AbilityCellStateTests`, `ComboDisplayTests`, `DamageMeterRowsTests`,
+`HudClockTests`). Played Marauder live (frames, DOWN, aggro + TAUNTED,
+missile lock-on → FIRED, NOW tiles, meter sorting) and Halcyon (entry
+callout, panel reveal, cooldowns, meter). Warden's panel, every row state,
+and the three overlays were checked with their states pushed in directly.
+No console errors.
+
+## Session 58 — Boss Models from "Boss Designs" (Art Phase 5)
+
+Claude Design finished the boss designs, and all three bosses replaced
+their placeholder squares as live 3D models, the same route as the ships.
+See `art-roadmap.md`'s Phase 5.
+
+- **Source.** The designs were read through the Claude Design project:
+  `Boss Designs.dc.html`, `bossStates.js`, `bosses3d.js` (each rig's
+  `apply()` / `pose()` is the reference for every state) and
+  `Boss State Wiring.dc.html`. The page builds its GLBs in the browser, so
+  its "Download all (ZIP)" export was staged in a temporary folder at the
+  project root, sorted into `Assets/Art/Bosses/`, then deleted. State PNGs and
+  rig JSONs went into `Source~` folders, which are kept in git but not
+  imported. The design's minion GLBs and PNGs were deleted: the minions
+  keep their Combat FX sprites by choice.
+- **Materials and wrappers** were generated through Unity MCP from each
+  `<boss>_rig.json`:
+  - one `ShipMesh` material per glTF material, with emission = color ×
+    intensity × 1.6, and additive FX also × the glTF opacity;
+  - the hulls reuse the ships' materials;
+  - wrapper prefabs with the rig's hidden nodes off, and the ship
+    pulse / spin components on the constantly moving parts.
+
+  No editor code was committed.
+- **Runtime.**
+  - `BossModel` (nodes by name, `Show`, `Glow` through a
+    MaterialPropertyBlock) sits on a `Visual` child of each boss prefab.
+    The placeholder `SpriteRenderer`s are gone, and `SetVisible` toggles
+    the model.
+  - Seven state scripts read gameplay and show it. Gameplay only gained
+    read-only getters: `IsShockwaveTelegraphing`,
+    `HalcyonStaticField.IsTelegraphing`, `WardenArm.CurrentTarget` /
+    `IsTelegraphing` / `IsFiring`, and `WardenBigShot.TelegraphProgress`.
+  - Removed: `WardenArmHealth.downColor`, `WardenBigShot`'s sprite pulse,
+    and the never-attached `HalcyonSurgeTint.cs`.
+  - Six palette tokens were added for the state colors.
+- **Gotchas:**
+  - glTFast mirrors the design's X axis, so the scripts negate x for
+    every position they set.
+  - The wrapper's GLB root carries the model's scale (≈0.04); overwriting
+    it with 1 made the first Warden attempt 25× too big.
+  - The `Visual` rotation is `LookRotation(down, toward camera)`.
+- **Warden's arms moved** onto the design's hull mounts, about 0.5 units
+  from the centre instead of 1.9. Player bullets fly straight up and the
+  old 1.6-unit body box covered the arms, so a shielded body would have
+  soaked every shot. The body box now covers only the keep, and the arm
+  boxes are the turret footprint. **Needs a real playtest.**
+- **Level Select** shows each boss's 768 px portrait in its card's
+  `BossArt`.
+- **Hit flash.** New `BossHitFlash` flashes a model node through
+  `ShipMesh`'s `_FlashColor`: white at alpha 0.55 for 0.08 s, softer than
+  the ships' because the party shoots the boss constantly.
+  - **Placement:** the whole model on Marauder and Halcyon, `warden_body` on
+    Warden, and each Warden arm on its own.
+  - **Trigger:** the four `TakeDamage` methods call it only when the hit
+    lands, so a shielded Warden body stays dark.
+  - **`BossModel.ResetGlow`:** now writes the material's emission back
+    instead of clearing the whole property block, which would have cut a
+    flash short.
+
+### Verified
+
+All 176 EditMode tests pass (new: `BossModelTests` with the flash cases,
+`WardenArmModelTests`;
+`WardenArmHealthTests` lost its sprite-color asserts). Played each level in
+the editor and rendered the boss up close:
+- **Warden:** idle; arm firing and aimed; phase 2 with arm C; Big Shot
+  charge; arm down with reboot ticks. Hit flash: an arm hit flashes only
+  that arm; a shielded body doesn't flash; with both arms down, a body hit
+  flashes the keep.
+- **Marauder:** phase 1 and phase 2.
+- **Halcyon:** roaming; the Opening telegraph; exposed, forced through
+  `IsActive` because the window kept being missed.
+
+No console errors. Not checked live: Marauder's missile, barrage and bay
+looks (minions are off), Warden's Lockdown chevrons, and bloom on the
+boss glow in a full fight.

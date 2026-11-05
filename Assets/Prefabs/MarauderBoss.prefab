@@ -9,11 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1056681803579479942}
-  - component: {fileID: 7342040337403757580}
   - component: {fileID: 2542918792098575779}
   - component: {fileID: 6576846442655130558}
   - component: {fileID: 387983663104001652}
   - component: {fileID: 2333862066334353517}
+  - component: {fileID: 2586829496821321201}
+  - component: {fileID: 7332741226066205841}
+  - component: {fileID: 4848094630519014679}
   m_Layer: 0
   m_Name: MarauderBoss
   m_TagString: Enemy
@@ -33,69 +35,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 4.2, z: 0}
   m_LocalScale: {x: 1.6, y: 1.6, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2663795324594557284}
+  - {fileID: 880712456709788434}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &7342040337403757580
-SpriteRenderer:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1990896620938820717}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6, g: 0.1, b: 0.85, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
-  m_BlendShapeWeights: []
 --- !u!50 &2542918792098575779
 Rigidbody2D:
   serializedVersion: 5
@@ -212,13 +156,8 @@ MonoBehaviour:
     knockback: 33
     cooldown: 3
     telegraphTime: 0.3
-    ringColor: {r: 1, g: 0.4, b: 0.1, a: 0.25}
-    ringTelegraphColor: {r: 1, g: 0.15, b: 0.1, a: 0.85}
-    ringImpactColor: {r: 1, g: 0.9, b: 0.3, a: 1}
-    ringWidth: 0.06
-    ringTelegraphWidth: 0.14
-    telegraphPulseSpeed: 12
     impactFlashDuration: 0.15
+    visual: {fileID: 7478649578045110406}
   guidedMissile:
     targetRoles: 0200000000000000
     interval: 5
@@ -226,6 +165,7 @@ MonoBehaviour:
     turnRate: 90
     speed: 5
     warningLingerTime: 2
+    missilePrefab: {fileID: 2454154910025362242, guid: c5955d69922452049b2cda193f180cd0, type: 3}
   patternBarrageCooldown: 7
   patternBarrageTelegraphTime: 0.7
   fanBulletCount: 5
@@ -254,3 +194,267 @@ MonoBehaviour:
   spawnInterval: 6
   spawnRadius: 2
   explosiveMinionChance: 0.3
+--- !u!114 &2586829496821321201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 360e8c12968f91743b4bf3fe334ef702, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::MarauderModelStates
+  model: {fileID: 5636405115046132335}
+--- !u!114 &7332741226066205841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d9872c1e342f72448b16a7530437c51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::MarauderModelWeapons
+  model: {fileID: 5636405115046132335}
+--- !u!114 &4848094630519014679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1990896620938820717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4acf620f63cba7540a837778b028b504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::BossHitFlash
+  model: {fileID: 5636405115046132335}
+  node: Visual
+  flashColor:
+    key: 12
+    alpha: 0.55
+  flashDuration: 0.08
+--- !u!1 &8586031907057321717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2663795324594557284}
+  - component: {fileID: 3933634742489620029}
+  - component: {fileID: 7478649578045110406}
+  m_Layer: 0
+  m_Name: ShockwaveRing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2663795324594557284
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8586031907057321717}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1056681803579479942}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &3933634742489620029
+SpriteRenderer:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8586031907057321717}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: -5
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 21300000, guid: ecaebc2b181cf424bac3e4a0e02cda2d, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 2.6666667, y: 2.6666667}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+  m_BlendShapeWeights: []
+--- !u!114 &7478649578045110406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8586031907057321717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68fa268ab87c7674cb1d5486f67ca919, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::DangerZoneVisual
+  idle: {fileID: 21300000, guid: ecaebc2b181cf424bac3e4a0e02cda2d, type: 3}
+  telegraphA: {fileID: 21300000, guid: 37b747181a2d04744be98c004284ee64, type: 3}
+  telegraphB: {fileID: 21300000, guid: 2afce9c0df9dc634ea3e7147e812aaa0, type: 3}
+  impact: {fileID: 21300000, guid: 56fad77b271fc2244b5266ec714b65eb, type: 3}
+  afterImpact: {fileID: 0}
+  idleAlpha: 1
+  ringRadiusPx: 183
+  telegraphSwapSpeed: 12
+--- !u!1 &8674963794458133859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 880712456709788434}
+  - component: {fileID: 5636405115046132335}
+  m_Layer: 0
+  m_Name: Visual
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &880712456709788434
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8674963794458133859}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 0.625, y: 0.625, z: 0.625}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 9144761602315395769}
+  m_Father: {fileID: 1056681803579479942}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5636405115046132335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8674963794458133859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2857b83063717044facbd5cf49bd9afb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::BossModel
+--- !u!1001 &3325076858803892218
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 880712456709788434}
+    m_Modifications:
+    - target: {fileID: 1706457099290934573, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_Name
+      value: MarauderModel
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+--- !u!4 &9144761602315395769 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5822507740228259139, guid: b5526a11ac172fb479ba5582bee2b1aa, type: 3}
+  m_PrefabInstance: {fileID: 3325076858803892218}
+  m_PrefabAsset: {fileID: 0}

@@ -1,0 +1,1326 @@
+fileFormatVersion: 2
+guid: e239a814e4d1b8940885957505c0cf66
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2271921585284351321
+    second: warden_death_explosive_3_0
+  - first:
+      213: -460296245577471395
+    second: warden_death_explosive_3_1
+  - first:
+      213: -5762211799261024101
+    second: warden_death_explosive_3_2
+  - first:
+      213: 7627599093351127507
+    second: warden_death_explosive_3_3
+  - first:
+      213: -1900175533451187330
+    second: warden_death_explosive_3_4
+  - first:
+      213: -7511397165286024312
+    second: warden_death_explosive_3_5
+  - first:
+      213: 1954541764730977432
+    second: warden_death_explosive_3_6
+  - first:
+      213: 7205029732782554083
+    second: warden_death_explosive_3_7
+  - first:
+      213: 1195150859837633734
+    second: warden_death_explosive_3_8
+  - first:
+      213: -2095403670968497086
+    second: warden_death_explosive_3_9
+  - first:
+      213: 1503472846532850684
+    second: warden_death_explosive_3_10
+  - first:
+      213: 135505886093978019
+    second: warden_death_explosive_3_11
+  - first:
+      213: 2466550783536453105
+    second: warden_death_explosive_3_12
+  - first:
+      213: 4500142521128938282
+    second: warden_death_explosive_3_13
+  - first:
+      213: -6215433602146335085
+    second: warden_death_explosive_3_14
+  - first:
+      213: 7138804690301078018
+    second: warden_death_explosive_3_15
+  - first:
+      213: 3309763650600213971
+    second: warden_death_explosive_3_16
+  - first:
+      213: -5337679742389496200
+    second: warden_death_explosive_3_17
+  - first:
+      213: -5625877488958850427
+    second: warden_death_explosive_3_18
+  - first:
+      213: -690170917280081836
+    second: warden_death_explosive_3_19
+  - first:
+      213: -3988501305839581542
+    second: warden_death_explosive_3_20
+  - first:
+      213: 292577028994664340
+    second: warden_death_explosive_3_21
+  - first:
+      213: -6411637304379826574
+    second: warden_death_explosive_3_22
+  - first:
+      213: 7533432001284802967
+    second: warden_death_explosive_3_23
+  - first:
+      213: -85076790232442046
+    second: warden_death_explosive_3_24
+  - first:
+      213: -7225672123701927927
+    second: warden_death_explosive_3_25
+  - first:
+      213: 233042205258895340
+    second: warden_death_explosive_3_26
+  - first:
+      213: 2643362072062667474
+    second: warden_death_explosive_3_27
+  - first:
+      213: 1964955108412372155
+    second: warden_death_explosive_3_28
+  - first:
+      213: 4727190924563785106
+    second: warden_death_explosive_3_29
+  - first:
+      213: -5735973219196003447
+    second: warden_death_explosive_3_30
+  - first:
+      213: -7627467313224741636
+    second: warden_death_explosive_3_31
+  - first:
+      213: -1558905967561788777
+    second: warden_death_explosive_3_32
+  - first:
+      213: -2966202869066260766
+    second: warden_death_explosive_3_33
+  - first:
+      213: 223915694158466427
+    second: warden_death_explosive_3_34
+  - first:
+      213: 4591734823446873865
+    second: warden_death_explosive_3_35
+  - first:
+      213: 3633135225202879278
+    second: warden_death_explosive_3_36
+  - first:
+      213: 8970684179744929648
+    second: warden_death_explosive_3_37
+  - first:
+      213: 4294707867354028782
+    second: warden_death_explosive_3_38
+  - first:
+      213: -7533347305837870717
+    second: warden_death_explosive_3_39
+  - first:
+      213: 5669880579175944907
+    second: warden_death_explosive_3_40
+  - first:
+      213: -3743140999359875894
+    second: warden_death_explosive_3_41
+  - first:
+      213: -3868150090642035832
+    second: warden_death_explosive_3_42
+  - first:
+      213: 1480287929138720849
+    second: warden_death_explosive_3_43
+  - first:
+      213: 3153585739962207222
+    second: warden_death_explosive_3_44
+  - first:
+      213: -6406086726031904551
+    second: warden_death_explosive_3_45
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: warden_death_explosive_3_0
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 216
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7aa7597fa538870e0800000000000000
+      internalID: -2271921585284351321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_1
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 220
+        width: 23
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5aa8eed003bc99f0800000000000000
+      internalID: -460296245577471395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_2
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 220
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b907b78e5e28800b0800000000000000
+      internalID: -5762211799261024101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_3
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 217
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d9194076fcaad960800000000000000
+      internalID: 7627599093351127507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_4
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 211
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7be0cd7b6831a5e0800000000000000
+      internalID: -1900175533451187330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_5
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 165
+        width: 29
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88b1044431822c790800000000000000
+      internalID: -7511397165286024312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_6
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 165
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89c7471216def1b10800000000000000
+      internalID: 1954541764730977432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_7
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 212
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ebb1aa3e586df360800000000000000
+      internalID: 7205029732782554083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_8
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 205
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c4ff95ff57069010800000000000000
+      internalID: 1195150859837633734
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_9
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 194
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24c8fd29671abe2e0800000000000000
+      internalID: -2095403670968497086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_10
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 203
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf3390396986dd410800000000000000
+      internalID: 1503472846532850684
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_11
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 196
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a92b9da2e961e100800000000000000
+      internalID: 135505886093978019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_12
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 184
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f5d6298ed2fa3220800000000000000
+      internalID: 2466550783536453105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_13
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 186
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2b658ab7c7b37e30800000000000000
+      internalID: 4500142521128938282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_14
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 173
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3968a03d1185eb9a0800000000000000
+      internalID: -6215433602146335085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_15
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 175
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20ac946fa01221360800000000000000
+      internalID: 7138804690301078018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_16
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 160
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dd968c1184aeed20800000000000000
+      internalID: 3309763650600213971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_17
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 139
+        width: 47
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8765316fd80cce5b0800000000000000
+      internalID: -5337679742389496200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_18
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 139
+        width: 47
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58abdb02b3edce1b0800000000000000
+      internalID: -5625877488958850427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_19
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 163
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 458173915350c66f0800000000000000
+      internalID: -690170917280081836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_20
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 133
+        width: 8
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a96004fb13ff5a8c0800000000000000
+      internalID: -3988501305839581542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_21
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 97
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4978aaaf1417f0400800000000000000
+      internalID: 292577028994664340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_22
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 149
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27e1ccb87d94507a0800000000000000
+      internalID: -6411637304379826574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_23
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 136
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7990428cd702c8860800000000000000
+      internalID: 7533432001284802967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_24
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 105
+        width: 7
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24b909b2c1fb1def0800000000000000
+      internalID: -85076790232442046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_25
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 88
+        width: 47
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 900ed4b9c7149bb90800000000000000
+      internalID: -7225672123701927927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_26
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 86
+        width: 47
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cef4126a6aeeb3300800000000000000
+      internalID: 233042205258895340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_27
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 107
+        width: 7
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2da2906accb1fa420800000000000000
+      internalID: 2643362072062667474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_28
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 91
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb43284a24ce44b10800000000000000
+      internalID: 1964955108412372155
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_29
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 93
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2952314a91b5a9140800000000000000
+      internalID: 4727190924563785106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_30
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 79
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98b1ba46fbab560b0800000000000000
+      internalID: -5735973219196003447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_31
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 44
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cfc065304eac52690800000000000000
+      internalID: -7627467313224741636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_32
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 44
+        width: 29
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7923e3d2847ad5ae0800000000000000
+      internalID: -1558905967561788777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_33
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 80
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ee9f89c43ee5d6d0800000000000000
+      internalID: -2966202869066260766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_34
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 67
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7d43f133228b1300800000000000000
+      internalID: 223915694158466427
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_35
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 68
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 907875e6e7e19bf30800000000000000
+      internalID: 4591734823446873865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_36
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 57
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2b2d27fc3d7b6230800000000000000
+      internalID: 3633135225202879278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_37
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 58
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 077b9e59bb54e7c70800000000000000
+      internalID: 8970684179744929648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_38
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 48
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eea56bf0d0ed99b30800000000000000
+      internalID: 4294707867354028782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_39
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 40
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38143e9e98c247790800000000000000
+      internalID: -7533347305837870717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_40
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 41
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc21ba0b8567fae40800000000000000
+      internalID: 5669880579175944907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_41
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 48
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac434f4d711bd0cc0800000000000000
+      internalID: -3743140999359875894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_42
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 35
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88be265acf1915ac0800000000000000
+      internalID: -3868150090642035832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_43
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 30
+        width: 23
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 150bc95570a0b8410800000000000000
+      internalID: 1480287929138720849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_44
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 30
+        width: 23
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fb4f27a589c3cb20800000000000000
+      internalID: 3153585739962207222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: warden_death_explosive_3_45
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 35
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d0f58640120917a0800000000000000
+      internalID: -6406086726031904551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      warden_death_explosive_3_0: -2271921585284351321
+      warden_death_explosive_3_1: -460296245577471395
+      warden_death_explosive_3_10: 1503472846532850684
+      warden_death_explosive_3_11: 135505886093978019
+      warden_death_explosive_3_12: 2466550783536453105
+      warden_death_explosive_3_13: 4500142521128938282
+      warden_death_explosive_3_14: -6215433602146335085
+      warden_death_explosive_3_15: 7138804690301078018
+      warden_death_explosive_3_16: 3309763650600213971
+      warden_death_explosive_3_17: -5337679742389496200
+      warden_death_explosive_3_18: -5625877488958850427
+      warden_death_explosive_3_19: -690170917280081836
+      warden_death_explosive_3_2: -5762211799261024101
+      warden_death_explosive_3_20: -3988501305839581542
+      warden_death_explosive_3_21: 292577028994664340
+      warden_death_explosive_3_22: -6411637304379826574
+      warden_death_explosive_3_23: 7533432001284802967
+      warden_death_explosive_3_24: -85076790232442046
+      warden_death_explosive_3_25: -7225672123701927927
+      warden_death_explosive_3_26: 233042205258895340
+      warden_death_explosive_3_27: 2643362072062667474
+      warden_death_explosive_3_28: 1964955108412372155
+      warden_death_explosive_3_29: 4727190924563785106
+      warden_death_explosive_3_3: 7627599093351127507
+      warden_death_explosive_3_30: -5735973219196003447
+      warden_death_explosive_3_31: -7627467313224741636
+      warden_death_explosive_3_32: -1558905967561788777
+      warden_death_explosive_3_33: -2966202869066260766
+      warden_death_explosive_3_34: 223915694158466427
+      warden_death_explosive_3_35: 4591734823446873865
+      warden_death_explosive_3_36: 3633135225202879278
+      warden_death_explosive_3_37: 8970684179744929648
+      warden_death_explosive_3_38: 4294707867354028782
+      warden_death_explosive_3_39: -7533347305837870717
+      warden_death_explosive_3_4: -1900175533451187330
+      warden_death_explosive_3_40: 5669880579175944907
+      warden_death_explosive_3_41: -3743140999359875894
+      warden_death_explosive_3_42: -3868150090642035832
+      warden_death_explosive_3_43: 1480287929138720849
+      warden_death_explosive_3_44: 3153585739962207222
+      warden_death_explosive_3_45: -6406086726031904551
+      warden_death_explosive_3_5: -7511397165286024312
+      warden_death_explosive_3_6: 1954541764730977432
+      warden_death_explosive_3_7: 7205029732782554083
+      warden_death_explosive_3_8: 1195150859837633734
+      warden_death_explosive_3_9: -2095403670968497086
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

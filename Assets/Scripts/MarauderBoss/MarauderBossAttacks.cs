@@ -77,7 +77,8 @@ public class MarauderBossAttacks
 
     private void SpawnGuidedMissile(Transform target)
     {
-        GameObject bulletObj = Object.Instantiate(boss.bulletPrefab, boss.transform.position, Quaternion.identity);
+        GameObject prefab = boss.guidedMissile.missilePrefab != null ? boss.guidedMissile.missilePrefab : boss.bulletPrefab;
+        GameObject bulletObj = Object.Instantiate(prefab, boss.transform.position, Quaternion.identity);
         Bullet b = bulletObj.GetComponent<Bullet>();
         b.damage = boss.bulletDamage;
         b.InitHoming(target, boss.guidedMissile.turnRate, boss.guidedMissile.speed, "Enemy");

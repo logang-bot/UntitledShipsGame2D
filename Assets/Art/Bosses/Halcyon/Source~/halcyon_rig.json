@@ -1,0 +1,801 @@
+{
+ "root": "halcyon",
+ "scale": 0.041611,
+ "nodes": [
+  {
+   "name": "halcyon",
+   "parent": null,
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_wing_crescent",
+   "parent": "halcyon",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_wing_crescent_edge",
+   "parent": "halcyon_wing_crescent",
+   "type": "LineSegments",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_wing_strip",
+   "parent": "halcyon",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_body",
+   "parent": "halcyon",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_keel_strip",
+   "parent": "halcyon",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_storm_core",
+   "parent": "halcyon",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_storm_core_orb",
+   "parent": "halcyon_storm_core",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_core_shell_R",
+   "parent": "halcyon_storm_core",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_core_shell_R_plate",
+   "parent": "halcyon_core_shell_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_core_shell_L",
+   "parent": "halcyon_storm_core",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_core_shell_L_plate",
+   "parent": "halcyon_core_shell_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_weakpoint_reticle",
+   "parent": "halcyon",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "halcyon_reticle_bracket_0",
+   "parent": "halcyon_weakpoint_reticle",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_0_a",
+   "parent": "halcyon_reticle_bracket_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_0_b",
+   "parent": "halcyon_reticle_bracket_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_1",
+   "parent": "halcyon_weakpoint_reticle",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_1_a",
+   "parent": "halcyon_reticle_bracket_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_1_b",
+   "parent": "halcyon_reticle_bracket_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_2",
+   "parent": "halcyon_weakpoint_reticle",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_2_a",
+   "parent": "halcyon_reticle_bracket_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_2_b",
+   "parent": "halcyon_reticle_bracket_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_3",
+   "parent": "halcyon_weakpoint_reticle",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_3_a",
+   "parent": "halcyon_reticle_bracket_3",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_bracket_3_b",
+   "parent": "halcyon_reticle_bracket_3",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_reticle_ring",
+   "parent": "halcyon_weakpoint_reticle",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_ring",
+   "parent": "halcyon",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_ring_band",
+   "parent": "halcyon_coil_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_tesla_coil_0",
+   "parent": "halcyon_coil_ring",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_base_0",
+   "parent": "halcyon_tesla_coil_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_0_0",
+   "parent": "halcyon_tesla_coil_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_0_1",
+   "parent": "halcyon_tesla_coil_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_0_2",
+   "parent": "halcyon_tesla_coil_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_0_3",
+   "parent": "halcyon_tesla_coil_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_mast_0",
+   "parent": "halcyon_tesla_coil_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_tip_0",
+   "parent": "halcyon_tesla_coil_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_spoke_0",
+   "parent": "halcyon_coil_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_tesla_coil_1",
+   "parent": "halcyon_coil_ring",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_base_1",
+   "parent": "halcyon_tesla_coil_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_1_0",
+   "parent": "halcyon_tesla_coil_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_1_1",
+   "parent": "halcyon_tesla_coil_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_1_2",
+   "parent": "halcyon_tesla_coil_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_1_3",
+   "parent": "halcyon_tesla_coil_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_mast_1",
+   "parent": "halcyon_tesla_coil_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_tip_1",
+   "parent": "halcyon_tesla_coil_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_spoke_1",
+   "parent": "halcyon_coil_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_tesla_coil_2",
+   "parent": "halcyon_coil_ring",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_base_2",
+   "parent": "halcyon_tesla_coil_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_2_0",
+   "parent": "halcyon_tesla_coil_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_2_1",
+   "parent": "halcyon_tesla_coil_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_2_2",
+   "parent": "halcyon_tesla_coil_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_wind_2_3",
+   "parent": "halcyon_tesla_coil_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_mast_2",
+   "parent": "halcyon_tesla_coil_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_coil_tip_2",
+   "parent": "halcyon_tesla_coil_2",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_spoke_2",
+   "parent": "halcyon_coil_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_static_arcs",
+   "parent": "halcyon_coil_ring",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "halcyon_static_arc_0",
+   "parent": "halcyon_static_arcs",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_static_arc_1",
+   "parent": "halcyon_static_arcs",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_static_arc_2",
+   "parent": "halcyon_static_arcs",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_static_field_ring",
+   "parent": "halcyon",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevrons",
+   "parent": "halcyon",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "halcyon_opening_chevron_0_0",
+   "parent": "halcyon_opening_chevrons",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_0_0_R",
+   "parent": "halcyon_opening_chevron_0_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_0_0_L",
+   "parent": "halcyon_opening_chevron_0_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_0_1",
+   "parent": "halcyon_opening_chevrons",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_0_1_R",
+   "parent": "halcyon_opening_chevron_0_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_0_1_L",
+   "parent": "halcyon_opening_chevron_0_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_1_0",
+   "parent": "halcyon_opening_chevrons",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_1_0_R",
+   "parent": "halcyon_opening_chevron_1_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_1_0_L",
+   "parent": "halcyon_opening_chevron_1_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_1_1",
+   "parent": "halcyon_opening_chevrons",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_1_1_R",
+   "parent": "halcyon_opening_chevron_1_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_1_1_L",
+   "parent": "halcyon_opening_chevron_1_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_2_0",
+   "parent": "halcyon_opening_chevrons",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_2_0_R",
+   "parent": "halcyon_opening_chevron_2_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_2_0_L",
+   "parent": "halcyon_opening_chevron_2_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_2_1",
+   "parent": "halcyon_opening_chevrons",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_2_1_R",
+   "parent": "halcyon_opening_chevron_2_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_2_1_L",
+   "parent": "halcyon_opening_chevron_2_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_3_0",
+   "parent": "halcyon_opening_chevrons",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_3_0_R",
+   "parent": "halcyon_opening_chevron_3_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_3_0_L",
+   "parent": "halcyon_opening_chevron_3_0",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_3_1",
+   "parent": "halcyon_opening_chevrons",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_3_1_R",
+   "parent": "halcyon_opening_chevron_3_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_3_1_L",
+   "parent": "halcyon_opening_chevron_3_1",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_R",
+   "parent": "halcyon",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_R_nacelle",
+   "parent": "halcyon_thruster_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_R_collar",
+   "parent": "halcyon_thruster_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_R_glow",
+   "parent": "halcyon_thruster_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_R_plume",
+   "parent": "halcyon_thruster_R",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_L",
+   "parent": "halcyon",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_L_nacelle",
+   "parent": "halcyon_thruster_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_L_collar",
+   "parent": "halcyon_thruster_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_L_glow",
+   "parent": "halcyon_thruster_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_thruster_L_plume",
+   "parent": "halcyon_thruster_L",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_phase2_overcharge",
+   "parent": "halcyon",
+   "type": "Group",
+   "defaultActive": false
+  },
+  {
+   "name": "halcyon_p2_outer_ring",
+   "parent": "halcyon_phase2_overcharge",
+   "type": "Group",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_outer_band",
+   "parent": "halcyon_p2_outer_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_outer_node_0",
+   "parent": "halcyon_p2_outer_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_outer_node_1",
+   "parent": "halcyon_p2_outer_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_outer_node_2",
+   "parent": "halcyon_p2_outer_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_outer_node_3",
+   "parent": "halcyon_p2_outer_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_outer_node_4",
+   "parent": "halcyon_p2_outer_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_outer_node_5",
+   "parent": "halcyon_p2_outer_ring",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_scorch_0",
+   "parent": "halcyon_phase2_overcharge",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_scorch_1",
+   "parent": "halcyon_phase2_overcharge",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_scorch_2",
+   "parent": "halcyon_phase2_overcharge",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_core_halo",
+   "parent": "halcyon_phase2_overcharge",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_wing_arc_R",
+   "parent": "halcyon_phase2_overcharge",
+   "type": "Mesh",
+   "defaultActive": true
+  },
+  {
+   "name": "halcyon_p2_wing_arc_L",
+   "parent": "halcyon_phase2_overcharge",
+   "type": "Mesh",
+   "defaultActive": true
+  }
+ ],
+ "materials": [
+  {
+   "name": "halcyon_hull",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#3a4458",
+   "additive": false
+  },
+  {
+   "name": "halcyon_trim_edge",
+   "emissive": null,
+   "intensity": null,
+   "color": "#ffe14a",
+   "additive": false
+  },
+  {
+   "name": "halcyon_volt",
+   "emissive": "#ffe14a",
+   "intensity": 1.1,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "halcyon_plate",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#46536f",
+   "additive": false
+  },
+  {
+   "name": "halcyon_core_glow",
+   "emissive": "#ffe14a",
+   "intensity": 1.128213964070149,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "halcyon_weakpoint_glow",
+   "emissive": "#fffbe0",
+   "intensity": 2.6,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "halcyon_coil_glow",
+   "emissive": "#ffe14a",
+   "intensity": 1.1,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "halcyon_dark",
+   "emissive": "#000000",
+   "intensity": 1,
+   "color": "#10151f",
+   "additive": false
+  },
+  {
+   "name": "halcyon_coil_tip",
+   "emissive": "#fff3a8",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "halcyon_arc_0_fx",
+   "emissive": "#fff3a8",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "halcyon_arc_1_fx",
+   "emissive": "#fff3a8",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "halcyon_arc_2_fx",
+   "emissive": "#fff3a8",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "halcyon_static_field_fx",
+   "emissive": "#ffe14a",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "halcyon_opening_chevron_fx",
+   "emissive": "#fffbe0",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "halcyon_spark",
+   "emissive": "#fff3a8",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "halcyon_thruster_R_plume_fx",
+   "emissive": "#fff3a8",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "halcyon_thruster_L_plume_fx",
+   "emissive": "#fff3a8",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  },
+  {
+   "name": "halcyon_dim",
+   "emissive": "#8a7a22",
+   "intensity": 0.7,
+   "color": "#000000",
+   "additive": false
+  },
+  {
+   "name": "halcyon_p2_wing_arc_fx",
+   "emissive": "#fff3a8",
+   "intensity": 1.4,
+   "color": "#000000",
+   "additive": true
+  }
+ ]
+}

@@ -1,39 +1,42 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Routes to one of two panels depending on how many local humans joined via
-// JoinLobby: the original single 4-button picker (CoOpRoster.Players ==
+// JoinLobby: the single-player four-card picker (CoOpRoster.Players ==
 // null - direct scene open, or exactly 1 joined player) or
 // RoleSelectMultiUI's per-player row picker (2+ joined players). See
 // docs/systems/player-roles.md's "Role Select scene" section.
 public class RoleSelectUI : MonoBehaviour
 {
+    public MenuScreen screen;
     public GameObject singlePickerPanel;
     public GameObject multiPickerPanel;
     public Button startButton;
+    public RoleCardView[] cards; // index = (int)PlayerRole
+    public TMPro.TMP_Text kickerText;
 
     private PlayerRole? selectedRole;
 
     void Awake()
     {
         startButton.interactable = false;
-
         bool useMulti = CoOpRoster.Players != null && CoOpRoster.Players.Count >= 2;
-        if (singlePickerPanel != null) singlePickerPanel.SetActive(!useMulti);
-        if (multiPickerPanel != null) multiPickerPanel.SetActive(useMulti);
+        singlePickerPanel.SetActive(!useMulti);
+        multiPickerPanel.SetActive(useMulti);
+        if (useMulti) screen.firstSelected = null;
+        kickerText.text = $"04 / 05 · P1 {SinglePlayerDevice()}";
+    }
+
+    private static string SinglePlayerDevice()
+    {
+        bool gamepad = CoOpRoster.Players != null && CoOpRoster.Players[0].controlScheme == "Gamepad";
+        return gamepad ? "GAMEPAD 1" : "KEYBOARD + MOUSE";
     }
 
     public void SelectAttacker() { SelectRole(PlayerRole.Attacker); }
     public void SelectTank() { SelectRole(PlayerRole.Tank); }
     public void SelectMedic() { SelectRole(PlayerRole.Medic); }
     public void SelectSupport() { SelectRole(PlayerRole.Support); }
-
-    private void SelectRole(PlayerRole role)
-    {
-        selectedRole = role;
-        startButton.interactable = true;
-    }
 
     public void StartGame()
     {
@@ -53,7 +56,7 @@ public class RoleSelectUI : MonoBehaviour
         {
             PartyRoleAssignment.HumanRole = selectedRole.Value;
         }
-        SceneManager.LoadScene("LevelSelect");
+        screen.GoTo("LevelSelect");
     }
 
     public void Back()
@@ -61,6 +64,15 @@ public class RoleSelectUI : MonoBehaviour
         // JoinLobby precedes RoleSelect now whenever the co-op flow was
         // used; a direct-open (CoOpRoster.Players == null) still has
         // somewhere sane to go back to.
-        SceneManager.LoadScene(CoOpRoster.Players != null ? "JoinLobby" : "Lobby");
+        screen.GoBack(CoOpRoster.Players != null ? "JoinLobby" : "Lobby");
+    }
+
+    private void SelectRole(PlayerRole role)
+    {
+        selectedRole = role;
+        startButton.interactable = true;
+        foreach (RoleCardView card in cards) card.SetState(card.role == role ? RoleCardState.You : RoleCardState.Cpu);
+        cards[(int)role].Pulse();
+        screen.Focus(startButton);
     }
 }

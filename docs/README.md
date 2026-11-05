@@ -26,9 +26,11 @@ Per-system reference: what each script does, what it's attached to, and how
 the scene is wired.
 
 - [systems/scene-flow.md](systems/scene-flow.md) — Main Menu → Lobby → Join
-  Lobby → Role Select → Level Select → Level1/Level2/Level3 scene flow,
-  `GameModeSelection` (Local/Online), local co-op device joining, and the
-  Pause overlay.
+  Lobby → Role Select → Level Select → Level scene flow, the persistent
+  `MenuBackground` scene and screen transitions, `GameModeSelection`
+  (Local/Online), local co-op device joining, and the Pause overlay.
+- [systems/ui-kit.md](systems/ui-kit.md) — the menus' UI kit, fonts and the
+  project-wide palette (`NeonPalette`).
 - [systems/movement.md](systems/movement.md) — ship movement, fixed
   orientation decision.
 - [systems/combat.md](systems/combat.md) — shooting, bullets, health, enemy

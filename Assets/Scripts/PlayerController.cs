@@ -248,23 +248,18 @@ void HandleMovement()
 
     void Fire()
     {
-        SpawnBullet(1f, fireDamage);
+        SpawnBullet(1f, fireDamage, PlayerShotKind.Regular);
     }
 
-    public void FireBigShot(float widthMultiplier, float damageAmount)
+    public void FireBigShot(float widthMultiplier, float damageAmount, PlayerShotKind kind)
     {
-        SpawnBullet(widthMultiplier, damageAmount);
+        SpawnBullet(widthMultiplier, damageAmount, kind);
     }
 
-void SpawnBullet(float widthMultiplier, float damageAmount)
+void SpawnBullet(float widthMultiplier, float damageAmount, PlayerShotKind kind)
     {
         GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
-        if (widthMultiplier != 1f)
-        {
-            Vector3 scale = bulletObj.transform.localScale;
-            scale.x *= widthMultiplier;
-            bulletObj.transform.localScale = scale;
-        }
+        if (TryGetComponent(out PlayerShotLook look)) look.Dress(bulletObj, kind, widthMultiplier);
         Bullet b = bulletObj.GetComponent<Bullet>();
         b.damage = damageAmount;
         b.Init(Vector2.up, bulletSpeed, "Player", gameObject);

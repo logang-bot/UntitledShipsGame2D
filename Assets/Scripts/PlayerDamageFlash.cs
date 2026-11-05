@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerDamageFlash : MonoBehaviour
 {
-    public Color flashColor = Color.white;
+    public PaletteSwatch flashColor = new PaletteSwatch(PaletteColor.White);
     public float flashDuration = 0.12f;
 
     private ShipVisual visual;

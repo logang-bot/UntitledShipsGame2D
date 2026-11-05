@@ -9,4 +9,5 @@ public interface IBoss
 {
     void SetVisible(bool visible);
     void ApplyContactDamage(GameObject ship);
+    BossDamageLedger DamageLedger { get; }
 }

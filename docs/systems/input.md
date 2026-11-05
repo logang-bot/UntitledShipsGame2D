@@ -69,10 +69,14 @@ path alongside the asset-based one — worth revisiting if more global
 ## Local co-op join screen input (JoinLobby)
 
 Device pairing itself (which physical device becomes which player) isn't
-driven by `PlayerControls.inputactions` at all — `JoinLobby.unity`'s
-`PlayerInputManager` (`JoinPlayersWhenButtonIsPressed`) listens for *any*
-button press on *any* unpaired device and handles the join/scheme-matching
-internally; see [scene-flow.md](scene-flow.md)'s "JoinLobbyUI.cs" section.
+driven by `PlayerControls.inputactions` at all. `JoinLobby.unity`'s
+`PlayerInputManager` is set to `JoinPlayersManually` (Session 54):
+`JoinDeviceInput` listens to every button press
+(`InputSystem.onAnyButtonPress`) and `JoinPressRouter` decides whether it
+joins, leaves (B / Esc on a joined device), goes back (B / Esc with nobody
+joined) or continues (Start / Enter); joins go through
+`PlayerInputManager.JoinPlayer` with the `Keyboard&Mouse` or `Gamepad`
+scheme. See [scene-flow.md](scene-flow.md)'s "JoinLobbyUI.cs" section.
 Once joined, `RoleSelectMultiUI`/`RolePickerRow.cs` (the 2+-human role
 picker in `RoleSelect.unity`) also bypass the Input Actions asset entirely —
 each row polls its own player's already-paired `Gamepad`/`Keyboard` object
@@ -82,6 +86,19 @@ which is real, correct Unity functionality but more infrastructure than a
 4-role button grid needs. The single-human picker (`RoleSelectUI`'s
 `SinglePickerPanel`, used whenever 0 or 1 players joined) is unaffected —
 still an ordinary single-cursor Unity UI panel, operable by whichever device
-Player 1 joined with since every menu `EventSystem` already uses Unity's
-`DefaultInputActions.inputactions` for UI navigation (mouse, keyboard, and
-gamepad Navigate/Submit all bound out of the box).
+Player 1 joined with since the menus' one `EventSystem` (in
+`MenuBackground.unity`) uses Unity's `DefaultInputActions.inputactions` for
+UI navigation (mouse, keyboard, and gamepad Navigate/Submit all bound out
+of the box).
+
+Screen-level shortcuts (Back, Start) are `MenuHotkey` components: a
+standalone `InputAction` per shortcut, built like `PauseUI`'s, so they
+work on any device regardless of what's selected. See
+[ui-kit.md](ui-kit.md).
+
+**Testing note:** the project's Input System settings use
+`PointersAndKeyboardsRespectGameViewFocus` and
+`ResetAndDisableNonBackgroundDevices`, so simulated keyboard (and, while
+the Editor is in the background, gamepad) input from scripts or the MCP
+bridge doesn't reach UI actions. Menu navigation has to be checked by hand
+with the Game view focused.

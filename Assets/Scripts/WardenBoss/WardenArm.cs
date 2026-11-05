@@ -54,9 +54,11 @@ public class WardenArm : MonoBehaviour
     public float bulletSpeed = 6f;
 
     public PlayerRole? CurrentTargetRole => TargetRole();
+    public GameObject CurrentTarget => currentTarget;
+    public bool IsTelegraphing => enabled && state == ArmState.Telegraph;
+    public bool IsFiring => enabled && state == ArmState.Firing;
 
     private WardenBoss boss;
-    private SpriteRenderer sr;
     private Collider2D col;
     private ArmState state;
     private float stateEndTime;
@@ -66,7 +68,6 @@ public class WardenArm : MonoBehaviour
     void Awake()
     {
         boss = GetComponentInParent<WardenBoss>();
-        sr = GetComponent<SpriteRenderer>();
         col = GetComponent<Collider2D>();
     }
 
@@ -77,7 +78,6 @@ public class WardenArm : MonoBehaviour
 
     public void SetVisible(bool visible)
     {
-        if (sr != null) sr.enabled = visible;
         if (col != null) col.enabled = visible;
     }
 

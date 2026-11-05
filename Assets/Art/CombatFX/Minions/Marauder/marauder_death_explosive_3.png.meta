@@ -1,0 +1,1326 @@
+fileFormatVersion: 2
+guid: bd54f497e1f741a4dbc158afc975b93a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 402854715566087361
+    second: marauder_death_explosive_3_0
+  - first:
+      213: -1748584730409739874
+    second: marauder_death_explosive_3_1
+  - first:
+      213: 5780625759075953294
+    second: marauder_death_explosive_3_2
+  - first:
+      213: 1951104272508369620
+    second: marauder_death_explosive_3_3
+  - first:
+      213: 8430607991089290944
+    second: marauder_death_explosive_3_4
+  - first:
+      213: -1891081568201966226
+    second: marauder_death_explosive_3_5
+  - first:
+      213: 7174987516929682144
+    second: marauder_death_explosive_3_6
+  - first:
+      213: -424641564095831431
+    second: marauder_death_explosive_3_7
+  - first:
+      213: 4944560396412064617
+    second: marauder_death_explosive_3_8
+  - first:
+      213: 7669111348594894398
+    second: marauder_death_explosive_3_9
+  - first:
+      213: 4525932955486532706
+    second: marauder_death_explosive_3_10
+  - first:
+      213: 9048362413112421580
+    second: marauder_death_explosive_3_11
+  - first:
+      213: 3257430336425283419
+    second: marauder_death_explosive_3_12
+  - first:
+      213: -5657231037881527393
+    second: marauder_death_explosive_3_13
+  - first:
+      213: -1193753600267385483
+    second: marauder_death_explosive_3_14
+  - first:
+      213: 4744123937594242518
+    second: marauder_death_explosive_3_15
+  - first:
+      213: 1816643353878491924
+    second: marauder_death_explosive_3_16
+  - first:
+      213: 6762109630249722473
+    second: marauder_death_explosive_3_17
+  - first:
+      213: -330605516188685838
+    second: marauder_death_explosive_3_18
+  - first:
+      213: -3241620824469264900
+    second: marauder_death_explosive_3_19
+  - first:
+      213: -7667277022673582009
+    second: marauder_death_explosive_3_20
+  - first:
+      213: 5030531668195005973
+    second: marauder_death_explosive_3_21
+  - first:
+      213: -610005235200959143
+    second: marauder_death_explosive_3_22
+  - first:
+      213: -4405570881149856755
+    second: marauder_death_explosive_3_23
+  - first:
+      213: 4510836517423231675
+    second: marauder_death_explosive_3_24
+  - first:
+      213: 3501166283933785969
+    second: marauder_death_explosive_3_25
+  - first:
+      213: -3346182374944599309
+    second: marauder_death_explosive_3_26
+  - first:
+      213: -4217377195271883490
+    second: marauder_death_explosive_3_27
+  - first:
+      213: -7919929814718973546
+    second: marauder_death_explosive_3_28
+  - first:
+      213: -3983750814611881263
+    second: marauder_death_explosive_3_29
+  - first:
+      213: -7752748750624604530
+    second: marauder_death_explosive_3_30
+  - first:
+      213: -7854380634212982998
+    second: marauder_death_explosive_3_31
+  - first:
+      213: -1783603706716265580
+    second: marauder_death_explosive_3_32
+  - first:
+      213: 1788815922270017725
+    second: marauder_death_explosive_3_33
+  - first:
+      213: 7243830763929311467
+    second: marauder_death_explosive_3_34
+  - first:
+      213: -6832610854743029661
+    second: marauder_death_explosive_3_35
+  - first:
+      213: -8370878942912320917
+    second: marauder_death_explosive_3_36
+  - first:
+      213: 8744997908343659745
+    second: marauder_death_explosive_3_37
+  - first:
+      213: -6196236043593256567
+    second: marauder_death_explosive_3_38
+  - first:
+      213: 8979809872684166006
+    second: marauder_death_explosive_3_39
+  - first:
+      213: 6016899410825286331
+    second: marauder_death_explosive_3_40
+  - first:
+      213: 7253694191472726917
+    second: marauder_death_explosive_3_41
+  - first:
+      213: -2074237502394779961
+    second: marauder_death_explosive_3_42
+  - first:
+      213: 1528035088722926547
+    second: marauder_death_explosive_3_43
+  - first:
+      213: 5549223227553114441
+    second: marauder_death_explosive_3_44
+  - first:
+      213: 1981249019945187426
+    second: marauder_death_explosive_3_45
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_0
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 216
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cc5869ba3a379500800000000000000
+      internalID: 402854715566087361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_1
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 220
+        width: 23
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e99514cb377cbb7e0800000000000000
+      internalID: -1748584730409739874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_2
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 220
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8ae1353088e83050800000000000000
+      internalID: 5780625759075953294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_3
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 217
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dabb9a9ff6b31b10800000000000000
+      internalID: 1951104272508369620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_4
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 211
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ce5275fc498ff470800000000000000
+      internalID: 8430607991089290944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_5
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 165
+        width: 29
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6d7806455781c5e0800000000000000
+      internalID: -1891081568201966226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_6
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 165
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eaa476c12da29360800000000000000
+      internalID: 7174987516929682144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_7
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 212
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 972a33f4fbe5b1af0800000000000000
+      internalID: -424641564095831431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_8
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 205
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9631b9eab7b9e9440800000000000000
+      internalID: 4944560396412064617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_9
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 194
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e366aeb83282e6a60800000000000000
+      internalID: 7669111348594894398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_10
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 203
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26432092b085fce30800000000000000
+      internalID: 4525932955486532706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_11
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 196
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cccef88acad329d70800000000000000
+      internalID: 9048362413112421580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_12
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 184
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5fc533e1a7b43d20800000000000000
+      internalID: 3257430336425283419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_13
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 186
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f93d1c6285a7d71b0800000000000000
+      internalID: -5657231037881527393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_14
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 173
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57508b2ec6fee6fe0800000000000000
+      internalID: -1193753600267385483
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_15
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 175
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d57bb6f59386d140800000000000000
+      internalID: 4744123937594242518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_16
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 160
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 413708f5183063910800000000000000
+      internalID: 1816643353878491924
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_17
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 139
+        width: 47
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 962684ba1e6d7dd50800000000000000
+      internalID: 6762109630249722473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_18
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 139
+        width: 47
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f9e9ced804796bf0800000000000000
+      internalID: -330605516188685838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_19
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 163
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf52005f8037303d0800000000000000
+      internalID: -3241620824469264900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_20
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 133
+        width: 8
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 748c60dbb2c589590800000000000000
+      internalID: -7667277022673582009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_21
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 97
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 516dd1a36e900d540800000000000000
+      internalID: 5030531668195005973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_22
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 149
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95dd7b47873d887f0800000000000000
+      internalID: -610005235200959143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_23
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 136
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d04124410a44cd2c0800000000000000
+      internalID: -4405570881149856755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_24
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 105
+        width: 7
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb23fd4c9e5b99e30800000000000000
+      internalID: 4510836517423231675
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_25
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 88
+        width: 47
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17f927d6f24a69030800000000000000
+      internalID: 3501166283933785969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_26
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 86
+        width: 47
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f211cbdbd8ff81d0800000000000000
+      internalID: -3346182374944599309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_27
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 107
+        width: 7
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e157cf719cdd875c0800000000000000
+      internalID: -4217377195271883490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_28
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 91
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69976ab8bc1c61290800000000000000
+      internalID: -7919929814718973546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_29
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 93
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d2c26dadbfd6b8c0800000000000000
+      internalID: -3983750814611881263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_30
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 79
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8eba2e4614b86490800000000000000
+      internalID: -7752748750624604530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_31
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 44
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2f170f6d62aff290800000000000000
+      internalID: -7854380634212982998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_32
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 44
+        width: 29
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4936b11f0ed5f37e0800000000000000
+      internalID: -1783603706716265580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_33
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 80
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db8977f8a9623d810800000000000000
+      internalID: 1788815922270017725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_34
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 67
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be89d0943b1478460800000000000000
+      internalID: 7243830763929311467
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_35
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 68
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 368409ad0a0bd21a0800000000000000
+      internalID: -6832610854743029661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_36
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 57
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6ae9e5c3f9a4db80800000000000000
+      internalID: -8370878942912320917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_37
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 58
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ec9b50c3497c5970800000000000000
+      internalID: 8744997908343659745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_38
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 48
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 981f62db52c820aa0800000000000000
+      internalID: -6196236043593256567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_39
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 40
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67ba2eb8081be9c70800000000000000
+      internalID: 8979809872684166006
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_40
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 41
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb29f7f9222508350800000000000000
+      internalID: 6016899410825286331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_41
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 48
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 583db087f6c4aa460800000000000000
+      internalID: 7253694191472726917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_42
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 35
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c637f93bf3d633e0800000000000000
+      internalID: -2074237502394779961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_43
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 30
+        width: 23
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3db99ab31dba43510800000000000000
+      internalID: 1528035088722926547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_44
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 30
+        width: 23
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94966a9df1dc20d40800000000000000
+      internalID: 5549223227553114441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: marauder_death_explosive_3_45
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 35
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2687c6d8c7fce7b10800000000000000
+      internalID: 1981249019945187426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      marauder_death_explosive_3_0: 402854715566087361
+      marauder_death_explosive_3_1: -1748584730409739874
+      marauder_death_explosive_3_10: 4525932955486532706
+      marauder_death_explosive_3_11: 9048362413112421580
+      marauder_death_explosive_3_12: 3257430336425283419
+      marauder_death_explosive_3_13: -5657231037881527393
+      marauder_death_explosive_3_14: -1193753600267385483
+      marauder_death_explosive_3_15: 4744123937594242518
+      marauder_death_explosive_3_16: 1816643353878491924
+      marauder_death_explosive_3_17: 6762109630249722473
+      marauder_death_explosive_3_18: -330605516188685838
+      marauder_death_explosive_3_19: -3241620824469264900
+      marauder_death_explosive_3_2: 5780625759075953294
+      marauder_death_explosive_3_20: -7667277022673582009
+      marauder_death_explosive_3_21: 5030531668195005973
+      marauder_death_explosive_3_22: -610005235200959143
+      marauder_death_explosive_3_23: -4405570881149856755
+      marauder_death_explosive_3_24: 4510836517423231675
+      marauder_death_explosive_3_25: 3501166283933785969
+      marauder_death_explosive_3_26: -3346182374944599309
+      marauder_death_explosive_3_27: -4217377195271883490
+      marauder_death_explosive_3_28: -7919929814718973546
+      marauder_death_explosive_3_29: -3983750814611881263
+      marauder_death_explosive_3_3: 1951104272508369620
+      marauder_death_explosive_3_30: -7752748750624604530
+      marauder_death_explosive_3_31: -7854380634212982998
+      marauder_death_explosive_3_32: -1783603706716265580
+      marauder_death_explosive_3_33: 1788815922270017725
+      marauder_death_explosive_3_34: 7243830763929311467
+      marauder_death_explosive_3_35: -6832610854743029661
+      marauder_death_explosive_3_36: -8370878942912320917
+      marauder_death_explosive_3_37: 8744997908343659745
+      marauder_death_explosive_3_38: -6196236043593256567
+      marauder_death_explosive_3_39: 8979809872684166006
+      marauder_death_explosive_3_4: 8430607991089290944
+      marauder_death_explosive_3_40: 6016899410825286331
+      marauder_death_explosive_3_41: 7253694191472726917
+      marauder_death_explosive_3_42: -2074237502394779961
+      marauder_death_explosive_3_43: 1528035088722926547
+      marauder_death_explosive_3_44: 5549223227553114441
+      marauder_death_explosive_3_45: 1981249019945187426
+      marauder_death_explosive_3_5: -1891081568201966226
+      marauder_death_explosive_3_6: 7174987516929682144
+      marauder_death_explosive_3_7: -424641564095831431
+      marauder_death_explosive_3_8: 4944560396412064617
+      marauder_death_explosive_3_9: 7669111348594894398
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

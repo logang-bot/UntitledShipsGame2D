@@ -1,0 +1,1326 @@
+fileFormatVersion: 2
+guid: 896d545f6ea551d41b35ab3aecaccef8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2951098195897112482
+    second: wave_death_explosive_3_0
+  - first:
+      213: -8149553525848150498
+    second: wave_death_explosive_3_1
+  - first:
+      213: -1438747467869653414
+    second: wave_death_explosive_3_2
+  - first:
+      213: 2957403314493160959
+    second: wave_death_explosive_3_3
+  - first:
+      213: -3442350218664917991
+    second: wave_death_explosive_3_4
+  - first:
+      213: -7560486212276021303
+    second: wave_death_explosive_3_5
+  - first:
+      213: -3824339851499354062
+    second: wave_death_explosive_3_6
+  - first:
+      213: -193911515064717847
+    second: wave_death_explosive_3_7
+  - first:
+      213: -2050420401481114958
+    second: wave_death_explosive_3_8
+  - first:
+      213: -2729556661422857954
+    second: wave_death_explosive_3_9
+  - first:
+      213: 2920004590949235670
+    second: wave_death_explosive_3_10
+  - first:
+      213: -5323278099345515911
+    second: wave_death_explosive_3_11
+  - first:
+      213: 4115485941233282087
+    second: wave_death_explosive_3_12
+  - first:
+      213: -7746203023005436132
+    second: wave_death_explosive_3_13
+  - first:
+      213: -8814016019615822289
+    second: wave_death_explosive_3_14
+  - first:
+      213: -1245043968754667891
+    second: wave_death_explosive_3_15
+  - first:
+      213: 7802690123603492320
+    second: wave_death_explosive_3_16
+  - first:
+      213: 5568891446331736802
+    second: wave_death_explosive_3_17
+  - first:
+      213: 4217475667895178472
+    second: wave_death_explosive_3_18
+  - first:
+      213: -4035200213759669174
+    second: wave_death_explosive_3_19
+  - first:
+      213: -1928143402467810324
+    second: wave_death_explosive_3_20
+  - first:
+      213: 2651158654016825670
+    second: wave_death_explosive_3_21
+  - first:
+      213: 1323046732661536680
+    second: wave_death_explosive_3_22
+  - first:
+      213: 5182328222872537604
+    second: wave_death_explosive_3_23
+  - first:
+      213: -1745811713854088694
+    second: wave_death_explosive_3_24
+  - first:
+      213: -3820608915236137748
+    second: wave_death_explosive_3_25
+  - first:
+      213: -7107037158969244713
+    second: wave_death_explosive_3_26
+  - first:
+      213: -2950807740311181581
+    second: wave_death_explosive_3_27
+  - first:
+      213: 3011503718861647368
+    second: wave_death_explosive_3_28
+  - first:
+      213: 947090290366906610
+    second: wave_death_explosive_3_29
+  - first:
+      213: -3847152581849686151
+    second: wave_death_explosive_3_30
+  - first:
+      213: -3414273859045097914
+    second: wave_death_explosive_3_31
+  - first:
+      213: 3160398595005243375
+    second: wave_death_explosive_3_32
+  - first:
+      213: 4878406428623174943
+    second: wave_death_explosive_3_33
+  - first:
+      213: 8385957608410214148
+    second: wave_death_explosive_3_34
+  - first:
+      213: -7243710040921046512
+    second: wave_death_explosive_3_35
+  - first:
+      213: -3745973725590415535
+    second: wave_death_explosive_3_36
+  - first:
+      213: 6980954872852623622
+    second: wave_death_explosive_3_37
+  - first:
+      213: 4074531717440486303
+    second: wave_death_explosive_3_38
+  - first:
+      213: -6322728437375601347
+    second: wave_death_explosive_3_39
+  - first:
+      213: -3149313284474855364
+    second: wave_death_explosive_3_40
+  - first:
+      213: 8977994335701195269
+    second: wave_death_explosive_3_41
+  - first:
+      213: -5230065520357027480
+    second: wave_death_explosive_3_42
+  - first:
+      213: 6020093380245476563
+    second: wave_death_explosive_3_43
+  - first:
+      213: -5917161827811467644
+    second: wave_death_explosive_3_44
+  - first:
+      213: 8643218551579273747
+    second: wave_death_explosive_3_45
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: wave_death_explosive_3_0
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 216
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a75ebf6c2864f820800000000000000
+      internalID: 2951098195897112482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_1
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 220
+        width: 23
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1ee9c51f38f6ee80800000000000000
+      internalID: -8149553525848150498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_2
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 220
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a56f2200dca880ce0800000000000000
+      internalID: -1438747467869653414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_3
+      rect:
+        serializedVersion: 2
+        x: 150
+        y: 217
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffd7de145aeca0920800000000000000
+      internalID: 2957403314493160959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_4
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 211
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9144df7e6b05a30d0800000000000000
+      internalID: -3442350218664917991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_5
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 165
+        width: 29
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c79c0cd8d1c31790800000000000000
+      internalID: -7560486212276021303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_6
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 165
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 238c203da273deac0800000000000000
+      internalID: -3824339851499354062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_7
+      rect:
+        serializedVersion: 2
+        x: 163
+        y: 212
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9eda5b221861f4df0800000000000000
+      internalID: -193911515064717847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_8
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 205
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ba118922817b83e0800000000000000
+      internalID: -2050420401481114958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_9
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 194
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e11e691adaaae1ad0800000000000000
+      internalID: -2729556661422857954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_10
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 203
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dbf90264b0f58820800000000000000
+      internalID: 2920004590949235670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_11
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 196
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97ad4e7c5caef16b0800000000000000
+      internalID: -5323278099345515911
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_12
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 184
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72ce255a8a42d1930800000000000000
+      internalID: 4115485941233282087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_13
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 186
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1734b74465ff7490800000000000000
+      internalID: -7746203023005436132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_14
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 173
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2e423af0235ea580800000000000000
+      internalID: -8814016019615822289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_15
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 175
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8ea2a06b17b8bee0800000000000000
+      internalID: -1245043968754667891
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_16
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 160
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0edb5d5b359b84c60800000000000000
+      internalID: 7802690123603492320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_17
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 139
+        width: 47
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e28053e34da84d40800000000000000
+      internalID: 5568891446331736802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_18
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 139
+        width: 47
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e4deb956cb778a30800000000000000
+      internalID: 4217475667895178472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_19
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 163
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4c4645f8c61008c0800000000000000
+      internalID: -4035200213759669174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_20
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 133
+        width: 8
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce3a4eb8acbdd35e0800000000000000
+      internalID: -1928143402467810324
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_21
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 97
+        width: 62
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64920e7dfbecac420800000000000000
+      internalID: 2651158654016825670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_22
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 149
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a738895ef76c5210800000000000000
+      internalID: 1323046732661536680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_23
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 136
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40a8cc1cf045be740800000000000000
+      internalID: 5182328222872537604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_24
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 105
+        width: 7
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0ad207fe71a5c7e0800000000000000
+      internalID: -1745811713854088694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_25
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 88
+        width: 47
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce4d8ad1f687afac0800000000000000
+      internalID: -3820608915236137748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_26
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 86
+        width: 47
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d3032ecb5bbe5d90800000000000000
+      internalID: -7107037158969244713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_27
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 107
+        width: 7
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f667468eff9c07d0800000000000000
+      internalID: -2950807740311181581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_28
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 91
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80e248a3da20bc920800000000000000
+      internalID: 3011503718861647368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_29
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 93
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f08a87e99db42d00800000000000000
+      internalID: 947090290366906610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_30
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 79
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97f5f122c1b2c9ac0800000000000000
+      internalID: -3847152581849686151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_31
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 44
+        width: 31
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64ef6b9c3001e90d0800000000000000
+      internalID: -3414273859045097914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_32
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 44
+        width: 29
+        height: 47
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fef5ee317cdfbdb20800000000000000
+      internalID: 3160398595005243375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_33
+      rect:
+        serializedVersion: 2
+        x: 210
+        y: 80
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1df018ccc493b340800000000000000
+      internalID: 4878406428623174943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_34
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 67
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40f66ce9308e06470800000000000000
+      internalID: 8385957608410214148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_35
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 68
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01288fab81c297b90800000000000000
+      internalID: -7243710040921046512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_36
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 57
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1579c3c5eb0a30cc0800000000000000
+      internalID: -3745973725590415535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_37
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 58
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 601b96d587551e060800000000000000
+      internalID: 6980954872852623622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_38
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 48
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9b3a1c5205ab8830800000000000000
+      internalID: 4074531717440486303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_39
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 40
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3577f64cf72148a0800000000000000
+      internalID: -6322728437375601347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_40
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 41
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c302578e0446b44d0800000000000000
+      internalID: -3149313284474855364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_41
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 48
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50a50f6e74e389c70800000000000000
+      internalID: 8977994335701195269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_42
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 35
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 861d91b8e131b67b0800000000000000
+      internalID: -5230065520357027480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_43
+      rect:
+        serializedVersion: 2
+        x: 103
+        y: 30
+        width: 23
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d45634980bab8350800000000000000
+      internalID: 6020093380245476563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_44
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 30
+        width: 23
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48edbc60ba402eda0800000000000000
+      internalID: -5917161827811467644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: wave_death_explosive_3_45
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 35
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31ae2fa9a71e2f770800000000000000
+      internalID: 8643218551579273747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      wave_death_explosive_3_0: 2951098195897112482
+      wave_death_explosive_3_1: -8149553525848150498
+      wave_death_explosive_3_10: 2920004590949235670
+      wave_death_explosive_3_11: -5323278099345515911
+      wave_death_explosive_3_12: 4115485941233282087
+      wave_death_explosive_3_13: -7746203023005436132
+      wave_death_explosive_3_14: -8814016019615822289
+      wave_death_explosive_3_15: -1245043968754667891
+      wave_death_explosive_3_16: 7802690123603492320
+      wave_death_explosive_3_17: 5568891446331736802
+      wave_death_explosive_3_18: 4217475667895178472
+      wave_death_explosive_3_19: -4035200213759669174
+      wave_death_explosive_3_2: -1438747467869653414
+      wave_death_explosive_3_20: -1928143402467810324
+      wave_death_explosive_3_21: 2651158654016825670
+      wave_death_explosive_3_22: 1323046732661536680
+      wave_death_explosive_3_23: 5182328222872537604
+      wave_death_explosive_3_24: -1745811713854088694
+      wave_death_explosive_3_25: -3820608915236137748
+      wave_death_explosive_3_26: -7107037158969244713
+      wave_death_explosive_3_27: -2950807740311181581
+      wave_death_explosive_3_28: 3011503718861647368
+      wave_death_explosive_3_29: 947090290366906610
+      wave_death_explosive_3_3: 2957403314493160959
+      wave_death_explosive_3_30: -3847152581849686151
+      wave_death_explosive_3_31: -3414273859045097914
+      wave_death_explosive_3_32: 3160398595005243375
+      wave_death_explosive_3_33: 4878406428623174943
+      wave_death_explosive_3_34: 8385957608410214148
+      wave_death_explosive_3_35: -7243710040921046512
+      wave_death_explosive_3_36: -3745973725590415535
+      wave_death_explosive_3_37: 6980954872852623622
+      wave_death_explosive_3_38: 4074531717440486303
+      wave_death_explosive_3_39: -6322728437375601347
+      wave_death_explosive_3_4: -3442350218664917991
+      wave_death_explosive_3_40: -3149313284474855364
+      wave_death_explosive_3_41: 8977994335701195269
+      wave_death_explosive_3_42: -5230065520357027480
+      wave_death_explosive_3_43: 6020093380245476563
+      wave_death_explosive_3_44: -5917161827811467644
+      wave_death_explosive_3_45: 8643218551579273747
+      wave_death_explosive_3_5: -7560486212276021303
+      wave_death_explosive_3_6: -3824339851499354062
+      wave_death_explosive_3_7: -193911515064717847
+      wave_death_explosive_3_8: -2050420401481114958
+      wave_death_explosive_3_9: -2729556661422857954
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

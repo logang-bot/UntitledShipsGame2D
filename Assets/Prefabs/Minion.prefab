@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8721729593595149489}
   - component: {fileID: 7208756705659023956}
   - component: {fileID: 1030493880642178165}
+  - component: {fileID: 6066937285952372384}
   m_Layer: 0
   m_Name: Minion
   m_TagString: Enemy
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 4.2, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -61,7 +62,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,8 +85,8 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 0.55, b: 0.1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: f2ee417507a93104e883973e8630ff15, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -160,13 +161,13 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.6666667, y: 0.6666667}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
 --- !u!114 &1030493880642178165
 MonoBehaviour:
@@ -183,9 +184,31 @@ MonoBehaviour:
   wobbleAmplitude: 0.2
   wobbleFrequency: 1.5
   health: 2
-  bulletPrefab: {fileID: 2454154910025362242, guid: 948b73a827320324aa43963466632840, type: 3}
+  bulletPrefab: {fileID: 2454154910025362242, guid: 8e04d99c944bf0e4fa1719c99dd8ae14, type: 3}
   fireInterval: 2
   bulletSpeed: 6
   bulletDamage: 1
   contactDamage: 1
-  contactDamageCooldown: 1
+  type: 0
+  fragmentPrefab: {fileID: 2454154910025362242, guid: 7603d15320109374498dbd8c5fbde4e6, type: 3}
+  fragmentCount: 8
+  fragmentSpeed: 5
+  fragmentDamage: 1
+--- !u!114 &6066937285952372384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7300340836886836703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9f7176f29fef7b45abe75dc10cb530f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::HostileLook
+  standardSprites:
+  - {fileID: 21300000, guid: f2ee417507a93104e883973e8630ff15, type: 3}
+  explosiveSprites:
+  - {fileID: 21300000, guid: 2346f8f4d23a3ab48bd39b0b5aeda43e, type: 3}
+  deathFxPrefab: {fileID: 7418875213110137500, guid: b7a34784b80a0b4468cb1341fc2ed34e, type: 3}
+  explosiveDeathFxPrefab: {fileID: 1174337486264373071, guid: 78ab138d6cf11fa4e889a84300f4518b, type: 3}

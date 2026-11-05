@@ -1,0 +1,494 @@
+fileFormatVersion: 2
+guid: bebfc6f9f44789a44b2f921e3718b04d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3585487020825269087
+    second: support_speed_boost_4_end_0
+  - first:
+      213: 8700527187344243703
+    second: support_speed_boost_4_end_1
+  - first:
+      213: 4048252490543620599
+    second: support_speed_boost_4_end_2
+  - first:
+      213: -6513380150017296068
+    second: support_speed_boost_4_end_3
+  - first:
+      213: -8734773996298095987
+    second: support_speed_boost_4_end_4
+  - first:
+      213: -8964298240285677049
+    second: support_speed_boost_4_end_5
+  - first:
+      213: 1909516694652709079
+    second: support_speed_boost_4_end_6
+  - first:
+      213: 228337315075938532
+    second: support_speed_boost_4_end_7
+  - first:
+      213: 711715505948618349
+    second: support_speed_boost_4_end_8
+  - first:
+      213: 2528715327793587284
+    second: support_speed_boost_4_end_9
+  - first:
+      213: -3135581194721036791
+    second: support_speed_boost_4_end_10
+  - first:
+      213: 8837901748540619661
+    second: support_speed_boost_4_end_11
+  - first:
+      213: 6125646224554057597
+    second: support_speed_boost_4_end_12
+  - first:
+      213: -1764441309877924092
+    second: support_speed_boost_4_end_13
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_0
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 308
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1acafe02d8acd3ec0800000000000000
+      internalID: -3585487020825269087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_1
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 323
+        width: 21
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fb3848216b7eb870800000000000000
+      internalID: 8700527187344243703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_2
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 319
+        width: 21
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f161fb01384e2830800000000000000
+      internalID: 4048252490543620599
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_3
+      rect:
+        serializedVersion: 2
+        x: 188
+        y: 283
+        width: 14
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c39732f4343db95a0800000000000000
+      internalID: -6513380150017296068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_4
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 300
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8235554459d7c680800000000000000
+      internalID: -8734773996298095987
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_5
+      rect:
+        serializedVersion: 2
+        x: 182
+        y: 252
+        width: 6
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70aec1fce3a689380800000000000000
+      internalID: -8964298240285677049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_6
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 272
+        width: 11
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d8e3751157ff7a10800000000000000
+      internalID: 1909516694652709079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_7
+      rect:
+        serializedVersion: 2
+        x: 183
+        y: 221
+        width: 11
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e8511a04973b2300800000000000000
+      internalID: 228337315075938532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_8
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 236
+        width: 7
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6e64395b7580e900800000000000000
+      internalID: 711715505948618349
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_9
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 197
+        width: 18
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 454e833613dc71320800000000000000
+      internalID: 2528715327793587284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_10
+      rect:
+        serializedVersion: 2
+        x: 309
+        y: 208
+        width: 14
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 906f144348d2c74d0800000000000000
+      internalID: -3135581194721036791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_11
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 183
+        width: 21
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8b3199a0d886aa70800000000000000
+      internalID: 8837901748540619661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_12
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 182
+        width: 21
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7fd14249caa20550800000000000000
+      internalID: 6125646224554057597
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_speed_boost_4_end_13
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 188
+        width: 19
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40f83b12af17387e0800000000000000
+      internalID: -1764441309877924092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      support_speed_boost_4_end_0: -3585487020825269087
+      support_speed_boost_4_end_1: 8700527187344243703
+      support_speed_boost_4_end_10: -3135581194721036791
+      support_speed_boost_4_end_11: 8837901748540619661
+      support_speed_boost_4_end_12: 6125646224554057597
+      support_speed_boost_4_end_13: -1764441309877924092
+      support_speed_boost_4_end_2: 4048252490543620599
+      support_speed_boost_4_end_3: -6513380150017296068
+      support_speed_boost_4_end_4: -8734773996298095987
+      support_speed_boost_4_end_5: -8964298240285677049
+      support_speed_boost_4_end_6: 1909516694652709079
+      support_speed_boost_4_end_7: 228337315075938532
+      support_speed_boost_4_end_8: 711715505948618349
+      support_speed_boost_4_end_9: 2528715327793587284
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
