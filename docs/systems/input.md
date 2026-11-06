@@ -6,6 +6,10 @@ why, and [../progress-log-archive.md](../progress-log-archive.md)
 (Session 1) for the full migration story and troubleshooting notes from
 switching over.
 
+This page is how input is wired. **Which key does what on each screen** is in
+the player guide: [../player-guide/README.md](../player-guide/README.md)'s
+"Controls at a glance".
+
 ## PlayerControls (Input Actions asset)
 
 **Assigned to:** the `Player Input` component on every ship — `Ship.prefab`
@@ -15,14 +19,13 @@ Select scene" for the co-op spawner that decides which).
 
 Custom-created (not Unity's auto-generated default) to keep exact control
 over action names, since `Player Input`'s Send Messages behavior matches
-methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
+methods by name (`Move` action → `OnMove`, `Ability` action → `OnAbility`).
 
 - Action map: `Player`
-  - `Move` — Value / Vector2, 2D Vector composite (WASD, `Keyboard&Mouse`
-    scheme) plus a `<Gamepad>/leftStick` binding (`Gamepad` scheme) — arrow
-    keys are still **not** bound
-  - `Fire` — Button (Space and left mouse button, `Keyboard&Mouse`;
-    `<Gamepad>/buttonSouth`, `Gamepad`)
+  - `Move` — Value / Vector2, 2D Vector composite on the **arrow keys**
+    (`Keyboard&Mouse` scheme) plus a `<Gamepad>/leftStick` binding (`Gamepad`
+    scheme). WASD is **not** bound for movement (the co-op role picker reads
+    A / D itself, see below)
   - `Ability` — Button (`E`, `Keyboard&Mouse`; `<Gamepad>/buttonWest`,
     `Gamepad`)
 - Control schemes (added for local co-op — see
@@ -33,8 +36,9 @@ methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
   `Gamepad`-scheme player and a `Keyboard&Mouse`-scheme player active in the
   same scene don't both respond to every binding.
 
-`OnMove`/`OnFire` are consumed by `PlayerController.cs` — see
-[movement.md](movement.md) and [combat.md](combat.md). `OnAbility` is
+`OnMove` is consumed by `PlayerController.cs` — see
+[movement.md](movement.md). Firing has no input: every ship fires automatically
+(see [roguelike-progression.md](roguelike-progression.md)). `OnAbility` is
 consumed by `PlayerAbility.cs` — see [player-roles.md](player-roles.md). None
 of these consumers needed any code change for gamepad support — they already
 only handle input through `PlayerInput`'s Send Messages, agnostic to which

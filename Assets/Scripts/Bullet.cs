@@ -29,6 +29,9 @@ private string owner; // "Player" or "Enemy" - determines what it can hit
     // Rotates the sprite (drawn nose-down) along its flight: missiles,
     // capsules, rods and shards. Round orbs leave it off.
     public bool alignToDirection;
+    // Burst left where the bullet hits an enemy; set per shot by
+    // PlayerShotLook (only the Attacker's crit has one).
+    public GameObject impactFx;
 
 public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = null)
     {
@@ -96,7 +99,13 @@ void OnTriggerEnter2D(Collider2D other)
     {
         DamageBoss(other);
         DamageMinorEnemy(other);
+        SpawnImpact();
         Destroy(gameObject);
+    }
+
+    private void SpawnImpact()
+    {
+        if (impactFx != null) Instantiate(impactFx, transform.position, Quaternion.identity);
     }
 
     private void DamageBoss(Collider2D other)

@@ -5,7 +5,8 @@ using UnityEngine;
 // the model's orientation, scale and z offset. Start, not Awake, for the
 // same reason as PlayerRoleComponent - a spawned ship's role is assigned
 // right after Instantiate. The hit flash tints every model renderer through
-// ShipMesh.shader's _FlashColor.
+// ShipMesh.shader's _FlashColor, reading each renderer's property block
+// first so ShipThrusters' per-frame plume emission survives.
 public class ShipVisual : MonoBehaviour
 {
     public GameObject[] roleVisuals; // indexed by (int)PlayerRole
@@ -30,7 +31,13 @@ public class ShipVisual : MonoBehaviour
     private void ApplyFlash(Color color)
     {
         if (block == null) return;
+        foreach (Renderer modelRenderer in renderers) FlashRenderer(modelRenderer, color);
+    }
+
+    private void FlashRenderer(Renderer modelRenderer, Color color)
+    {
+        modelRenderer.GetPropertyBlock(block);
         block.SetColor(FlashColorId, color);
-        foreach (Renderer modelRenderer in renderers) modelRenderer.SetPropertyBlock(block);
+        modelRenderer.SetPropertyBlock(block);
     }
 }

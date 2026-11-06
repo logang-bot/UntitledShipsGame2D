@@ -16,45 +16,9 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Fire",
-                    "type": "Button",
-                    "id": "f0b4fd69-2d45-43f8-a0bd-26f70e4f1cd8",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Ability",
                     "type": "Button",
                     "id": "7a2c8e91-4b3d-4f6a-9c1e-5d8f3a2b6c7d",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Combo1",
-                    "type": "Button",
-                    "id": "1a2b3c4d-5e6f-4a1b-8c2d-3e4f5a6b7c81",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Combo2",
-                    "type": "Button",
-                    "id": "1a2b3c4d-5e6f-4a1b-8c2d-3e4f5a6b7c82",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Combo3",
-                    "type": "Button",
-                    "id": "1a2b3c4d-5e6f-4a1b-8c2d-3e4f5a6b7c83",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -130,39 +94,6 @@
                 },
                 {
                     "name": "",
-                    "id": "e1f4c3c4-cf84-49d9-8b8e-47753bbe13d6",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "62e8d1f7-796f-40d9-aa47-92f8acfbd3d1",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a7b8c9d0-2b4e-4f7a-9d2e-6e9f4b3c7d8e",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Fire",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "9f1d4e6b-3c7a-4e2f-8b5d-1a9c6f4e7b2d",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -180,72 +111,6 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Ability",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2b3c4d5e-6f7a-4b2c-9d3e-4f5a6b7c8d91",
-                    "path": "<Keyboard>/1",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Combo1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2b3c4d5e-6f7a-4b2c-9d3e-4f5a6b7c8d92",
-                    "path": "<Keyboard>/2",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Combo2",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "2b3c4d5e-6f7a-4b2c-9d3e-4f5a6b7c8d93",
-                    "path": "<Keyboard>/3",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Combo3",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3c4d5e6f-7a8b-4c3d-ad4e-5f6a7b8c9d01",
-                    "path": "<Gamepad>/buttonNorth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Combo1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3c4d5e6f-7a8b-4c3d-ad4e-5f6a7b8c9d02",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Combo2",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3c4d5e6f-7a8b-4c3d-ad4e-5f6a7b8c9d03",
-                    "path": "<Gamepad>/rightShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Combo3",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

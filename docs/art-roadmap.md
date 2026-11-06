@@ -48,7 +48,8 @@ The ship designs live in the Claude Design project "Ship Designs"
 | `Neon Fleet HUD.dc.html` | The in-level HUD: screen layout for PC (1600×900) and mobile (390×844), the four-slot squad rail (human vs CPU frames, special-attack states) and the boss panel. The source of the HUD (Phase 8) and the starting point of the UI kit. |
 | `Pre-Fight Menus.dc.html` + `Menu Button.dc.html` + `Hint Bar.dc.html` | The five screens before a level (Main Menu, Lobby, Join Lobby, Role Select single and multi, Level Select) at PC 1600×900 and mobile 390×844, the UI kit (frames, button states, slot frames, icons, colour tokens, type scale) and the screen transitions. **PC built** (Session 54, Phase 7); mobile waits for the phone work. Icons exported as PNGs to `Assets/Art/UI/Import/`. |
 | `Boss Designs.dc.html` + `bossBackgrounds.js` | The three bosses (2D + 3D, phase 2 looks, signature colors: Marauder `#FF2D95`, Halcyon `#FFE14A`, Warden `#5470FF`), Marauder's minions, and the four-layer parallax background per boss, from the prompt summarized in Phase 2c. **Backgrounds in use** (Session 53, PNGs in `Assets/Art/Backgrounds/`). **Bosses in use** (Session 58): the second turn adds `bossStates.js`, `Boss Models 3D.html` / `bosses3d.js` (the rigs) and `Boss State Wiring.dc.html` (every state and its trigger); its ZIP export is in `Assets/Art/Bosses/`. See Phase 5. |
-| `Combat FX Designs.dc.html` | Bullets, auras and rings, the four role abilities as wind-up / activate / sustain / end frames, every boss's minions plus the wave enemies with death bursts, Marauder and Warden shockwave rings, Halcyon's Static Field, and four white particle textures, each shown over the three backgrounds. **In use** (Session 55): its "Download all (ZIP)" export, 108 PNGs, in `Assets/Art/CombatFX/`. See Phase 3. |
+| `Combat FX Designs.dc.html` | Bullets, auras and rings, the four role abilities as wind-up / activate / sustain / end frames, every boss's minions plus the wave enemies with death bursts, Marauder and Warden shockwave rings, Halcyon's Static Field, and four white particle textures, each shown over the three backgrounds. **In use** (Session 55): its "Download all (ZIP)" export, 108 PNGs, in `Assets/Art/CombatFX/`. See Phase 3. A later turn added the roguelike test's Crit Strike lance, muzzle and impact (`attacker_crit_*`, in use on the roguelike branch) and checked the regular streak in a Multishot cone. |
+| `Neon Fleet HUD v2.dc.html` + `HUD Party Frame` / `HUD Upgrade Card` / `HUD Boss Panel` | The in-level HUD (Phase 8, PC built in Session 57). Section 10 "Roguelike Test" designs the roguelike Attacker branch's UI: the Attacker frame's Attack / Crit cells and XP row, the level-up screen and its upgrade cards, five icons (`ico_attack`, `ico_critshot`, `ico_dmg`, `ico_crit`, `ico_multi`, from its "Download HUD assets" ZIP) and the `Crit` / `CritDim` tokens. **Built on the roguelike branch.** See `systems/roguelike-progression.md`. |
 
 | Role | Ship | Shape | Design color |
 | --- | --- | --- | --- |
@@ -106,10 +107,11 @@ Built straight from the 3D models instead of the planned 2D sprites first.
 - **In place:**
   - glTFast (`com.unity.cloud.gltfast` 6.20.0) imports the GLBs from
     `Assets/Art/Ships/Models/`.
-  - `Assets/Art/Ships/ShipMesh.shader` and 24 materials in
+  - `Assets/Art/Ships/ShipMesh.shader` (plus `ShipPlume.shader` for the
+    engine flames, Session 60) and 25 materials in
     `Assets/Art/Ships/Materials/`: shared hull/plate/dark, per-ship neon and
-    accent (HDR emission), glass, additive engine plumes, and one material
-    per edge-line color.
+    accent (HDR emission), glass, additive engine plumes plus a shared white
+    plume core (Session 60), and one material per edge-line color.
   - One prefab per ship in `Assets/Art/Ships/Prefabs/` (`Nova11`,
     `Aegis04`, `Lumen02`, `Echo07`), with `ShipPartSpinner` on Lumen's
     `halo_ring` and Echo's gyros, and `ShipPartPulse` on the Aegis and Echo
@@ -126,8 +128,23 @@ Built straight from the 3D models instead of the planned 2D sprites first.
   - ~~**A dark background.**~~ Done in Phase 2c (Session 53).
   - Tune the ship scale, light direction, hull brightness and bloom against
     that background, at in-game size.
-  - Engine flames that react to speed, and the Tank shield-emitter pulse
-    (the design pulses its glow, which needs per-renderer emission).
+  - ~~Engine flames that react to speed.~~ Done in Session 60: the GLBs
+    were re-exported from `Ship Models 3D.html` after the design added its
+    animated plume. Each engine is now a `<name>_plume` pivot at the nozzle
+    holding `_plume_outer` (the ship's plume material) and `_plume_core`
+    (`plume_core.mat`, white). Both use `ShipPlume.shader`: additive,
+    double-sided, and fading along the flame (brightest at the nozzle) and
+    toward the silhouette edges. The design's cones are uniform, but from
+    straight above a uniform cone is the same flat triangle, so the fade is
+    what makes it read as a flame. Plume emission is the ship's neon × 0.8;
+    the core is white × 1.5. `ShipThrusters` on each ship prefab ports the
+    design's `thrusters()`: a flicker at cruise, eased into the BOOST look
+    (longer, wider, brighter, faster) by `ShipBoostFeed` on `Ship.prefab`
+    while Support's Speed Boost is on. Emission is driven per renderer
+    through `MaterialPropertyBlock`s (`EmissionDriver`), which `ShipVisual`'s
+    hit flash now shares instead of overwriting.
+  - The Tank shield-emitter pulse (the design pulses its glow; the
+    per-renderer emission that needs now exists, `EmissionDriver`).
   - ~~Visuals for the Tank's **Shield Arc** and the Medic's **aura ring**.~~
     Done with the Combat FX sprites (Session 55, see Phase 3).
   - Whether a roll also gives invulnerability frames is a gameplay decision
@@ -453,7 +470,8 @@ original brief.
   callouts; see `systems/hud-layout.md`. Still open: the phone layout
   (top strip + squad chips), the design's PLANNED deck parts (card tray,
   energy, spell card, focus hitbox and graze ring, with phase 3), and live
-  3D portraits on the frames.
+  3D portraits on the frames. The roguelike Attacker test's level-up screen
+  and Attacker frame rows (design section 10) are built on that branch.
 - **Later:** card art for the deck layer, once its design settles.
 
 ## Cross-cutting

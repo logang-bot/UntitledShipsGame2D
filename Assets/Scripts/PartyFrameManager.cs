@@ -28,6 +28,9 @@ public class PartyFrameManager : MonoBehaviour
 
     public FrameSeat SeatOf(GameObject ship) => ship != null && seats.TryGetValue(ship, out FrameSeat seat) ? seat : default;
 
+    public PartyFrameUI FrameFor(PlayerRole role) =>
+        Array.Find(partyFrames ?? Array.Empty<PartyFrameUI>(), frame => frame != null && frame.IsBound && frame.Role == role);
+
     /// <summary>
     /// Every ship (human or AI) carries both PlayerInput and AIController
     /// (see Ship.prefab / docs/systems/player-roles.md's "Co-op roster") -

@@ -90,7 +90,8 @@ never restarts between screens (Session 54):
   - `Awake`: if `MenuBackground` isn't loaded, loads it additively. So
     pressing Play on any screen scene in the editor works, and so does
     `PauseUI` loading `MainMenu` or `RoleSelect` from a level, unchanged.
-  - `Start`: slides `slideGroups` (header, content, footer) in, then
+  - `Start`: keeps the screen hidden until `FrameSettle` reports smooth
+    frames (see "Load hitches" below), slides `slideGroups` (header, content, footer) in, then
     selects `firstSelected` if `focusOnEnter` is on. It's **off on Role
     Select and Level Select**, so those open with no option highlighted.
     On every screen, a navigation press (arrows, D-pad, stick) while
@@ -103,6 +104,30 @@ never restarts between screens (Session 54):
   - `TryBeginLeaving()`: for Level Select's own launch animation.
 - **Launching a level** is a normal `SceneManager.LoadScene("Level")`,
   which closes every menu scene including `MenuBackground`.
+
+## Load hitches (FrameSettle, LevelReveal)
+
+Loading a scene costs one long frame. Profiled in the editor (Session 60):
+about 480 ms for `Level` and 350 ms for `MainMenu`, most of it the GC pass
+that a single-mode load runs to unload the previous scene's assets. Starting
+Play also costs the editor's domain and scene reload (`EnterPlayModeOptions`
+reloads both), which a build doesn't have. There's **no loading screen**:
+loads are well under a second. What showed as lag was animations and the
+level starting during those slow frames, so they now wait:
+
+- **`FrameSettle.UntilSmooth()`** (static coroutine helper): waits until two
+  frames in a row take under 1/30 s, giving up after 0.75 s.
+- **Menus:** `MenuScreen.Start` keeps the screen hidden until then, so the
+  enter slide plays in full instead of stuttering.
+- **Level:** `LevelRevealCover`, the last child of `HUDCanvas` (full-screen
+  `Bg` image, `CanvasGroup`, `LevelReveal`), starts opaque, waits for
+  `FrameSettle`, fades out over 0.25 s (unscaled), then deactivates. It runs
+  on every `Level` load: from Level Select (straight after its blackout), and
+  on Restart and Retry.
+
+Turning off the editor's domain reload would speed up pressing Play, but
+every static (`MobKills`, `CoOpRoster`, the selections…) would need a reset
+first. Not done.
 - **Shortcuts:** `MenuHotkey` (standalone `InputAction`, like `PauseUI`):
   Esc / gamepad B → Back on Lobby, single-player Role Select and Level
   Select; Backspace / B on multiplayer Role Select (Esc unlocks there);

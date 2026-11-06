@@ -10,6 +10,9 @@ public class PauseUI : MonoBehaviour
     // should never pop Pause on top of an end screen.
     public GameObject gameOverPanelRoot;
     public GameObject victoryPanelRoot;
+    // The level-up screen owns timeScale while it's open, so pausing over it
+    // would resume the game with a card still waiting to be picked.
+    public LevelUpUI levelUpUI;
 
     private InputAction pauseAction;
 
@@ -52,6 +55,7 @@ public class PauseUI : MonoBehaviour
         if (GameModeSelection.Mode == GameMode.Online) return;
         if (gameOverPanelRoot != null && gameOverPanelRoot.activeSelf) return;
         if (victoryPanelRoot != null && victoryPanelRoot.activeSelf) return;
+        if (levelUpUI != null && levelUpUI.IsOpen) return;
 
         Show();
     }

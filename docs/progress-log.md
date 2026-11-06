@@ -2259,3 +2259,139 @@ the editor and rendered the boss up close:
 No console errors. Not checked live: Marauder's missile, barrage and bay
 looks (minions are off), Warden's Lockdown chevrons, and bloom on the
 boss glow in a full fight.
+
+## Session 59 — Roguelike Attacker UI from "Neon Fleet HUD v2" Section 10
+
+On `feature/roguelike-attacker-progression`, rebased onto the art second
+draft. The roguelike test's code-built placeholders (`LevelUpUI`'s procedural
+cards and `CooldownBarUI`) were replaced by the Claude Design "Roguelike Test"
+designs. See `systems/roguelike-progression.md`'s "HUD".
+
+- **Source.** Read through the Claude Design project: `Neon Fleet HUD v2.dc.html`
+  section 10, the new `HUD Upgrade Card.dc.html`, the roguelike variant in
+  `HUD Party Frame.dc.html`, and the Crit Strike shot in
+  `Combat FX Designs.dc.html`. Both "Download all (ZIP)" exports were staged at
+  the project root, only the new files were imported, then the ZIPs were
+  deleted: `attacker_crit_shot` / `_muzzle` / `_impact` (PPU 192) and
+  `ico_attack`, `ico_critshot`, `ico_dmg`, `ico_crit`, `ico_multi` (PPU 200).
+- **Design decisions followed.** Attack + XP live in the Attacker's party
+  frame (the playfield stays clear), so `CooldownBarUI` is gone. The ability
+  cell and combo box are removed for the Attacker rather than reading
+  `ABILITY / OFFLINE` (the rebase-time `AbilityTimes` tweak was reverted). Crit
+  moved off pure red to vermilion `#FF5A1F` (new `Crit` / `CritDim` tokens).
+  The level-up screen covers the playfield only; the rails dim to 35%.
+- **Party frame.** `PartyFrame.prefab` gains a `RogueRow` (`RogueFrameView`:
+  `CooldownCellView` ×2, `XpRowView` with `UpgradeChipView` chips, CPU note), a
+  `LevelUpTag` beside `LOW HP`, and a root `CanvasGroup` for the dimmer.
+  `AttackerProgression` binds the Attacker's frame in `Start` through
+  `PartyFrameManager.FrameFor`. `PipRowView.Tint` paints the white "new XP" cell.
+- **Level-up screen.** `UpgradeCard.prefab` (`UpgradeCardView`, a `Selectable`
+  so hover, arrows / D-pad and Enter / A share one focus) and a `LevelUpPanel`
+  on `HUDCanvas`. `LevelUpUI` keeps its name and the `PauseUI` wiring and is now
+  only the controller; `LevelUpFlow` (0.3 s lock, 150 ms slide-in, 250 ms
+  confirm) and `PickStreak` (`PICK i / n`) are tested plain classes.
+  `HudFreezeDimmer` dims the rails and shows `PAUSE · LOCKED`.
+- **Crit Strike.** `PlayerShotKind.Crit` and `PlayerShotLook.crit`;
+  `FireCrit` lost its colour parameter. New `CritMuzzleFx` (spawned at the
+  fire point by `ShipCombatFx.PlayCritMuzzle`) and `CritImpactFx` (spawned by
+  `Bullet.impactFx`, the first bullet hit effect in the project, set only on
+  the crit).
+- **Role Select.** The Attacker's line now reads `LEVEL UP` — "Fires on its
+  own. Kills earn XP; each level-up adds an upgrade."
+- **Placement gotcha.** The panel first went on `GameplayCanvas` (playfield
+  size), but that camera-space canvas sorts under the playfield sprites and
+  goes through bloom, so it rendered washed out and behind the ships. It now
+  sits on `HUDCanvas` as a 608-wide centred column, which always matches the
+  playfield because the canvas scales with height.
+
+### Verified
+
+All 203 EditMode tests pass (new: `UpgradeCardCopyTests`, `LevelUpFlowTests`,
+`PickStreakTests`, `CooldownCellStateTests`, `XpRowStateTests`,
+`UpgradeChipsTests`). Played `Level.unity` as the human Attacker with three
+kills reported through `MobKills`: two banked level-ups opened back to back
+(`PICK 1 / 2` → `PICK 2 / 2`, `LV 0 → 1` → `LV 1 → 2`), the input-lock bar
+drained, focus landed on card 1, picks applied (Multishot ×3, Crit +100%),
+the rails dimmed to 35% with `PAUSE · LOCKED`, and closing restored time scale
+and the rails. The frame showed `ATTACK ×3`, the `CRIT` cell and the
+`CRIT ×1` / `MULTI ×3` chips; a crit bullet carried the lance sprite and
+`CritImpactFx`. No console errors.
+
+Not checked live: a CPU Attacker's `AUTO-FIRE · NO UPGRADES` line (the scene's
+default roster has a human Attacker), mouse hover and gamepad navigation on
+the cards, the crit muzzle / impact frames on screen, and the MAX state at
+level 5.
+
+## Session 60 — UI Fixes: Engine Flames, Load Hitches, Level-up Scrim
+
+On `feature/roguelike-attacker-progression`. Three issues from playtesting.
+
+- **Engine flames (design port).** Every engine showed a static flat
+  triangle. The design (`Ship Models 3D.html` + `ships3d.js`) had since
+  gained an animated plume, but our GLBs predate it: one static `*_plume`
+  mesh per engine, drawn with `Cull Back`, so half of the open cone read as a
+  flat triangle. The design now builds each engine as a `<name>_plume` pivot
+  at the nozzle holding `_plume_outer` and `_plume_core`, with a CRUISE
+  flicker and a BOOST look (hold Shift in the design). Decisions: the user
+  re-exports the four GLBs (rather than building cones in Unity), and in game
+  BOOST means **Support's Speed Boost** (`speedBuffMultiplier > 1`); no new
+  input. Built: `ThrusterPose` (the design's coefficients, pure),
+  `ThrustBoost` (asymmetric ease, 7 up / 3.5 down, dt capped at 0.1 s),
+  `ThrusterParts` / `ThrusterEngine` (find the named nodes, apply a pose with
+  absolute scales), `EmissionDriver` (per-renderer `MaterialPropertyBlock`),
+  `ShipThrusters` on the four ship prefabs, `ShipBoostFeed` on `Ship.prefab`.
+  New `ShipPlume.shader` (additive, double-sided, fades along the flame and
+  toward the silhouette edges) on the four plume materials and the new
+  `plume_core.mat`; opacity comes from the script. `ShipVisual`'s hit flash
+  now reads each renderer's property block before writing, so it no longer
+  wipes the plume emission.
+- **After the re-export.** The GLBs came back with the plume parts on all
+  four ships. Every existing material override survived (glTFast IDs are
+  name-based). The new `_plume_outer` / `_plume_core` renderers got their
+  materials (shadows off), and 33 orphaned overrides left by the old
+  single-mesh `*_plume` nodes were removed (3 per old cone). Tuning, judged
+  in captures: with the neon emission (2–2.5) the cones saturated into solid
+  wedges; at the design's intensity (neon × 0.55) they were still flat
+  triangles from above, because the design's cones are uniform and a uniform
+  cone seen top-down is a triangle. Hence `ShipPlume.shader`'s fades. A
+  first pass faded the wrong way: the exported cone's `uv.y` is 0 at the
+  apex (nozzle) and 1 at the open end. Final: plume = neon × 0.8,
+  core = white × 1.5. `ShipMesh.shader`'s interim `_Cull` property was
+  reverted, as nothing needs it now.
+- **Load hitches.** Profiled with the MCP profiler (editor): one ~480 ms
+  frame loading `Level` and ~350 ms loading `MainMenu`, mostly the GC pass of
+  a single-mode load; pressing Play adds the editor's domain reload. No
+  loading screen: `FrameSettle` waits for smooth frames, `MenuScreen` stays
+  hidden until then, and `LevelReveal` fades the level in from black. An
+  async load behind Level Select's blackout was considered and dropped: the
+  load still blocks one frame, and the blackout already covers it. See
+  `systems/scene-flow.md`'s "Load hitches".
+- **Level-up scrim.** The 86% backdrop existed but barely dimmed. A capture
+  showed an enemy core at 0.41 under it: the project is in **Linear** color
+  space, so UI alpha blends in linear light and 86% black leaves white at 14%
+  linear, about 41% on screen. Per the user, the scrim now covers the
+  **whole screen** (`LevelUpScrim` on `HUDCanvas`, before `LevelUpUI`) at
+  `LinearSpaceAlpha.ForBlackOverlay(0.86)` = 98.7%, and `HudFreezeDimmer`
+  lifts the Attacker's frame above it with a nested `Canvas`
+  (`overrideSorting`). The old backdrop `Image` on `LevelUpPanel` was removed.
+  Gotcha: the scrim's `PaletteTint.Awake` runs on its first activation and
+  reset the alpha, so the dimmer activates it first and sets alpha after.
+
+### Verified
+
+All 212 EditMode tests pass (new: `ThrusterPoseTests`, `ThrustBoostTests`).
+Played `Level.unity` as the human Attacker with three kills through
+`MobKills`: the whole screen darkened, the Attacker frame stayed lit, the
+cards read clearly; two picks closed the screen and restored the scrim,
+frame sorting and time scale. `LevelRevealCover` was gone once the level
+ran. `MainMenu` opened with its full slide-in. Flames: on the menu fleet,
+cruise shows a short flicker fading from each nozzle and BOOST (target set
+directly) roughly 2.4× longer and brighter with the white core showing, on
+all four ships. In `Level`, every ship's `ShipBoostFeed` set its target to 1
+under a speed buff, and a hit flash and the plume emission coexisted in one
+renderer's property block. No console errors.
+
+Not checked live: the boost from Support's actual ability in a fight (the
+CPU teammates died in the background during the test; the buff path is the
+same `speedBuffMultiplier` the ability sets), and the flames at in-game
+size during real play.

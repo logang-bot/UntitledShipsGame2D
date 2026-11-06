@@ -156,7 +156,6 @@ public class AIController : MonoBehaviour
         Transform medicTarget = role.role == PlayerRole.Medic ? medic.FindHurtAlly() : null;
         Vector2 moveDirection = ComputeMoveDirection(medicTarget);
         controller.SetMoveDirection(moveDirection);
-        controller.SetFiring(true);
         UpdateAbilityUsage();
     }
 
@@ -200,9 +199,8 @@ public class AIController : MonoBehaviour
     /// <summary>
     /// Tank's Taunt is decided per boss by tactics.ShouldTaunt (see
     /// AIBossTactics and its subclasses); every other role retries every
-    /// frame, which the ability's own cooldown gate makes safe. Attacker
-    /// always requests the slot that continues its combo, so bots play a
-    /// perfect rotation paced by comboAttackCooldown. TEMPORARY for Medic:
+    /// frame, which the ability's own cooldown gate makes safe (an Attacker
+    /// with Big Shot switched off just gets a no-op). TEMPORARY for Medic:
     /// fires the aura boost the instant it's off cooldown regardless of
     /// whether anyone needs it - flagged for rework once the aura AI is
     /// revisited (see docs/systems/bosses/marauder-boss.md's "AI teammate behavior").
@@ -214,7 +212,6 @@ public class AIController : MonoBehaviour
             if (tactics.ShouldTaunt(this)) ability.TryUseAbility();
             return;
         }
-        if (role.role == PlayerRole.Attacker) ability.TryComboAttack(ability.AttackerComboExpectedSlot);
         ability.TryUseAbility();
     }
 }

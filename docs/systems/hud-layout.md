@@ -101,7 +101,8 @@ role stroke, glow and a 3 px inset edge; other human = dim role stroke; CPU
 | `FrameVitalsView` + 2× `PipRowView` | HP as 14 px square pips (amber when low), shield as 9×14 segments (fixed width per point), the n/max numbers, `BROKEN` at 0 shield. A shield over 12 points (the Tank's 20) moves to its own line |
 | `FrameStatsView` | SPD, FIRE (live, with buff multipliers) and real DPS from the boss's `BossDamageLedger`. Values boosted by Speed Boost turn light purple with a `+` (the design's ▲ isn't in the fonts) |
 | `AbilityCellView` | The square sweep around the icon (`AbilityCellState`): solid = ready, filling = active time left, grey track filling back up = cooldown; name, status, seconds, 3 px active bar |
-| `ComboKeysView` | Attacker only: the 1-2-3 keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`) |
+| `ComboKeysView` | Attacker only: the 1-2-3 keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`). Hidden on this branch, where the combo is removed (see `roguelike-progression.md`); the view and `ComboDisplay` stay for when it returns |
+| `RogueFrameView` | Roguelike Attacker test only: replaces the ability row (`PartyFrameUI.BindRogue`) with the Attack / Crit cells and XP row, or the CPU note. See `roguelike-progression.md`'s "HUD" |
 
 `PipRowView` resizes to the ship's max each time it changes, because
 `PlayerRoleComponent` applies the role's max HP and shield in `Start()`,
@@ -118,9 +119,10 @@ fades to 40% under a hatch and shows a `DOWN` badge; its ability reads
 
 `AbilityTimes.Read` takes the cooldown remaining and total from
 `PlayerAbility` (`CooldownRemaining`, `CooldownFor(role)`) and the active
-time from Speed Boost / Aura Boost. The Attacker combo reads
-`AttackerComboExpectedSlot`, `AttackerComboBrokenAt` and
-`AttackerComboFinishedAt`.
+time from Speed Boost / Aura Boost.
+
+The frame's root `CanvasGroup` is for `HudFreezeDimmer` (35% while the
+level-up screen is open); `Content`'s is for DOWN.
 
 ### DamageMeterView.cs
 
@@ -213,6 +215,23 @@ Full screen on `HUDCanvas`, covering both rails. Each uses the kit's
 
 `BossNameLabel` fills the boss name into the kickers and titles, bound by
 `onSpawned`. The overlays' mutual-exclusion guards are unchanged.
+
+The roguelike Attacker test adds a fourth, the **level-up screen**
+(`LevelUpUI`): its cards sit in a 608-wide column centred on `HUDCanvas`,
+which always matches the playfield since the canvas scales with height. It
+is not on `GameplayCanvas`, whose camera-space rendering goes through bloom
+and sorts under the playfield sprites. While it is open, `LevelUpScrim` (a
+full-screen `Bg` image just before `LevelUpUI`) darkens the whole screen,
+the Attacker's frame is lifted above it, the rails dim and Pause is blocked.
+See `roguelike-progression.md`.
+
+**Backdrop alphas and Linear color space.** The project renders in Linear
+color space, so UI alpha blends in linear light, while the designs' alphas
+assume sRGB blending. A design's 86% black backdrop only darkens white to
+about 41% on screen. `LinearSpaceAlpha.ForBlackOverlay` converts a design
+alpha to the one that looks the same (86% → 98.7%); the level-up scrim uses
+it. The Pause, Game Over and Victory backdrops still use the raw design
+alphas, so they're lighter than designed.
 
 ## Scene wiring (`Level.unity`)
 

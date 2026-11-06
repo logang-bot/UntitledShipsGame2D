@@ -2,12 +2,14 @@ using TMPro;
 using UnityEngine;
 
 // The top line of a party frame: who-tag (◤ P1 / P2 / ◇ CPU 1), ship name,
-// role word, the LOW HP tag and the Speed Boost buff chip.
+// role word, the LEVEL UP tag (roguelike Attacker test), the LOW HP tag and
+// the Speed Boost buff chip.
 public class FrameIdentityView : MonoBehaviour
 {
     public TagChip who;
     public TMP_Text shipName;
     public TMP_Text roleName;
+    public GameObject levelUpTag;
     public GameObject lowHpTag;
     public GameObject speedBuffChip;
 
@@ -26,10 +28,13 @@ public class FrameIdentityView : MonoBehaviour
         speedBuffChip.SetActive(speedBoosted);
     }
 
+    public void SetLevelUpPending(bool pending) => levelUpTag.SetActive(pending);
+
     public void ShowDown()
     {
         shipName.color = NeonPalette.Get(PaletteColor.TextSoft);
         roleName.color = NeonPalette.Get(PaletteColor.Text3);
         SetConditions(false, false);
+        SetLevelUpPending(false);
     }
 }

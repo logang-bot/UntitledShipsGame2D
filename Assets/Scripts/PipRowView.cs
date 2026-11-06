@@ -25,6 +25,8 @@ public class PipRowView : MonoBehaviour
         for (int i = 0; i < max; i++) Paint(pips[i], i < filled, low);
     }
 
+    public void Tint(int index, Color color) => pips[index].color = color;
+
     private void Resize(int max)
     {
         pipTemplate.gameObject.SetActive(false);

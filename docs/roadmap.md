@@ -641,6 +641,23 @@ reference docs live under `systems/`.
   Marauder's minions stay Combat FX sprites. The old sprite tints are
   gone. Level Select shows each boss's portrait. See `art-roadmap.md`'s
   Phase 5.
+- **Roguelike progression test (Attacker)** — XP from mob kills, 5 level-ups,
+  a freeze-and-pick screen with 3 stacking cards, automatic firing for every
+  role, and a cooldown/XP bar. Attacker combo removed and Big Shot off on this
+  branch. The HUD follows the Claude Design "Roguelike Test" section: Attack /
+  Crit cells and an XP row with upgrade chips in the Attacker's party frame, a
+  playfield-only level-up screen with designed upgrade cards (input lock,
+  focus, 250 ms pick confirm, banked picks back to back), dimmed rails, and a
+  vermilion Crit Strike lance with muzzle and impact.
+  See `systems/roguelike-progression.md`.
+- **UI fixes (Session 60)** — animated engine flames ported from the design
+  (cruise flicker, BOOST look during Support's Speed Boost; `ShipThrusters`,
+  GLBs re-exported with plume parts); the level-up screen now darkens the
+  whole screen except the Attacker frame, with its alpha corrected for Linear
+  color space (`LinearSpaceAlpha`); menus wait for smooth frames before
+  sliding in and the level fades in from black (`FrameSettle`,
+  `LevelReveal`). See `art-roadmap.md`, `systems/hud-layout.md` and
+  `systems/scene-flow.md`.
 
 ## In Progress
 

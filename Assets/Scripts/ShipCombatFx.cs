@@ -13,6 +13,7 @@ public class ShipCombatFx : MonoBehaviour
     public GameObject speedBoostFx;
     public GameObject bigShotFx;
     public GameObject healFlashFx;
+    public GameObject critMuzzleFx;
 
     [Header("Medic aura")]
     public Sprite auraIdle;
@@ -27,9 +28,11 @@ public class ShipCombatFx : MonoBehaviour
     public Sprite speedRing;
     public Sprite speedRingEnd;
 
-    public void PlayAbility(PlayerRole role) => SpawnChild(AbilityFxFor(role));
+    public void PlayAbility(PlayerRole role) => SpawnChild(AbilityFxFor(role), transform);
 
-    public void PlayHealFlash() => SpawnChild(healFlashFx);
+    public void PlayHealFlash() => SpawnChild(healFlashFx, transform);
+
+    public void PlayCritMuzzle(Transform nose) => SpawnChild(critMuzzleFx, nose);
 
     private GameObject AbilityFxFor(PlayerRole role)
     {
@@ -42,10 +45,10 @@ public class ShipCombatFx : MonoBehaviour
         }
     }
 
-    private void SpawnChild(GameObject prefab)
+    private void SpawnChild(GameObject prefab, Transform parent)
     {
         if (prefab == null) return;
-        GameObject fx = Instantiate(prefab, transform);
+        GameObject fx = Instantiate(prefab, parent);
         FxSprites.UndoParentScale(fx.transform);
     }
 }

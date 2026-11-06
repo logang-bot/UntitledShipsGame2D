@@ -43,8 +43,9 @@ data and lookups: static lookup tables (`PlayerRoleStats`, `NeonPalette`,
 `RolePalette`, the `*Looks`/`*Styles`/`*Text` presets), static carriers
 (`PartyRoleAssignment`, `CoOpRoster`, `GameModeSelection`,
 `LevelSelection`, `MenuTransitionState`), pure helpers (`MenuTween`,
-`MenuEase`, `RoleStatScale`, `SquadLineup`, `JoinPressRouter`), small
-value structs (`PaletteSwatch`, `NeonFrameLook`, `TweenSpec`…), and the
+`MenuEase`, `RoleStatScale`, `SquadLineup`, `JoinPressRouter`,
+`FrameSettle`, `LinearSpaceAlpha`), small value structs (`PaletteSwatch`,
+`NeonFrameLook`, `TweenSpec`, `ThrusterPose`…), and the
 plain helper classes a feature folder's `MonoBehaviour` constructs. There are no component
 hierarchies. The only interfaces or base classes are the two documented
 exceptions below: `IBoss`, and the `AIBossTactics` strategy.

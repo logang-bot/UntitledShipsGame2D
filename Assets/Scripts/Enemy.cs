@@ -116,7 +116,7 @@ public class Enemy : MonoBehaviour
         }
 
         // Destroy if it drifts off the bottom of the screen
-        if (transform.position.y < -10f) Die();
+        if (transform.position.y < -10f) Die(false);
     }
 
     void Fire()
@@ -147,10 +147,12 @@ public class Enemy : MonoBehaviour
         Die();
     }
 
-    void Die()
+    // Drifting off screen isn't a kill, so it earns no XP.
+    void Die(bool killed = true)
     {
         if (isDead) return;
         isDead = true;
+        if (killed) MobKills.Report();
         if (type == EnemyType.Explosive) SpawnFragments();
         if (TryGetComponent(out HostileLook look)) look.SpawnDeath(type == EnemyType.Explosive);
         Destroy(gameObject);
