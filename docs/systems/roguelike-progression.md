@@ -78,9 +78,11 @@ After level 5 the XP row reads `MAX` and kills stop giving XP.
 
 1. The kill that completes a level **freezes the fight** on the next frame:
    bullets, timers and the boss all stop, exactly like Pause.
-2. The screen covers the **playfield only**. The other party frames, the damage
-   meter and the boss rail dim to 35% so the freeze is obvious. The Attacker's
-   own frame stays lit, so current upgrades can be read while choosing.
+2. A scrim **darkens the whole screen** (playfield and both rails) so the
+   cards read clearly. The Attacker's own frame stays lit above it, so
+   current upgrades can be read while choosing. (The design covered the
+   playfield only; changed after playtesting showed the cards were hard to
+   read over the fight.)
 3. For the first **0.3 s, input is locked** (an `INPUT LOCKED` bar drains). A
    key or click already on its way from the fight is dropped, so it can't pick
    a card the player never read.
@@ -293,8 +295,10 @@ Designs"). PC only.
   `MAX`, and a chip per upgrade taken (`DMG +n`, `CRIT ×n`, `MULTI ×shots`). A
   `LEVEL UP` tag sits next to the role name while a pick is banked. A CPU
   Attacker's frame shows one dashed `AUTO-FIRE · NO UPGRADES (CPU)` line.
-- **Level-up screen.** Covers the playfield only (a 608-wide column on
-  `HUDCanvas`), backdrop 86%. Header: `LEVEL UP`, the pilot (`NOVA-11 · P1`),
+- **Level-up screen.** The cards sit in a 608-wide column on `HUDCanvas`,
+  over a full-screen scrim (`LevelUpScrim`, design backdrop 86%, drawn at
+  98.7% to look the same in Linear color space; see `hud-layout.md`'s
+  "Backdrop alphas"). Header: `LEVEL UP`, the pilot (`NOVA-11 · P1`),
   `PICK i / n` when picks are banked, `LV a → b`, and either
   `FIGHT FROZEN · CHOOSE ONE` or the amber `+n MORE PICK AFTER THIS`. Then the
   `INPUT LOCKED` drain bar for the first 0.3 s, the three cards stacked
@@ -304,8 +308,11 @@ Designs"). PC only.
   inset edge, `ENTER A PICK` tag; hover and keyboard / gamepad share one focus),
   picked (solid orange, `PICKED` tag, held 250 ms), locked (55%, during the
   input lock) and dim (30%, the other cards while a pick confirms).
-- **While open**, every other party frame, the damage meter and the boss rail
-  drop to 35%, and the rail's pause hint reads `PAUSE · LOCKED` with a lock icon.
+- **While open**, the scrim darkens everything except the Attacker's frame,
+  which gets a nested `Canvas` with `overrideSorting` to sit above it. Under
+  the scrim, every other party frame, the damage meter and the boss rail also
+  drop to 35%, and the rail's pause hint reads `PAUSE · LOCKED` with a lock
+  icon.
 - **Crit Strike shot**: a 16 × 92 px vermilion (`Crit`, `#FF5A1F`) lance with a
   muzzle star at the nose and a diamond impact burst (120 ms) where it hits.
 
@@ -323,7 +330,7 @@ Everything lives in `Assets/Scripts/AttackerProgression/`.
 | `LevelUpFlow`, `PickStreak` | The screen's timing and the banked-pick count (plain classes, tested) |
 | `LevelUpHeaderView`, `UpgradeCardView` (+ `UpgradeCardLooks`, `UpgradeCardCopy`, `UpgradeCardState`) | The header and the cards (`UpgradeCard.prefab`) |
 | `LevelUpKeys` | The 1 / 2 / 3 pick keys, live only while the screen is open |
-| `HudFreezeDimmer` | Dims the rails and locks the pause hint while the screen is open |
+| `HudFreezeDimmer` | Shows the full-screen scrim, lifts the Attacker's frame above it, dims the rails and locks the pause hint while the screen is open |
 | `RogueFrameView` (+ `CooldownCellView`, `XpRowView`, `UpgradeChipView`) | The Attacker frame's roguelike rows, inside `PartyFrame.prefab` |
 | `CooldownCellState`, `XpRowState`, `UpgradeChips` | What those rows draw (plain structs, tested) |
 

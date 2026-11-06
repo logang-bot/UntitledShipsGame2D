@@ -53,6 +53,7 @@ GameObject:
   - component: {fileID: 5883566481210704653}
   - component: {fileID: 5803027871074571646}
   - component: {fileID: 4152285164259849233}
+  - component: {fileID: 3403166036847641875}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Player
@@ -488,6 +489,19 @@ MonoBehaviour:
   comboBroken: {fileID: 21300000, guid: dec70b2e185de3f469f7ffd8906c8e23, type: 3}
   crit: {fileID: 21300000, guid: c40871ed3591efc4a898d48d04f7c878, type: 3}
   critImpactFx: {fileID: 3290155587259647624, guid: b72de0ad255573740bc75d8b8ccdf34f, type: 3}
+--- !u!114 &3403166036847641875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039737173953149718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ef6ca5ae7e22db49b84f2042f0d1c7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::ShipBoostFeed
+  controller: {fileID: 2405750416407749301}
 --- !u!1 &8713791423059384962
 GameObject:
   m_ObjectHideFlags: 0

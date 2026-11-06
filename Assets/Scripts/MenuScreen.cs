@@ -48,6 +48,9 @@ public class MenuScreen : MonoBehaviour
 
     IEnumerator Start()
     {
+        screenGroup.alpha = 0f;
+        yield return FrameSettle.UntilSmooth();
+        screenGroup.alpha = 1f;
         yield return PlayAll(EnterSpec(MenuTransitionState.IsBack));
         SetInteractable(true);
         if (focusOnEnter) Focus(firstSelected);

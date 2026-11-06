@@ -1,8 +1,8 @@
 # Overlays
 
-Screens that appear over a running fight. Pause, Game Over and Victory cover
-the whole screen; the level-up screen covers only the playfield. None of them
-can open on top of another.
+Screens that appear over a running fight. All of them darken the whole
+screen; the level-up screen keeps your Attacker frame lit. None of them can
+open on top of another.
 
 More detail: [../systems/hud-layout.md](../systems/hud-layout.md)'s
 "Overlays" (layout and looks), [../systems/scene-flow.md](../systems/scene-flow.md)
@@ -34,8 +34,9 @@ Pause doesn't open during a level-up, or over Game Over or Victory.
 ## Level-up (this branch)
 
 **Opens when** the human Attacker completes a level (see
-[the-fight.md](the-fight.md)'s "Level-ups"). The fight freezes; the rest of
-the HUD dims and the pause hint reads `PAUSE · LOCKED`.
+[the-fight.md](the-fight.md)'s "Level-ups"). The fight freezes and the whole
+screen darkens behind the cards, except your Attacker frame, so you can read
+your current upgrades while choosing. The pause hint reads `PAUSE · LOCKED`.
 
 **On screen:** `LEVEL UP` and the pilot (`NOVA-11 · P1`), the level change
 (`LV 2 → 3`), and either `FIGHT FROZEN · CHOOSE ONE` or, when more picks are

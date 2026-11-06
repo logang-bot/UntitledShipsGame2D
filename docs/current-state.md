@@ -23,7 +23,9 @@ player guide in sync with anything a player can see.
   `RoleSelect` (3) → `LevelSelect` (4) → one shared `Level` (5) for all three
   bosses, with `MenuBackground` (6) loaded under the five menu screens. Pause,
   Game Over, Victory and the level-up screen are overlays inside `Level`.
-  See [systems/scene-flow.md](systems/scene-flow.md).
+  Menus wait for smooth frames before sliding in, and the level fades in from
+  black once loaded, so load hitches don't show. See
+  [systems/scene-flow.md](systems/scene-flow.md).
 - **Menus in the neon style (Session 54, PC):** every screen before a fight
   follows the Claude Design "Pre-Fight Menus" design, on one UI kit and one
   palette. Keyboard, mouse and gamepad all navigate. See
@@ -73,9 +75,12 @@ player guide in sync with anything a player can see.
 - **In-level HUD (Session 57, PC):** party frames, damage meter, one shared
   boss panel, playfield callouts, Pause / Game Over / Victory on the menu kit.
   **(this branch)** The Attacker frame's level-up rows and the level-up screen
-  (Session 59). See [systems/hud-layout.md](systems/hud-layout.md).
+  (Session 59). The level-up screen darkens the whole screen except the
+  Attacker frame (Session 60). See [systems/hud-layout.md](systems/hud-layout.md).
 - **Ships and bosses** are the Claude Design 3D models rendered live (Sessions
-  51 and 58), each boss fight has its own parallax background (Session 53), and
+  51 and 58), with animated engine flames that flicker and burn longer and
+  brighter during Support's Speed Boost (Session 60). Each boss fight has its
+  own parallax background (Session 53), and
   the Combat FX sprites are in (Session 55). See [art-roadmap.md](art-roadmap.md).
 
 ## What's NOT there yet
@@ -101,6 +106,9 @@ player guide in sync with anything a player can see.
   [roadmap.md](roadmap.md)'s "Known issues".
 - The Pause hint bar shows `B · RESUME`, but gamepad B doesn't resume. Use
   Start, Esc or the RESUME button.
+- The Pause, Game Over and Victory backdrops look lighter than designed: their
+  alphas aren't corrected for Linear color space yet, unlike the level-up
+  scrim. See [systems/hud-layout.md](systems/hud-layout.md)'s "Backdrop alphas".
 
 ## Running it in the Editor
 

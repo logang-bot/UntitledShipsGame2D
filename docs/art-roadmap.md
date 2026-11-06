@@ -107,10 +107,11 @@ Built straight from the 3D models instead of the planned 2D sprites first.
 - **In place:**
   - glTFast (`com.unity.cloud.gltfast` 6.20.0) imports the GLBs from
     `Assets/Art/Ships/Models/`.
-  - `Assets/Art/Ships/ShipMesh.shader` and 24 materials in
+  - `Assets/Art/Ships/ShipMesh.shader` (plus `ShipPlume.shader` for the
+    engine flames, Session 60) and 25 materials in
     `Assets/Art/Ships/Materials/`: shared hull/plate/dark, per-ship neon and
-    accent (HDR emission), glass, additive engine plumes, and one material
-    per edge-line color.
+    accent (HDR emission), glass, additive engine plumes plus a shared white
+    plume core (Session 60), and one material per edge-line color.
   - One prefab per ship in `Assets/Art/Ships/Prefabs/` (`Nova11`,
     `Aegis04`, `Lumen02`, `Echo07`), with `ShipPartSpinner` on Lumen's
     `halo_ring` and Echo's gyros, and `ShipPartPulse` on the Aegis and Echo
@@ -127,8 +128,23 @@ Built straight from the 3D models instead of the planned 2D sprites first.
   - ~~**A dark background.**~~ Done in Phase 2c (Session 53).
   - Tune the ship scale, light direction, hull brightness and bloom against
     that background, at in-game size.
-  - Engine flames that react to speed, and the Tank shield-emitter pulse
-    (the design pulses its glow, which needs per-renderer emission).
+  - ~~Engine flames that react to speed.~~ Done in Session 60: the GLBs
+    were re-exported from `Ship Models 3D.html` after the design added its
+    animated plume. Each engine is now a `<name>_plume` pivot at the nozzle
+    holding `_plume_outer` (the ship's plume material) and `_plume_core`
+    (`plume_core.mat`, white). Both use `ShipPlume.shader`: additive,
+    double-sided, and fading along the flame (brightest at the nozzle) and
+    toward the silhouette edges. The design's cones are uniform, but from
+    straight above a uniform cone is the same flat triangle, so the fade is
+    what makes it read as a flame. Plume emission is the ship's neon × 0.8;
+    the core is white × 1.5. `ShipThrusters` on each ship prefab ports the
+    design's `thrusters()`: a flicker at cruise, eased into the BOOST look
+    (longer, wider, brighter, faster) by `ShipBoostFeed` on `Ship.prefab`
+    while Support's Speed Boost is on. Emission is driven per renderer
+    through `MaterialPropertyBlock`s (`EmissionDriver`), which `ShipVisual`'s
+    hit flash now shares instead of overwriting.
+  - The Tank shield-emitter pulse (the design pulses its glow; the
+    per-renderer emission that needs now exists, `EmissionDriver`).
   - ~~Visuals for the Tank's **Shield Arc** and the Medic's **aura ring**.~~
     Done with the Combat FX sprites (Session 55, see Phase 3).
   - Whether a roll also gives invulnerability frames is a gameplay decision

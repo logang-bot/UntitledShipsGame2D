@@ -650,6 +650,14 @@ reference docs live under `systems/`.
   focus, 250 ms pick confirm, banked picks back to back), dimmed rails, and a
   vermilion Crit Strike lance with muzzle and impact.
   See `systems/roguelike-progression.md`.
+- **UI fixes (Session 60)** — animated engine flames ported from the design
+  (cruise flicker, BOOST look during Support's Speed Boost; `ShipThrusters`,
+  GLBs re-exported with plume parts); the level-up screen now darkens the
+  whole screen except the Attacker frame, with its alpha corrected for Linear
+  color space (`LinearSpaceAlpha`); menus wait for smooth frames before
+  sliding in and the level fades in from black (`FrameSettle`,
+  `LevelReveal`). See `art-roadmap.md`, `systems/hud-layout.md` and
+  `systems/scene-flow.md`.
 
 ## In Progress
 

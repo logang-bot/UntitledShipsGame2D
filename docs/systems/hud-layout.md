@@ -217,11 +217,21 @@ Full screen on `HUDCanvas`, covering both rails. Each uses the kit's
 `onSpawned`. The overlays' mutual-exclusion guards are unchanged.
 
 The roguelike Attacker test adds a fourth, the **level-up screen**
-(`LevelUpUI`), which covers the playfield only: a 608-wide column centred on
-`HUDCanvas`, which always matches the playfield since the canvas scales with
-height. It is not on `GameplayCanvas`, whose camera-space rendering goes
-through bloom and sorts under the playfield sprites. While it is open the
-rails dim and Pause is blocked. See `roguelike-progression.md`.
+(`LevelUpUI`): its cards sit in a 608-wide column centred on `HUDCanvas`,
+which always matches the playfield since the canvas scales with height. It
+is not on `GameplayCanvas`, whose camera-space rendering goes through bloom
+and sorts under the playfield sprites. While it is open, `LevelUpScrim` (a
+full-screen `Bg` image just before `LevelUpUI`) darkens the whole screen,
+the Attacker's frame is lifted above it, the rails dim and Pause is blocked.
+See `roguelike-progression.md`.
+
+**Backdrop alphas and Linear color space.** The project renders in Linear
+color space, so UI alpha blends in linear light, while the designs' alphas
+assume sRGB blending. A design's 86% black backdrop only darkens white to
+about 41% on screen. `LinearSpaceAlpha.ForBlackOverlay` converts a design
+alpha to the one that looks the same (86% → 98.7%); the level-up scrim uses
+it. The Pause, Game Over and Victory backdrops still use the raw design
+alphas, so they're lighter than designed.
 
 ## Scene wiring (`Level.unity`)
 

@@ -67,7 +67,7 @@ ship.
 
 - **Ability — Speed Boost** (4 s, 15 s cooldown): every ship in the party, CPUs
   included, moves **and** fires 1.5× faster. A purple ring shows on every
-  boosted ship, and the boosted stats on the left rail turn light purple
-  with a `+`.
+  boosted ship, its engine flames burn longer and brighter, and the boosted
+  stats on the left rail turn light purple with a `+`.
 - **How to play:** time the boost for the boss's damage windows (Halcyon's
   Opening, Warden's arms all down) or to get everyone out of a barrage.

@@ -369,3 +369,45 @@ directives (fully qualify `UnityEngine.UI.Image`, `TMPro.…`), no
 `UnityEngine.Object`). A lambda parameter name can't be reused as a local
 later in the same method (`bar`, `sp`, `hb` all collided). The menu
 screens of Session 54 were built this way; no builder script was kept.
+
+## Linear color space: UI alpha looks weaker than the design's
+
+The project renders in **Linear** color space, so UI alpha blends in linear
+light. The Claude Design pages blend in sRGB (a browser). A black overlay at
+design alpha `a` leaves white at `(1 − a)` *linear*, which displays much
+brighter: 86% leaves white at about 41% on screen instead of 14%. Same for a
+`CanvasGroup` fade over a dark background (35% shows as about 62%). Convert
+with `LinearSpaceAlpha.ForBlackOverlay` (`1 − (1 − a)^2.2`; 86% → 98.7%).
+Found on the level-up scrim in Session 60. To check a dim, sample the
+captured PNG (`Texture2D.LoadImage` + `GetPixel` in `execute_code`) rather
+than eyeballing it.
+
+## `PaletteTint` re-applies its color on first activation
+
+`PaletteTint.Awake` sets the `Graphic`'s color. On an object saved inactive,
+`Awake` runs the first time it's activated, overwriting any color (or alpha)
+set from code before that. Activate first, then set the color (Session 60,
+`HudFreezeDimmer.ShowScrim`).
+
+## Profiling from MCP
+
+`manage_profiler` `profiler_start` doesn't survive entering Play mode (the
+domain reload turns the profiler off). Enable it from `execute_code` while
+playing (`UnityEditorInternal.ProfilerDriver.enabled = true`), trigger the
+load, then read frames with `ProfilerDriver.GetRawFrameDataView` (frame
+times) and `GetHierarchyFrameDataView` (samples). Set
+`ProfilerDriver.profileEditor = true` to see inside `EditorLoop`, where
+scene loads land in the editor. Two traps: the `execute_code` call itself
+costs a ~1 s frame (it compiles), and an unfocused Editor throttles frames
+to ~100 ms, so only spikes above that mean anything (Session 60).
+
+## Re-exporting a GLB: orphaned prefab overrides
+
+The ship prefabs are prefab instances of the glTFast-imported GLB, with
+material and shadow overrides keyed to each node's file ID. glTFast's IDs
+follow node names, so a re-export keeps every override whose node still
+exists. A node that changed type (Session 60: each `*_plume` mesh became a
+group) leaves its overrides orphaned. `PrefabUtility`'s "unused overrides"
+API is internal; instead, in `LoadPrefabContents`, keep only the
+`GetPropertyModifications(instance)` entries whose `target` isn't null and
+write them back with `SetPropertyModifications`, then save.
