@@ -9,11 +9,16 @@ public class PlayerAbilityAttacker
     // off-by-one translating UI/input slot numbers to array indices.
     private int expectedSlot = 1;
     private readonly float[] nextAttackTime = new float[3];
+    private readonly AttackerBeamCast beamCast;
 
     public PlayerAbilityAttacker(PlayerAbility ability)
     {
         this.ability = ability;
+        beamCast = new AttackerBeamCast(ability);
     }
+
+    /// <summary>Seconds since the Nova Beam cast began, or -1 when not casting.</summary>
+    public float CastElapsed => beamCast.Elapsed;
 
     // What slot a correctly-played combo attacks next - read by the HUD
     // (PlayerAbility.StatusText) and by AIController to always feed the
@@ -25,12 +30,7 @@ public class PlayerAbilityAttacker
     public float LastBreakTime { get; private set; } = -1f;
     public float LastFinishTime { get; private set; } = -1f;
 
-    public void Trigger()
-    {
-        float damage = ability.PlayerController.fireDamage * ability.bigShotDamageMultiplier;
-        ability.PlayerController.FireBigShot(ability.bigShotWidthMultiplier, damage, PlayerShotKind.BigShot);
-        ability.PlayerController.AddRecoil(Vector2.down * ability.recoilForce);
-    }
+    public void Trigger() => beamCast.Begin();
 
     /// <summary>
     /// One step of the 3-attack combo. `slot` is whichever of the 3 combo
@@ -42,7 +42,7 @@ public class PlayerAbilityAttacker
     /// </summary>
     public void TryComboAttack(int slot)
     {
-        if (slot < 1 || slot > 3) return;
+        if (slot < 1 || slot > 3 || beamCast.IsCasting) return;
         if (Time.time < nextAttackTime[slot - 1]) return;
         nextAttackTime[slot - 1] = Time.time + ability.comboAttackCooldown;
 

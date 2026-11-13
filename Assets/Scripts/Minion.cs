@@ -118,7 +118,7 @@ public class Minion : MonoBehaviour
         if (health <= 0) Die();
     }
 
-    // Called by a ship's own PlayerController.ResolveShipCollisions() the
+    // Called by a ship's own ShipCollisionResolver the
     // moment its overlap-resolution math detects it overlapping this minion -
     // same shape as MarauderBoss.ApplyContactDamage, except this minion doesn't
     // survive the hit (kamikaze).

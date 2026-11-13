@@ -32,7 +32,7 @@ fire-cooldown gate needs seconds-until-next-shot, rather than ever mutating
 `shotsPerSecond` itself.
 
 `Fire()` (regular Space/click fire) and `FireBigShot(float widthMultiplier,
-float damageAmount)` (Attacker's ability — see [player-roles.md](player-roles.md))
+float damageAmount)` (the Attacker's combo shots — see [player-roles.md](player-roles.md))
 both route through a shared private `SpawnBullet(widthMultiplier,
 damageAmount)` so there's one instantiation/`Init()` call site; `Fire()` is
 just `SpawnBullet(1f, fireDamage)` — the caster's own live, role-fixed
@@ -83,8 +83,8 @@ right after `Instantiate()`, before `Init()` runs. `float`, default `1`, so
 anything that doesn't set it (enemy/boss bullets that don't need a specific
 value) is unaffected. `PlayerController.SpawnBullet()` sets it explicitly
 for both regular fire (the caster's fixed-per-role `fireDamage`, e.g. `2.0`
-for Attacker) and Attacker's big shot (`fireDamage × bigShotDamageMultiplier`,
-a live `2x` — see [player-roles.md](player-roles.md)); the collider scales
+for Attacker) and the Attacker's combo shots (`fireDamage × comboStepDamageMultipliers[step]`,
+live multipliers — see [player-roles.md](player-roles.md)); the collider scales
 automatically with the bullet's `transform.localScale` (Unity
 `BoxCollider2D` behavior), so a wider bullet doesn't need any collider-size
 code.
@@ -112,16 +112,28 @@ their shooter as `ownerObject`.
 
 `OnTriggerEnter2D` only dispatches. The player-bullet-vs-`Enemy`-tag case
 goes to `HitEnemy()`, and the enemy-bullet-vs-`Player`-tag case goes to
-`HitPlayer()`. `HitEnemy()` checks the collider for each damageable
-component, then destroys the bullet:
-- `DamageBoss()`:
+`HitPlayer()`. `HitEnemy()` hands the collider's object to
+**`EnemyDamage.TryDamage(target, amount, source)`**, then destroys the bullet.
+`EnemyDamage` (a static helper since Session 59, shared with the Attacker's
+Nova Beam, so both damage exactly the same things) checks for one
+damageable component and returns whether anything took the hit:
+- bosses:
   - `MarauderBoss.TakeDamage(damage, ownerObject)`. The shooter is passed
     so Marauder's aggro system can credit the hit.
   - `HalcyonBoss.TakeDamage(damage)` and `WardenBoss.TakeDamage(damage)`.
     No `ownerObject`, since neither has aggro.
   - `WardenArmHealth.TakeDamage(damage)` for Warden's arms, which are
     `Enemy`-tagged trigger colliders.
-- `DamageMinorEnemy()`: `Enemy` and `Minion`.
+- minor enemies: `Enemy` and `Minion`.
+
+**The Nova Beam's damage.** `BeamColumnDamage.Strike(column, damage,
+source)` runs one `Physics2D.OverlapBoxAll` over the beam's column per tick
+(enemy colliders are triggers, and `queriesHitTriggers` is on), keeps the
+`Enemy`-tagged colliders, hits each GameObject once through `EnemyDamage`,
+and returns the impact points (the target's underside at the beam's x) for
+the spark particles. Its per-tick damage is never below 1, so the health
+pools' rounding can't swallow it. See
+[player-roles.md](player-roles.md) for the cast rules.
 
 See [marauder-boss.md](bosses/marauder-boss.md),
 [halcyon-boss.md](bosses/halcyon-boss.md) and
@@ -164,6 +176,11 @@ event fires on either call since `PartyFrameUI` already polls
 up live for free. **No passive shield regen anywhere** — shield only ever
 goes up via `RestoreShield(int)`, deliberately, to keep Tank dependent on
 Medic.
+
+**Invulnerability (Session 59).** `GrantInvulnerability(seconds)` makes
+`TakeDamage` ignore every hit (no shield loss, no `OnDamaged`) until then,
+extending but never shortening a window already running; `IsInvulnerable`
+reads it. The Attacker's Nova Beam cast is its only caller today.
 
 Key public fields: `maxHealth`/`maxShield` — both fixed per-role values
 (script defaults `5`/`3`, overwritten by the role's own number at `Awake()`
@@ -275,7 +292,7 @@ Periodic downward fire (staggered per-instance via random initial delay),
 takes damage via `TakeDamage(float)`, self-destructs at 0 HP or when
 off-screen. **Kamikaze contact damage** — same shape as
 `Minion.ApplyContactDamage` (see [marauder-boss.md](bosses/marauder-boss.md)): a ship
-overlapping an `Enemy` (via `PlayerController.ResolveShipCollisions()`,
+overlapping an `Enemy` (via `ShipCollisionResolver`, split out of `PlayerController` in Session 59,
 same manual-overlap idiom used for allies/boss/minions, not a Unity
 trigger callback) takes `contactDamage` (1) once and the `Enemy` dies
 immediately, funneled through a private `Die()` guarded by `isDead` (same
@@ -284,7 +301,7 @@ end-of-frame — a bullet kill and a ship contact landing in the same
 physics step could otherwise double-fire). `TakeDamage(float)` and the
 off-screen self-destruct both route through the same `Die()`. A new
 `HalfExtents` (`Vector2`, cached from the `BoxCollider2D` in `Awake()`,
-same as `Minion.HalfExtents`) is what `ResolveShipCollisions()` uses for
+same as `Minion.HalfExtents`) is what `ShipCollisionResolver` uses for
 the overlap math, since runtime-spawned colliders can't be cached ship-side
 in `Start()`. Movement is one of three shapes selected by the public
 `movementPattern` field (nested `MovementPattern` enum: `SineWave`, `ZigZag`,
@@ -443,9 +460,9 @@ excluded (Combat FX pass; before it, every bullet was a 0.05 × 0.5 box).
 | `Bullets/WaveFragment` | `wave_fragment_shard` | circle r 0.05 | yes | explosive `Enemy` |
 
 **Player shot look.** `PlayerShotLook` on `Ship.prefab` dresses each player
-bullet: the owner's role-coloured streak, or the Attacker's Big Shot /
+bullet: the owner's role-coloured streak, or the Attacker's
 combo 1–3 / broken-combo sprite (`PlayerShotKind`, passed through
-`PlayerController.FireBigShot(width, damage, kind)`). A wider shot widens
+`PlayerController.FireBigShot(width, damage, kind)`; `PlayerShotKind.BigShot` is unused since the Nova Beam replaced Big Shot in Session 59). A wider shot widens
 the **collider** (`size.x *= widthMultiplier`), not the transform, since
 the wide sprites are already drawn wide.
 
@@ -459,5 +476,5 @@ the wide sprites are already drawn wide.
 | Transform          | scale 1, with the `BoxCollider2D` sized 0.6 — the same world hitbox as the old 0.6 scale, which matched every ship (see [movement.md](movement.md)) |
 | Sprite Renderer    | Combat FX hull sprite, `Sprite-Unlit-Default`                                  |
 | **HostileLook.cs** | standard: wave_sine / wave_zigzag / wave_dive (index = `MovementPattern`), explosive: the `_explosive` trio, death FX: `FX/WaveDeath` / `FX/WaveDeathExplosive` |
-| Collider2D         | Is Trigger: **ON** — was `OFF` until the Level 1 rework; a solid collider on a `Dynamic` `Rigidbody2D` let real Box2D physics push enemies and the boss around on contact (see [level-sequencing.md](level-sequencing.md)'s "Boss visibility/collision"). Trigger-vs-trigger and trigger-vs-solid pairs still fire `OnTriggerEnter2D` normally, so `Bullet.cs`'s hit detection is unaffected. Ship-vs-`Enemy` kamikaze contact damage (see `Enemy.cs` above) is a separate, unrelated mechanism — manual overlap math in `PlayerController.ResolveShipCollisions()`, not a Unity trigger/physics callback — so it isn't affected by this setting either. |
+| Collider2D         | Is Trigger: **ON** — was `OFF` until the Level 1 rework; a solid collider on a `Dynamic` `Rigidbody2D` let real Box2D physics push enemies and the boss around on contact (see [level-sequencing.md](level-sequencing.md)'s "Boss visibility/collision"). Trigger-vs-trigger and trigger-vs-solid pairs still fire `OnTriggerEnter2D` normally, so `Bullet.cs`'s hit detection is unaffected. Ship-vs-`Enemy` kamikaze contact damage (see `Enemy.cs` above) is a separate, unrelated mechanism — manual overlap math in `ShipCollisionResolver`, not a Unity trigger/physics callback — so it isn't affected by this setting either. |
 | **Enemy.cs**       | moveSpeed: 2, sineAmplitude: 1.5, sineFrequency: 1, movementPattern: SineWave (default, set per-instance by EnemySpawner), zigzagInterval: 0.4, zigzagSpeed: 3, diveSpeedMultiplier: 1.6, health: 3, bulletPrefab: WaveBullet prefab, fireInterval: 1.5, bulletSpeed: 6, contactDamage: 1, type: Standard (default, set per-instance by EnemySpawner), fragmentPrefab: WaveFragment prefab, fragmentCount: 8, fragmentSpeed: 5, fragmentDamage: 1 |

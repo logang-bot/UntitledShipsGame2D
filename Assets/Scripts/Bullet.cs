@@ -94,23 +94,8 @@ void OnTriggerEnter2D(Collider2D other)
 
     private void HitEnemy(Collider2D other)
     {
-        DamageBoss(other);
-        DamageMinorEnemy(other);
+        EnemyDamage.TryDamage(other.gameObject, damage, ownerObject);
         Destroy(gameObject);
-    }
-
-    private void DamageBoss(Collider2D other)
-    {
-        if (other.TryGetComponent(out MarauderBoss boss)) boss.TakeDamage(damage, ownerObject);
-        if (other.TryGetComponent(out HalcyonBoss halcyonBoss)) halcyonBoss.TakeDamage(damage, ownerObject);
-        if (other.TryGetComponent(out WardenBoss wardenBoss)) wardenBoss.TakeDamage(damage, ownerObject);
-        if (other.TryGetComponent(out WardenArmHealth wardenArm)) wardenArm.TakeDamage(damage, ownerObject);
-    }
-
-    private void DamageMinorEnemy(Collider2D other)
-    {
-        if (other.TryGetComponent(out Enemy enemy)) enemy.TakeDamage(damage);
-        if (other.TryGetComponent(out Minion minion)) minion.TakeDamage(damage);
     }
 
     /// <summary>

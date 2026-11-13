@@ -8,6 +8,20 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Attacker's Nova Beam and anime cut-in (Session 59, demo)** — the
+  Attacker's E is no longer Big Shot. Pressing it makes the ship
+  invulnerable and locks it in place. The Attacker's party frame slides
+  over into a cut-in card where the pilot talks, then shouts with a white
+  flash and a glowing fingertip as, 0.8 s in, a 3 s plasma beam fires
+  from the cannons to the top of the screen. The beam is a white core with
+  warm orange-to-red-gold edges, lightning and sparks, and burns everything
+  in its column. The card slides back out to the stats while the beam is
+  still firing. Cooldown 20 s. The character is the developer's own
+  4-frame art (`Assets/Art/CutIns/Attacker/attacker_talk_1..4.png`). All
+  numbers want a playtest. See the
+  [spec](superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md),
+  [systems/player-roles.md](systems/player-roles.md) and
+  [systems/hud-layout.md](systems/hud-layout.md).
 - **Boss models (Session 58)** — Marauder, Halcyon and Warden are the
   finished Claude Design boss models, rendered live in 3D like the ships.
   Every phase and telegraph shows on the model: Marauder's shockwave core,
@@ -98,8 +112,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   much larger, faster one for a few seconds, Support triggers a **party-wide**
   Speed Boost (move speed **and** fire rate, all 4 ships, not just itself)
   with a shared gold ring showing on every ship while it's active, Attacker
-  fires a wider, harder-hitting bullet (damage scales live off its own
-  current fire damage) with visible recoil. Medic's aura is always on — a
+  fires the Nova Beam (see the first bullet above). Medic's aura is always on — a
   thin ring around it shows the current radius, tiny by default until
   boosted — and heals/shields any ally (including the human player) who
   gets close enough, flashing them green when it actually helps. Tank also
@@ -310,7 +323,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   width for free, rather than trying to dodge it. Every ~8s (6s in phase
   2) it also charges for 0.6s (white core, flash ring and lane on the
   model) and fires a **Big Shot** — one
-  3×-wide, 2-damage bullet straight down, like the Attacker's own Big
+  3×-wide, 2-damage bullet straight down, like the Attacker's old Big
   Shot. It glides in from above the screen like the other bosses and is
   the slowest mover of the three (eased legs, 1.5–2.5 u/s average). **The
   arms shield the boss.** Warden takes no damage while any active arm is

@@ -166,6 +166,7 @@ MonoBehaviour:
   acceleration: 12
   screenPadding: {x: 0, y: 0}
   speedBuffMultiplier: 1
+  castLocked: 0
   bulletPrefab: {fileID: 229699745721229377, guid: c026c6169059d5645a02f38dedd8d3b6, type: 3}
   firePoint: {fileID: 6492829957591468841}
   shotsPerSecond: 2.857
@@ -361,10 +362,13 @@ MonoBehaviour:
   speedBoostCooldown: 15
   speedBoostDuration: 4
   speedBoostMultiplier: 1.5
-  bigShotCooldown: 3
-  bigShotWidthMultiplier: 3
-  bigShotDamageMultiplier: 2
-  recoilForce: 6
+  beam:
+    windupSeconds: 0.8
+    beamSeconds: 3
+    cooldown: 20
+    tickInterval: 0.1
+    tickDamageMultiplier: 0.5
+    widthOfShip: 0.9
   comboAttackCooldown: 0.5
   comboStepDamageMultipliers:
   - 1
@@ -463,6 +467,7 @@ MonoBehaviour:
   speedBoostFx: {fileID: 7150154136931267945, guid: ab5fff2e1438f8e4cafa8bcc92d0d880, type: 3}
   bigShotFx: {fileID: 2941659134109857387, guid: 503df054baa2267459a3f5eef4438c98, type: 3}
   healFlashFx: {fileID: 5675639555758628126, guid: 92c3e180f5a444943a0746131b1a8a17, type: 3}
+  beamPrefab: {fileID: 5853105548642192646, guid: 2f14c6a0ebb59f54fbac41c52fd2b3d8, type: 3}
   auraIdle: {fileID: 21300000, guid: 3a0ade8b90d42e24a9ac44ac8c793078, type: 3}
   auraBoost: {fileID: 21300000, guid: a542ebd060b1e5c4e972bab5a46697b2, type: 3}
   auraBoostPulse: {fileID: 21300000, guid: 6eab25adfeaa823468176ae4311f5a56, type: 3}

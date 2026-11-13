@@ -209,12 +209,7 @@ public class AIController : MonoBehaviour
     /// </summary>
     private void UpdateAbilityUsage()
     {
-        if (role.role == PlayerRole.Tank)
-        {
-            if (tactics.ShouldTaunt(this)) ability.TryUseAbility();
-            return;
-        }
-        if (role.role == PlayerRole.Attacker) ability.TryComboAttack(ability.AttackerComboExpectedSlot);
-        ability.TryUseAbility();
+        if (role.role == PlayerRole.Attacker) attacker.UseAbilities();
+        else if (role.role != PlayerRole.Tank || tactics.ShouldTaunt(this)) ability.TryUseAbility();
     }
 }

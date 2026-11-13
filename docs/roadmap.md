@@ -641,6 +641,21 @@ reference docs live under `systems/`.
   Marauder's minions stay Combat FX sprites. The old sprite tints are
   gone. Level Select shows each boss's portrait. See `art-roadmap.md`'s
   Phase 5.
+- **Attacker Nova Beam + anime cut-in demo (Session 59)** — art Phases 4
+  and 6 started. The Attacker's E replaces Big Shot with the **Nova Beam**:
+  invulnerable and locked in place from the press, a 0.8 s wind-up, then a
+  3 s plasma column from the cannons to the top of the screen that strikes
+  everything in it every 0.1 s (HLSL beam shader, LineRenderer lightning,
+  particles; 20 s cooldown; CPU Attackers cast only when lined up). The
+  Attacker's party frame plays an anime **cut-in card** synced to it: key
+  poses (wind-up → flash and smear → pointing at the camera), blink, hair
+  sway and push-in, first on generated placeholder layers; the developer's
+  own four static frames (talking → shout → afterglow) replaced them.
+  Supporting changes: `EnemyDamage` (bullet and beam share one damage
+  dispatch), `PlayerHealth.GrantInvulnerability`,
+  `PlayerController.castLocked`, and `ShipCollisionResolver` (split out of
+  `PlayerController`). See the
+  [spec](superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md).
 
 ## In Progress
 
@@ -720,13 +735,15 @@ is independently testable and the one before it de-risks the next.
     (first draft done: Session 53);
   - effects (Combat FX sprites done: Session 55, Sprite Atlases tested and
     dropped: Session 56; grid and particles open);
-  - powers (role ability effects done: Session 55; black hole open);
+  - powers (role ability effects done: Session 55; the Attacker's Nova
+    Beam done: Session 59; black hole open);
   - bosses, designed in Claude Design alongside the backgrounds — **in the
     game as live 3D models** (Session 58), with every phase and telegraph
     state on the model and portraits on the Level Select cards. Warden's
     arms moved onto the hull and need a playtest. See `art-roadmap.md`'s
     Phase 5;
-  - anime cut-ins;
+  - anime cut-ins (route decided and the Attacker's card built on
+    the developer's 4-frame art: Session 59; the other roles open);
   - the pre-level screens (main menu through level select) on a shared UI
     kit;
   - the in-level HUD last (PC done: Session 57; phone layout open).

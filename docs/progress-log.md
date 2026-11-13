@@ -2259,3 +2259,105 @@ the editor and rendered the boss up close:
 No console errors. Not checked live: Marauder's missile, barrage and bay
 looks (minions are off), Warden's Lockdown chevrons, and bloom on the
 boss glow in a full fight.
+
+## Session 59 — Attacker Nova Beam + Anime Cut-in Demo (Art Phases 4 and 6)
+
+The developer wanted the role superpowers to feel like superpowers, starting
+with the Attacker, plus an anime character cut-in before the power fires.
+Design talk first, then the build. The spec is
+`docs/superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md`.
+
+### Decisions
+
+- **Big Shot is replaced by the Nova Beam:** a 3 s plasma column, 0.9 × the
+  ship's width, from the cannons to the top of the screen, after a 0.8 s
+  wind-up that the cut-in plays over. The caster is **invulnerable** and
+  **locked in place** for the whole 3.8 s (the developer's picks). Colors
+  stay in a warm Attacker range (never a boss color).
+- **Cut-in route: 2D key poses.** The developer first said "like ZZZ", then
+  asked for the industry standard. The options covered were still +
+  motion graphics (Touhou), key poses (anime limited animation), rigged 2D
+  (Spine / Live2D / Unity 2D Animation) and 3D toon (ZZZ). Key poses won:
+  the "pose and point at the camera" moment for 2–3 drawings. A
+  foreshortened point needs its own drawing in any 2D route anyway.
+- **Art source:** Claude draws by writing code (SVG), so the character
+  comes from **Claude Fable 5.2** in a claude.ai artifact as layered vector
+  art, exported as PNG layers. The prompt is
+  `ArtSource/CutIns/Attacker/fable-prompt.md`. Commissioned art may replace
+  it for release (Steam needs an AI-content disclosure if Claude art ships).
+
+### Built
+
+- **`EnemyDamage`**: `Bullet`'s boss / arm / enemy / minion dispatch moved
+  into a shared static helper, so the beam damages exactly what bullets do.
+- **`PlayerHealth.GrantInvulnerability`** and
+  **`PlayerController.castLocked`** (no movement, recoil or normal fire).
+  `PlayerController` was 268 lines, so its collision code moved to
+  **`ShipCollisionResolver`** (behavior unchanged).
+- **Cast:** `AttackerBeamCast` (coroutine on `PlayerAbility`, like
+  Support's boost) with `AttackerBeamSettings` replacing the four Big Shot
+  fields. The combo keys are paused while casting. `AIControllerAttacker`
+  only casts when its focus point is inside the beam's column.
+- **Beam:** `AttackerBeam` + `BeamColumnDamage` (one `OverlapBoxAll` per
+  0.1 s tick) + `AttackerBeamVisual` + `BeamLightning`, the
+  `AttackerBeam.shader`, and `Prefabs/FX/AttackerBeam.prefab` (body quad,
+  2 edge arcs, 6 branches, muzzle flare, impact sparks). New tokens
+  `BeamCore`, `BeamAmber`, `BeamRedGold`, `BeamArc`. `PaletteTint` now also
+  colors a `ParticleSystem`.
+- **Cut-in card:** `CutInCard` on `PartyFrame.prefab` with `CutInTiming`,
+  `CutInTimeline`, `CutInPoseTimeline`, `CutInCardView`,
+  `CutInCharacterRig` and `CutInAmbientMotion`. The 13 placeholder layer
+  PNGs were generated in the editor from palette colors, named after the
+  prompt's layers, so the Fable art drops in by overwriting them.
+- HUD text: "Nova Beam" / "NOVA BEAM", the `ico_beam` ability icon, the
+  "Firing" status and the active sweep.
+
+### Tuning notes
+
+- The first beam (core × 3, edges × 2.2, glow 1.6× wide) bloomed into a flat
+  white column that greyed the whole playfield. Core × 1.3, edges × 1.6 and
+  glow 1.5× keep the warm edges visible.
+- Damage per tick is `fireDamage × 0.5` (1 for the Attacker): 30 per cast,
+  a fifth of Marauder's HP, on a 20 s cooldown.
+- The card's title wrapped onto two lines over the kicker; it is now one
+  unwrapped line at 54 pt.
+
+### Verified
+
+All 194 EditMode tests pass (new: `EnemyDamageTests`,
+`BeamColumnDamageTests`, `CutInTimelineTests`, `CutInPoseTimelineTests`,
+and two invulnerability cases in `PlayerHealthTests`). In Play mode on
+Level 1, with the cast forced through `TryUseAbility()` and time slowed for
+the screenshots:
+- the card slid in with the wind-up pose; at 0.8 s the flash and the
+  pointing pose landed as the beam fired;
+- the ship stayed put and invulnerable; the HUD read NOVA BEAM · ACTIVE;
+- at 2.8 s the card was gone and the stats back while the beam still fired;
+  at 3.8 s the lock lifted, the beam was gone, and the cooldown read
+  20 s from the press.
+
+No console errors from the game (the MCP screenshot tool logged its own
+PlayerLoop warnings). An early 12 s test beam also hit Marauder for 80,
+and the damage meter credited NOVA-11. **Not checked live:** a CPU
+Attacker's cast gating, a
+shielded Warden under the beam, and
+a real E press. All of these need a playtest.
+
+### Later in Session 59: the developer's own cut-in frames
+
+The developer chose static PNGs over layers and made a 4-frame animation of
+one pointing pose: `attacker_talk_1..4.png` (smirk, talking, shout with a
+fingertip flash and glowing suit, smirk with the glow still on). All four
+are 1216×362, transparent and aligned. The card was rebuilt around them:
+- `CutInFrame` (TalkClosed, TalkOpen, Shout, Afterglow) replaces
+  `CutInPose`.
+- `CutInPoseTimeline.FrameAt` flips the talk frames every 0.12 s until the
+  snap, holds the shout 0.6 s, then the afterglow.
+- `CutInCharacterRig` swaps one `Portrait` sprite.
+- `CutInAmbientMotion` became `CutInSpeedLines` (the hair sway needed
+  layers).
+
+The 13 generated placeholder layers were deleted. The title shrank to 44 pt
+and moved right, because the pointing hand ran into it. 194 EditMode tests
+pass. In Play mode (loaded from the main menu), the talking frames show
+while the card slides in, and the shout lands with the beam.

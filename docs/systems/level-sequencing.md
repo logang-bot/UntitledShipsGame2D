@@ -109,7 +109,7 @@ combat start rather than mere visibility. `SetVisible(false)` fires at the
 *start* of the entrance glide, while ships are still frozen for several
 more seconds; enabling `MinionSpawner` there too let kamikaze minions spawn
 and overlap ships that couldn't react yet (`PlayerController.enabled ==
-false` during the freeze means `FixedUpdate`/`ResolveShipCollisions` never
+false` during the freeze means `FixedUpdate`/`ShipCollisionResolver.Resolve` never
 runs) — contact would silently do nothing even though the overlap was
 plainly visible. `MarauderBoss.OnEnable()` fires later, exactly when
 `LevelSequencer` sets `bossObject.enabled = true` at `BossCombat` — by

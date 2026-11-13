@@ -28,7 +28,7 @@ classes it alone constructs (e.g. `MarauderBoss/` holds `MarauderBoss.cs`
 plus `MarauderBossMovement`/`Shockwave`/`Attacks`/`Aggro`/its two
 `[System.Serializable]` settings classes; `HalcyonBoss/` holds
 `HalcyonBoss.cs` plus its three sibling `MonoBehaviour`s;
-`AIController/`/`PlayerAbility/` follow the same shape). The Session 54
+`AIController/`/`PlayerAbility/` follow the same shape; `AttackerBeam/`, Session 59, holds `AttackerBeam.cs` plus `BeamColumnDamage`, its visual and lightning components and two small structs). The Session 54
 menus added ~60 small one-purpose files (the `Menu*`, `Palette*`,
 `Role*`/`Level*` view, `TagChip*`, `Join*` families), bringing it to ~140
 scripts. They stayed flat because they're shared by several screens

@@ -21,6 +21,7 @@ public class PartyFrameUI : MonoBehaviour
     public ComboKeysView combo;
     public GameObject downOverlay;
     public CanvasGroup content;
+    public CutInCardView cutIn;
 
     private GameObject ship;
     private PlayerHealth health;
@@ -37,6 +38,7 @@ public class PartyFrameUI : MonoBehaviour
         ShowSeat();
         ability.Bind(role, !seat.isHuman, shipAbility);
         combo.Bind(role);
+        cutIn.SyncSnap(shipAbility.beam.windupSeconds);
         downOverlay.SetActive(false);
     }
 
@@ -84,7 +86,14 @@ public class PartyFrameUI : MonoBehaviour
         identity.SetConditions(FrameVitalsView.IsLow(health), controller.speedBuffMultiplier > 1f);
         stats.Show(controller, Dps(), !seat.isHuman);
         ability.Show(AbilityCellState.From(AbilityTimes.Read(shipAbility, role, isDown)));
-        if (role == PlayerRole.Attacker && !isDown) combo.Show(ComboNow());
+        if (role == PlayerRole.Attacker && !isDown) PaintAttacker();
+    }
+
+    /// <summary>The combo keys, and the Nova Beam cut-in card fading the stats out as it covers them.</summary>
+    private void PaintAttacker()
+    {
+        combo.Show(ComboNow());
+        content.alpha = 1f - cutIn.Show(shipAbility.AttackerCastElapsed);
     }
 
     private float Dps() => controller.bossObject is IBoss boss ? boss.DamageLedger.Dps(ship) : 0f;

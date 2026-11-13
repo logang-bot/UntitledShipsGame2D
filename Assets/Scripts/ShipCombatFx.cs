@@ -11,8 +11,13 @@ public class ShipCombatFx : MonoBehaviour
     public GameObject tauntFx;
     public GameObject auraBoostFx;
     public GameObject speedBoostFx;
+    // The Attacker's Nova Beam wind-up flash at the muzzle (the design's
+    // Big Shot frames, which now open the beam cast).
     public GameObject bigShotFx;
     public GameObject healFlashFx;
+
+    [Header("Attacker Nova Beam")]
+    public GameObject beamPrefab;
 
     [Header("Medic aura")]
     public Sprite auraIdle;
@@ -30,6 +35,13 @@ public class ShipCombatFx : MonoBehaviour
     public void PlayAbility(PlayerRole role) => SpawnChild(AbilityFxFor(role));
 
     public void PlayHealFlash() => SpawnChild(healFlashFx);
+
+    /// <summary>Spawned in world space, not under the ship, so the ship's 0.6 scale doesn't size the beam.</summary>
+    public void SpawnBeam(AttackerBeamShot shot)
+    {
+        if (beamPrefab == null) return;
+        Instantiate(beamPrefab).GetComponent<AttackerBeam>().Fire(shot);
+    }
 
     private GameObject AbilityFxFor(PlayerRole role)
     {

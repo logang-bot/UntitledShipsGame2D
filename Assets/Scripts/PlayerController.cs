@@ -9,14 +9,17 @@ public class PlayerController : MonoBehaviour
     // instead of snapping to full speed instantly - most noticeable right
     // after LevelSequencer unfreezes a ship (see ResetVelocity()).
     public float acceleration = 12f;
-    // Extra buffer beyond the ship's own collider size (see HandleMovement's
-    // clamp) - 0 lets the ship's edge reach all the way to the true screen
-    // edge, same as enemies (which have no screen clamp at all).
+    // Extra buffer beyond the ship's own collider size (see ClampToScreen)
+    // - 0 lets the ship's edge reach all the way to the true screen edge,
+    // same as enemies (which have no screen clamp at all).
     public Vector2 screenPadding = Vector2.zero;
     // Non-destructive buff multiplier - set/cleared by PlayerAbility's
     // party-wide speed boost, never mutated into moveSpeed itself, so
     // there's nothing to divide back out (and nothing to double-apply).
     public float speedBuffMultiplier = 1f;
+    // Set while the Attacker casts its Nova Beam: the ship holds still and
+    // stops its normal fire until the beam ends (AttackerBeamCast).
+    public bool castLocked;
 
     [Header("Shooting")]
     public GameObject bulletPrefab;
@@ -40,13 +43,8 @@ public class PlayerController : MonoBehaviour
     private bool isFiring;
     private float nextFireTime;
     private Vector2 recoilVelocity;
-    private BoxCollider2D selfCollider;
     private Vector2 selfHalfExtents;
-    private PlayerAbility ability;
-    private IBoss boss;
-    private BoxCollider2D bossCollider;
-    private Vector2 bossHalfExtents;
-    private BoxCollider2D[] allyColliders;
+    private ShipCollisionResolver collisions;
 
     // Seconds until the next shot, derived from the live (possibly buffed)
     // shots/second - computed at point of use rather than stored, so
@@ -61,48 +59,30 @@ public class PlayerController : MonoBehaviour
     // whenever a buff is up, or if a field was hand-tweaked in the Inspector.
     public float CurrentDps => fireDamage * shotsPerSecond * fireRateBuffMultiplier;
 
-void Start()
+    /// <summary>The ship's collider width in world units (about 0.6).</summary>
+    public float ShipWidth => selfHalfExtents.x * 2f;
+
+    void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         cam = Camera.main;
-        selfCollider = GetComponent<BoxCollider2D>();
-        selfHalfExtents = selfCollider.bounds.extents;
-        ability = GetComponent<PlayerAbility>();
+        selfHalfExtents = GetComponent<BoxCollider2D>().bounds.extents;
+        collisions = new ShipCollisionResolver(gameObject, selfHalfExtents, bossObject);
+        ApplyRoleStats();
+    }
 
-        boss = bossObject as IBoss;
-        if (bossObject != null)
-        {
-            bossCollider = bossObject.GetComponent<BoxCollider2D>();
-            if (bossCollider != null) bossHalfExtents = bossCollider.bounds.extents;
-        }
-
-        if (ability != null && ability.allies != null)
-        {
-            allyColliders = new BoxCollider2D[ability.allies.Length];
-            for (int i = 0; i < ability.allies.Length; i++)
-            {
-                if (ability.allies[i] != null)
-                    allyColliders[i] = ability.allies[i].GetComponent<BoxCollider2D>();
-            }
-        }
-
+    private void ApplyRoleStats()
+    {
         PlayerRoleComponent roleComponent = GetComponent<PlayerRoleComponent>();
-        if (roleComponent != null)
-        {
-            moveSpeed = roleComponent.Stats.moveSpeed;
-            shotsPerSecond = roleComponent.Stats.shotsPerSecond;
-            fireDamage = roleComponent.Stats.fireDamage;
-        }
+        if (roleComponent == null) return;
+        moveSpeed = roleComponent.Stats.moveSpeed;
+        shotsPerSecond = roleComponent.Stats.shotsPerSecond;
+        fireDamage = roleComponent.Stats.fireDamage;
     }
 
     void Update()
     {
-        // Handles held-down fire (auto-fire while button is held)
-        if (isFiring && Time.time >= nextFireTime)
-        {
-            nextFireTime = Time.time + FireInterval;
-            Fire();
-        }
+        TryAutoFire();
     }
 
     void FixedUpdate()
@@ -110,97 +90,38 @@ void Start()
         HandleMovement();
     }
 
-void HandleMovement()
+    void HandleMovement()
     {
+        if (castLocked) { HoldStill(); return; }
         recoilVelocity = Vector2.Lerp(recoilVelocity, Vector2.zero, recoilDamping * Time.fixedDeltaTime);
-
         Vector2 targetVelocity = moveInput.normalized * (moveSpeed * speedBuffMultiplier);
         currentVelocity = Vector2.MoveTowards(currentVelocity, targetVelocity, acceleration * Time.fixedDeltaTime);
-
-        Vector2 move = currentVelocity + recoilVelocity;
-        Vector2 newPos = rb.position + move * Time.fixedDeltaTime;
-
-        newPos = ResolveShipCollisions(newPos);
-
-        Vector3 min = cam.ViewportToWorldPoint(new Vector3(0, 0, 0));
-        Vector3 max = cam.ViewportToWorldPoint(new Vector3(1, 1, 0));
-        // Clamp by the ship's own half-extent (not a flat guess) so its edge
-        // - not its center - is what reaches the screen boundary.
-        float marginX = selfHalfExtents.x + screenPadding.x;
-        float marginY = selfHalfExtents.y + screenPadding.y;
-        newPos.x = Mathf.Clamp(newPos.x, min.x + marginX, max.x - marginX);
-        newPos.y = Mathf.Clamp(newPos.y, min.y + marginY, max.y - marginY);
-
-        rb.MovePosition(newPos);
+        Vector2 newPos = rb.position + (currentVelocity + recoilVelocity) * Time.fixedDeltaTime;
+        rb.MovePosition(ClampToScreen(collisions.Resolve(newPos)));
     }
 
-// Resolves newPos against every other living ship (push-apart only - no
-    // damage) and against the boss (push-apart AND contact damage), using the
-    // same AABB math for both - ships/boss move in small discrete steps each
-    // frame rather than teleporting, so a momentary overlap here is exactly
-    // the signal a physical collision actually happened.
-    Vector2 ResolveShipCollisions(Vector2 candidatePos)
+    private void HoldStill()
     {
-        if (selfCollider == null) return candidatePos;
-
-        if (ability != null && ability.allies != null)
-        {
-            for (int i = 0; i < ability.allies.Length; i++)
-            {
-                Transform ally = ability.allies[i];
-                if (ally == null || ally == transform || !ally.gameObject.activeInHierarchy) continue;
-                BoxCollider2D allyCollider = allyColliders != null && i < allyColliders.Length ? allyColliders[i] : null;
-                if (allyCollider == null) continue;
-
-                candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
-                    candidatePos, selfHalfExtents,
-                    ally.position, allyCollider.bounds.extents,
-                    out _);
-            }
-        }
-
-        if (bossObject != null && bossCollider != null)
-        {
-            candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
-                candidatePos, selfHalfExtents,
-                bossObject.transform.position, bossHalfExtents,
-                out bool overlappingBoss);
-            if (overlappingBoss) boss.ApplyContactDamage(gameObject);
-        }
-
-        // Minions are spawned/destroyed at runtime by MinionSpawner, so
-        // (unlike allies/boss above) their colliders can't be cached once in
-        // Start() - each Minion caches its own HalfExtents instead.
-        foreach (Minion minion in Minion.Active)
-        {
-            if (minion == null) continue;
-            candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
-                candidatePos, selfHalfExtents,
-                minion.transform.position, minion.HalfExtents,
-                out bool overlappingMinion);
-            if (overlappingMinion) minion.ApplyContactDamage(gameObject);
-        }
-
-        // Same kamikaze contact damage as Minion.Active above, for the
-        // pre-boss/phase-2 wave enemies (EnemySpawner) - same runtime-spawned
-        // reasoning, each Enemy caches its own HalfExtents.
-        foreach (Enemy enemy in Enemy.Active)
-        {
-            if (enemy == null) continue;
-            candidatePos = ShipCollisionUtil.ResolveBoxOverlap(
-                candidatePos, selfHalfExtents,
-                enemy.transform.position, enemy.HalfExtents,
-                out bool overlappingEnemy);
-            if (overlappingEnemy) enemy.ApplyContactDamage(gameObject);
-        }
-
-        return candidatePos;
+        currentVelocity = Vector2.zero;
+        recoilVelocity = Vector2.zero;
+        rb.MovePosition(rb.position);
     }
 
+    /// <summary>
+    /// Clamps by the ship's own half-extent (not a flat guess) so its edge,
+    /// not its center, is what reaches the screen boundary.
+    /// </summary>
+    private Vector2 ClampToScreen(Vector2 pos)
+    {
+        Vector3 min = cam.ViewportToWorldPoint(Vector3.zero);
+        Vector3 max = cam.ViewportToWorldPoint(Vector3.one);
+        Vector2 margin = selfHalfExtents + screenPadding;
+        pos.x = Mathf.Clamp(pos.x, min.x + margin.x, max.x - margin.x);
+        pos.y = Mathf.Clamp(pos.y, min.y + margin.y, max.y - margin.y);
+        return pos;
+    }
 
     // Auto-called by PlayerInput ("Send Messages" behavior) whenever
-    // the "Move" action changes value (WASD, arrows, or gamepad stick).
-// Auto-called by PlayerInput ("Send Messages" behavior) whenever
     // the "Move" action changes value (WASD, arrows, or gamepad stick).
     public void OnMove(InputValue value)
     {
@@ -222,23 +143,24 @@ void HandleMovement()
     }
 
     // Auto-called by PlayerInput whenever the "Fire" action is pressed/released.
-// Auto-called by PlayerInput whenever the "Fire" action is pressed/released.
     public void OnFire(InputValue value)
     {
         SetFiring(value.isPressed);
     }
 
-    // Non-input entry point so AIController can drive firing directly.
+    // Non-input entry point so AIController can drive firing directly. Fires
+    // immediately on press; Update() then repeats while it's held.
     public void SetFiring(bool firing)
     {
         isFiring = firing;
+        TryAutoFire();
+    }
 
-        // Fire immediately on press, then Update() handles repeat-fire while held
-        if (isFiring && Time.time >= nextFireTime)
-        {
-            nextFireTime = Time.time + FireInterval;
-            Fire();
-        }
+    private void TryAutoFire()
+    {
+        if (!isFiring || castLocked || Time.time < nextFireTime) return;
+        nextFireTime = Time.time + FireInterval;
+        Fire();
     }
 
     public void AddRecoil(Vector2 impulse)
@@ -256,7 +178,7 @@ void HandleMovement()
         SpawnBullet(widthMultiplier, damageAmount, kind);
     }
 
-void SpawnBullet(float widthMultiplier, float damageAmount, PlayerShotKind kind)
+    void SpawnBullet(float widthMultiplier, float damageAmount, PlayerShotKind kind)
     {
         GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         if (TryGetComponent(out PlayerShotLook look)) look.Dress(bulletObj, kind, widthMultiplier);
@@ -264,5 +186,4 @@ void SpawnBullet(float widthMultiplier, float damageAmount, PlayerShotKind kind)
         b.damage = damageAmount;
         b.Init(Vector2.up, bulletSpeed, "Player", gameObject);
     }
-
 }

@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class AIControllerAttacker
 {
+    /// <summary>How far past the beam's edge the focus point may sit and still count as lined up.</summary>
+    private const float BeamAimMargin = 0.3f;
+
     private readonly AIController owner;
 
     public AIControllerAttacker(AIController owner)
@@ -35,5 +38,24 @@ public class AIControllerAttacker
 
         Vector2 toTarget = targetPoint - (Vector2)owner.transform.position;
         return toTarget.magnitude < owner.attackerDeadzone ? Vector2.zero : toTarget.normalized;
+    }
+
+    /// <summary>
+    /// Always feeds the combo the slot that continues it (a perfect rotation),
+    /// and only casts the Nova Beam when the focus point sits in the beam's
+    /// column, since the cast anchors the ship in place for its whole length.
+    /// </summary>
+    public void UseAbilities()
+    {
+        PlayerAbility ability = owner.Ability;
+        ability.TryComboAttack(ability.AttackerComboExpectedSlot);
+        if (IsFocusInBeamColumn(ability)) ability.TryUseAbility();
+    }
+
+    private bool IsFocusInBeamColumn(PlayerAbility ability)
+    {
+        if (owner.bossObject == null) return false;
+        float reach = owner.Controller.ShipWidth * ability.beam.widthOfShip * 0.5f + BeamAimMargin;
+        return Mathf.Abs(owner.Tactics.FocusPoint().x - owner.transform.position.x) < reach;
     }
 }

@@ -17,7 +17,7 @@ public class PlayerAbility : MonoBehaviour
     public Transform[] allies;
     /// <summary>
     /// Ship colliders are ~0.6 world units across, and ship-vs-ship overlap
-    /// resolution (PlayerController.ResolveShipCollisions) never lets two
+    /// resolution (ShipCollisionResolver) never lets two
     /// ships get closer than roughly that - so this must stay comfortably
     /// above ~0.6 or the Medic can never physically get an ally in range.
     /// </summary>
@@ -47,17 +47,13 @@ public class PlayerAbility : MonoBehaviour
     /// <summary>Applies to move speed AND fire rate, all 4 allies.</summary>
     public float speedBoostMultiplier = 1.5f;
 
-    [Header("Attacker - Big Shot")]
-    public float bigShotCooldown = 3f;
-    public float bigShotWidthMultiplier = 3f;
-    /// <summary>Live multiplier of the caster's current fireDamage, not a flat number.</summary>
-    public float bigShotDamageMultiplier = 2f;
-    public float recoilForce = 6f;
+    [Header("Attacker - Nova Beam")]
+    public AttackerBeamSettings beam = new AttackerBeamSettings();
 
     [Header("Attacker - Combo")]
     /// <summary>
-    /// Per-slot cooldown on Combo1/2/3 - independent of bigShotCooldown
-    /// above. This is what stops mashing a single key instead of actually
+    /// Per-slot cooldown on Combo1/2/3 - independent of the Nova Beam's
+    /// cooldown above. This is what stops mashing a single key instead of actually
     /// playing the 1->2->3 rotation, not a timing/order requirement.
     /// </summary>
     public float comboAttackCooldown = 0.5f;
@@ -65,7 +61,7 @@ public class PlayerAbility : MonoBehaviour
     /// Damage multiplier for each step of a correctly-played rotation, index
     /// 0 = combo slot 1. The 3rd entry is the finisher bonus for actually
     /// completing the sequence. Live multiplier of the caster's current
-    /// fireDamage, same convention as bigShotDamageMultiplier.
+    /// fireDamage, same convention as beam.tickDamageMultiplier.
     /// </summary>
     public float[] comboStepDamageMultipliers = { 1f, 1.3f, 1.8f };
     /// <summary>Bullet width per correct combo step, purely visual escalation toward the finisher.</summary>
@@ -102,6 +98,7 @@ public class PlayerAbility : MonoBehaviour
     public bool IsAuraBoosted => medic.IsBoosted;
     public float AuraBoostRemaining => medic.BoostRemaining;
     public PlayerController PlayerController => playerController;
+    public PlayerHealth Health => playerHealth;
     public ShipCombatFx Fx => fx;
     public Color TintColor => roleComponent.Stats.tintColor;
     // Which combo key (1/2/3) continues the rotation correctly right now -
@@ -110,6 +107,8 @@ public class PlayerAbility : MonoBehaviour
     public int AttackerComboExpectedSlot => attacker.ExpectedSlot;
     public float AttackerComboBrokenAt => attacker.LastBreakTime;
     public float AttackerComboFinishedAt => attacker.LastFinishTime;
+    /// <summary>Seconds into the Nova Beam cast (the cut-in card's clock), or -1 when idle.</summary>
+    public float AttackerCastElapsed => attacker.CastElapsed;
 
     public string AbilityName => PlayerAbilityLabels.NameFor(roleComponent.role);
     public string StatusText => PlayerAbilityLabels.StatusFor(this, roleComponent.role);
@@ -165,7 +164,7 @@ public class PlayerAbility : MonoBehaviour
             case PlayerRole.Tank: return tauntCooldown;
             case PlayerRole.Medic: return auraBoostCooldown;
             case PlayerRole.Support: return speedBoostCooldown;
-            case PlayerRole.Attacker: return bigShotCooldown;
+            case PlayerRole.Attacker: return beam.cooldown;
             default: return 0f;
         }
     }

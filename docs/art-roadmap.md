@@ -25,7 +25,7 @@ Two rules keep the parallel work safe:
 | Blender | **Optional, not a foundation.** Only for refining a 3D model. | It was the biggest learning cost in the old plan, and none of the current designs need it. |
 | How they're lit | Ships: a custom unlit `ShipMesh.shader` (fixed-direction Lambert from mesh normals, plus HDR emission for the neon). Everything else: URP **2D Renderer**, `Sprite-Lit-Default`, `Light2D`. Bloom does most of the glow. | URP's `Mesh2D-Lit` lights meshes only through normal-map textures and ignores mesh normals, so the models would look flat. |
 | Effects and powers | Neon style inspired by the Tuts+ "Neon Vector Shooter" (Shape Blaster): bloom, additive particles stretched by speed, a warping background grid, black-hole-style powers | The effects are what sell the neon look. They're independent of how the ships are made. |
-| Anime ability cut-ins | **Decided at the start of Phase 6**, between two routes, neither needing Blender: **2D illustrated** characters animated in Unity, or **VRoid → Unity** through UniVRM and its toon shader (MToon). | 2D matches 2D ships, and it's how Touhou's own spell-card cut-ins work. VRoid → Unity keeps the anime-3D look while skipping Blender entirely. |
+| Anime ability cut-ins | **2D illustrated, key poses** (Session 59): layered character art, animated in Unity with anime limited animation (wind-up pose → flash and smear → pointing pose, plus blink, hair sway, push-in). Drawn with **Claude Fable 5.2** in a claude.ai artifact as layered SVG, exported as PNG layers; a commissioned illustrator may replace it for release. Rigging the same layers (Spine or Unity 2D Animation) is the upgrade path. | Fits the small strip at the screen's edge where the card plays, costs 2–3 drawings per character, and is how anime itself does it. VRoid / ZZZ-style 3D was the most work, and its detail is lost in a 608×181 card. |
 | Mobile | **One project** with per-platform quality settings | No duplicated code, and it keeps crossplay possible. Sprites cost a phone the same however they were made. |
 | Priority | Ships, bosses, effects and powers first; then the pre-level screens (main menu through level select); then the in-level HUD | The screens before the level show the ships and bosses, so they come after those exist. |
 | Screens and HUD style | One shared **UI kit**, first from the `Neon Fleet HUD` design and built from the `Pre-Fight Menus` design (Session 54, see `systems/ui-kit.md`): dark panels, neon role-colored frames, **Chakra Petch** and **JetBrains Mono** fonts. Every menu and the HUD use it. | One look across all screens, built once. Both fonts are free Google Fonts (SIL Open Font License), usable in Unity through TextMesh Pro. |
@@ -272,10 +272,21 @@ lands, and update it when an asset gets wired.
 | `Superpowers/Tank/tank_aggro_mark` | The mark already appears inside `tank_taunt_2_activate` / `_3_sustain` | An aggro indicator shown separately, e.g. above whichever ship the boss is targeting |
 | `Superpowers/Medic/medic_aura_boost_3_sustain`, `_4_end` | `AuraBoostFx` plays only wind-up and activate; the boosted aura ring (`medic_aura_boost`) already covers the sustain, and the ring returning to idle is the end | A visible "boost ending" beat if the aura's return to idle feels too abrupt |
 | `Superpowers/Support/support_speed_boost_3_sustain` | The party ring (`Auras/Player/support_speed_ring`) is the same picture and is what every ship shows | Nothing planned; duplicate of the ring |
-| `Particles/particle_glow_dot`, `particle_streak`, `particle_ring`, `particle_shard` | No particle systems yet. `FX-Additive.mat` (URP Particles/Unlit, additive, glow dot as its texture) is ready | Hit sparks and explosions (Stretched Billboard), tinted with Start Color, per the Phase 3 "Make" list above |
+| `Particles/particle_streak`, `particle_ring`, `particle_shard` | Only `particle_glow_dot` is used, through `FX-Additive.mat` (the Nova Beam's lightning, muzzle flare and sparks, Session 59) | Hit sparks and explosions (Stretched Billboard), tinted with `PaletteTint` (which now colors a `ParticleSystem`), per the Phase 3 "Make" list above |
 
 ### Phase 4: Powers
 
+- **First power done (Session 59): the Attacker's Nova Beam.** A
+  hand-written additive HDR shader (`Assets/Art/VFX/AttackerBeam.shader`
+  on a stretched quad): a white core, edges drifting through Attacker
+  orange → `BeamAmber` → `BeamRedGold`, noise streaks flowing up, a rippling
+  width. Plus `BeamLightning` (jagged LineRenderer arcs up both edges and
+  flickering side branches) and two particle systems (muzzle flare, and
+  impact sparks emitted where the beam meets each target), on
+  `FX-Additive.mat`. Sorting −2 / −1 (sparks 8), so enemy bullets stay on
+  top. The first brightness pass (core × 3) bloomed into a flat white
+  column that washed out the playfield; × 1.3 core and × 1.6 edges keep the
+  colors. Prefab: `Assets/Prefabs/FX/AttackerBeam.prefab`.
 - **Make:**
   - **The black hole:** a core sprite, an orbiting particle spray,
     `ParticleSystemForceField` (gravity plus vortex) pulling nearby
@@ -364,7 +375,19 @@ lands, and update it when an asset gets wired.
 
 ### Phase 6: Anime cut-ins
 
-- **Decide first:** make a quick mockup of one character's cut-in each way,
+- **Started (Session 59), Attacker demo:** route decided (2D illustrated,
+  key poses; see Decisions). Pressing E now plays the cut-in card over the
+  Attacker's party frame, synced to the new **Nova Beam** (see Phase 4).
+  **The final art is in:** instead of layers, the developer made four
+  static whole-character frames (`Assets/Art/CutIns/Attacker/
+  attacker_talk_1..4.png`: smirk, talking, shout with fingertip flash,
+  smirk with glowing suit). The card flips the two talk frames until the
+  beam fires, then shows the shout (with flash, push-in and shake), then
+  holds the last frame. Static frames mean no hair sway or blink. Design:
+  `docs/superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md`.
+  The card and its scripts are in `systems/hud-layout.md`. **Next:**
+  playtest, then the other roles.
+- **Original plan (kept for reference) — decide first:** make a quick mockup of one character's cut-in each way,
   then pick one route for all four roles.
   - **2D illustrated:** a drawn character (drawn yourself or commissioned),
     split into a few layers, animated in Unity: slide in, slight parallax,
@@ -503,8 +526,10 @@ art:
   or need baking or mesh merging.
 - **Explosion lighting on ships:** `ShipMesh.shader` uses a fixed light
   direction; reacting to `Light2D`s would need extra shader work.
-- **Cut-in route:** 2D illustrated or VRoid → Unity, decided at the start of
-  Phase 6. Commissioning an artist later could raise the quality of either.
+- ~~**Cut-in route:**~~ **Decided (Session 59):** 2D illustrated, key
+  poses. Still open: the pilots' character concepts, and whether release
+  art is commissioned (Steam requires disclosing AI-generated content if
+  Claude-made art ships).
 - ~~**Each boss's signature color:**~~ **Decided (Session 58):** the boss
   designs' colors are final: Marauder `#FF2D95`, Halcyon `#FFE14A`,
   Warden `#5470FF`, used for each boss's bullets, glow and model.
