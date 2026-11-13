@@ -134,7 +134,7 @@ public class Enemy : MonoBehaviour
         if (health <= 0) Die();
     }
 
-    // Called by a ship's own PlayerController.ResolveShipCollisions() the
+    // Called by a ship's own ShipCollisionResolver the
     // moment its overlap-resolution math detects it overlapping this enemy -
     // same shape as Minion.ApplyContactDamage (kamikaze: doesn't survive the hit).
     public void ApplyContactDamage(GameObject ship)

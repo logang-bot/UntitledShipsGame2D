@@ -303,7 +303,7 @@ happened — so the same overlap check that computes the push-back also
 drives Body contact damage below, instead of relying on Unity's trigger
 callbacks (which would stop firing once real overlap is actively
 prevented). Ship-vs-ship overlap only ever gets pushed apart, no damage.
-`ResolveShipCollisions()` runs two more of these loops the same way, over
+`ShipCollisionResolver.Resolve()` runs two more of these loops the same way, over
 `Minion.Active` (below) and `Enemy.Active` (see
 [combat.md](../combat.md)'s `Enemy.cs`) — both apply kamikaze contact damage
 on overlap, unlike the ship-vs-ship push-only case here.
@@ -321,7 +321,7 @@ path rather than being blocked by them.
 Reworked alongside the solid-body collision above. Previously fired off
 Unity's `OnTriggerStay2D` (the boss's `BoxCollider2D` is non-trigger, ship
 colliders are triggers, so Unity fired the callback on genuine overlap);
-now fires from `PlayerController.ResolveShipCollisions()`'s own box-overlap
+now fires from `ShipCollisionResolver`'s own box-overlap
 check the moment it detects a ship overlapping the boss, calling a new
 `public MarauderBoss.ApplyContactDamage(GameObject ship)`. Same math as before:
 gated per-target by `contactDamageCooldown` (1s, a private
@@ -762,7 +762,7 @@ going through `PlayerInput`'s input-callback path:
   which just unwrap the `InputValue` and call these.
 - `PlayerAbility.TryUseAbility()` — the non-input equivalent of the
   dispatch inside `OnAbility(InputValue)`. The four `Trigger*` methods
-  (`TriggerTaunt`, `TriggerAuraBoost`, `TriggerSpeedBoost`, `TriggerBigShot`)
+  (now per-role helpers: `PlayerAbilityTank`/`Medic`/`Support`/`Attacker`, the last starting the Nova Beam cast)
   stay private.
 
 `TryUseAbility()`'s public, self-cooldown-gated design is also what makes
@@ -794,7 +794,7 @@ earlier. This is deliberately *not* tied to `SetVisible()` (which fires at
 the *start* of the entrance glide, several seconds earlier): starting
 minions there let them spawn and overlap ships that were still frozen for
 the rest of the entrance (`PlayerController.enabled == false`, so
-`FixedUpdate`/`ResolveShipCollisions` never runs) — kamikaze contact would
+`FixedUpdate`/`ShipCollisionResolver.Resolve` never runs) — kamikaze contact would
 silently do nothing against a frozen ship even while visibly overlapping
 it. Gating on `OnEnable()` instead guarantees ships are already unfrozen
 before any minion exists.
@@ -906,7 +906,7 @@ pinned to a fixed flank slot.
 
 **Solid-body collision**: minions physically block ships, same as the boss
 does (see "Solid-body collision (ships + boss)" above).
-`PlayerController.ResolveShipCollisions()` gained a loop over `Minion.Active`
+`ShipCollisionResolver` (`PlayerController.ResolveShipCollisions()` until Session 59) gained a loop over `Minion.Active`
 after its existing ally/boss checks, calling `ShipCollisionUtil
 .ResolveBoxOverlap()` against each minion's live position/`HalfExtents` and
 `minion.ApplyContactDamage(gameObject)` on overlap — same shape as the
@@ -931,7 +931,7 @@ through a dash exactly (`boss.position + flankOffset`, wobble within
 `boss.CurrentTarget` exactly for two different minions/targets; `TakeDamage`
 reduces health and destroys at 0, and `MinionSpawner` immediately refills
 the freed slot on its next `Update()` (cap never exceeded 2 across repeated
-forced spawns); `ResolveShipCollisions` (invoked directly) correctly
+forced spawns); `ResolveShipCollisions` (invoked directly, before it moved to `ShipCollisionResolver`) correctly
 resolves a ship/minion overlap using `Minion.Active`; invoking
 `MarauderBoss.OnDefeated` destroys every live minion immediately
 (`Minion.Active.Count` → 0).

@@ -103,7 +103,8 @@ For the full reasoning behind each of these, see
 | Level scenes | **One shared `Level.unity`**; each boss is its own prefab, and `LevelSetup` spawns only the picked one | Replaced three drifting `Ctrl+D` copies (Session 51). Two bosses can't coexist, and boss edits live in per-boss prefabs |
 | Boss art and backgrounds | Bosses and one parallax background per boss designed in Claude Design (2D + 3D GLB, signature color per boss); backgrounds dark with stars and city rooftops far below, in scrolling layers | Same pipeline as the ships; each fight gets its own look without hurting bullet readability (Session 52, first draft). Backgrounds ship as static PNG layers with a random start offset and mirror, not a port of the design's JS generator (Session 53) |
 | Effects style | Neon, inspired by Tuts+ "Neon Vector Shooter" (Shape Blaster) | Bloom, additive stretched particles, warping grid, black-hole powers; enemy bullets must stay readable over effects |
-| Ability cut-ins | 2D illustrated, or VRoid → Unity (UniVRM + MToon); picked at the start of art Phase 6 | Neither route needs Blender. 2D matches the ships and Touhou's spell-card cut-ins; VRoid → Unity keeps the anime-3D look |
+| Ability cut-ins | **2D illustrated, key poses** (Session 59): layered character art in a card over the caster's party frame; wind-up → flash/smear → pointing pose. Art drawn with Claude Fable 5.2 in an artifact, exported as PNG layers | The industry standard for this slot (Touhou, Persona 5's strip cut-ins); 2–3 drawings a character. ZZZ-style 3D rejected: the most work, lost in a 608×181 card. Rigging the same layers (Spine / Unity 2D Animation) is the upgrade path |
+| Attacker superpower | **Nova Beam** replaces Big Shot (Session 59): invulnerable and locked in place, 0.8 s wind-up, 3 s piercing column, 20 s cooldown | Makes E feel like a superpower; numbers are placeholders for a playtest |
 | Mobile | One project, per-platform quality tiers | No duplicated code; keeps crossplay possible. A sibling project was considered and rejected |
 | Version control | git, ships-game history retained | `origin` still points at `logang-bot/UntitledShipsGame2D` — retarget before pushing |
 
@@ -115,7 +116,7 @@ For the full reasoning behind each of these, see
 - How cards are acquired/unlocked over time (the loadout screen assumes a
   pool exists; where it comes from is deferred).
 - Number and structure of bosses/stages beyond Level 1.
-- The cut-in route, whether live ship models hold up on low-end phones
+- The pilots' character concepts, whether live ship models hold up on low-end phones
   (phone work deferred),
   final art palettes, and audio direction. The art pipeline
   itself is decided; see

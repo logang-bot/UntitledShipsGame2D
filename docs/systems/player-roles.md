@@ -130,15 +130,26 @@ blocks re-activation until the current role's cooldown elapses.
   all 4 Combat FX speed rings (always Support purple, per the design)
   light up the instant the boost starts, and when it ends each shows the
   ring breaking up for 0.25 s before hiding.
-- **Attacker — Big Shot**: calls `PlayerController.FireBigShot(widthMultiplier,
-  damageAmount, PlayerShotKind.BigShot)` (`3x` hitbox width) and `PlayerController.AddRecoil(Vector2.down
-  * recoilForce)`. Damage is a live multiplier of the caster's current
-  `fireDamage` (`bigShotDamageMultiplier`, `2x`), computed at cast time —
-  so it automatically stays proportional if `fireDamage` is ever retuned.
-  See [combat.md](combat.md) for why recoil has to be a decaying velocity
-  blended into `HandleMovement()` rather than a physics impulse
-  (`MovePosition` overwrites plain `AddForce` every `FixedUpdate`).
-- **Attacker — 3-attack combo**: separate from Big Shot above, bound to
+- **Attacker — Nova Beam** (replaced Big Shot, Session 59; design in
+  [the spec](../superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md)):
+  `PlayerAbilityAttacker.Trigger()` starts an `AttackerBeamCast` coroutine.
+  From the press the ship is **invulnerable**
+  (`PlayerHealth.GrantInvulnerability`) and **locked in place**
+  (`PlayerController.castLocked`: no movement, no normal fire, and
+  `TryComboAttack` no-ops). After `beam.windupSeconds` (0.8 s, while the HUD
+  cut-in card plays) `ShipCombatFx.SpawnBeam` fires the beam for
+  `beam.beamSeconds` (3 s), then the lock lifts. The beam
+  (`AttackerBeam`, `Prefabs/FX/AttackerBeam.prefab`) runs from the
+  `FirePoint` to the top of the screen, 0.9 × the ship's width, and every
+  `beam.tickInterval` (0.1 s) strikes each enemy in its column once for
+  `max(1, fireDamage × beam.tickDamageMultiplier)` (0.5×, so 1 per tick for
+  the Attacker) through `EnemyDamage`. It pierces everything, credits the
+  ship (DPS meter, aggro), doesn't erase bullets, and a shielded Warden
+  still takes nothing. The cooldown (`beam.cooldown`, 20 s) counts from the
+  press. All numbers are placeholders for a playtest. A CPU Attacker only
+  casts when its focus point sits inside the beam's column
+  (`AIControllerAttacker.UseAbilities`), since the cast anchors it for 3.8 s.
+- **Attacker — 3-attack combo**: separate from the Nova Beam above, bound to
   three dedicated inputs (`Combo1`/`Combo2`/`Combo3` — keyboard `1`/`2`/`3`,
   gamepad North/L1/R1). `PlayerAbilityAttacker` tracks a single
   `expectedSlot` (1→2→3→1…, the fixed "correct rotation"). Landing the
@@ -148,7 +159,7 @@ blocks re-activation until the current role's cooldown elapses.
   landing the wrong slot ("bad execution") fires at
   `comboBreakDamageMultiplier` (0.5x) instead and resets `expectedSlot` back
   to 1, rather than dealing no damage at all. Each slot has its own short
-  `comboAttackCooldown` (0.5s) — independent of `bigShotCooldown` — so the
+  `comboAttackCooldown` (0.5s) — independent of the beam's cooldown — so the
   gate is "don't mash one key", not the sequencing itself; the sequencing is
   entirely on the player picking the right key. `AIController` always feeds
   `TryComboAttack()` the current `AttackerComboExpectedSlot`, so Attacker
@@ -160,9 +171,10 @@ Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
 `auraTickInterval` (1s), `auraHealPerTick`/`auraShieldPerTick` (1 each),
 `auraBoostRadius` (1.5), `auraBoostTickInterval` (0.25s), `auraBoostDuration`
 (4s), `auraBoostCooldown` (10s), `auraPulseInterval` (0.25s), `healFlashColor`; `speedBoostCooldown`
-(15s), `speedBoostDuration` (4s), `speedBoostMultiplier` (1.5); `bigShotCooldown` (3s),
-`bigShotWidthMultiplier` (3), `bigShotDamageMultiplier` (2), `recoilForce`
-(6); `comboAttackCooldown` (0.5s), `comboStepDamageMultipliers` (`1, 1.3,
+(15s), `speedBoostDuration` (4s), `speedBoostMultiplier` (1.5); `beam`
+(`AttackerBeamSettings`: `windupSeconds` 0.8, `beamSeconds` 3, `cooldown`
+20, `tickInterval` 0.1, `tickDamageMultiplier` 0.5, `widthOfShip` 0.9);
+`comboAttackCooldown` (0.5s), `comboStepDamageMultipliers` (`1, 1.3,
 1.8`), `comboStepWidthMultipliers` (`1, 1.5, 2.5`),
 `comboBreakDamageMultiplier` (0.5). Key public methods: `OnAbility(InputValue)`,
 `OnCombo1/2/3(InputValue)`.
@@ -171,7 +183,9 @@ Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
 role's art: after a successful `TryUseAbility()`, `PlayerAbility` calls
 `Fx.PlayAbility(role)`, which spawns that role's `SpriteSequence` prefab
 (`Prefabs/FX/TauntFx`, `AuraBoostFx`, `SpeedBoostFx`, `BigShotFx`) as a ship
-child. Purely cosmetic: the mechanic itself still fires instantly. Taunt
+child. Purely cosmetic: the mechanic itself still fires instantly (the
+Attacker's `BigShotFx` frames now play as the Nova Beam's wind-up flash at
+the muzzle, and the beam follows 0.8 s later). Taunt
 holds its aggro-mark frame for 2 s (`holdSeconds` on the prefab); the Medic
 and Support sequences are wind-up + activate only, since the boosted aura
 and the party speed rings show the sustain. `ShipCombatFx` also holds the
@@ -281,9 +295,9 @@ one of its two inputs was tuned.
 This is a **ceiling, not a prediction**: ships fire straight up (`Vector2.up`)
 at a boss that moves side to side, so real output is this minus everything that
 missed. The damage meter (`DamageMeterView`, see [hud-layout.md](hud-layout.md)) reports what actually
-landed, and the gap between the two numbers is the positioning skill. Attacker's
-Big Shot widens its bullet 3x on top of doubling its damage, so part of that
-ability's value is accuracy against a moving target, not raw damage.
+landed, and the gap between the two numbers is the positioning skill. The
+Attacker's Nova Beam rewards the same skill differently: the ship is anchored
+for the whole cast, so its value depends on lining up under the boss first.
 
 `PlayerController.CurrentDps` is the *live* equivalent —
 `fireDamage * shotsPerSecond * fireRateBuffMultiplier` — so it reflects

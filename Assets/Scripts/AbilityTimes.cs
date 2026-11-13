@@ -24,12 +24,15 @@ public struct AbilityTimes
     {
         if (role == PlayerRole.Support && ability.IsSpeedBoostActive) return ability.SpeedBoostRemaining;
         if (role == PlayerRole.Medic && ability.IsAuraBoosted) return ability.AuraBoostRemaining;
+        if (role == PlayerRole.Attacker && ability.AttackerCastElapsed >= 0f)
+            return Mathf.Max(0f, ability.beam.TotalSeconds - ability.AttackerCastElapsed);
         return 0f;
     }
 
     private static float ActiveTotal(PlayerAbility ability, PlayerRole role)
     {
         if (role == PlayerRole.Support) return ability.speedBoostDuration;
+        if (role == PlayerRole.Attacker) return ability.beam.TotalSeconds;
         return role == PlayerRole.Medic ? ability.auraBoostDuration : 0f;
     }
 }

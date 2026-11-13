@@ -19,6 +19,9 @@
   quality tiers). It runs in parallel with the gameplay work.
 - [architecture.md](architecture.md) — concrete code-level conventions:
   script organization, communication patterns, deliberate omissions.
+- [superpowers/specs/](superpowers/specs/) — design specs written before a
+  feature is built: the Halcyon and Warden bosses, and the Attacker's
+  Nova Beam with its anime cut-in card (Session 59).
 
 ## Systems
 
@@ -36,12 +39,13 @@ the scene is wired.
 - [systems/combat.md](systems/combat.md) — shooting, bullets, health, enemy
   waves.
 - [systems/player-roles.md](systems/player-roles.md) — `PlayerRole`
-  enum/stats/component.
+  enum/stats/component, and each role's E ability (the Attacker's Nova
+  Beam).
 - [systems/cards.md](systems/cards.md) — **design spec, not yet built**: the
   deckbuilding layer merged in from `tohou_deck`. Grazing/energy, the 3-slot
   hand, deck rules, the `DeckBuild` loadout scene, and boss spell cards.
 - [systems/hud-layout.md](systems/hud-layout.md) — portrait/crossplay
-  screen layout, HUD canvases.
+  screen layout, HUD canvases, the squad frames and the anime cut-in card.
 - [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md) — **Marauder**, Level 1's
   boss: phases, aggro/taunt, CPU-controlled AI teammates, boss-fight HUD,
   tuning.
