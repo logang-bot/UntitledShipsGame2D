@@ -76,14 +76,33 @@ Messages behavior on the `Ability` action, bound to `E` — see
 (`nextAbilityTime`, same pattern as `PlayerController`'s `nextFireTime`)
 blocks re-activation until the current role's cooldown elapses.
 
-- **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. A
-  persistent listener redirects the boss's target to the taunter
-  (`MarauderBoss.TauntedBy(GameObject)` — see [marauder-boss.md](bosses/marauder-boss.md)'s "Aggro /
-  targeting"), alongside `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
-  feedback.
-- **Tank — Shield Arc** (passive/always-on, independent of Taunt, not
-  `E`-triggered): a wide, curved shield in front of Tank, both visual and
-  **functional**. Built procedurally in `Awake()` only for `role == Tank`:
+- **Tank — Super Shield (E, Session 60)**: the Tank's superpower. On the
+  press (`TankSuperShield`) the Tank's shield refills to max, and the
+  Shield Arc below grows to `superShieldScale` (2.5×) its width **and**
+  height around the ship's centre line over `growSeconds` (0.4 s), holds,
+  flickers for the last `endingSeconds` (1 s), and shrinks back over
+  `collapseSeconds` (0.25 s): `superShieldSeconds` (4 s) in all. For the
+  whole cast the arc is a **free block** (`TankShieldArc.FreeBlock`:
+  `Bullet.HitPlayer` destroys the bullet without damage). The Tank is not
+  locked or invulnerable; a bullet that reaches its body still hits.
+  Cooldown `superShieldCooldown` (25 s). The arc shows the Combat FX
+  `tank_supershield_*` frames from the pure `SuperShieldTimeline` (expand,
+  a 4-frame shimmer, the ending flicker, collapse), and the Tank's cut-in
+  card plays with it (see [hud-layout.md](hud-layout.md)).
+- **Tank — Taunt (key 1, Session 60)**: on the `Combo1` action (key 1 /
+  gamepad Y), with its own cooldown (`tauntCooldown`, 4 s) separate from
+  E's. `TankTaunt` invokes `public UnityEvent OnTaunt`; `PartyBossWiring`'s
+  runtime listener calls `BossEvents.Taunt(boss, ship, tauntSeconds)`,
+  which holds the boss on the taunter for `tauntSeconds` (3 s): Marauder
+  keeps it as its target for the window even if someone out-damages it
+  (see [marauder-boss.md](bosses/marauder-boss.md)'s "Aggro / targeting"),
+  Warden opens its arm-bias window for that long, Halcyon ignores it.
+  `TauntMagnetVisual` shows the magnet (`tank_taunt_magnet_*`, pure
+  `TauntMagnetTimeline`) for the same 3 s. `PlayerDamageFlash.Flash()` +
+  `CameraShake.Shake()` feedback as before.
+- **Tank — Shield Arc** (passive/always-on, the base the Super Shield
+  grows): a wide, curved shield in front of Tank, both visual and
+  **functional**. Built procedurally (`TankShieldArc.Create`, from `Start()`) only for `role == Tank`:
   a child `ShieldArc` GameObject, tagged `Player`, with a local-space
   `EdgeCollider2D` (`isTrigger`) sampling a shallow-parabola point set —
   `shieldArcWidthMultiplier` (3x Tank's own `BoxCollider2D` width) wide,
@@ -166,8 +185,11 @@ blocks re-activation until the current role's cooldown elapses.
   bots play a perfect rotation every time — there's no "bad execution" mode
   for bots yet, only for human input.
 
-Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
-(3), `shieldArcHeight` (0.2), `shieldArcYOffset` (0.3); `allies[]`, `auraRadius` (0.5),
+Key public fields: `tankPowers` (`TankAbilitySettings`: `tauntCooldown` 4,
+`tauntSeconds` 3, `superShieldCooldown` 25, `superShieldSeconds` 4,
+`superShieldScale` 2.5, `growSeconds` 0.4, `collapseSeconds` 0.25,
+`endingSeconds` 1, `shieldArcWidthMultiplier` 3, `shieldArcHeight` 0.2,
+`shieldArcYOffset` 0.3), `OnTaunt`; `allies[]`, `auraRadius` (0.5),
 `auraTickInterval` (1s), `auraHealPerTick`/`auraShieldPerTick` (1 each),
 `auraBoostRadius` (1.5), `auraBoostTickInterval` (0.25s), `auraBoostDuration`
 (4s), `auraBoostCooldown` (10s), `auraPulseInterval` (0.25s), `healFlashColor`; `speedBoostCooldown`
@@ -177,19 +199,22 @@ Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
 `comboAttackCooldown` (0.5s), `comboStepDamageMultipliers` (`1, 1.3,
 1.8`), `comboStepWidthMultipliers` (`1, 1.5, 2.5`),
 `comboBreakDamageMultiplier` (0.5). Key public methods: `OnAbility(InputValue)`,
-`OnCombo1/2/3(InputValue)`.
+`OnCombo1/2/3(InputValue)` (`OnCombo1` is also the Tank's Taunt), `TryTaunt()`.
 
 **Ability effects (Combat FX).** `ShipCombatFx` on `Ship.prefab` holds every
 role's art: after a successful `TryUseAbility()`, `PlayerAbility` calls
 `Fx.PlayAbility(role)`, which spawns that role's `SpriteSequence` prefab
-(`Prefabs/FX/TauntFx`, `AuraBoostFx`, `SpeedBoostFx`, `BigShotFx`) as a ship
+(`AuraBoostFx`, `SpeedBoostFx`, `BigShotFx`) as a ship
 child. Purely cosmetic: the mechanic itself still fires instantly (the
 Attacker's `BigShotFx` frames now play as the Nova Beam's wind-up flash at
-the muzzle, and the beam follows 0.8 s later). Taunt
-holds its aggro-mark frame for 2 s (`holdSeconds` on the prefab); the Medic
+the muzzle, and the beam follows 0.8 s later). The Tank has no one-shot
+sequence any more (the old `TauntFx` ring is unused since Session 60): its
+Super Shield is drawn on the arc and its Taunt by the magnet. The Medic
 and Support sequences are wind-up + activate only, since the boosted aura
 and the party speed rings show the sustain. `ShipCombatFx` also holds the
-aura, shield-arc and speed-ring sprites the helpers above draw.
+aura, shield-arc, Super Shield (`superShieldFrames` in `SuperShieldFrame`
+order + `superShieldBlock`), Taunt magnet (`tauntMagnetFrames`) and
+speed-ring sprites the helpers above draw.
 
 Also exposes read-only status for the HUD (see `PartyFrameUI.cs` in
 [hud-layout.md](hud-layout.md)): `CooldownRemaining`, `IsSpeedBoostActive`,
@@ -492,7 +517,7 @@ aggro table all stay untouched by this feature.
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
 | **PlayerRoleComponent**  | role: Attacker (`Ship.prefab` default — overwritten at runtime by the Role Select flow, see "Role Select scene" above; used as-is when a level scene is opened directly) |
-| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`. Only `Flash` works straight from the prefab, since it targets the ship itself. A prefab can't reference scene objects, so the shake call has a null target in `Ship.prefab` (`Teammate.prefab` also still carries a null-target `MarauderBoss.TauntedBy`, which does nothing). Taunt is added at runtime to every ship by `PartyBossWiring` (`OnTaunt` → `BossEvents.Taunt`). Co-op-spawned ships get camera shake at runtime from `SpawnedShipEventWiring`. See [marauder-boss.md](bosses/marauder-boss.md)'s Taunt-wiring notes |
+| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`. Only `Flash` works straight from the prefab, since it targets the ship itself. A prefab can't reference scene objects, so the shake call has a null target in `Ship.prefab`. Taunt is added at runtime to every ship by `PartyBossWiring` (`OnTaunt` → `BossEvents.Taunt`). Co-op-spawned ships get camera shake at runtime from `SpawnedShipEventWiring`. See [marauder-boss.md](bosses/marauder-boss.md)'s Taunt-wiring notes |
 
 ## Not yet built
 

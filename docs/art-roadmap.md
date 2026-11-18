@@ -287,6 +287,20 @@ lands, and update it when an asset gets wired.
   top. The first brightness pass (core × 3) bloomed into a flat white
   column that washed out the playfield; × 1.3 core and × 1.6 edges keep the
   colors. Prefab: `Assets/Prefabs/FX/AttackerBeam.prefab`.
+- **Second power done (Session 60): the Tank's Super Shield and Taunt
+  magnet.** Both are Claude Design Combat FX sprites (prompt in
+  `ArtSource/Tank/claude-design-prompts.md`), in
+  `Assets/Art/CombatFX/Superpowers/Tank/`:
+  - **Super Shield:** `tank_supershield_*` (1024×512): expand, idle + pulse
+    + two plasma idles (a 4-frame shimmer), block flash, ending flicker and
+    collapse. Its end caps sit 900 px apart, 64 px below the image's centre
+    (`ShieldArcSpriteFit.Super`), drawn at the full 2.5× size while the
+    collider grows under it.
+  - **Taunt magnet:** `tank_taunt_magnet_*` (512×512): activate, a 3-frame
+    inward-pull loop, end.
+
+  The old one-shot `TauntFx` ring is no longer played. Sorting: the arc at −5,
+  the magnet at −2, both under every bullet.
 - **Make:**
   - **The black hole:** a core sprite, an orbiting particle spray,
     `ParticleSystemForceField` (gravity plus vortex) pulling nearby
@@ -385,8 +399,15 @@ lands, and update it when an asset gets wired.
   beam fires, then shows the shout (with flash, push-in and shake), then
   holds the last frame. Static frames mean no hair sway or blink. Design:
   `docs/superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md`.
-  The card and its scripts are in `systems/hud-layout.md`. **Next:**
-  playtest, then the other roles.
+  The card and its scripts are in `systems/hud-layout.md`.
+- **Tank (Session 60):** the card is per role now (`CutInRoleArt`), and
+  the Tank's (`AEGIS-04 · TANK`, `SUPER SHIELD`, Tank cyan) plays with the
+  Super Shield, its shout landing as the wall reaches full size (0.4 s).
+  The developer's four pilot frames are in `Assets/Art/CutIns/Tank/`
+  (`tank_talk_1..4`: smirk, talking, shout with a cyan burst, grin holding
+  the hexagon shield), with `ico_supershield` and `ico_magnet` for the
+  frame. **Next:**
+  playtest both cards, then Medic and Support.
 - **Original plan (kept for reference) — decide first:** make a quick mockup of one character's cut-in each way,
   then pick one route for all four roles.
   - **2D illustrated:** a drawn character (drawn yourself or commissioned),

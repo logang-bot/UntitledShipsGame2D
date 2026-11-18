@@ -122,10 +122,11 @@ below.
 
 **Taunt biases re-picks, doesn't redirect.** Unlike `MarauderBoss.TauntedBy`
 (an instant aggro-table overwrite) or Halcyon (no listener at all, a genuine
-no-op), Warden's `TauntedBy(GameObject)` — the listener for every ship's
+no-op), Warden's `TauntedBy(GameObject, float seconds)` — the listener for every ship's
 `PlayerAbility.OnTaunt`, added at runtime to every ship by
 `PartyBossWiring` through `BossEvents.Taunt` — has no single-target aggro
-to redirect. It just opens a `tauntWindowDuration` (3s) window
+to redirect. It just opens a window as long as the Tank's taunt
+(`tauntSeconds`, 3 s; Warden's own `tauntWindowDuration` was removed in Session 60)
 (`TauntedShip`/`TauntActiveUntil`) that `WardenArm.PickWeighted` reads on its
 next re-pick to weight (not force) the draw toward the taunter — see
 "WardenArm.cs" below.
@@ -467,7 +468,7 @@ using the per-boss Strategy described in `docs/architecture.md`'s
 "Per-boss AI behavior: Strategy (AIBossTactics)".
 
 - **Taunt:** `ShouldTaunt` is always true, so an AI Tank taunts on
-  cooldown. Taunt always helps here (it biases arm re-picks toward the
+  cooldown (every 4 s, so its magnet is up 3 s out of 4). Taunt always helps here (it biases arm re-picks toward the
   Tank), and there's no "already holding aggro" state to check, unlike
   Marauder.
 - **Arm focus.** While `IsShielded`:

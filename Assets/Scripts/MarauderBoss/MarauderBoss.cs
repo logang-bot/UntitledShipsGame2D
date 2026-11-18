@@ -231,9 +231,9 @@ public class MarauderBoss : MonoBehaviour, IBoss
         if (CurrentHealth <= 0) Die();
     }
 
-    public void TauntedBy(GameObject taunter)
+    public void TauntedBy(GameObject taunter, float seconds)
     {
-        aggroSystem.TauntedBy(taunter);
+        aggroSystem.TauntedBy(taunter, seconds);
     }
 
     void Die()

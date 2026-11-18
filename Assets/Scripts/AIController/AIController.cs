@@ -110,6 +110,7 @@ public class AIController : MonoBehaviour
     private AIControllerMedic medic;
     private AIControllerSupport support;
     private AIControllerAttacker attacker;
+    private AIControllerTank tank;
     private AIControllerAvoidance avoidance;
     private AIBossTactics tactics;
 
@@ -139,6 +140,7 @@ public class AIController : MonoBehaviour
         medic = new AIControllerMedic(this);
         support = new AIControllerSupport(this);
         attacker = new AIControllerAttacker(this);
+        tank = new AIControllerTank(this);
         avoidance = new AIControllerAvoidance(this);
     }
 
@@ -199,7 +201,8 @@ public class AIController : MonoBehaviour
 
     /// <summary>
     /// Tank's Taunt is decided per boss by tactics.ShouldTaunt (see
-    /// AIBossTactics and its subclasses); every other role retries every
+    /// AIBossTactics and its subclasses) and its Super Shield by its own
+    /// shield (AIControllerTank); every other role retries every
     /// frame, which the ability's own cooldown gate makes safe. Attacker
     /// always requests the slot that continues its combo, so bots play a
     /// perfect rotation paced by comboAttackCooldown. TEMPORARY for Medic:
@@ -210,6 +213,7 @@ public class AIController : MonoBehaviour
     private void UpdateAbilityUsage()
     {
         if (role.role == PlayerRole.Attacker) attacker.UseAbilities();
-        else if (role.role != PlayerRole.Tank || tactics.ShouldTaunt(this)) ability.TryUseAbility();
+        else if (role.role == PlayerRole.Tank) tank.UseAbilities();
+        else ability.TryUseAbility();
     }
 }

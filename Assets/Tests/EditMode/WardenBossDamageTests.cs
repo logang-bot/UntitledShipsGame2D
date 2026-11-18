@@ -65,9 +65,8 @@ public class WardenBossDamageTests
     {
         WardenBoss boss = CreateBoss();
         GameObject taunter = Ship();
-        boss.tauntWindowDuration = 3f;
 
-        boss.TauntedBy(taunter);
+        boss.TauntedBy(taunter, 3f);
 
         Assert.AreSame(taunter, boss.TauntedShip);
         Assert.Greater(boss.TauntActiveUntil, Time.time);

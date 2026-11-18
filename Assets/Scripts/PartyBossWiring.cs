@@ -17,6 +17,7 @@ public static class PartyBossWiring
         ship.GetComponent<PlayerController>().bossObject = boss;
         AIController ai = ship.GetComponent<AIController>();
         if (ai.enabled) ai.bossObject = boss;
-        ship.GetComponent<PlayerAbility>().OnTaunt.AddListener(() => BossEvents.Taunt(boss, ship));
+        PlayerAbility ability = ship.GetComponent<PlayerAbility>();
+        ability.OnTaunt.AddListener(() => BossEvents.Taunt(boss, ship, ability.tankPowers.tauntSeconds));
     }
 }

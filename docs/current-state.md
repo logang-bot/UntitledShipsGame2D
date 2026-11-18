@@ -8,6 +8,25 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Tank's Super Shield and Taunt magnet (Session 60)** — the Tank now has
+  two abilities. **E is the Super Shield**, its superpower: the shield
+  refills to 20 and the shield arc grows to 2.5× its width and height,
+  centered on the ship, for 4 s. Bullets hitting the big arc cost
+  nothing; it flickers in its last second, then shrinks back. The Tank can
+  still move, and its body can still be hit. Cooldown 25 s. The Tank's
+  party frame plays a cut-in card (`AEGIS-04 · TANK`, `SUPER SHIELD`) like
+  the Attacker's. **Key 1 (gamepad Y) is Taunt**: the boss is held on the
+  Tank for 3 s (Marauder keeps it as its target even if someone
+  out-damages it, Warden's arms lean toward it, Halcyon ignores it), shown
+  by a magnet field around the ship. Cooldown 4 s, so the magnet can be up
+  almost all the time. The frame's new Taunt box reads READY / PULLING /
+  COOLDOWN. An AI Tank taunts on its boss's rules and casts the Super
+  Shield when its shield drops to half. The sprites are the Claude Design
+  Combat FX export, and the card is the developer's 4-frame pilot art
+  (`Assets/Art/CutIns/Tank/tank_talk_1..4.png`). Numbers want a playtest. See the
+  [spec](superpowers/specs/2026-11-18-tank-super-shield-taunt-design.md),
+  [systems/player-roles.md](systems/player-roles.md) and
+  [systems/hud-layout.md](systems/hud-layout.md).
 - **Attacker's Nova Beam and anime cut-in (Session 59, demo)** — the
   Attacker's E is no longer Big Shot. Pressing it makes the ship
   invulnerable and locks it in place. The Attacker's party frame slides
@@ -105,8 +124,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   refills via Medic's proximity aura — see
   [systems/player-roles.md](systems/player-roles.md)'s "Shield stat". The
   party frame shows a shield bar alongside the health bar. Press **E** to
-  use the role's ability: Tank taunts (redirects the boss's aggro to you —
-  see the Boss encounter bullet below and
+  use the role's ability: Tank raises its Super Shield (and taunts on
+  **1**, holding the boss's aggro on you for 3 s — see the Boss encounter
+  bullet below and
   [systems/player-roles.md](systems/player-roles.md)'s "Aggro/targeting"
   section), Medic temporarily expands its passive heal/shield aura into a
   much larger, faster one for a few seconds, Support triggers a **party-wide**
@@ -506,10 +526,11 @@ real networking last, then art/audio.
    light up with a shared gold ring and visibly speed up/fire faster
    together, not just your own ship. As Tank, notice the wide curved shield
    arc above your ship even without pressing anything — that's always on;
-   press **E** to fire the taunt event instead, which has a real effect: it
-   forces the boss to switch its target to you (watch `BossPanel`'s
-   "Target:" text change) — watch the party frame's ability line show the
-   boost amount and cooldown countdown. As Attacker, **E** fires a wider,
+   press **1** to taunt: a magnet field shows around your ship and the boss
+   panel's aggro row reads TANK / TAUNTED for 3 s, while your frame's Taunt
+   box reads PULLING. Press **E** for the Super Shield: your cut-in card
+   plays, your shield refills, and the arc grows into a big wall that
+   blocks for free for 4 s (watch the shield bar stay full). As Attacker, **E** fires a wider,
    harder-hitting shot (damage scales with your own current fire damage)
    with a visible backward recoil kick.
 10. *(Optional)* Resize the Game view window (or check the Scene view via

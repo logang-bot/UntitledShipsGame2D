@@ -102,6 +102,7 @@ role stroke, glow and a 3 px inset edge; other human = dim role stroke; CPU
 | `FrameStatsView` | SPD, FIRE (live, with buff multipliers) and real DPS from the boss's `BossDamageLedger`. Values boosted by Speed Boost turn light purple with a `+` (the design's ▲ isn't in the fonts) |
 | `AbilityCellView` | The square sweep around the icon (`AbilityCellState`): solid = ready, filling = active time left, grey track filling back up = cooldown; name, status, seconds, 3 px active bar |
 | `ComboKeysView` | Attacker only: the 1-2-3 keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`) |
+| `TauntKeyView` | Tank only (Session 60), the `TauntBox` next to the hidden combo box: `READY` (white-edged `1` keycap), `PULLING · n s` (filled cyan keycap, magnet, the 3 px bar emptying over the 3 s taunt), `COOLDOWN · n s` (slate keycap refilled by a radial sweep). Mapped by the pure, tested `TauntDisplay`. Built from the Neon Fleet HUD screenshots in `ArtSource/Tank/hud-reference/`, with its `ico_magnet` |
 
 `PipRowView` resizes to the ship's max each time it changes, because
 `PlayerRoleComponent` applies the role's max HP and shield in `Start()`,
@@ -112,17 +113,22 @@ after the frames are bound.
 its ship): `CLICK` keycap when ready, white border and `TRIGGER` on hover,
 `WAIT` + lock while cooling. The human's own frame shows no key.
 
-**Anime cut-in card (Session 59, Attacker only).** Each `PartyFrame` has a
+**Anime cut-in card (Session 59 Attacker, Session 60 Tank).** Each `PartyFrame` has a
 `CutInCard` child (last sibling, `LayoutElement.ignoreLayout`, a
-`RectMask2D` so it's clipped to the frame). When the frame's ship is the
-Attacker, `PartyFrameUI.Paint()` hands `CutInCardView.Show()` the ship's
-cast clock (`PlayerAbility.AttackerCastElapsed`, -1 when idle) and fades the
-stats `content` out by however much of the frame the card covers. Pure
-reads, scaled time, so pause freezes it with the game.
+`RectMask2D` so it's clipped to the frame). `CutInCardView.Bind(role, snap)`
+picks the role's `CutInRoleArt` (frames, kicker, title) from `roles[]`,
+recolors the card (`roleTints` → the role color, `roleBgTints` → its dark
+card color) and returns false for a role with no entry (Medic, Support for
+now), whose card never shows. For a role with a card,
+`PartyFrameUI.Paint()` hands `CutInCardView.Show()` the ship's
+superpower clock (`PlayerAbility.SuperpowerElapsed`: the Nova Beam cast or
+the Super Shield, -1 when idle) and fades the stats `content` out by
+however much of the frame the card covers. Pure reads, scaled time, so
+pause freezes it with the game.
 
 | Piece | Does |
 | --- | --- |
-| `CutInTiming` | The timeline numbers: slide in 0–0.25 s, talk frames flipping every 0.12 s, snap at the beam's wind-up (synced from `beam.windupSeconds` in `Initialize`), shout held 0.6 s, flash, 1.06× push-in, 0.15 s shake, slide out 2.30–2.55 s |
+| `CutInTiming` | The timeline numbers: slide in 0–0.25 s, talk frames flipping every 0.12 s, snap when the power lands (`PlayerAbility.SuperpowerSnapSeconds`: the beam's 0.8 s wind-up, or the Super Shield's 0.4 s growth), shout held 0.6 s, flash, 1.06× push-in, 0.15 s shake, slide out 2.30–2.55 s |
 | `CutInTimeline` | How much of the frame the card covers at a moment (ease-out in, ease-in out). Tested |
 | `CutInPoseTimeline` | Which drawn frame shows (`CutInFrame`: TalkClosed / TalkOpen flipping until the snap, then Shout, then Afterglow), plus the flash alpha, push-in scale and shake strength. Tested |
 | `CutInCardView` | Slides `Panel` in from the frame's left edge and back, and shows or hides the card |
@@ -136,9 +142,11 @@ edge, and the white `Flash`. The frames are the developer's four static
 PNGs in `Assets/Art/CutIns/Attacker/`, `attacker_talk_1..4.png` (1216×362,
 transparent, 200 px/unit, uncompressed), in `CutInFrame` order:
 smirk / talking / shout with fingertip flash / smirk with glowing suit.
-The card is on all four frames, but only the Attacker's is ever shown.
-Per-role art comes with the other roles' powers. The ability cell's
-Attacker icon is now `ico_beam`.
+The Tank's card (`AEGIS-04 · TANK`, `SUPER SHIELD`, in Tank cyan) uses
+`Assets/Art/CutIns/Tank/tank_talk_1..4.png`, the same format: smirk /
+talking / shout with the cyan burst / grin holding the hexagon shield.
+The ability cell's Attacker icon is `ico_beam`; the Tank's is
+`ico_supershield`.
 
 **DOWN.** There is no revive, so a dead ship's frame stays in its slot,
 fades to 40% under a hatch and shows a `DOWN` badge; its ability reads
@@ -269,5 +277,7 @@ eye icon in the Hierarchy while doing world-space work.
 - The "in Medic aura" buff chip: nothing tracks which ships an aura is
   reaching.
 - The PC rails sliding in with the level (`ui-kit.md`'s transitions).
-- Cut-in cards for the Tank, Medic and Support, and the Attacker's final
-  character art. Where the card goes on phones, which have no rails.
+- Cut-in cards for the Medic and Support, the Tank's frames 1 and 3, and
+  the final character art. Where the card goes on phones, which have no rails.
+- A CPU Tank's Taunt can't be clicked from its frame (the ability cell
+  triggers its Super Shield).

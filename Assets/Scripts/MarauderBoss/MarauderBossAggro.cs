@@ -10,6 +10,8 @@ public class MarauderBossAggro
 {
     private readonly MarauderBoss boss;
     private readonly Dictionary<GameObject, float> aggro = new Dictionary<GameObject, float>();
+    private GameObject heldTarget;
+    private float heldUntil = float.NegativeInfinity;
 
     public GameObject CurrentTarget { get; private set; }
 
@@ -30,7 +32,7 @@ public class MarauderBossAggro
 
     public void PickTarget()
     {
-        CurrentTarget = FindHighestAggroTarget();
+        CurrentTarget = IsHeld ? heldTarget : FindHighestAggroTarget();
     }
 
     private GameObject FindHighestAggroTarget()
@@ -58,12 +60,21 @@ public class MarauderBossAggro
         if (source != null && aggro.ContainsKey(source)) aggro[source] += amount;
     }
 
-    public void TauntedBy(GameObject taunter)
+    /// <summary>
+    /// Tops the taunter's aggro, and holds the boss on it for the taunt's
+    /// seconds even if someone out-damages it meanwhile - the Tank's magnet
+    /// shows that long, so the boss must not be shooting someone else.
+    /// </summary>
+    public void TauntedBy(GameObject taunter, float seconds)
     {
         if (!aggro.ContainsKey(taunter)) return;
 
         float highest = 0f;
         foreach (KeyValuePair<GameObject, float> kv in aggro) highest = Mathf.Max(highest, kv.Value);
         aggro[taunter] = highest + boss.tauntBonus;
+        heldTarget = taunter;
+        heldUntil = Time.time + seconds;
     }
+
+    private bool IsHeld => heldTarget != null && heldTarget.activeInHierarchy && Time.time < heldUntil;
 }

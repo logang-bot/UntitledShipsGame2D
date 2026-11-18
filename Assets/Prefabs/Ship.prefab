@@ -314,7 +314,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd98367d25d1aed4caf32174d6103430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAbility
-  tauntCooldown: 5
+  tankPowers:
+    tauntCooldown: 4
+    tauntSeconds: 3
+    superShieldCooldown: 25
+    superShieldSeconds: 4
+    superShieldScale: 2.5
+    growSeconds: 0.4
+    collapseSeconds: 0.25
+    endingSeconds: 1
+    shieldArcWidthMultiplier: 3
+    shieldArcHeight: 0.2
+    shieldArcYOffset: 0.3
   OnTaunt:
     m_PersistentCalls:
       m_Calls:
@@ -379,9 +390,6 @@ MonoBehaviour:
   - 1.5
   - 2.5
   comboBreakDamageMultiplier: 0.5
-  shieldArcWidthMultiplier: 3
-  shieldArcHeight: 0.2
-  shieldArcYOffset: 0.3
 --- !u!114 &523717138145725323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,7 +470,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4739defb047cd0144a21ff50f0766f93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UntitledShips.Runtime::ShipCombatFx
-  tauntFx: {fileID: 2591409455247927361, guid: e2f7c8f5b4119fe4ab56378fc7ca2ba5, type: 3}
   auraBoostFx: {fileID: 8042989756503457828, guid: 37863ba741bc0fd4d83bd29b01ccee0d, type: 3}
   speedBoostFx: {fileID: 7150154136931267945, guid: ab5fff2e1438f8e4cafa8bcc92d0d880, type: 3}
   bigShotFx: {fileID: 2941659134109857387, guid: 503df054baa2267459a3f5eef4438c98, type: 3}
@@ -473,6 +480,21 @@ MonoBehaviour:
   auraBoostPulse: {fileID: 21300000, guid: 6eab25adfeaa823468176ae4311f5a56, type: 3}
   shieldIdle: {fileID: 21300000, guid: 9c5a22ae8ac48b145baf7db967a07cea, type: 3}
   shieldBlock: {fileID: 21300000, guid: 59629d29f76f33e4fb7b61fdd7621f87, type: 3}
+  superShieldFrames:
+  - {fileID: 21300000, guid: 892d4db936765a34f874662c3c3abc9e, type: 3}
+  - {fileID: 21300000, guid: a3e6be1a03be439429c9f71b07dc969c, type: 3}
+  - {fileID: 21300000, guid: 2103e1053306e5f4baef34d8a7b8d912, type: 3}
+  - {fileID: 21300000, guid: d41fa05aaf01059439091cc9f9f9c04d, type: 3}
+  - {fileID: 21300000, guid: b4b1bd350f370e044ad1eab356f87333, type: 3}
+  - {fileID: 21300000, guid: 56af8c5a2c69c1d458f7d2f6af7dc92f, type: 3}
+  - {fileID: 21300000, guid: 3aa6c371742142146ac8836d7aa148c3, type: 3}
+  superShieldBlock: {fileID: 21300000, guid: 532139a16eed2754fbbb9b05dcbf2aaf, type: 3}
+  tauntMagnetFrames:
+  - {fileID: 21300000, guid: 168aa037ada5b0b468f5ce848f7012a2, type: 3}
+  - {fileID: 21300000, guid: 5510e346a8706104a98b03e800603257, type: 3}
+  - {fileID: 21300000, guid: e4b1246a2ff7df94f93b77182c3fa9bd, type: 3}
+  - {fileID: 21300000, guid: 81a5de66eebc34a45a93a299f44a7601, type: 3}
+  - {fileID: 21300000, guid: 331f79e1280ba8143aa6b21ad3d04330, type: 3}
   speedRing: {fileID: 21300000, guid: 393659913c20b9343af5a7b57bcdb518, type: 3}
   speedRingEnd: {fileID: 21300000, guid: bebfc6f9f44789a44b2f921e3718b04d, type: 3}
 --- !u!114 &4152285164259849233

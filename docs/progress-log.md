@@ -2361,3 +2361,88 @@ The 13 generated placeholder layers were deleted. The title shrank to 44 pt
 and moved right, because the pointing hand ran into it. 194 EditMode tests
 pass. In Play mode (loaded from the main menu), the talking frames show
 while the card slides in, and the shout lands with the beam.
+
+## Session 60 — Tank Super Shield + Taunt Magnet (Art Phases 4 and 6)
+
+The second role reworked in the Nova Beam's style. The developer wanted
+Taunt kept, made visible and nearly always available, plus a new big
+ability. The spec is
+`docs/superpowers/specs/2026-11-18-tank-super-shield-taunt-design.md`.
+
+### Decisions
+
+- **Keys:** E = Super Shield (E stays "the superpower" for every role, so
+  the cut-in follows E). Taunt moves to key 1 / gamepad Y, the existing
+  `Combo1` action (only the Attacker used it). No new input action.
+- **Super Shield:** refills the shield and grows the arc to **2.5× the
+  normal arc** in width and height, centered on the ship. First asked for
+  as 3/4 of the screen; the developer then chose to size it from the Tank
+  so it survives screen changes. 4 s, every arc hit free (the developer's
+  pick: a 3/4-screen arc could drain all 20 points in one barrage), 25 s
+  cooldown. Not locked, not invulnerable: moving the wall is the point.
+- **Taunt:** 3 s active, 4 s cooldown, a magnet showing the whole time.
+  To keep the magnet honest, Marauder now holds the taunter as its target
+  for the window; Warden's window takes the Tank's number.
+- **Art:** Claude Design prompts for the Combat FX and Neon Fleet HUD
+  projects (`ArtSource/Tank/claude-design-prompts.md`); the developer draws
+  the pilot frames.
+
+### Built
+
+- `TankAbilitySettings` replaces `tauntCooldown` and the three shield-arc
+  fields on `PlayerAbility` (re-set on `Ship.prefab`, arc height 0.2 as
+  before; every ship, human or CPU, spawns from it. The old
+  `Teammate.prefab` is referenced nowhere).
+- `PlayerAbilityTank` now composes `TankShieldArc` (the arc moved out of it,
+  plus `SetScale`, the look swap and `FreeBlock`), `TankSuperShield` (the
+  4 s cast, driven by the pure `SuperShieldTimeline`) and `TankTaunt`
+  (cooldown, window, `TauntMagnetVisual` from `TauntMagnetTimeline`).
+  `ShieldArcShape` and `ShieldArcSpriteFit` are the pure arc maths.
+- `Bullet.HitPlayer` asks `TankShieldArc.Absorbs` first.
+- `BossEvents.Taunt` and both bosses' `TauntedBy` take the seconds;
+  `MarauderBossAggro` holds the taunter; `WardenBoss.tauntWindowDuration`
+  is gone.
+- `AIControllerTank`: taunts on `ShouldTaunt`, Super Shield at ≤ 50% shield.
+- HUD: `CutInCardView.Bind` picks a `CutInRoleArt` per role and recolors
+  the card; `PlayerAbility.SuperpowerElapsed` / `SuperpowerSnapSeconds`
+  drive it. `TauntKeyView` + `TauntDisplay` add the Tank's Taunt box
+  (built in `PartyFrame.prefab` from the combo box). The Tank's ability
+  cell reads SUPER SHIELD; the Role Select card reads SUPER SHIELD and
+  KEY 1 · TAUNT (the card only has two lines).
+- Art intake: the Combat FX ZIP's 13 frames, imported like the existing FX
+  (192 px/unit); `tank_talk_2` / `_4` (200 px/unit); the HUD screenshots
+  in `ArtSource/Tank/hud-reference/`. `tank_talk_1` / `_3` were saved web
+  pages, not images, and `ico_supershield` / `ico_magnet` weren't
+  exported, so placeholders stand in (frames `2, 2, 4, 4`; `ico_shieldarc`,
+  `ico_taunt`).
+
+### Verified
+
+All 206 EditMode tests pass (new: `ShieldArcShapeTests`,
+`SuperShieldTimelineTests`, `TauntMagnetTimelineTests`,
+`TauntDisplayTests`, and Marauder's held-taunt case). In Play mode on
+Level 1, triggering the CPU Tank's abilities through `TryUseAbility()` /
+`TryTaunt()`:
+- the shield refilled from 5 to 20; mid-cast the arc was 2.5× wide
+  (4.5 local units, 2.7 world), centered on the ship, the design sprite's
+  caps on the collider's ends, free block on, the shimmer frames cycling,
+  and the shield still 20 after ~10 s under fire (with the duration
+  stretched for the check);
+- after the cast the arc was back to 1.8 and the cooldown counting from 25 s;
+- the magnet played its sustain loop; the Tank's frame showed PULLING and
+  SUPER SHIELD · ACTIVE, its card bound to SUPER SHIELD; Marauder's panel
+  read TANK · TAUNTED.
+
+No console errors or warnings. **Not checked live:** a real key-1 / E
+press as a human Tank, the cut-in card mid-slide, Warden and Halcyon. All
+numbers need a playtest.
+
+### Later in Session 60: the remaining art
+
+The developer re-exported `tank_talk_1` / `_3` as proper 1216×362
+transparent PNGs, aligned with frames 2 and 4, and Claude Design exported
+`ico_supershield` / `ico_magnet` (48×48, white for tinting, like the other
+HUD icons). All are imported like their neighbours and wired in: the card
+plays all four frames, the ability cell and Taunt box use the new icons.
+The unused `Teammate.prefab` (no scene, prefab or script referenced it;
+every ship spawns from `Ship.prefab`) was deleted.

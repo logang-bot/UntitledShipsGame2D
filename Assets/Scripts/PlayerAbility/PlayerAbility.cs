@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerAbility : MonoBehaviour
 {
-    [Header("Tank - Taunt")]
-    public float tauntCooldown = 5f;
+    [Header("Tank - Taunt (key 1), Super Shield (E) and shield arc")]
+    public TankAbilitySettings tankPowers = new TankAbilitySettings();
     public UnityEvent OnTaunt;
 
     [Header("Medic - Aura")]
@@ -73,14 +73,6 @@ public class PlayerAbility : MonoBehaviour
     /// </summary>
     public float comboBreakDamageMultiplier = 0.5f;
 
-    [Header("Tank - Shield Arc")]
-    /// <summary>Arc width = Tank's own collider width x this.</summary>
-    public float shieldArcWidthMultiplier = 3f;
-    /// <summary>Bulge/thickness of the curve.</summary>
-    public float shieldArcHeight = 0.4f;
-    /// <summary>Local offset above the ship.</summary>
-    public float shieldArcYOffset = 0.3f;
-
     private PlayerRoleComponent roleComponent;
     private PlayerController playerController;
     private PlayerHealth playerHealth;
@@ -107,8 +99,13 @@ public class PlayerAbility : MonoBehaviour
     public int AttackerComboExpectedSlot => attacker.ExpectedSlot;
     public float AttackerComboBrokenAt => attacker.LastBreakTime;
     public float AttackerComboFinishedAt => attacker.LastFinishTime;
-    /// <summary>Seconds into the Nova Beam cast (the cut-in card's clock), or -1 when idle.</summary>
+    /// <summary>Seconds into the Nova Beam cast, or -1 when idle.</summary>
     public float AttackerCastElapsed => attacker.CastElapsed;
+    public PlayerAbilityTank Tank => tank;
+    /// <summary>Seconds into this ship's superpower (the cut-in card's clock), or -1 when idle.</summary>
+    public float SuperpowerElapsed => roleComponent.role == PlayerRole.Tank ? tank.SuperShieldElapsed : attacker.CastElapsed;
+    /// <summary>When the superpower lands, for the cut-in's shout: the beam firing, or the wall at full size.</summary>
+    public float SuperpowerSnapSeconds => roleComponent.role == PlayerRole.Tank ? tankPowers.growSeconds : beam.windupSeconds;
 
     public string AbilityName => PlayerAbilityLabels.NameFor(roleComponent.role);
     public string StatusText => PlayerAbilityLabels.StatusFor(this, roleComponent.role);
@@ -148,7 +145,7 @@ public class PlayerAbility : MonoBehaviour
     void Start()
     {
         if (roleComponent.role == PlayerRole.Medic) medic.CreateAuraRing();
-        if (roleComponent.role == PlayerRole.Tank) tank.CreateShieldArc();
+        if (roleComponent.role == PlayerRole.Tank) tank.Build();
         nextAbilityTime = Time.time + CooldownFor(roleComponent.role);
     }
 
@@ -161,7 +158,7 @@ public class PlayerAbility : MonoBehaviour
     {
         switch (role)
         {
-            case PlayerRole.Tank: return tauntCooldown;
+            case PlayerRole.Tank: return tankPowers.superShieldCooldown;
             case PlayerRole.Medic: return auraBoostCooldown;
             case PlayerRole.Support: return speedBoostCooldown;
             case PlayerRole.Attacker: return beam.cooldown;
@@ -211,9 +208,18 @@ public class PlayerAbility : MonoBehaviour
         }
     }
 
+    /// <summary>Key 1 is the Attacker's first combo slot and the Tank's Taunt; each call is role-guarded.</summary>
     public void OnCombo1(InputValue value)
     {
-        if (value.isPressed) TryComboAttack(1);
+        if (!value.isPressed) return;
+        TryComboAttack(1);
+        TryTaunt();
+    }
+
+    /// <summary>Non-input entry point for the Tank's Taunt, so AIController uses the same cooldown gate.</summary>
+    public void TryTaunt()
+    {
+        if (roleComponent.role == PlayerRole.Tank) tank.Taunt.TryTaunt();
     }
 
     public void OnCombo2(InputValue value)

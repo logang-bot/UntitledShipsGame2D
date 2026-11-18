@@ -3,12 +3,12 @@ using UnityEngine;
 // The Combat FX sprites a ship carries: its role's superpower sequence, the
 // heal flash it shows when a Medic patches it up, and the sprites of the
 // role visuals the PlayerAbility helpers draw (Medic aura, Tank shield arc,
-// Support's party speed ring). One component on Ship.prefab serves all four
+// Super Shield and Taunt magnet, Support's party speed ring). The Tank's
+// E has no one-shot sequence: its Super Shield is drawn on the arc itself. One component on Ship.prefab serves all four
 // roles, since a ship only learns its role at spawn.
 public class ShipCombatFx : MonoBehaviour
 {
     [Header("Superpowers (SpriteSequence prefabs)")]
-    public GameObject tauntFx;
     public GameObject auraBoostFx;
     public GameObject speedBoostFx;
     // The Attacker's Nova Beam wind-up flash at the muzzle (the design's
@@ -28,9 +28,23 @@ public class ShipCombatFx : MonoBehaviour
     public Sprite shieldIdle;
     public Sprite shieldBlock;
 
+    [Header("Tank Super Shield, in SuperShieldFrame order")]
+    public Sprite[] superShieldFrames;
+    public Sprite superShieldBlock;
+
+    [Header("Tank Taunt magnet, in TauntMagnetFrame order")]
+    public Sprite[] tauntMagnetFrames;
+
     [Header("Support party speed ring")]
     public Sprite speedRing;
     public Sprite speedRingEnd;
+
+    public bool HasSuperShieldArt =>
+        superShieldFrames != null && superShieldFrames.Length == (int)SuperShieldFrame.Collapse + 1 && superShieldBlock != null;
+
+    public bool HasTauntMagnetArt => tauntMagnetFrames != null && tauntMagnetFrames.Length == (int)TauntMagnetFrame.None;
+
+    public Sprite SuperShieldSprite(SuperShieldFrame frame) => superShieldFrames[(int)frame];
 
     public void PlayAbility(PlayerRole role) => SpawnChild(AbilityFxFor(role));
 
@@ -47,7 +61,7 @@ public class ShipCombatFx : MonoBehaviour
     {
         switch (role)
         {
-            case PlayerRole.Tank: return tauntFx;
+            case PlayerRole.Tank: return null;
             case PlayerRole.Medic: return auraBoostFx;
             case PlayerRole.Support: return speedBoostFx;
             default: return bigShotFx;

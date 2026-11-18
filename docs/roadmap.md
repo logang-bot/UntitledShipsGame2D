@@ -656,6 +656,23 @@ reference docs live under `systems/`.
   `PlayerController.castLocked`, and `ShipCollisionResolver` (split out of
   `PlayerController`). See the
   [spec](superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md).
+- **Tank Super Shield + Taunt magnet (Session 60)** — the second role
+  reworked in the Nova Beam's style. **E = Super Shield**: refills the
+  shield and grows the shield arc to 2.5× its width and height (sized from
+  the Tank, not the screen) for 4 s, every hit on it free, then a 1 s
+  flicker and a collapse; 25 s cooldown; plays the Tank's cut-in card.
+  **Key 1 = Taunt** (the existing `Combo1` action), now 4 s cooldown and a
+  3 s window on every boss: Marauder holds the taunter as its target for
+  the window, Warden's bias window follows the Tank's number, and a magnet
+  field shows the whole time. New: `TankAbilitySettings`, `TankShieldArc`
+  (with `ShieldArcShape` / `ShieldArcSpriteFit`), `TankSuperShield` +
+  `SuperShieldTimeline`, `TankTaunt` + `TauntMagnetVisual` /
+  `TauntMagnetTimeline`, `AIControllerTank`, the per-role cut-in card
+  (`CutInRoleArt`, `PlayerAbility.SuperpowerElapsed`) and the frame's
+  `TauntKeyView` (`TauntDisplay`). Art from Claude Design (Combat FX and
+  Neon Fleet HUD prompts in `ArtSource/Tank/claude-design-prompts.md`) and
+  the developer's pilot frames. See the
+  [spec](superpowers/specs/2026-11-18-tank-super-shield-taunt-design.md).
 
 ## In Progress
 
@@ -736,14 +753,16 @@ is independently testable and the one before it de-risks the next.
   - effects (Combat FX sprites done: Session 55, Sprite Atlases tested and
     dropped: Session 56; grid and particles open);
   - powers (role ability effects done: Session 55; the Attacker's Nova
-    Beam done: Session 59; black hole open);
+    Beam done: Session 59; the Tank's Super Shield and Taunt magnet done:
+    Session 60; Medic, Support and the black hole open);
   - bosses, designed in Claude Design alongside the backgrounds — **in the
     game as live 3D models** (Session 58), with every phase and telegraph
     state on the model and portraits on the Level Select cards. Warden's
     arms moved onto the hull and need a playtest. See `art-roadmap.md`'s
     Phase 5;
   - anime cut-ins (route decided and the Attacker's card built on
-    the developer's 4-frame art: Session 59; the other roles open);
+    the developer's 4-frame art: Session 59; the Tank's card: Session 60,
+    on the developer's 4-frame art; Medic and Support open);
   - the pre-level screens (main menu through level select) on a shared UI
     kit;
   - the in-level HUD last (PC done: Session 57; phone layout open).

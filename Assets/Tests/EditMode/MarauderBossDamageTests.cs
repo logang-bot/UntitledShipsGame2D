@@ -155,7 +155,7 @@ public class MarauderBossDamageTests
         boss.TakeDamage(20f, attacker);
         boss.TakeDamage(3f, tank);
 
-        boss.TauntedBy(tank);
+        boss.TauntedBy(tank, 3f);
 
         Assert.AreEqual(3f, boss.GetDamageDealt(tank), 0.0001f,
             "Taunt must not inflate the taunter's recorded damage.");
@@ -176,10 +176,24 @@ public class MarauderBossDamageTests
         PickTarget(boss);
         Assert.AreSame(attacker, boss.CurrentTarget, "Top damage should hold aggro before the taunt.");
 
-        boss.TauntedBy(tank);
+        boss.TauntedBy(tank, 3f);
         PickTarget(boss);
 
         Assert.AreSame(tank, boss.CurrentTarget, "Taunt should pull the boss onto the Tank.");
+    }
+
+    [Test]
+    public void TauntedBy_HoldsTheTankForItsWindow_EvenWhenOutDamaged()
+    {
+        GameObject attacker = Ship("Attacker");
+        GameObject tank = Ship("Tank");
+        MarauderBoss boss = CreateBoss(attacker, tank);
+
+        boss.TauntedBy(tank, 3f);
+        boss.TakeDamage(boss.tauntBonus + 20f, attacker);
+        PickTarget(boss);
+
+        Assert.AreSame(tank, boss.CurrentTarget, "The magnet shows for the whole taunt, so the boss must stay on the Tank.");
     }
 
     // -------------------------------------------------- targeting roster

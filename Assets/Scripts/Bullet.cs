@@ -98,16 +98,22 @@ void OnTriggerEnter2D(Collider2D other)
         Destroy(gameObject);
     }
 
+    /// <summary>A Super Shield arc stops the bullet for free; anything else player-tagged takes the hit.</summary>
+    private void HitPlayer(Collider2D other)
+    {
+        if (!TankShieldArc.Absorbs(other)) DamagePlayer(other);
+        Destroy(gameObject);
+    }
+
     /// <summary>
     /// GetComponentInParent (not GetComponent) so a child collider - e.g.
     /// Tank's wide shield-arc trigger - can route the hit to its ship's own
     /// PlayerHealth, not just a ship's own body collider.
     /// </summary>
-    private void HitPlayer(Collider2D other)
+    private void DamagePlayer(Collider2D other)
     {
         PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
         if (health != null) health.TakeDamage(Mathf.RoundToInt(damage));
-        Destroy(gameObject);
     }
 
 }

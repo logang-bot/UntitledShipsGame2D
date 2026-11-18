@@ -213,9 +213,14 @@ currently holds the highest aggro. No decay. `PickTarget()` uses
 `Dictionary.TryGetValue` rather than a raw indexer, so it stays safe even
 if `aggro` and `targets[]` were ever to drift out of sync.
 
-`TauntedBy(GameObject taunter)` — the listener for Tank taunt (see
+`TauntedBy(GameObject taunter, float seconds)` — the listener for Tank taunt (see
 below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
-(100), guaranteeing an immediate target switch to the taunter.
+(100), guaranteeing an immediate target switch to the taunter, and
+**holds** the boss on the taunter for `seconds` (the Tank's
+`tauntSeconds`, 3 s; Session 60): while that window is open and the
+taunter is alive, `PickTarget()` keeps it as `CurrentTarget` even if
+someone else's aggro climbs past it. The Tank's magnet shows for the same
+window, so the boss never shoots someone else while it's up.
 
 ### Public API
 
@@ -480,8 +485,8 @@ calling `boss.TakeDamage(damage, ownerObject)` on the latter. See
 
 ## AIController.cs
 
-**Attached to:** the 3 `Teammate_*` GameObjects (`Assets/Prefabs/Teammate.prefab`
-instances — see below), replacing `PlayerInput`.
+**Attached to:** every ship (`Assets/Prefabs/Ship.prefab`), enabled on the
+CPU-flown `Teammate_*` ships in place of `PlayerInput`.
 **Requires:** `PlayerController`, `PlayerAbility`, `PlayerHealth`,
 `PlayerRoleComponent` on the same GameObject (same component set as the
 human `Player`) — reused as-is, no AI-specific duplicate logic.
@@ -503,8 +508,9 @@ Drives a CPU-controlled teammate every `Update()`:
   the equivalent non-input entry point for `OnFire(InputValue)`.
 - **Abilities**: `PlayerAbility.TryUseAbility()` — a public method that goes
   through the same cooldown gate and role-dispatch switch the human player
-  uses. Per-role heuristic: **Tank** taunts whenever it doesn't currently
-  hold the boss's aggro. That's `MarauderAITactics.ShouldTaunt`, the
+  uses. Per-role heuristic: **Tank** taunts (key 1, `TryTaunt()`) whenever it doesn't currently
+  hold the boss's aggro, and casts its Super Shield once its own shield is
+  at half or below (`AIControllerTank`). The taunt rule is `MarauderAITactics.ShouldTaunt`, the
   per-boss AI strategy since Session 46; see `docs/architecture.md`'s
   "Per-boss AI behavior". **Medic**
   fires its aura boost the instant it's off cooldown — flagged as a
@@ -1009,12 +1015,9 @@ tag logic treats them exactly like the human player), with a distinct
 `PlayerRoleComponent.role` (Tank / Medic / Support — `Player` itself
 defaults to `Attacker`, all overwritten at runtime by Role Select — see
 [player-roles.md](../player-roles.md)'s "Role Select scene") so all 4 roles
-are covered exactly once. `Teammate_Tank` is linked to
-`Assets/Prefabs/Teammate.prefab`; `Teammate_Medic`/`Teammate_Support` are
-plain independent GameObjects with the same component values, not prefab
-instances — an edit meant to apply to all three teammates has to be applied
-to each individually (or to `Teammate.prefab` **plus** the two non-linked
-copies).
+are covered exactly once. All four ships come from
+`Assets/Prefabs/Ship.prefab`, so one prefab edit reaches every ship (the
+old, unused `Teammate.prefab` was deleted in Session 60).
 
 | Component            | Key inspector values                                                        |
 | --------------------- | ----------------------------------------------------------------------------- |

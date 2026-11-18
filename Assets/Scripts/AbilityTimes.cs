@@ -2,7 +2,7 @@ using UnityEngine;
 
 // The raw timers behind one ship's ability cell, read off PlayerAbility so
 // AbilityCellState can stay a pure mapping. "Active" is the ability's own
-// running effect (Speed Boost, Aura Boost); instant abilities have none.
+// running effect (Speed Boost, Aura Boost, Nova Beam, Super Shield).
 public struct AbilityTimes
 {
     public float cooldownRemaining;
@@ -24,6 +24,7 @@ public struct AbilityTimes
     {
         if (role == PlayerRole.Support && ability.IsSpeedBoostActive) return ability.SpeedBoostRemaining;
         if (role == PlayerRole.Medic && ability.IsAuraBoosted) return ability.AuraBoostRemaining;
+        if (role == PlayerRole.Tank) return ability.Tank.SuperShieldRemaining;
         if (role == PlayerRole.Attacker && ability.AttackerCastElapsed >= 0f)
             return Mathf.Max(0f, ability.beam.TotalSeconds - ability.AttackerCastElapsed);
         return 0f;
@@ -33,6 +34,7 @@ public struct AbilityTimes
     {
         if (role == PlayerRole.Support) return ability.speedBoostDuration;
         if (role == PlayerRole.Attacker) return ability.beam.TotalSeconds;
+        if (role == PlayerRole.Tank) return ability.tankPowers.superShieldSeconds;
         return role == PlayerRole.Medic ? ability.auraBoostDuration : 0f;
     }
 }
