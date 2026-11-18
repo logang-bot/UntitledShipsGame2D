@@ -74,5 +74,14 @@ biggest shield in the party).
 ## Open items
 
 - A CPU Tank's Taunt can't be clicked from its frame.
-- Every number needs a playtest: cooldowns, 2.5×, 0.4 s growth, the AI's
+- Every number needs a playtest: cooldowns, 3.5×, 0.4 s growth, the AI's
   50% rule.
+
+## First tuning (later in Session 60)
+
+The developer's call, before a playtest: Taunt's cooldown goes from 4 s
+to **8 s** (up 3 s out of 8, so the Tank picks its moments); the Super
+Shield grows to **3.5×** instead of 2.5× (about two thirds of the
+playfield's width) and lasts **9 s** instead of 4 s. The Super Shield's
+cooldown stays 25 s. The decisions table above keeps the first numbers;
+`TankAbilitySettings` and `Ship.prefab` hold the current ones.

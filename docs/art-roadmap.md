@@ -294,8 +294,10 @@ lands, and update it when an asset gets wired.
   - **Super Shield:** `tank_supershield_*` (1024×512): expand, idle + pulse
     + two plasma idles (a 4-frame shimmer), block flash, ending flicker and
     collapse. Its end caps sit 900 px apart, 64 px below the image's centre
-    (`ShieldArcSpriteFit.Super`), drawn at the full 2.5× size while the
-    collider grows under it.
+    (`ShieldArcSpriteFit.Super`), drawn at the full size while the
+    collider grows under it. Drawn for 2.5×; since the shield went to
+    3.5× (later in Session 60) the sprite is stretched 1.4× to fit, so
+    check it still looks sharp in play.
   - **Taunt magnet:** `tank_taunt_magnet_*` (512×512): activate, a 3-frame
     inward-pull loop, end.
 
@@ -408,6 +410,9 @@ lands, and update it when an asset gets wired.
   the hexagon shield), with `ico_supershield` and `ico_magnet` for the
   frame. **Next:**
   playtest both cards, then Medic and Support.
+- **Voice lines (planned, Session 60):** each card gets a provisional
+  voice clip, a shout on the snap frame (optionally a short line under
+  the talk frames). See [roadmap.md](roadmap.md)'s "Provisional audio".
 - **Original plan (kept for reference) — decide first:** make a quick mockup of one character's cut-in each way,
   then pick one route for all four roles.
   - **2D illustrated:** a drawn character (drawn yourself or commissioned),
@@ -442,8 +447,9 @@ Menu), with the UI kit, the two fonts, one project-wide palette
 `MenuBackground` scene with the drifting fleet, and the design's
 transitions. Details in [systems/ui-kit.md](systems/ui-kit.md). Still
 open: the mobile layouts, a real logo for the wordmark slot, QUIT's
-confirm modal, and a check with real gamepads. The table below is the
-original brief.
+confirm modal, and a check with real gamepads. Provisional menu music
+(one loop on `MenuBackground`) is planned in [roadmap.md](roadmap.md)'s
+"Provisional audio". The table below is the original brief.
 
 | Screen | What it does today | What the art adds |
 | --- | --- | --- |
@@ -562,3 +568,5 @@ art:
 - **The roll mechanic:** purely visual, or does it give i-frames? That's the
   phase 3 developer's call.
 - **Audio direction** (FMOD is planned) is out of scope for this roadmap.
+  The provisional voice lines and music (Session 60) are tracked in
+  [roadmap.md](roadmap.md)'s "Provisional audio".

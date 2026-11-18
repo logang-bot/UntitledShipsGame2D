@@ -468,7 +468,7 @@ using the per-boss Strategy described in `docs/architecture.md`'s
 "Per-boss AI behavior: Strategy (AIBossTactics)".
 
 - **Taunt:** `ShouldTaunt` is always true, so an AI Tank taunts on
-  cooldown (every 4 s, so its magnet is up 3 s out of 4). Taunt always helps here (it biases arm re-picks toward the
+  cooldown (every 8 s, so its magnet is up 3 s out of 8). Taunt always helps here (it biases arm re-picks toward the
   Tank), and there's no "already holding aggro" state to check, unlike
   Marauder.
 - **Arm focus.** While `IsShielded`:

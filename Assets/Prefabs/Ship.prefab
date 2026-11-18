@@ -315,11 +315,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAbility
   tankPowers:
-    tauntCooldown: 4
+    tauntCooldown: 8
     tauntSeconds: 3
     superShieldCooldown: 25
-    superShieldSeconds: 4
-    superShieldScale: 2.5
+    superShieldSeconds: 9
+    superShieldScale: 3.5
     growSeconds: 0.4
     collapseSeconds: 0.25
     endingSeconds: 1

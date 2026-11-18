@@ -18,13 +18,18 @@ over action names, since `Player Input`'s Send Messages behavior matches
 methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
 
 - Action map: `Player`
-  - `Move` — Value / Vector2, 2D Vector composite (WASD, `Keyboard&Mouse`
-    scheme) plus a `<Gamepad>/leftStick` binding (`Gamepad` scheme) — arrow
-    keys are still **not** bound
+  - `Move` — Value / Vector2, 2D Vector composite (the arrow keys,
+    `Keyboard&Mouse` scheme) plus a `<Gamepad>/leftStick` binding (`Gamepad`
+    scheme). WASD is not bound
   - `Fire` — Button (Space and left mouse button, `Keyboard&Mouse`;
     `<Gamepad>/buttonSouth`, `Gamepad`)
   - `Ability` — Button (`E`, `Keyboard&Mouse`; `<Gamepad>/buttonWest`,
-    `Gamepad`)
+    `Gamepad`). Every role's superpower: the Attacker's Nova Beam, the
+    Tank's Super Shield
+  - `Combo1` / `Combo2` / `Combo3` — Buttons (keys `1` / `2` / `3`,
+    `Keyboard&Mouse`; `<Gamepad>/buttonNorth` / `leftShoulder` /
+    `rightShoulder`, `Gamepad`). The Attacker's combo shots; `Combo1` is
+    also the Tank's **Taunt** (Session 60)
 - Control schemes (added for local co-op — see
   [scene-flow.md](scene-flow.md)'s "JoinLobbyUI.cs" section): `Keyboard&Mouse`
   (requires both a `<Keyboard>` and a `<Mouse>`) and `Gamepad` (requires a
@@ -34,8 +39,9 @@ methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
   same scene don't both respond to every binding.
 
 `OnMove`/`OnFire` are consumed by `PlayerController.cs` — see
-[movement.md](movement.md) and [combat.md](combat.md). `OnAbility` is
-consumed by `PlayerAbility.cs` — see [player-roles.md](player-roles.md). None
+[movement.md](movement.md) and [combat.md](combat.md). `OnAbility` and
+`OnCombo1..3` are consumed by `PlayerAbility.cs` — see
+[player-roles.md](player-roles.md). None
 of these consumers needed any code change for gamepad support — they already
 only handle input through `PlayerInput`'s Send Messages, agnostic to which
 device/scheme triggered it.

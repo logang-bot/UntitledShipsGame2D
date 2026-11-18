@@ -29,7 +29,7 @@ public class TauntDisplayTests
     {
         TauntDisplay d = TauntDisplay.From(0f, 1f, settings);
         Assert.AreEqual(TauntMood.Cooldown, d.mood);
-        Assert.AreEqual(0.75f, d.progress, 1e-5f);
+        Assert.AreEqual(1f - 1f / settings.tauntCooldown, d.progress, 1e-5f);
     }
 
     [Test]

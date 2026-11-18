@@ -10,16 +10,17 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 - **Tank's Super Shield and Taunt magnet (Session 60)** — the Tank now has
   two abilities. **E is the Super Shield**, its superpower: the shield
-  refills to 20 and the shield arc grows to 2.5× its width and height,
-  centered on the ship, for 4 s. Bullets hitting the big arc cost
+  refills to 20 and the shield arc grows to 3.5× its width and height
+  (about two thirds of the playfield's width), centered on the ship, for
+  9 s. Bullets hitting the big arc cost
   nothing; it flickers in its last second, then shrinks back. The Tank can
   still move, and its body can still be hit. Cooldown 25 s. The Tank's
   party frame plays a cut-in card (`AEGIS-04 · TANK`, `SUPER SHIELD`) like
   the Attacker's. **Key 1 (gamepad Y) is Taunt**: the boss is held on the
   Tank for 3 s (Marauder keeps it as its target even if someone
   out-damages it, Warden's arms lean toward it, Halcyon ignores it), shown
-  by a magnet field around the ship. Cooldown 4 s, so the magnet can be up
-  almost all the time. The frame's new Taunt box reads READY / PULLING /
+  by a magnet field around the ship. Cooldown 8 s from the press, so the
+  magnet is up 3 s out of every 8. The frame's new Taunt box reads READY / PULLING /
   COOLDOWN. An AI Tank taunts on its boss's rules and casts the Super
   Shield when its shield drops to half. The sprites are the Claude Design
   Combat FX export, and the card is the developer's 4-frame pilot art
@@ -121,7 +122,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   to fixed, role-specific values (see
   [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role
   stats" for the full table). Shield absorbs damage before health and only
-  refills via Medic's proximity aura — see
+  refills via Medic's proximity aura or the Tank's own Super Shield — see
   [systems/player-roles.md](systems/player-roles.md)'s "Shield stat". The
   party frame shows a shield bar alongside the health bar. Press **E** to
   use the role's ability: Tank raises its Super Shield (and taunts on
@@ -326,7 +327,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   fires. Touching the
   boss directly still costs a ship 2x bullet damage, same as Marauder. It
   has no aggro/target system at all — Tank's Taunt does nothing against it
-  (still flashes/shakes as feedback, just doesn't redirect anything). See
+  (the magnet still shows as feedback, it just doesn't redirect anything). See
   [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md).
 - **Warden (Level 3's boss)** — a dual/triple-lane coverage fight: two
   turret-arms (three from Phase 2 on) each independently pick a random
@@ -384,7 +385,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   Medic aura, Tank shield arc, Support speed ring, the three bosses' danger
   rings, and a sprite effect for each role's ability. The three bosses are
   their live 3D design models with every phase and telegraph state
-  (Session 58). The avatar slot is still a placeholder shape. No audio.
+  (Session 58). The avatar slot is still a placeholder shape. No audio yet:
+  provisional cut-in voice lines and menu and level music are next (see
+  [roadmap.md](roadmap.md)'s "Provisional audio").
 - Some imported Combat FX art isn't used yet: the Halcyon and Warden
   minions and their death bursts (those fights have no minions), the
   Halcyon bullet set, several spare orb sizes, the standalone aggro mark,
@@ -449,11 +452,12 @@ real networking last, then art/audio.
    combat begins. See [systems/level-sequencing.md](systems/level-sequencing.md).
    *(To iterate faster while testing, temporarily lower `LevelSequencer`'s
    `minionPhase1Duration` in the Inspector.)*
-5. Move with **WASD** (or a gamepad's left stick, if you joined that way).
-   Hold **Space**/**left mouse button** (or a gamepad's South button) to
-   fire — it auto-fires while held. Press **E** (or a gamepad's West
-   button) to use the current role's ability (see step 9 for what each role
-   does). Any AI-controlled ships fight alongside you fully autonomously —
+5. Move with the **arrow keys** (or a gamepad's left stick, if you joined
+   that way). Hold **Space**/**left mouse button** (or a gamepad's South
+   button) to fire — it auto-fires while held. Press **E** (or a gamepad's
+   West button) to use the current role's ability (see step 9 for what each
+   role does). Keys **1/2/3** (gamepad North / LB / RB) are the Attacker's
+   combo shots; **1** is also the Tank's Taunt. Any AI-controlled ships fight alongside you fully autonomously —
    no input needed for them.
 6. Watch the boss run its scripted pattern (snap to a side, advance toward
    the party, retreat, return to center, pause, repeat mirrored) — it fires at
@@ -530,9 +534,10 @@ real networking last, then art/audio.
    panel's aggro row reads TANK / TAUNTED for 3 s, while your frame's Taunt
    box reads PULLING. Press **E** for the Super Shield: your cut-in card
    plays, your shield refills, and the arc grows into a big wall that
-   blocks for free for 4 s (watch the shield bar stay full). As Attacker, **E** fires a wider,
-   harder-hitting shot (damage scales with your own current fire damage)
-   with a visible backward recoil kick.
+   blocks for free for 9 s (watch the shield bar stay full). As Attacker, **E** fires the Nova Beam:
+   your cut-in card plays, the ship locks in place, invulnerable, and 0.8 s
+   later a 3 s beam burns everything in its column; **1/2/3** fire the
+   combo shots.
 10. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`

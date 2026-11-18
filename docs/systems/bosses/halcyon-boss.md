@@ -3,8 +3,8 @@
 Level 2's boss: a pure positioning fight, the opposite of
 [Marauder](marauder-boss.md)'s bullet-heavy style. No ambient bullets at
 all — damage comes only from body contact and a new Static Field proximity
-pulse. No aggro/threat table either: Tank's Taunt still fires its own
-feedback (flash/shake) but has no boss-side listener here, so it's a
+pulse. No aggro/threat table either: Tank's Taunt still shows its own
+feedback (the magnet, since Session 60) but has no boss-side listener here, so it's a
 genuine, intentional no-op against Halcyon. Design decisions were resolved
 via a brainstorming session recorded in
 [docs/superpowers/specs/2026-09-04-halcyon-boss-design.md](../../superpowers/specs/2026-09-04-halcyon-boss-design.md);

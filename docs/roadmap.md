@@ -26,8 +26,10 @@ reference docs live under `systems/`.
 5. **Art & audio — final pass**, once everything above works with
    placeholder assets. **Exception (Session 49): art starts now, in
    parallel with step 3.** Each asset replaces a placeholder that already
-   works, so it never blocks gameplay. See `art-roadmap.md`. Audio is still
-   last.
+   works, so it never blocks gameplay. See `art-roadmap.md`. The final
+   audio (FMOD) is still last, but **provisional audio comes now
+   (Session 60)**: cut-in voice lines and placeholder music for the menus
+   and the level. See "Provisional audio" under "Art & audio" below.
 
 ## Implemented
 
@@ -658,10 +660,10 @@ reference docs live under `systems/`.
   [spec](superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md).
 - **Tank Super Shield + Taunt magnet (Session 60)** — the second role
   reworked in the Nova Beam's style. **E = Super Shield**: refills the
-  shield and grows the shield arc to 2.5× its width and height (sized from
-  the Tank, not the screen) for 4 s, every hit on it free, then a 1 s
+  shield and grows the shield arc to 3.5× its width and height (sized from
+  the Tank, not the screen) for 9 s, every hit on it free, then a 1 s
   flicker and a collapse; 25 s cooldown; plays the Tank's cut-in card.
-  **Key 1 = Taunt** (the existing `Combo1` action), now 4 s cooldown and a
+  **Key 1 = Taunt** (the existing `Combo1` action), now 8 s cooldown and a
   3 s window on every boss: Marauder holds the taunter as its target for
   the window, Warden's bias window follows the Tank's number, and a magnet
   field shows the whole time. New: `TankAbilitySettings`, `TankShieldArc`
@@ -773,4 +775,31 @@ is independently testable and the one before it de-risks the next.
   (glTFast + `ShipMesh.shader`) under the URP 2D Renderer, plus bloom and
   Shape Blaster-inspired neon effects. Blender is optional.
 
+- **Provisional audio (next, added Session 60)** — placeholder sound, so
+  the game stops being silent while the art lands. Each item replaces
+  silence, so like the art it never blocks gameplay, and the FMOD pass
+  below replaces it later.
+  - **Cut-in voice lines:** import a short voice clip for each role's
+    cut-in card: a shout on the frame where the card snaps (the Nova Beam
+    firing, the Super Shield reaching full size, `CutInTiming.snapAt`),
+    and optionally a short line under the talk frames before it. Attacker
+    and Tank first (their cards exist), Medic and Support with their own
+    cards. Files in `Assets/Audio/Voice/<Role>/`. Each clip has to fit
+    the wind-up: 0.8 s for the Nova Beam, 0.4 s for the Super Shield.
+  - **Menu music:** import one looping placeholder track for the
+    pre-game screens (`MainMenu` through `LevelSelect`). It plays from the
+    persistent `MenuBackground.unity`, so it keeps going across the five
+    screens and their transitions instead of restarting on each one, and
+    stops when `Level` loads (which closes `MenuBackground`).
+  - **Level music:** import one looping placeholder track for the fight in
+    `Level.unity`. One track for every boss to start; a track per boss
+    can follow on `LevelSetup`'s `BossEntry`, next to its background.
+  - **To decide when it's built:** plain Unity `AudioSource`s for the
+    placeholders (no FMOD yet) is the simplest route; whether an
+    `AudioMixer` with music and voice volumes comes with it; and every
+    placeholder clip needs a license that allows it in the repo (note the
+    source next to it). AI-generated audio would need Steam's AI content
+    disclosure if it ever ships.
+  - **Done when:** the menus and the level each play their music, and
+    the Attacker's and the Tank's cut-ins shout on the snap.
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.

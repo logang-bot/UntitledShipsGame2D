@@ -1,7 +1,8 @@
 using NUnit.Framework;
+using UnityEngine;
 
-// The Super Shield's 4 s cast: expand while growing to 2.5x, a shimmer
-// loop at full size, the ending flicker, then collapse back to 1x.
+// The Super Shield's cast: expand while growing to its full scale, a
+// shimmer loop at full size, the ending flicker, then collapse back to 1x.
 public class SuperShieldTimelineTests
 {
     private readonly TankAbilitySettings settings = new TankAbilitySettings();
@@ -27,9 +28,18 @@ public class SuperShieldTimelineTests
     [Test]
     public void FrameAt_FlickersBeforeTheEnd_ThenCollapses()
     {
-        float endingStart = settings.superShieldSeconds - settings.collapseSeconds - settings.endingSeconds;
-        Assert.AreEqual(SuperShieldFrame.Ending, SuperShieldTimeline.FrameAt(settings, 3.05f), "3.05 s is an even flicker step.");
-        Assert.Greater(3.05f, endingStart);
+        float evenStep = FirstEvenFlickerStepMidpoint();
+        Assert.Less(evenStep + SuperShieldTimeline.FlickerSeconds, settings.superShieldSeconds - settings.collapseSeconds);
+        Assert.AreEqual(SuperShieldFrame.Ending, SuperShieldTimeline.FrameAt(settings, evenStep));
+        Assert.AreEqual(SuperShieldFrame.Idle, SuperShieldTimeline.FrameAt(settings, evenStep + SuperShieldTimeline.FlickerSeconds));
         Assert.AreEqual(SuperShieldFrame.Collapse, SuperShieldTimeline.FrameAt(settings, settings.superShieldSeconds - 0.1f));
+    }
+
+    private float FirstEvenFlickerStepMidpoint()
+    {
+        float endingStart = settings.superShieldSeconds - settings.collapseSeconds - settings.endingSeconds;
+        int step = Mathf.CeilToInt(endingStart / SuperShieldTimeline.FlickerSeconds);
+        if (step % 2 == 1) step++;
+        return (step + 0.5f) * SuperShieldTimeline.FlickerSeconds;
     }
 }

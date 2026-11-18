@@ -2446,3 +2446,38 @@ HUD icons). All are imported like their neighbours and wired in: the card
 plays all four frames, the ability cell and Taunt box use the new icons.
 The unused `Teammate.prefab` (no scene, prefab or script referenced it;
 every ship spawns from `Ship.prefab`) was deleted.
+
+### Later in Session 60: docs pass and provisional audio items
+
+A pass over the docs for anything the Nova Beam and Tank work left stale:
+- `systems/input.md`: the action list now matches `PlayerControls`
+  (movement is on the arrow keys, not WASD; `Combo1..3` on keys 1/2/3 and
+  gamepad North / LB / RB, with `Combo1` also the Tank's Taunt).
+- `current-state.md`: the how-to-test steps use the arrow keys, name keys
+  1/2/3, and describe the Attacker's E as the Nova Beam (it still said
+  Big Shot); shields refill from the Medic's aura or the Super Shield;
+  Taunt on Halcyon shows the magnet.
+- `systems/player-roles.md` (shield refill) and
+  `systems/bosses/halcyon-boss.md` (taunt feedback) likewise.
+
+New roadmap items (`roadmap.md`'s "Provisional audio", with pointers from
+`art-roadmap.md` Phases 6 and 7): placeholder **voice lines for the cut-in
+cards** (a shout on the snap frame), **menu music** (one loop on the
+persistent `MenuBackground`, so it carries across the five screens) and
+**level music** (one loop in `Level.unity`, per boss later). The final
+FMOD pass stays last.
+
+### Later in Session 60: first Tank tuning
+
+The developer's numbers, before a playtest:
+- **Taunt cooldown 4 s → 8 s.** It's still a 3 s hold, so the magnet is
+  up 3 s out of every 8 instead of almost always.
+- **Super Shield 2.5× → 3.5×** (about 3.8 world units, two thirds of the
+  playfield's width) and **4 s → 9 s**. Cooldown unchanged at 25 s.
+
+Changed in `TankAbilitySettings` and `Ship.prefab` (the only serialized
+copy). The design sprites were drawn for 2.5×, so they now stretch 1.4×
+to fit. `SuperShieldTimelineTests`' flicker case had 3.05 s hard-coded
+(inside the old 4 s cast); it now finds an even flicker step from the
+settings, and `TauntDisplayTests`' cooldown case reads the cooldown from
+the settings. All 206 EditMode tests pass. Not playtested yet.

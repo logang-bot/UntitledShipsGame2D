@@ -78,10 +78,10 @@ blocks re-activation until the current role's cooldown elapses.
 
 - **Tank — Super Shield (E, Session 60)**: the Tank's superpower. On the
   press (`TankSuperShield`) the Tank's shield refills to max, and the
-  Shield Arc below grows to `superShieldScale` (2.5×) its width **and**
+  Shield Arc below grows to `superShieldScale` (3.5×) its width **and**
   height around the ship's centre line over `growSeconds` (0.4 s), holds,
   flickers for the last `endingSeconds` (1 s), and shrinks back over
-  `collapseSeconds` (0.25 s): `superShieldSeconds` (4 s) in all. For the
+  `collapseSeconds` (0.25 s): `superShieldSeconds` (9 s) in all. For the
   whole cast the arc is a **free block** (`TankShieldArc.FreeBlock`:
   `Bullet.HitPlayer` destroys the bullet without damage). The Tank is not
   locked or invulnerable; a bullet that reaches its body still hits.
@@ -90,7 +90,7 @@ blocks re-activation until the current role's cooldown elapses.
   a 4-frame shimmer, the ending flicker, collapse), and the Tank's cut-in
   card plays with it (see [hud-layout.md](hud-layout.md)).
 - **Tank — Taunt (key 1, Session 60)**: on the `Combo1` action (key 1 /
-  gamepad Y), with its own cooldown (`tauntCooldown`, 4 s) separate from
+  gamepad Y), with its own cooldown (`tauntCooldown`, 8 s) separate from
   E's. `TankTaunt` invokes `public UnityEvent OnTaunt`; `PartyBossWiring`'s
   runtime listener calls `BossEvents.Taunt(boss, ship, tauntSeconds)`,
   which holds the boss on the taunter for `tauntSeconds` (3 s): Marauder
@@ -185,9 +185,9 @@ blocks re-activation until the current role's cooldown elapses.
   bots play a perfect rotation every time — there's no "bad execution" mode
   for bots yet, only for human input.
 
-Key public fields: `tankPowers` (`TankAbilitySettings`: `tauntCooldown` 4,
-`tauntSeconds` 3, `superShieldCooldown` 25, `superShieldSeconds` 4,
-`superShieldScale` 2.5, `growSeconds` 0.4, `collapseSeconds` 0.25,
+Key public fields: `tankPowers` (`TankAbilitySettings`: `tauntCooldown` 8,
+`tauntSeconds` 3, `superShieldCooldown` 25, `superShieldSeconds` 9,
+`superShieldScale` 3.5, `growSeconds` 0.4, `collapseSeconds` 0.25,
 `endingSeconds` 1, `shieldArcWidthMultiplier` 3, `shieldArcHeight` 0.2,
 `shieldArcYOffset` 0.3), `OnTaunt`; `allies[]`, `auraRadius` (0.5),
 `auraTickInterval` (1s), `auraHealPerTick`/`auraShieldPerTick` (1 each),
@@ -270,8 +270,9 @@ per-role stats" below):
   before (see [combat.md](combat.md)).
 - **No passive regen of its own** — `PlayerHealth.RestoreShield(int)`
   (symmetric to `Heal(int)`, clamps at `maxShield`) is only ever called by
-  Medic's proximity aura, never on its own over time. Keeps Tank
-  meaningfully dependent on Medic, matching the MMO-raid "tank and healer"
+  Medic's proximity aura and the Tank's Super Shield (a full refill on a
+  25 s cooldown, Session 60), never on its own over time. Keeps Tank
+  meaningfully dependent on Medic between Super Shields, matching the MMO-raid "tank and healer"
   coupling this project is modeled on (`../overview.md`).
 - **Shield bar**: a fixed shield-blue bar on the party frame, not
   role-tinted — see [hud-layout.md](hud-layout.md).
