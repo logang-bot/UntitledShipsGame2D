@@ -2,13 +2,14 @@ using System;
 
 // The anime cut-in card's timeline, in seconds from the ability press. The
 // snap (talking to the shout) lands on the beam firing; the party frame
-// syncs snapAt to the ship's real wind-up. See
+// syncs snapAt to the ship's real wind-up, and the card leaves a fixed time
+// after it, so the shout and afterglow always get the same screen time. See
 // docs/superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md.
 [Serializable]
 public class CutInTiming
 {
     public float slideInSeconds = 0.25f;
-    public float slideOutAt = 2.3f;
+    public float slideOutAfterSnapSeconds = 1.5f;
     public float slideOutSeconds = 0.25f;
 
     /// <summary>How long each talking frame shows before the mouth flips.</summary>
@@ -20,4 +21,6 @@ public class CutInTiming
     public float pushSeconds = 0.12f;
     public float pushScale = 1.06f;
     public float shakeSeconds = 0.15f;
+
+    public float SlideOutAt => snapAt + slideOutAfterSnapSeconds;
 }

@@ -27,9 +27,11 @@ reference docs live under `systems/`.
    placeholder assets. **Exception (Session 49): art starts now, in
    parallel with step 3.** Each asset replaces a placeholder that already
    works, so it never blocks gameplay. See `art-roadmap.md`. The final
-   audio (FMOD) is still last, but **provisional audio comes now
-   (Session 60)**: cut-in voice lines and placeholder music for the menus
-   and the level. See "Provisional audio" under "Art & audio" below.
+   audio (FMOD) is still last, but **provisional audio came first
+   (planned Session 60, in Session 61)**: cut-in voice lines and
+   placeholder music for the menus and the level. See "Provisional audio"
+   under "Implemented" and "Art & audio" below. **Next: provisional sound
+   effects** (ships, bullets, hits; "Art & audio" below).
 
 ## Implemented
 
@@ -645,8 +647,8 @@ reference docs live under `systems/`.
   Phase 5.
 - **Attacker Nova Beam + anime cut-in demo (Session 59)** — art Phases 4
   and 6 started. The Attacker's E replaces Big Shot with the **Nova Beam**:
-  invulnerable and locked in place from the press, a 0.8 s wind-up, then a
-  3 s plasma column from the cannons to the top of the screen that strikes
+  invulnerable and locked in place from the press, a 0.8 s wind-up (1.8 s since Session 61), then a
+  3 s (now 3.5 s) plasma column from the cannons to the top of the screen that strikes
   everything in it every 0.1 s (HLSL beam shader, LineRenderer lightning,
   particles; 20 s cooldown; CPU Attackers cast only when lined up). The
   Attacker's party frame plays an anime **cut-in card** synced to it: key
@@ -675,6 +677,26 @@ reference docs live under `systems/`.
   Neon Fleet HUD prompts in `ArtSource/Tank/claude-design-prompts.md`) and
   the developer's pilot frames. See the
   [spec](superpowers/specs/2026-11-18-tank-super-shield-taunt-design.md).
+- **Provisional audio (Session 61)** — the game stops being silent. Plain
+  Unity `AudioSource`s, no FMOD and no `AudioMixer` yet. **Menu music:** one
+  track on a `Music` object in the persistent `MenuBackground.unity`, so it
+  carries across the five menu screens and stops when `Level` loads.
+  **Level music:** one track on a `Music` object in `Level.unity` for every
+  boss, at volume 0.7. Both use `MusicTrack`, which loops back to an
+  Inspector `startAtSeconds` instead of the song's intro, and both keep
+  playing under the pause menu. In the level, `BossMusicCue` lands the
+  song's **1:27 on the frame boss combat starts** (the ships unfreeze after
+  the entrance): the song starts at 1:27 minus the timed pre-fight
+  (intro + free movement + waves + entrance, 27 s → 1:00), and when the
+  boss entrance begins it dips the volume and re-seeks if the untimed
+  wait for the last wave enemy threw it off by more than 0.25 s. Once the
+  fight starts, the song loops back to 1:27. **Cut-in voices:** the Attacker's and Tank's clips sit on
+  `CutInRoleArt.voice` and start **on the press** (the cast's first frame,
+  `CutInTimeline.CastStarted`), from an `AudioSource` on
+  `PartyFrame.prefab`'s `CutInCard`. Pause now also sets
+  `AudioListener.pause`, so voices freeze with the card. Files and their
+  license status are in `Assets/Audio/SOURCES.md`: both music tracks are
+  **not cleared** and must be replaced before any build is shared.
 
 ## In Progress
 
@@ -775,31 +797,43 @@ is independently testable and the one before it de-risks the next.
   (glTFast + `ShipMesh.shader`) under the URP 2D Renderer, plus bloom and
   Shape Blaster-inspired neon effects. Blender is optional.
 
-- **Provisional audio (next, added Session 60)** — placeholder sound, so
-  the game stops being silent while the art lands. Each item replaces
-  silence, so like the art it never blocks gameplay, and the FMOD pass
-  below replaces it later.
-  - **Cut-in voice lines:** import a short voice clip for each role's
-    cut-in card: a shout on the frame where the card snaps (the Nova Beam
-    firing, the Super Shield reaching full size, `CutInTiming.snapAt`),
-    and optionally a short line under the talk frames before it. Attacker
-    and Tank first (their cards exist), Medic and Support with their own
-    cards. Files in `Assets/Audio/Voice/<Role>/`. Each clip has to fit
-    the wind-up: 0.8 s for the Nova Beam, 0.4 s for the Super Shield.
-  - **Menu music:** import one looping placeholder track for the
-    pre-game screens (`MainMenu` through `LevelSelect`). It plays from the
-    persistent `MenuBackground.unity`, so it keeps going across the five
-    screens and their transitions instead of restarting on each one, and
-    stops when `Level` loads (which closes `MenuBackground`).
-  - **Level music:** import one looping placeholder track for the fight in
-    `Level.unity`. One track for every boss to start; a track per boss
-    can follow on `LevelSetup`'s `BossEntry`, next to its background.
-  - **To decide when it's built:** plain Unity `AudioSource`s for the
-    placeholders (no FMOD yet) is the simplest route; whether an
-    `AudioMixer` with music and voice volumes comes with it; and every
-    placeholder clip needs a license that allows it in the repo (note the
-    source next to it). AI-generated audio would need Steam's AI content
-    disclosure if it ever ships.
-  - **Done when:** the menus and the level each play their music, and
-    the Attacker's and the Tank's cut-ins shout on the snap.
+- **Provisional audio (planned Session 60, built Session 61; see
+  "Implemented")** — placeholder sound while the art lands; the FMOD pass
+  below replaces it. Decided when built: plain `AudioSource`s, **no
+  `AudioMixer` until a Settings screen needs volumes**; voice clips start
+  **on the press**, not on the snap (the developer's clips are full lines,
+  3 s and 4 s, so the old "fit inside the wind-up" rule is dropped); MP3s
+  imported as-is (the songs aren't written to loop, so the MP3 gap
+  doesn't matter). Still open:
+  - **Medic and Support voice lines**, with their own cut-in cards
+    (`Assets/Audio/Voice/<Role>/`, set on `CutInRoleArt.voice`).
+  - **A track per boss:** an `AudioClip` on `LevelSetup`'s `BossEntry`,
+    next to its background.
+  - **Cleared music:** both tracks are placeholders the project can't ship
+    (`Assets/Audio/SOURCES.md`); replace them before any build is shared.
+- **Provisional sound effects (next, added Session 61)** — the fight has
+  music and cut-in voices but no sound effects yet. Import placeholder
+  SFX, in the same spirit as the provisional audio above (plain
+  `AudioSource`s, replaced by the FMOD pass):
+  - **Ships:** normal fire, the Attacker's combo shots, each role's
+    ability (Nova Beam wind-up and beam loop, Super Shield, Taunt, Medic
+    aura, Support speed boost), taking a hit, going down.
+  - **Bullets:** the bosses' and wave enemies' shots, boss telegraphs
+    (Marauder's guided missile, danger rings), the Warden's volleys.
+  - **Hits:** player shots hitting the boss, a minion or a wave enemy,
+    bullets blocked by the Tank's shield arc, enemy and minion death
+    bursts, boss phase change and defeat.
+  - **UI (optional):** menu navigation and confirm, the pause menu.
+  - Files in `Assets/Audio/SFX/<Category>/`, each with its source and
+    license in `Assets/Audio/SOURCES.md`.
+  - **To decide when it's built:** how one-shots are played without a
+    singleton (an `AudioSource` on each emitter with `PlayOneShot` fits
+    the project's conventions; see `architecture.md`); a cap on how many
+    copies of the same sound play at once, since bullet curtains fire
+    dozens of shots a second; whether the `AudioMixer` (music / voice /
+    SFX groups) comes now, since SFX make three volumes worth balancing;
+    and keeping effects from drowning out bullet readability cues.
+  - **Done when:** firing, getting hit, hitting the boss, the abilities
+    and the deaths all make a sound, and a dense bullet curtain doesn't
+    clip or turn into noise.
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.

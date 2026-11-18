@@ -7,8 +7,8 @@ using System;
 public class AttackerBeamSettings
 {
     /// <summary>Seconds between the E press and the beam (the cut-in's wind-up).</summary>
-    public float windupSeconds = 0.8f;
-    public float beamSeconds = 3f;
+    public float windupSeconds = 1.8f;
+    public float beamSeconds = 3.5f;
     /// <summary>Counted from the E press, like every other ability.</summary>
     public float cooldown = 20f;
     public float tickInterval = 0.1f;

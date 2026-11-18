@@ -59,30 +59,41 @@ public class PauseUI : MonoBehaviour
     public void Show()
     {
         panelRoot.SetActive(true);
-        Time.timeScale = 0f;
+        SetPaused(true);
     }
 
     public void Resume()
     {
         panelRoot.SetActive(false);
-        Time.timeScale = 1f;
+        SetPaused(false);
     }
 
     public void Restart()
     {
-        Time.timeScale = 1f;
+        SetPaused(false);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void ChangeRoles()
     {
-        Time.timeScale = 1f;
+        SetPaused(false);
         SceneManager.LoadScene("RoleSelect");
     }
 
     public void QuitToMainMenu()
     {
-        Time.timeScale = 1f;
+        SetPaused(false);
         SceneManager.LoadScene("MainMenu");
+    }
+
+    /// <summary>
+    /// Freezes time and every sound except the music (its AudioSource ignores
+    /// listener pause). AudioListener.pause is static, so leaving the scene
+    /// has to clear it too.
+    /// </summary>
+    private static void SetPaused(bool paused)
+    {
+        Time.timeScale = paused ? 0f : 1f;
+        AudioListener.pause = paused;
     }
 }

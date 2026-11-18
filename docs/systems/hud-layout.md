@@ -116,7 +116,9 @@ its ship): `CLICK` keycap when ready, white border and `TRIGGER` on hover,
 **Anime cut-in card (Session 59 Attacker, Session 60 Tank).** Each `PartyFrame` has a
 `CutInCard` child (last sibling, `LayoutElement.ignoreLayout`, a
 `RectMask2D` so it's clipped to the frame). `CutInCardView.Bind(role, snap)`
-picks the role's `CutInRoleArt` (frames, kicker, title) from `roles[]`,
+picks the role's `CutInRoleArt` (frames, kicker, title, and the optional
+`voice` clip, played from the card's `voiceSource` on the cast's first
+frame, `CutInTimeline.CastStarted`; Session 61) from `roles[]`,
 recolors the card (`roleTints` → the role color, `roleBgTints` → its dark
 card color) and returns false for a role with no entry (Medic, Support for
 now), whose card never shows. For a role with a card,
@@ -128,7 +130,7 @@ pause freezes it with the game.
 
 | Piece | Does |
 | --- | --- |
-| `CutInTiming` | The timeline numbers: slide in 0–0.25 s, talk frames flipping every 0.12 s, snap when the power lands (`PlayerAbility.SuperpowerSnapSeconds`: the beam's 0.8 s wind-up, or the Super Shield's 0.4 s growth), shout held 0.6 s, flash, 1.06× push-in, 0.15 s shake, slide out 2.30–2.55 s |
+| `CutInTiming` | The timeline numbers: slide in 0–0.25 s, talk frames flipping every 0.12 s, snap when the power lands (`PlayerAbility.SuperpowerSnapSeconds`: the beam's 1.8 s wind-up, or the Super Shield's 0.4 s growth), shout held 0.6 s, flash, 1.06× push-in, 0.15 s shake, slide out `slideOutAfterSnapSeconds` (1.5 s) after the snap, over 0.25 s (`SlideOutAt`: Attacker 3.3 s, Tank 1.9 s) |
 | `CutInTimeline` | How much of the frame the card covers at a moment (ease-out in, ease-in out). Tested |
 | `CutInPoseTimeline` | Which drawn frame shows (`CutInFrame`: TalkClosed / TalkOpen flipping until the snap, then Shout, then Afterglow), plus the flash alpha, push-in scale and shake strength. Tested |
 | `CutInCardView` | Slides `Panel` in from the frame's left edge and back, and shows or hides the card |

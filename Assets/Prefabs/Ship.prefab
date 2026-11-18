@@ -374,8 +374,8 @@ MonoBehaviour:
   speedBoostDuration: 4
   speedBoostMultiplier: 1.5
   beam:
-    windupSeconds: 0.8
-    beamSeconds: 3
+    windupSeconds: 1.8
+    beamSeconds: 3.5
     cooldown: 20
     tickInterval: 0.1
     tickDamageMultiplier: 0.5

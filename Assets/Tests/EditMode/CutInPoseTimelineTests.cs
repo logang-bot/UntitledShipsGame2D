@@ -18,7 +18,7 @@ public class CutInPoseTimelineTests
     {
         Assert.AreEqual(CutInFrame.Shout, CutInPoseTimeline.FrameAt(timing, timing.snapAt + 0.01f));
         Assert.AreEqual(CutInFrame.Afterglow, CutInPoseTimeline.FrameAt(timing, timing.snapAt + timing.shoutHoldSeconds + 0.01f));
-        Assert.AreEqual(CutInFrame.Afterglow, CutInPoseTimeline.FrameAt(timing, timing.slideOutAt));
+        Assert.AreEqual(CutInFrame.Afterglow, CutInPoseTimeline.FrameAt(timing, timing.SlideOutAt));
     }
 
     [Test]

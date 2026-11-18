@@ -2481,3 +2481,110 @@ to fit. `SuperShieldTimelineTests`' flicker case had 3.05 s hard-coded
 (inside the old 4 s cast); it now finds an even flicker step from the
 settings, and `TauntDisplayTests`' cooldown case reads the cooldown from
 the settings. All 206 EditMode tests pass. Not playtested yet.
+
+## Session 61 — Provisional Audio (Menu Music, Level Music, Cut-in Voices)
+
+The roadmap's "Provisional audio" item, with the developer's four files.
+
+### Decisions
+
+- **Plain `AudioSource`s, no `AudioMixer` yet.** Unity can't create a mixer
+  from a script, and nothing reads volumes until a Settings screen exists;
+  the mixer comes with that screen.
+- **Voice on the press, not the snap.** The clips are full lines (Tank
+  ~3 s, Attacker ~6 s), longer than the card (~2.5 s), so they start on the
+  cast's first frame and play their build-up over the wind-up. This drops
+  the old roadmap rule that a clip must fit the wind-up.
+- **MP3s imported as-is.** The songs aren't written to loop, so the MP3
+  encoder gap at the loop point doesn't matter.
+- **All four files committed**, the developer's call. Both songs are
+  commercial or uncleared placeholders; `Assets/Audio/SOURCES.md` records
+  that they must be replaced before any build is shared.
+- **Music plays on under the pause menu**; voices freeze with the card.
+
+### What changed
+
+- `Assets/Audio/Music/` (`Menu_Neverending_DowntownBinary.mp3`,
+  `Level_LoseMyMind.mp3`: Streaming, Vorbis 70) and
+  `Assets/Audio/Voice/<Role>/` (Decompress On Load, Vorbis 70), plus
+  `SOURCES.md`. The `®` was dropped from the level track's filename.
+- New `MusicTrack`: plays its `AudioSource` and, when the track ends,
+  restarts it at `startAtSeconds` instead of the intro. A `Music` object
+  with one sits in `MenuBackground.unity` (all five menu screens) and in
+  `Level.unity` (every boss; `startAtSeconds` is 0 until the developer
+  picks the part of the song to start on).
+- `CutInRoleArt.voice` (Attacker and Tank set on `PartyFrame.prefab`),
+  `CutInCardView.voiceSource` (an `AudioSource` on `CutInCard`), and
+  `CutInTimeline.CastStarted` deciding the press frame (two new tests).
+- `PauseUI.SetPaused` sets `AudioListener.pause` along with
+  `Time.timeScale`, and clears it on Restart, Change Roles and Quit,
+  since it's static and would survive the scene load. The music sources
+  have Ignore Listener Pause on.
+
+All 208 EditMode tests pass. In Play mode the menu track plays from
+`MenuBackground`, and a seek to the end with `startAtSeconds = 60` came
+back at 62 s, so the loop goes back to the start point. Voices are
+checked by ear by the developer.
+
+### Later in Session 61: level music synced to boss combat
+
+The developer asked for the level track a bit quieter (`AudioSource`
+volume 1 → **0.7**) and for the song's **1:27 to land exactly when boss
+combat starts**: not when the boss appears, but when the entrance is over
+and the ships can move to attack it.
+
+The pre-fight isn't a fixed length: after the timed intro (4 s), free
+movement (4 s), waves (15 s) and before the timed entrance (4 s),
+`LevelSequencer` waits for the last wave enemy to die. So new
+`BossMusicCue` (on `Level.unity`'s `Music`, wired to the sequencer):
+- starts the song at 1:27 minus the timed steps (27 s → 1:00), read from
+  the sequencer's own fields so retuning them keeps the sync;
+- when `BossEntrance` begins (always `bossEntranceDuration` before
+  combat), checks the song position and, if it's more than 0.25 s off,
+  dips the volume out and back in (0.3 s each, `MusicTrack.JumpTo`) around
+  a seek that lands 1:27 on the combat frame;
+- on `BossCombat`, moves the loop point to 1:27, so a long fight replays
+  the fight part, not the pre-fight.
+
+Known edge: pausing during the 4 s entrance shifts the hit, because the
+music plays on under pause while the sequencer stops.
+
+### Later in Session 61: first Nova Beam tuning
+
+The developer's numbers, before a playtest: **wind-up 0.8 s → 1.3 s** and
+**beam 3 s → 5 s** (cooldown unchanged at 20 s), so the cast is 6.3 s,
+invulnerable and locked in place throughout. Changed in
+`AttackerBeamSettings`' defaults and `Ship.prefab` (the only serialized
+copy). The cut-in's snap follows the wind-up on its own
+(`PlayerAbility.SuperpowerSnapSeconds`), so the shout now lands at 1.3 s;
+the card still slides out at 2.3 s.
+
+### Later in Session 61: new Attacker voice
+
+The developer replaced the Attacker's cut-in voice with a new recording
+(~4.1 s, was ~6 s). Same filename (`Assets/Audio/Voice/Attacker/attacker_voice_final_flash.wav`)
+and `.meta`, so `PartyFrame.prefab`'s reference didn't change. It now ends
+inside the Nova Beam cast.
+Then the beam came back down, **5 s → 3.5 s**, so the cast is now 4.8 s
+(1.3 s wind-up + 3.5 s beam); the ~4.1 s voice line ends just before it.
+Then the wind-up went up, **1.3 s → 1.8 s**, so the cast is 5.3 s
+(1.8 s + 3.5 s beam).
+
+The 1.8 s wind-up made the cut-in card leave (fixed at 2.3 s) before the
+shout's 0.6 s hold ended. `CutInTiming.slideOutAt` became
+`slideOutAfterSnapSeconds` (1.5 s, the original gap) with a computed
+`SlideOutAt` = snap + 1.5 s, so the shout and afterglow always get the
+same screen time: the Attacker's card now leaves at 3.3 s, the Tank's at
+1.9 s (was 2.3 s). `PartyFrame.prefab` resaved with the new field; one new
+test. All 209 EditMode tests pass.
+
+### Next: provisional sound effects
+
+Added to `roadmap.md` ("Provisional sound effects", under "Art & audio"),
+with pointers from `current-state.md` and `art-roadmap.md`: placeholder
+SFX for the ships (fire, combo shots, each ability, hit, down), bullets
+(enemy shots, boss telegraphs), hits (on the boss and enemies, shield
+blocks, death bursts, phase change and defeat) and optionally the UI.
+To decide when built: one-shots without a singleton, a cap on copies of
+the same sound for bullet curtains, and whether the `AudioMixer` comes
+with them.

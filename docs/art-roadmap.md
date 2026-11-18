@@ -410,9 +410,11 @@ lands, and update it when an asset gets wired.
   the hexagon shield), with `ico_supershield` and `ico_magnet` for the
   frame. **Next:**
   playtest both cards, then Medic and Support.
-- **Voice lines (planned, Session 60):** each card gets a provisional
-  voice clip, a shout on the snap frame (optionally a short line under
-  the talk frames). See [roadmap.md](roadmap.md)'s "Provisional audio".
+- **Voice lines (built Session 61):** the Attacker's and Tank's cards play
+  a provisional voice clip starting on the E press (the clips are full
+  lines, so not on the snap); Medic and Support with their cards. The card
+  now leaves 1.5 s after the snap (`slideOutAfterSnapSeconds`). See
+  [roadmap.md](roadmap.md)'s "Provisional audio".
 - **Original plan (kept for reference) — decide first:** make a quick mockup of one character's cut-in each way,
   then pick one route for all four roles.
   - **2D illustrated:** a drawn character (drawn yourself or commissioned),
@@ -448,8 +450,8 @@ Menu), with the UI kit, the two fonts, one project-wide palette
 transitions. Details in [systems/ui-kit.md](systems/ui-kit.md). Still
 open: the mobile layouts, a real logo for the wordmark slot, QUIT's
 confirm modal, and a check with real gamepads. Provisional menu music
-(one loop on `MenuBackground`) is planned in [roadmap.md](roadmap.md)'s
-"Provisional audio". The table below is the original brief.
+(one loop on `MenuBackground`) is in since Session 61; see
+[roadmap.md](roadmap.md)'s "Provisional audio". The table below is the original brief.
 
 | Screen | What it does today | What the art adds |
 | --- | --- | --- |
@@ -568,5 +570,6 @@ art:
 - **The roll mechanic:** purely visual, or does it give i-frames? That's the
   phase 3 developer's call.
 - **Audio direction** (FMOD is planned) is out of scope for this roadmap.
-  The provisional voice lines and music (Session 60) are tracked in
-  [roadmap.md](roadmap.md)'s "Provisional audio".
+  The provisional voice lines and music (planned Session 60, built
+  Session 61) and the provisional sound effects (next) are tracked in
+  [roadmap.md](roadmap.md)'s "Provisional audio" and "Provisional sound effects".

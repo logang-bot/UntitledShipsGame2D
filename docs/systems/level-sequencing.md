@@ -172,6 +172,11 @@ Standalone empty GameObject in each level scene.
 | --- | --- |
 | **LevelSequencer.cs** | `ships`: `Player` + all 3 `Teammate_*`; `enemySpawner`: `Spawner`; `bossObject`: the `Boss` instance (`MarauderBoss` in `Level1`, `HalcyonBoss` in `Level2`); `introDuration`/`freeMovementDuration`/`bossEntranceDuration`: 4; `minionPhase1Duration`: 120 (15 in the current scenes, shortened for testing); `offScreenMargin`: 1 |
 
+`BossMusicCue` (on `Level.unity`'s `Music` object, Session 61) reads
+`CurrentState` and the four durations to land the level track's 1:27 on
+the `BossCombat` frame; retuning the durations keeps the sync. See
+[roadmap.md](../roadmap.md)'s "Provisional audio".
+
 The 4 ships' Transform positions in the saved scene are each ship's "home"
 — `LevelSequencer` captures them once in `Awake()`, before anything moves,
 so they must already form the intended horizontal line near the bottom of

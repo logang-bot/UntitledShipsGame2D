@@ -5,7 +5,8 @@ using UnityEngine;
 // left edge when the ship's superpower is cast, plays the character, and
 // slides back out. Like the rest of the HUD it only reads state: PartyFrameUI
 // hands it the cast's elapsed time every frame, so pausing freezes it too.
-// Bind picks the role's art and recolors the card in the role's colors.
+// Bind picks the role's art and recolors the card in the role's colors. The
+// role's voice line starts on the press, on the cast's first frame.
 public class CutInCardView : MonoBehaviour
 {
     public RectTransform panel;
@@ -15,10 +16,13 @@ public class CutInCardView : MonoBehaviour
     public CutInRoleArt[] roles;
     public TMP_Text kicker;
     public TMP_Text title;
+    public AudioSource voiceSource;
     /// <summary>Drawn in the role color (speed lines, kicker, edge); their alphas are kept.</summary>
     public PaletteTint[] roleTints;
     /// <summary>Drawn in the role's dark card color (the panel fill).</summary>
     public PaletteTint[] roleBgTints;
+
+    private float lastElapsed = -1f;
 
     void Awake() => Place(0f);
 
@@ -30,6 +34,7 @@ public class CutInCardView : MonoBehaviour
         rig.frames = art.frames;
         kicker.text = art.kicker;
         title.text = art.title;
+        voiceSource.clip = art.voice;
         Tint(roleTints, RolePalette.TokenFor(role));
         Tint(roleBgTints, RolePalette.BgTokenFor(role));
         timing.snapAt = snapSeconds;
@@ -39,10 +44,17 @@ public class CutInCardView : MonoBehaviour
     /// <summary>Shows the card at this moment of the cast (-1 = not casting) and returns how much of the frame it covers (0..1).</summary>
     public float Show(float elapsed)
     {
+        CueVoice(elapsed);
         float coverage = CutInTimeline.Coverage(timing, elapsed);
         Place(coverage);
         if (coverage > 0f) rig.Play(timing, elapsed, coverage);
         return coverage;
+    }
+
+    private void CueVoice(float elapsed)
+    {
+        if (CutInTimeline.CastStarted(lastElapsed, elapsed) && voiceSource.clip != null) voiceSource.Play();
+        lastElapsed = elapsed;
     }
 
     private static void Tint(PaletteTint[] tints, PaletteColor key)

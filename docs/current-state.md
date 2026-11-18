@@ -32,7 +32,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   Attacker's E is no longer Big Shot. Pressing it makes the ship
   invulnerable and locks it in place. The Attacker's party frame slides
   over into a cut-in card where the pilot talks, then shouts with a white
-  flash and a glowing fingertip as, 0.8 s in, a 3 s plasma beam fires
+  flash and a glowing fingertip as, 1.8 s in, a 3.5 s plasma beam fires
   from the cannons to the top of the screen. The beam is a white core with
   warm orange-to-red-gold edges, lightning and sparks, and burns everything
   in its column. The card slides back out to the stats while the beam is
@@ -385,9 +385,17 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   Medic aura, Tank shield arc, Support speed ring, the three bosses' danger
   rings, and a sprite effect for each role's ability. The three bosses are
   their live 3D design models with every phase and telegraph state
-  (Session 58). The avatar slot is still a placeholder shape. No audio yet:
-  provisional cut-in voice lines and menu and level music are next (see
-  [roadmap.md](roadmap.md)'s "Provisional audio").
+  (Session 58). The avatar slot is still a placeholder shape.
+- Provisional audio (Session 61): one music track plays across all five
+  menu screens (from `MenuBackground`) and another plays in the fight (from
+  `Level`); both loop and keep playing under the pause menu. The
+  Attacker's and Tank's cut-ins speak a voice line on the E press. The
+  level track is synced so its 1:27 lands as boss combat starts
+  (`BossMusicCue`). Medic and Support have no voice yet. Both music
+  tracks are placeholders that can't ship (see `Assets/Audio/SOURCES.md`
+  and [roadmap.md](roadmap.md)'s "Provisional audio"). **No sound effects
+  yet**: firing, hits, bullets, abilities and deaths are silent.
+  Provisional SFX are next (roadmap.md's "Provisional sound effects").
 - Some imported Combat FX art isn't used yet: the Halcyon and Warden
   minions and their death bursts (those fights have no minions), the
   Halcyon bullet set, several spare orb sizes, the standalone aggro mark,
@@ -535,8 +543,8 @@ real networking last, then art/audio.
    box reads PULLING. Press **E** for the Super Shield: your cut-in card
    plays, your shield refills, and the arc grows into a big wall that
    blocks for free for 9 s (watch the shield bar stay full). As Attacker, **E** fires the Nova Beam:
-   your cut-in card plays, the ship locks in place, invulnerable, and 0.8 s
-   later a 3 s beam burns everything in its column; **1/2/3** fire the
+   your cut-in card plays, the ship locks in place, invulnerable, and 1.8 s
+   later a 3.5 s beam burns everything in its column; **1/2/3** fire the
    combo shots.
 10. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the

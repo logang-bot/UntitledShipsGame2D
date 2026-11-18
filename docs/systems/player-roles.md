@@ -155,9 +155,9 @@ blocks re-activation until the current role's cooldown elapses.
   From the press the ship is **invulnerable**
   (`PlayerHealth.GrantInvulnerability`) and **locked in place**
   (`PlayerController.castLocked`: no movement, no normal fire, and
-  `TryComboAttack` no-ops). After `beam.windupSeconds` (0.8 s, while the HUD
+  `TryComboAttack` no-ops). After `beam.windupSeconds` (1.8 s, while the HUD
   cut-in card plays) `ShipCombatFx.SpawnBeam` fires the beam for
-  `beam.beamSeconds` (3 s), then the lock lifts. The beam
+  `beam.beamSeconds` (3.5 s), then the lock lifts. The beam
   (`AttackerBeam`, `Prefabs/FX/AttackerBeam.prefab`) runs from the
   `FirePoint` to the top of the screen, 0.9 × the ship's width, and every
   `beam.tickInterval` (0.1 s) strikes each enemy in its column once for
@@ -207,7 +207,7 @@ role's art: after a successful `TryUseAbility()`, `PlayerAbility` calls
 (`AuraBoostFx`, `SpeedBoostFx`, `BigShotFx`) as a ship
 child. Purely cosmetic: the mechanic itself still fires instantly (the
 Attacker's `BigShotFx` frames now play as the Nova Beam's wind-up flash at
-the muzzle, and the beam follows 0.8 s later). The Tank has no one-shot
+the muzzle, and the beam follows 1.8 s later). The Tank has no one-shot
 sequence any more (the old `TauntFx` ring is unused since Session 60): its
 Super Shield is drawn on the arc and its Taunt by the magnet. The Medic
 and Support sequences are wind-up + activate only, since the boosted aura
