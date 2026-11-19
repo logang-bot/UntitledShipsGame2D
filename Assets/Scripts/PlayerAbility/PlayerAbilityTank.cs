@@ -1,5 +1,5 @@
-// The Tank's two abilities: Super Shield on E (Trigger, through
-// PlayerAbility's shared cooldown gate) and Taunt on key 1 (its own
+// The Tank's two abilities: Super Shield on Q (Trigger, through
+// PlayerAbility's shared cooldown gate) and Taunt on E (its own
 // cooldown), plus the always-on shield arc the Super Shield grows.
 public class PlayerAbilityTank
 {

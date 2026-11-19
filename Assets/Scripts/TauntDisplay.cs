@@ -1,5 +1,5 @@
 // What the Tank's Taunt box shows (design: Neon Fleet HUD, Tank frame):
-// READY, PULLING while the taunt holds the boss, COOLDOWN until key 1 works
+// READY, PULLING while the taunt holds the boss, COOLDOWN until key E works
 // again, with the seconds left and how far along that state is (0..1).
 // Pure, so it's unit-tested (TauntDisplayTests).
 public struct TauntDisplay

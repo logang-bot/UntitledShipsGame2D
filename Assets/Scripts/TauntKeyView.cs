@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // The Tank's Taunt box (design: Neon Fleet HUD, Tank frame), in the spot the
-// Attacker's combo box takes: the state label, the key-1 keycap (white edge
+// Attacker's combo box takes: the state label, the key-E keycap (white edge
 // when ready, filled while pulling, a sweep refilling it on cooldown), the
 // magnet and the seconds, plus a bar for the taunt time left. Hidden on
 // every other role.

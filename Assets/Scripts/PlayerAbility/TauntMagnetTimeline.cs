@@ -1,4 +1,4 @@
-// The Taunt magnet's frame at a moment, in seconds from the key-1 press:
+// The Taunt magnet's frame at a moment, in seconds from the E press:
 // the field snaps on, loops its inward pull for the taunt's length, then
 // collapses. Pure, so it's unit-tested (TauntMagnetTimelineTests).
 public static class TauntMagnetTimeline

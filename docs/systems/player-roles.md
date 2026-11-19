@@ -71,7 +71,7 @@ above).
 
 One script, not four — branches on `PlayerRoleComponent.role` in a single
 `OnAbility(InputValue)` handler (auto-called by `Player Input`'s Send
-Messages behavior on the `Ability` action, bound to `E` — see
+Messages behavior on the `Ability` action, bound to `Q` — see
 [input.md](input.md)). A single `Time.time`-based cooldown gate
 (`nextAbilityTime`, same pattern as `PlayerController`'s `nextFireTime`)
 blocks re-activation until the current role's cooldown elapses.
@@ -89,9 +89,9 @@ blocks re-activation until the current role's cooldown elapses.
   `tank_supershield_*` frames from the pure `SuperShieldTimeline` (expand,
   a 4-frame shimmer, the ending flicker, collapse), and the Tank's cut-in
   card plays with it (see [hud-layout.md](hud-layout.md)).
-- **Tank — Taunt (key 1, Session 60)**: on the `Combo1` action (key 1 /
-  gamepad Y), with its own cooldown (`tauntCooldown`, 8 s) separate from
-  E's. `TankTaunt` invokes `public UnityEvent OnTaunt`; `PartyBossWiring`'s
+- **Tank — Taunt (key E, Session 60)**: on the `Combo1` action (key E /
+  gamepad R1 / RB), with its own cooldown (`tauntCooldown`, 8 s) separate from
+  the superpower's. `TankTaunt` invokes `public UnityEvent OnTaunt`; `PartyBossWiring`'s
   runtime listener calls `BossEvents.Taunt(boss, ship, tauntSeconds)`,
   which holds the boss on the taunter for `tauntSeconds` (3 s): Marauder
   keeps it as its target for the window even if someone out-damages it
@@ -125,7 +125,7 @@ blocks re-activation until the current role's cooldown elapses.
   of every ally in `allies[]` within `auraRadius` every `auraTickInterval`,
   whether human- or AI-controlled. The default aura is **deliberately
   tiny** (`auraRadius` 0.5 — allies must nearly touch the Medic); pressing
-  `E` (`TriggerAuraBoost()`) temporarily swaps to a larger
+  `Q` (`TriggerAuraBoost()`) temporarily swaps to a larger
   `auraBoostRadius` (1.5) and a much faster `auraBoostTickInterval` (0.25s
   vs. 1s) for `auraBoostDuration` (4s), via a `StopCoroutine`/
   `StartCoroutine` restart-safety pattern — `auraBoostCooldown` (10s) must
@@ -169,8 +169,8 @@ blocks re-activation until the current role's cooldown elapses.
   casts when its focus point sits inside the beam's column
   (`AIControllerAttacker.UseAbilities`), since the cast anchors it for 3.8 s.
 - **Attacker — 3-attack combo**: separate from the Nova Beam above, bound to
-  three dedicated inputs (`Combo1`/`Combo2`/`Combo3` — keyboard `1`/`2`/`3`,
-  gamepad North/L1/R1). `PlayerAbilityAttacker` tracks a single
+  three dedicated inputs (`Combo1`/`Combo2`/`Combo3` — keyboard `E`/`R`/`T`,
+  gamepad R1/L2/R2). `PlayerAbilityAttacker` tracks a single
   `expectedSlot` (1→2→3→1…, the fixed "correct rotation"). Landing the
   expected slot fires `FireBigShot` with that step's damage/width
   multiplier (`comboStepDamageMultipliers`/`comboStepWidthMultipliers` —
@@ -239,7 +239,7 @@ existing text element (reusing it as its own click surface rather than
 adding a separate button, since it already shows exactly the state a
 manual trigger needs, e.g. `"Taunt: Ready"`) — wired to call that
 teammate's `TryUseAbility()` on click. This is a third caller of the same
-method alongside `AIController`'s auto-retry and the human's own `E`
+method alongside `AIController`'s auto-retry and the human's own `Q`
 binding, so it needed **no changes to `PlayerAbility.cs` itself**. The
 click deliberately bypasses `AIController`'s extra Tank-specific condition
 (`if (boss.CurrentTarget != gameObject)`) — a manual click can force a

@@ -109,15 +109,22 @@ also disables your own fire), `Rally` (refund 1 energy to every ally).
 
 ## In-fight controls
 
-The signature role ability stays exactly where it is — **`E` / gamepad
-West**, unchanged, free, no card involved. Cards are additive, not a
-replacement.
+The signature role ability stays exactly where it is — **`Q` / gamepad
+L1** (moved from `E` / West in Session 63), unchanged, free, no card
+involved. Cards are additive, not a replacement.
 
 | Input | Keyboard | Gamepad |
 | --- | --- | --- |
 | Card slot 1 / 2 / 3 | `1` `2` `3` | North / East / Right Shoulder |
 | Focus | `Left Shift` | Left Trigger |
-| Role ability | `E` | West |
+| Role ability | `Q` | L1 |
+
+> **Gamepad conflict to resolve (Session 63):** the ability row now uses
+> L1 (superpower), then R1, L2 and R2 (`Combo1..3`, R1 also the Tank's
+> Taunt). So the planned **Focus on Left Trigger** and **card 3 on Right
+> Shoulder** collide. The keyboard plan (`1` `2` `3`, `Left Shift`) is
+> free. North / East / West (Triangle / Circle / Square) are unbound in a
+> fight. See [input.md](input.md).
 
 That's three new `PlayerControls` actions (`Card1`/`Card2`/`Card3`) plus
 `Focus`. Because every input-driven component in this project also exposes a

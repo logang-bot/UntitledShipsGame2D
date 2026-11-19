@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerAbility : MonoBehaviour
 {
-    [Header("Tank - Taunt (key 1), Super Shield (E) and shield arc")]
+    [Header("Tank - Taunt (E), Super Shield (Q) and shield arc")]
     public TankAbilitySettings tankPowers = new TankAbilitySettings();
     public UnityEvent OnTaunt;
 
@@ -26,7 +26,7 @@ public class PlayerAbility : MonoBehaviour
     public int auraHealPerTick = 1;
     public int auraShieldPerTick = 1;
 
-    [Header("Medic - Aura Boost (E ability)")]
+    [Header("Medic - Aura Boost (Q ability)")]
     /// <summary>Drastically larger while active - halved from 3, was flagged overpowered.</summary>
     public float auraBoostRadius = 2.0f;
     /// <summary>Much faster while active.</summary>
@@ -93,7 +93,7 @@ public class PlayerAbility : MonoBehaviour
     public PlayerHealth Health => playerHealth;
     public ShipCombatFx Fx => fx;
     public Color TintColor => roleComponent.Stats.tintColor;
-    // Which combo key (1/2/3) continues the rotation correctly right now -
+    // Which combo slot (1/2/3, keys E/R/T) continues the rotation correctly right now -
     // read by the HUD and by AIController so Attacker bots always feed
     // TryComboAttack() the right slot.
     public int AttackerComboExpectedSlot => attacker.ExpectedSlot;
@@ -208,7 +208,7 @@ public class PlayerAbility : MonoBehaviour
         }
     }
 
-    /// <summary>Key 1 is the Attacker's first combo slot and the Tank's Taunt; each call is role-guarded.</summary>
+    /// <summary>Combo1 (key E) is the Attacker's first combo slot and the Tank's Taunt; each call is role-guarded.</summary>
     public void OnCombo1(InputValue value)
     {
         if (!value.isPressed) return;

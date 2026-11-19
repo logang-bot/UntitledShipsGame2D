@@ -713,6 +713,12 @@ reference docs live under `systems/`.
   No audio manager: each emitter's own `AudioSource` plays through
   `SfxPlayback`, and `SfxVoiceLimit` caps copies of a clip so a volley plays
   once. See [systems/audio.md](systems/audio.md).
+- **Controls rebind (Session 63)**: movement on WASD (arrows kept as a
+  second binding). Abilities move to a MOBA-style row that fills from Q:
+  Q = every role's superpower, E / R / T = the Attacker's combo (E is also
+  the Tank's Taunt). Gamepad: Cross / A fires, L1 = superpower, R1 / L2 /
+  R2 = combo. A data-only change to `PlayerControls`, plus HUD keycaps and
+  role-card text. See [systems/input.md](systems/input.md).
 
 ## In Progress
 

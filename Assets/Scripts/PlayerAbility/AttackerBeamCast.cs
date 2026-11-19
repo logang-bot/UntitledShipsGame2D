@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 // The Attacker's Nova Beam cast: invulnerable and locked in place from the
-// E press, the beam after the wind-up, unlocked when the beam ends. Elapsed
+// Q press, the beam after the wind-up, unlocked when the beam ends. Elapsed
 // is the clock the HUD's cut-in card plays from.
 public class AttackerBeamCast
 {

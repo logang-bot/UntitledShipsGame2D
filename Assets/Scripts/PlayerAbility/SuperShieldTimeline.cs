@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // The Super Shield's frame and arc size at a moment of the cast, in seconds
-// from the E press: the expand frame while the arc grows, a shimmer loop
+// from the Q press: the expand frame while the arc grows, a shimmer loop
 // at full size, the ending flicker, then the collapse frame while it
 // shrinks back. Pure, so it's unit-tested (SuperShieldTimelineTests).
 public static class SuperShieldTimeline

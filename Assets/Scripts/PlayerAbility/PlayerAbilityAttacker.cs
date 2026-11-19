@@ -5,7 +5,7 @@ public class PlayerAbilityAttacker
     private readonly PlayerAbility ability;
 
     // The fixed 1->2->3 rotation the combo rewards. 1-based to match the
-    // combo key numbers (Combo1/2/3) shown to the player, so there's no
+    // combo slot numbers (Combo1/2/3, keys E/R/T), so there's no
     // off-by-one translating UI/input slot numbers to array indices.
     private int expectedSlot = 1;
     private readonly float[] nextAttackTime = new float[3];

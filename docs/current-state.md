@@ -8,15 +8,21 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Controls rebind (Session 63)** — move on **WASD** (the arrow keys
+  still work). Abilities sit on a MOBA-style row filled from Q: **Q** is
+  every role's superpower, and **E / R / T** are the Attacker's combo (**E**
+  is also the Tank's Taunt). Gamepad: Cross / A fires, **L1 / LB** is the
+  superpower, **R1 / L2 / R2** (RB / LT / RT) the combo. The HUD keycaps
+  read E / R / T. See [systems/input.md](systems/input.md).
 - **Tank's Super Shield and Taunt magnet (Session 60)** — the Tank now has
-  two abilities. **E is the Super Shield**, its superpower: the shield
+  two abilities. **Q is the Super Shield**, its superpower: the shield
   refills to 20 and the shield arc grows to 3.5× its width and height
   (about two thirds of the playfield's width), centered on the ship, for
   9 s. Bullets hitting the big arc cost
   nothing; it flickers in its last second, then shrinks back. The Tank can
   still move, and its body can still be hit. Cooldown 25 s. The Tank's
   party frame plays a cut-in card (`AEGIS-04 · TANK`, `SUPER SHIELD`) like
-  the Attacker's. **Key 1 (gamepad Y) is Taunt**: the boss is held on the
+  the Attacker's. **E (gamepad R1 / RB) is Taunt**: the boss is held on the
   Tank for 3 s (Marauder keeps it as its target even if someone
   out-damages it, Warden's arms lean toward it, Halcyon ignores it), shown
   by a magnet field around the ship. Cooldown 8 s from the press, so the
@@ -29,7 +35,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   [systems/player-roles.md](systems/player-roles.md) and
   [systems/hud-layout.md](systems/hud-layout.md).
 - **Attacker's Nova Beam and anime cut-in (Session 59, demo)** — the
-  Attacker's E is no longer Big Shot. Pressing it makes the ship
+  Attacker's superpower (Q) is no longer Big Shot. Pressing it makes the ship
   invulnerable and locks it in place. The Attacker's party frame slides
   over into a cut-in card where the pilot talks, then shouts with a white
   flash and a glowing fingertip as, 1.8 s in, a 3.5 s plasma beam fires
@@ -57,7 +63,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   HUD follows the Claude Design "Neon Fleet HUD v2" design. Left rail:
   four squad frames in fixed role order (who-tag, HP pips, shield segments,
   SPD / FIRE / DPS, the ability's square cooldown sweep, the Attacker's
-  1-2-3 combo, LOW HP / BROKEN / DOWN states; CPU abilities are still
+  E-R-T combo, LOW HP / BROKEN / DOWN states; CPU abilities are still
   click-to-trigger) and the damage meter. Right rail: one shared boss panel
   (name, phase, HP, SHIELDED; warning bars for the missile lock-on,
   barrages, Surge, lockdown and Big Shot; OPENING!; aggro and TAUNTED;
@@ -124,9 +130,9 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   stats" for the full table). Shield absorbs damage before health and only
   refills via Medic's proximity aura or the Tank's own Super Shield — see
   [systems/player-roles.md](systems/player-roles.md)'s "Shield stat". The
-  party frame shows a shield bar alongside the health bar. Press **E** to
+  party frame shows a shield bar alongside the health bar. Press **Q** to
   use the role's ability: Tank raises its Super Shield (and taunts on
-  **1**, holding the boss's aggro on you for 3 s — see the Boss encounter
+  **E**, holding the boss's aggro on you for 3 s — see the Boss encounter
   bullet below and
   [systems/player-roles.md](systems/player-roles.md)'s "Aggro/targeting"
   section), Medic temporarily expands its passive heal/shield aura into a
@@ -138,7 +144,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   boosted — and heals/shields any ally (including the human player) who
   gets close enough, flashing them green when it actually helps. Tank also
   always shows a wide curved shield arc above it — passive, always-on,
-  independent of `E` — and it physically blocks incoming fire (draining
+  independent of `Q` — and it physically blocks incoming fire (draining
   Tank's own shield/health, not a free block) across a width wider than
   Tank's own body. The party frame shows which ability is boosted/by how
   much and its cooldown. See
@@ -248,7 +254,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   Separately, the human can now click a teammate's ability status line
   (bottom of its party frame) to force that teammate's ability to fire
   right now, subject to its own cooldown — the human's own frame has no
-  such button, since **E** already does this for the human. See
+  such button, since **Q** already does this for the human. See
   [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s "Bullet-dodging" and
   [systems/player-roles.md](systems/player-roles.md)'s "PlayerAbility.cs".
 - **Minions around the boss** — up to 2 smaller enemy ships flank the boss
@@ -389,7 +395,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 - Provisional audio (Session 61): one music track plays across all five
   menu screens (from `MenuBackground`) and another plays in the fight (from
   `Level`); both loop and keep playing under the pause menu. The
-  Attacker's and Tank's cut-ins speak a voice line on the E press. The
+  Attacker's and Tank's cut-ins speak a voice line on the Q press. The
   level track is synced so its 1:27 lands as boss combat starts
   (`BossMusicCue`). Medic and Support have no voice yet. Both music
   tracks are placeholders that can't ship (see `Assets/Audio/SOURCES.md`
@@ -469,12 +475,13 @@ real networking last, then art/audio.
    combat begins. See [systems/level-sequencing.md](systems/level-sequencing.md).
    *(To iterate faster while testing, temporarily lower `LevelSequencer`'s
    `minionPhase1Duration` in the Inspector.)*
-5. Move with the **arrow keys** (or a gamepad's left stick, if you joined
-   that way). Hold **Space**/**left mouse button** (or a gamepad's South
-   button) to fire — it auto-fires while held. Press **E** (or a gamepad's
-   West button) to use the current role's ability (see step 9 for what each
-   role does). Keys **1/2/3** (gamepad North / LB / RB) are the Attacker's
-   combo shots; **1** is also the Tank's Taunt. Any AI-controlled ships fight alongside you fully autonomously —
+5. Move with **WASD** or the **arrow keys** (or a gamepad's left stick, if
+   you joined that way). Hold **Space**/**left mouse button** (or a
+   gamepad's South button: Cross / A) to fire — it auto-fires while held.
+   Press **Q** (gamepad L1 / LB) to use the current role's superpower (see
+   step 9 for what each role does). Keys **E/R/T** (gamepad R1 / L2 / R2,
+   Xbox RB / LT / RT) are the Attacker's combo shots; **E** is also the
+   Tank's Taunt. Any AI-controlled ships fight alongside you fully autonomously —
    no input needed for them.
 6. Watch the boss run its scripted pattern (snap to a side, advance toward
    the party, retreat, return to center, pause, repeat mirrored) — it fires at
@@ -512,7 +519,7 @@ real networking last, then art/audio.
    the role. Each teammate's ability line is clickable — click it (e.g. on
    the Tank's frame) to force that teammate's ability to fire right now,
    subject to its own cooldown (it visibly greys out while on cooldown);
-   your own frame has no such button since **E** already covers you. Watch
+   your own frame has no such button since **Q** already covers you. Watch
    a teammate near the boss during a Pattern Barrage or a regular shot and
    you'll see it occasionally juke sideways out of a bullet's path without
    abandoning its role positioning (Tank still roughly holds its guard
@@ -541,19 +548,19 @@ real networking last, then art/audio.
    per-role stats". As Medic, notice the dim ring around your ship even
    without pressing anything — that's the passive aura, tiny by default,
    healing/shielding any ally that gets close enough (they flash green when
-   it actually helps); press **E** to drastically expand the ring and speed
-   up the healing for a few seconds. Press **E** as Support to trigger a
+   it actually helps); press **Q** to drastically expand the ring and speed
+   up the healing for a few seconds. Press **Q** as Support to trigger a
    **party-wide** Speed Boost — watch every ship (including AI teammates)
    light up with a shared gold ring and visibly speed up/fire faster
    together, not just your own ship. As Tank, notice the wide curved shield
    arc above your ship even without pressing anything — that's always on;
-   press **1** to taunt: a magnet field shows around your ship and the boss
+   press **E** to taunt: a magnet field shows around your ship and the boss
    panel's aggro row reads TANK / TAUNTED for 3 s, while your frame's Taunt
-   box reads PULLING. Press **E** for the Super Shield: your cut-in card
+   box reads PULLING. Press **Q** for the Super Shield: your cut-in card
    plays, your shield refills, and the arc grows into a big wall that
-   blocks for free for 9 s (watch the shield bar stay full). As Attacker, **E** fires the Nova Beam:
+   blocks for free for 9 s (watch the shield bar stay full). As Attacker, **Q** fires the Nova Beam:
    your cut-in card plays, the ship locks in place, invulnerable, and 1.8 s
-   later a 3.5 s beam burns everything in its column; **1/2/3** fire the
+   later a 3.5 s beam burns everything in its column; **E/R/T** fire the
    combo shots.
 10. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the

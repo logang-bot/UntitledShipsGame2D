@@ -1,7 +1,7 @@
 using System;
 
 // The Tank's tunables, grouped as one Inspector block on PlayerAbility:
-// Taunt on key 1, Super Shield on E, and the always-on shield arc both of
+// Taunt on E, Super Shield on Q, and the always-on shield arc both of
 // them build on. Placeholder numbers until a playtest; see
 // docs/superpowers/specs/2026-11-18-tank-super-shield-taunt-design.md.
 [Serializable]
@@ -11,7 +11,7 @@ public class TankAbilitySettings
     /// <summary>How long the boss is held on the Tank, and the magnet shows.</summary>
     public float tauntSeconds = 3f;
 
-    /// <summary>Counted from the E press, like every other ability.</summary>
+    /// <summary>Counted from the Q press, like every other ability.</summary>
     public float superShieldCooldown = 25f;
     /// <summary>The whole cast, growth and collapse included. Arc hits are free for all of it.</summary>
     public float superShieldSeconds = 9f;

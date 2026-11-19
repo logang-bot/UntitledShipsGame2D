@@ -1,9 +1,9 @@
 using UnityEngine;
 
-// The Tank's Taunt on key 1: pulls the boss onto the Tank for tauntSeconds
+// The Tank's Taunt on E: pulls the boss onto the Tank for tauntSeconds
 // (through PlayerAbility.OnTaunt, which PartyBossWiring routes to the boss)
 // and shows the magnet for as long. Its cooldown is its own, separate from
-// the Super Shield's on E.
+// the Super Shield's on Q.
 public class TankTaunt
 {
     private readonly PlayerAbility ability;

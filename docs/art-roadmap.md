@@ -411,7 +411,7 @@ lands, and update it when an asset gets wired.
   frame. **Next:**
   playtest both cards, then Medic and Support.
 - **Voice lines (built Session 61):** the Attacker's and Tank's cards play
-  a provisional voice clip starting on the E press (the clips are full
+  a provisional voice clip starting on the Q press (the clips are full
   lines, so not on the snap); Medic and Support with their cards. The card
   now leaves 1.5 s after the snap (`slideOutAfterSnapSeconds`). See
   [roadmap.md](roadmap.md)'s "Provisional audio".

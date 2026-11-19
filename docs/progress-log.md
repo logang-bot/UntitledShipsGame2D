@@ -2668,3 +2668,46 @@ shot (−17 to −24 dB RMS, while the voices are −13 to −16 dB). Added a
 got its own superpower one-shot source; that source and the Nova Beam,
 Super Shield and Taunt loop sources now output to the new group. The
 Super Shield's block sound stays on plain SFX.
+
+## Session 63 — Controls Rebind (WASD, Q/E/R/T, shoulder buttons)
+
+A side fix for comfort: moving on the arrow keys and casting on E and
+1/2/3 was awkward to hold together.
+
+### Decisions (asked before building)
+
+- **Ability keys fill from Q**: Q = the superpower on every role, then a
+  role's extra abilities take E, R, T in order. Only the Attacker (Nova
+  Beam + three combo slots) reaches T. This replaces "E is the superpower
+  on every role"; the cut-in still follows the `Ability` action, whatever
+  key it's on.
+- **Gamepad, left to right:** L1 = superpower, R1 / L2 / R2 = the combo
+  slots. Fire stays on South (Cross / A).
+- **Arrow keys kept** as a second movement binding next to WASD.
+
+### What changed
+
+- `PlayerControls.inputactions`: a new WASD composite on `Move`; `Ability`
+  on `q` / `leftShoulder`; `Combo1..3` on `e` `r` `t` / `rightShoulder`
+  `leftTrigger` `rightTrigger`. The action names didn't change, so no code
+  changed (`OnAbility`, `OnCombo1..3`, and `AIController`'s direct calls).
+- `PartyFrame.prefab`: combo keycaps read E / R / T, and the Taunt keycap
+  reads E. `RoleCardText`: the Tank's line reads `KEY E`.
+- Comments and docs naming the old keys were updated (`input.md`,
+  `current-state.md`, `player-roles.md`, `hud-layout.md`, `overview.md`,
+  `art-roadmap.md`, `cards.md`, AGENTS.md).
+
+### Verification
+
+- `PlayerControls` reimported with no console errors. Its bindings, read
+  back in the Editor, match the table in `systems/input.md`.
+- All 220 EditMode tests pass.
+- Keyboard and pad feel are for the developer to check by hand (the Input
+  System settings keep simulated keys from reaching the game).
+
+### Open
+
+- The HUD keycaps show keyboard letters to a gamepad player too.
+- `cards.md`'s planned gamepad layout (Focus on Left Trigger, card 3 on
+  Right Shoulder) now collides with the combo slots. It's flagged there for
+  the deck-layer work.

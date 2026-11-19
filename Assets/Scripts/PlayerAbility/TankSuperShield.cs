@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-// The Tank's Super Shield cast: on the E press the shield refills and the
+// The Tank's Super Shield cast: on the Q press the shield refills and the
 // arc grows to superShieldScale, its hits free, for superShieldSeconds, then
 // it shrinks back. The Tank keeps moving and can still be hit on its body.
 // Elapsed is the clock the HUD's cut-in card plays from.
