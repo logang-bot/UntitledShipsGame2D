@@ -320,9 +320,9 @@ itself is attached to.
   networking").
 - Mobile layouts of the menus (the design has them) wait for the deferred
   phone work; QUIT has no confirm modal yet.
-- No Settings/Credits screens — not yet needed. Provisional music and
-  voices exist (Session 61) but have no volume controls; a Settings screen
-  would bring the `AudioMixer` with it.
+- No Settings/Credits screens yet. Music, voices and SFX play through
+  `GameMixer` (Session 62), but players have no volume controls; that's
+  [art-roadmap.md](../art-roadmap.md)'s "Phase 7b: Settings".
 - No `DeckBuild.unity` — the deck loadout screen is designed but not built.
   It will sit between `RoleSelect` and whichever level scene is chosen, in
   flow order, while being appended at whatever the next available Build

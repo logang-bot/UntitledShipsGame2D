@@ -9,6 +9,8 @@ public class TauntMagnetVisual : MonoBehaviour
 
     private SpriteRenderer sr;
     private Sprite[] frames;
+    private TauntSfx sfx;
+    private TauntMagnetFrame shownFrame = TauntMagnetFrame.None;
     private float startedAt = float.NegativeInfinity;
     private float tauntSeconds;
 
@@ -20,6 +22,7 @@ public class TauntMagnetVisual : MonoBehaviour
         TauntMagnetVisual visual = sr.gameObject.AddComponent<TauntMagnetVisual>();
         visual.sr = sr;
         visual.frames = frames;
+        visual.sfx = ship.GetComponent<TauntSfx>();
         return visual;
     }
 
@@ -34,5 +37,13 @@ public class TauntMagnetVisual : MonoBehaviour
         TauntMagnetFrame frame = TauntMagnetTimeline.FrameAt(Time.time - startedAt, tauntSeconds);
         sr.enabled = frame != TauntMagnetFrame.None;
         if (sr.enabled) sr.sprite = frames[(int)frame];
+        CueSoundOnFrameChange(frame);
+    }
+
+    private void CueSoundOnFrameChange(TauntMagnetFrame frame)
+    {
+        if (frame == shownFrame) return;
+        shownFrame = frame;
+        if (sfx != null) sfx.OnFrame(frame);
     }
 }

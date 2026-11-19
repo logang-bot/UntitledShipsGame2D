@@ -182,6 +182,7 @@ public class PlayerController : MonoBehaviour
     {
         GameObject bulletObj = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
         if (TryGetComponent(out PlayerShotLook look)) look.Dress(bulletObj, kind, widthMultiplier);
+        if (TryGetComponent(out ShipSfx sfx)) sfx.PlayShot(kind);
         Bullet b = bulletObj.GetComponent<Bullet>();
         b.damage = damageAmount;
         b.Init(Vector2.up, bulletSpeed, "Player", gameObject);

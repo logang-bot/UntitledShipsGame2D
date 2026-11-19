@@ -38,6 +38,8 @@ the scene is wired.
   orientation decision.
 - [systems/combat.md](systems/combat.md) — shooting, bullets, health, enemy
   waves.
+- [systems/audio.md](systems/audio.md) — the `GameMixer`, provisional
+  sound effects (who plays what, the per-clip cap) and how to add a sound.
 - [systems/player-roles.md](systems/player-roles.md) — `PlayerRole`
   enum/stats/component, and each role's E ability (the Attacker's Nova
   Beam).

@@ -12,6 +12,8 @@ public class AttackerBeam : MonoBehaviour
     public AttackerBeamVisual visual;
     public BeamLightning lightning;
     public ParticleSystem impactSparks;
+    public AudioSource sfxSource;
+    public SfxCue sparkSound;
 
     private readonly BeamColumnDamage damage = new BeamColumnDamage();
     private AttackerBeamShot shot;
@@ -56,6 +58,7 @@ public class AttackerBeam : MonoBehaviour
 
     private void EmitSparks(Vector2 impact)
     {
+        SfxPlayback.Play(sfxSource, sparkSound);
         if (impactSparks == null) return;
         impactSparks.Emit(new ParticleSystem.EmitParams { position = impact, applyShapeToPosition = true }, 4);
     }

@@ -393,9 +393,18 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   level track is synced so its 1:27 lands as boss combat starts
   (`BossMusicCue`). Medic and Support have no voice yet. Both music
   tracks are placeholders that can't ship (see `Assets/Audio/SOURCES.md`
-  and [roadmap.md](roadmap.md)'s "Provisional audio"). **No sound effects
-  yet**: firing, hits, bullets, abilities and deaths are silent.
-  Provisional SFX are next (roadmap.md's "Provisional sound effects").
+  and [roadmap.md](roadmap.md)'s "Provisional audio").
+- Provisional sound effects (Session 62) cover:
+  - firing (per role, plus the Attacker's combo shots), shots landing,
+    hits taken, Super Shield blocks;
+  - the Nova Beam, Super Shield and Taunt;
+  - every enemy bullet, the Marauder missile and the Warden's volleys;
+  - minion and wave-enemy deaths.
+
+  Everything plays through `GameMixer` (Music / Voice / SFX), and a per-clip
+  cap keeps a volley from stacking. Still silent: the Medic aura, the
+  Support speed boost, a ship going down, boss phase change and defeat,
+  and the UI. See [systems/audio.md](systems/audio.md).
 - Some imported Combat FX art isn't used yet: the Halcyon and Warden
   minions and their death bursts (those fights have no minions), the
   Halcyon bullet set, several spare orb sizes, the standalone aggro mark,

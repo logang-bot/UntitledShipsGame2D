@@ -94,15 +94,36 @@ void OnTriggerEnter2D(Collider2D other)
 
     private void HitEnemy(Collider2D other)
     {
-        EnemyDamage.TryDamage(other.gameObject, damage, ownerObject);
+        if (EnemyDamage.TryDamage(other.gameObject, damage, ownerObject)) ConfirmHitToShooter();
         Destroy(gameObject);
+    }
+
+    private void ConfirmHitToShooter()
+    {
+        if (ownerObject != null && ownerObject.TryGetComponent(out ShipSfx sfx)) sfx.PlayShotHit();
     }
 
     /// <summary>A Super Shield arc stops the bullet for free; anything else player-tagged takes the hit.</summary>
     private void HitPlayer(Collider2D other)
     {
-        if (!TankShieldArc.Absorbs(other)) DamagePlayer(other);
+        if (TankShieldArc.Absorbs(other)) PlayBlockOn(other);
+        else DamagePlayer(other);
         Destroy(gameObject);
+    }
+
+    private void PlayBlockOn(Collider2D other)
+    {
+        ShipSfx sfx = other.GetComponentInParent<ShipSfx>();
+        if (sfx != null) sfx.PlayBlock();
+    }
+
+    /// <summary>
+    /// Before TakeDamage: a killing hit deactivates the ship, and a disabled
+    /// AudioSource can't start a sound.
+    /// </summary>
+    private void PlayHitOn(PlayerHealth health)
+    {
+        if (health.TryGetComponent(out ShipSfx sfx)) sfx.PlayBulletHit(GetComponent<BulletSfx>());
     }
 
     /// <summary>
@@ -113,7 +134,9 @@ void OnTriggerEnter2D(Collider2D other)
     private void DamagePlayer(Collider2D other)
     {
         PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
-        if (health != null) health.TakeDamage(Mathf.RoundToInt(damage));
+        if (health == null || health.IsInvulnerable) return;
+        PlayHitOn(health);
+        health.TakeDamage(Mathf.RoundToInt(damage));
     }
 
 }

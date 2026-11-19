@@ -7,12 +7,14 @@ using UnityEngine;
 public class AttackerBeamCast
 {
     private readonly PlayerAbility ability;
+    private readonly AttackerBeamSfx sfx;
     private Coroutine routine;
     private float startTime;
 
     public AttackerBeamCast(PlayerAbility ability)
     {
         this.ability = ability;
+        sfx = ability.GetComponent<AttackerBeamSfx>();
     }
 
     public bool IsCasting => routine != null;
@@ -27,13 +29,21 @@ public class AttackerBeamCast
 
     private IEnumerator CastRoutine(AttackerBeamSettings beam)
     {
-        ability.PlayerController.castLocked = true;
-        ability.Health.GrantInvulnerability(beam.TotalSeconds);
+        LockForCast(beam);
         yield return new WaitForSeconds(beam.windupSeconds);
         if (ability.Fx != null) ability.Fx.SpawnBeam(ShotFor(beam));
+        if (sfx != null) sfx.PlayBeamStart();
         yield return new WaitForSeconds(beam.beamSeconds);
+        if (sfx != null) sfx.PlayBeamEnd();
         ability.PlayerController.castLocked = false;
         routine = null;
+    }
+
+    private void LockForCast(AttackerBeamSettings beam)
+    {
+        ability.PlayerController.castLocked = true;
+        ability.Health.GrantInvulnerability(beam.TotalSeconds);
+        if (sfx != null) sfx.PlayWindup();
     }
 
     private AttackerBeamShot ShotFor(AttackerBeamSettings beam)

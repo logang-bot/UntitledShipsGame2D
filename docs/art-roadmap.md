@@ -496,6 +496,39 @@ confirm modal, and a check with real gamepads. Provisional menu music
 - **Mobile check:** the screens fit 9:16 portrait, buttons are large enough
   to tap, and nothing sits under the phone's notch or rounded corners.
 
+### Phase 7b: Settings (volume controls)
+
+**Status: not started (added Session 62).** `GameMixer` exists (Master →
+Music / Voice / SFX → Superpowers; see
+[systems/audio.md](systems/audio.md)), but players can't reach it: the
+Main Menu has only PLAY and QUIT, and the pause menu has no audio options.
+Volumes can only be changed with the mixer's faders in the Editor.
+
+- **Where it lives (to decide):**
+  - **A. A Settings screen** reached from a SETTINGS button between PLAY
+    and QUIT. It's a new `MenuScreen` scene with the same slide
+    transition as the other menus, at the next free Build Settings index.
+    It's the cleanest fit, but works only from the main menu.
+  - **B. One volume panel opened from both the main menu and the pause
+    menu.** It's a bit more work (it has to sit in both canvases), but
+    the mix can be tuned mid-fight, where the SFX are heard against the
+    music. Session 62 leaned towards this one.
+- **Proposed defaults:**
+  - sliders for Master, Music, Voice and SFX (the Superpowers +6 dB stays
+    an internal balance);
+  - values saved between launches (`PlayerPrefs`).
+- **Design first:** a mockup in the `Pre-Fight Menus` / `Neon Fleet HUD`
+  style (a slider control joins the UI kit), made in Claude's Design
+  artifacts like the other new mockups.
+- **Code touchpoint:**
+  - expose each group's volume as a mixer parameter;
+  - a small script that maps slider values to decibels and saves them;
+  - the saved volumes applied at startup, before the menu music plays.
+- **Done when:** a player can change each volume from the game and it's
+  kept on the next launch. If B: also from the pause menu mid-fight.
+- **Later:** the same screen is the natural home for other settings
+  (controls, display, accessibility) once they exist.
+
 ### Phase 8: In-level HUD and later
 
 - **The in-level HUD:** the squad rail and party frames, the boss panel, the
@@ -571,5 +604,5 @@ art:
   phase 3 developer's call.
 - **Audio direction** (FMOD is planned) is out of scope for this roadmap.
   The provisional voice lines and music (planned Session 60, built
-  Session 61) and the provisional sound effects (next) are tracked in
+  Session 61) and the provisional sound effects (Session 62) are tracked in
   [roadmap.md](roadmap.md)'s "Provisional audio" and "Provisional sound effects".

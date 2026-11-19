@@ -2596,3 +2596,75 @@ voice sources were already at 1.0 (`AudioSource`'s maximum) and both clips
 peak within 0.6 dB of full scale, so they can't be boosted without
 clipping; the balance comes from the music instead: level track
 0.7 → **0.5**, menu track 1.0 → **0.8**.
+
+## Session 62 — Provisional Sound Effects
+
+The developer exported a Claude Design SFX set (`combat_fx_sfx.zip`, 95
+WAVs, 44.1 kHz mono, named after the Combat FX sprites). 92 were imported
+into `Assets/Audio/SFX/`, keeping the zip's folders; the three
+`*_demo.wav` sequence previews were left out. Full wiring is in
+[systems/audio.md](systems/audio.md).
+
+### Decisions (asked before building)
+
+- **`AudioMixer` now**, not at the Settings screen: `GameMixer` with
+  Music / Voice / SFX groups and a Compressor on SFX. The music and voice
+  sources were routed into it with their volumes unchanged.
+- **AI teammates' shots at full volume**, the same as the human's.
+- **Missing sounds stay silent** and are listed for a second Claude Design
+  batch: Medic aura, Support speed boost, ship going down, boss phase
+  change and defeat, the Warden core's shielded hit, the UI.
+
+### How it's built
+
+- No audio manager: each emitter owns its `AudioSource` and calls the
+  static `SfxPlayback`.
+- `SfxVoiceLimit` (static, per clip) refuses a clip that started under
+  0.03 s ago or already has 3 copies playing, so the Marauder's 12-bullet
+  ring and the Warden's 10-rod wall each sound once.
+- Hit sounds play from the object that **outlives** the moment: the
+  shooter's ship for a landed shot, the hit ship for an enemy bullet
+  (playing that bullet's `BulletSfx.impact`). Bullets themselves only play
+  their spawn sound.
+- The Super Shield and Taunt sounds follow their visual timelines' frame
+  changes. Two catches came up while wiring:
+  - The shield's ending frame flickers with Idle, so `SuperShieldSfx`
+    plays its ending once per cast.
+  - The death bursts last only 0.24 s, shorter than their sounds, so
+    `SpriteSequence` now hides the sprite and waits for its `AudioSource`
+    before destroying itself.
+- `Enemy.Despawn` replaces `Die()` for a wave enemy drifting off the
+  bottom of the screen. It used to spawn an unseen burst (and, for an
+  explosive enemy, fragments) off-screen, which would also have played a
+  death sound.
+
+### Verification
+
+- All 220 EditMode tests pass, 11 of them new (`SfxVoiceLimitTests`,
+  `SfxCueTests`).
+- Play mode, checked by reading which clips the limiter had claimed:
+  - **Marauder:** each role's shots, hit-confirms, hits taken, wave bullets
+    and fragments, boss shots, missile launch and hit, the Nova Beam's
+    wind-up / start / sparks / end, the Super Shield's expand / blocks /
+    ending / collapse, the Taunt's activate / end, all four combo sounds.
+  - **Warden:** turret bursts, the big shot, the Lockdown wall.
+- Whether a dense volley sounds right (no clipping, no wall of noise) is
+  for the developer's ears.
+
+### Seen, not fixed
+
+Reloading `Level` mid-play from a script threw a
+`NullReferenceException` in `PartyFrameManager.Awake` →
+`PlayerAbility.SuperpowerSnapSeconds`: the party frame's `Awake` ran
+before the ship's, so `roleComponent` was null. It's unrelated to audio;
+worth checking whether the pause menu's Restart hits it too.
+
+### Later in Session 62: louder superpowers
+
+The developer found the superpower sounds too quiet. They were already
+at cue volume 1.0, and the clips are mastered about as loud as a normal
+shot (−17 to −24 dB RMS, while the voices are −13 to −16 dB). Added a
+`Superpowers` group under `SFX` in `GameMixer` at **+6 dB**. `Ship.prefab`
+got its own superpower one-shot source; that source and the Nova Beam,
+Super Shield and Taunt loop sources now output to the new group. The
+Super Shield's block sound stays on plain SFX.

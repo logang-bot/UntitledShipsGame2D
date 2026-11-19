@@ -9,13 +9,16 @@ public class TankSuperShield
 {
     private readonly PlayerAbility ability;
     private readonly TankShieldArc arc;
+    private readonly SuperShieldSfx sfx;
     private Coroutine routine;
     private float startTime;
+    private SuperShieldFrame? shownFrame;
 
     public TankSuperShield(PlayerAbility ability, TankShieldArc arc)
     {
         this.ability = ability;
         this.arc = arc;
+        sfx = ability.GetComponent<SuperShieldSfx>();
     }
 
     public bool IsActive => routine != null;
@@ -43,12 +46,23 @@ public class TankSuperShield
 
     private void ShowMoment(TankAbilitySettings settings, float elapsed)
     {
+        SuperShieldFrame frame = SuperShieldTimeline.FrameAt(settings, elapsed);
         arc.SetScale(SuperShieldTimeline.ScaleAt(settings, elapsed));
-        arc.ShowSuperFrame(SuperShieldTimeline.FrameAt(settings, elapsed));
+        arc.ShowSuperFrame(frame);
+        CueSoundOnFrameChange(frame);
+    }
+
+    private void CueSoundOnFrameChange(SuperShieldFrame frame)
+    {
+        if (frame == shownFrame) return;
+        shownFrame = frame;
+        if (sfx != null) sfx.OnFrame(frame);
     }
 
     private void End()
     {
+        shownFrame = null;
+        if (sfx != null) sfx.OnEnd();
         arc.FreeBlock = false;
         arc.SetScale(1f);
         arc.ShowNormalLook();

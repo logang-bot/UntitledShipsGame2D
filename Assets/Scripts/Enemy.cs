@@ -115,8 +115,14 @@ public class Enemy : MonoBehaviour
             Fire();
         }
 
-        // Destroy if it drifts off the bottom of the screen
-        if (transform.position.y < -10f) Die();
+        if (transform.position.y < -10f) Despawn();
+    }
+
+    /// <summary>Drifted off the bottom of the screen: removed with no burst, fragments or death sound.</summary>
+    void Despawn()
+    {
+        isDead = true;
+        Destroy(gameObject);
     }
 
     void Fire()

@@ -43,7 +43,9 @@ data and lookups: static lookup tables (`PlayerRoleStats`, `NeonPalette`,
 `RolePalette`, the `*Looks`/`*Styles`/`*Text` presets), static carriers
 (`PartyRoleAssignment`, `CoOpRoster`, `GameModeSelection`,
 `LevelSelection`, `MenuTransitionState`), pure helpers (`MenuTween`,
-`MenuEase`, `RoleStatScale`, `SquadLineup`, `JoinPressRouter`), small
+`MenuEase`, `RoleStatScale`, `SquadLineup`, `JoinPressRouter`,
+`SfxPlayback`), the per-clip sound cap `SfxVoiceLimit` (a static registry
+like `Bullet.Active`; see `systems/audio.md`), small
 value structs (`PaletteSwatch`, `NeonFrameLook`, `TweenSpec`…), and the
 plain helper classes a feature folder's `MonoBehaviour` constructs. There are no component
 hierarchies. The only interfaces or base classes are the two documented

@@ -30,8 +30,8 @@ reference docs live under `systems/`.
    audio (FMOD) is still last, but **provisional audio came first
    (planned Session 60, in Session 61)**: cut-in voice lines and
    placeholder music for the menus and the level. See "Provisional audio"
-   under "Implemented" and "Art & audio" below. **Next: provisional sound
-   effects** (ships, bullets, hits; "Art & audio" below).
+   under "Implemented" and "Art & audio" below. Provisional sound effects
+   followed in Session 62 ("Provisional sound effects" in both sections).
 
 ## Implemented
 
@@ -697,6 +697,22 @@ reference docs live under `systems/`.
   `AudioListener.pause`, so voices freeze with the card. Files and their
   license status are in `Assets/Audio/SOURCES.md`: both music tracks are
   **not cleared** and must be replaced before any build is shared.
+- **Provisional sound effects (Session 62)**: the Claude Design SFX set in
+  `Assets/Audio/SFX/`, through a new `GameMixer` (Music / Voice / SFX,
+  Compressor on SFX). Sounds:
+  - **Ships:** each role's fire, the Attacker's four combo sounds, hit-confirm
+    when a shot lands, the hit a ship takes (sized per bullet), Super Shield
+    blocks.
+  - **Abilities:** the Nova Beam (wind-up, start, loop, end, impact sparks),
+    the Super Shield (expand, loop, ending, collapse), the Taunt (activate,
+    loop, end).
+  - **Enemies:** every enemy bullet prefab's shot, the Marauder missile
+    (launch, flight loop, hit), Warden turrets / big shot / Lockdown wall,
+    minion and wave-enemy deaths.
+
+  No audio manager: each emitter's own `AudioSource` plays through
+  `SfxPlayback`, and `SfxVoiceLimit` caps copies of a clip so a volley plays
+  once. See [systems/audio.md](systems/audio.md).
 
 ## In Progress
 
@@ -811,29 +827,31 @@ is independently testable and the one before it de-risks the next.
     next to its background.
   - **Cleared music:** both tracks are placeholders the project can't ship
     (`Assets/Audio/SOURCES.md`); replace them before any build is shared.
-- **Provisional sound effects (next, added Session 61)** — the fight has
-  music and cut-in voices but no sound effects yet. Import placeholder
-  SFX, in the same spirit as the provisional audio above (plain
-  `AudioSource`s, replaced by the FMOD pass):
-  - **Ships:** normal fire, the Attacker's combo shots, each role's
-    ability (Nova Beam wind-up and beam loop, Super Shield, Taunt, Medic
-    aura, Support speed boost), taking a hit, going down.
-  - **Bullets:** the bosses' and wave enemies' shots, boss telegraphs
-    (Marauder's guided missile, danger rings), the Warden's volleys.
-  - **Hits:** player shots hitting the boss, a minion or a wave enemy,
-    bullets blocked by the Tank's shield arc, enemy and minion death
-    bursts, boss phase change and defeat.
-  - **UI (optional):** menu navigation and confirm, the pause menu.
-  - Files in `Assets/Audio/SFX/<Category>/`, each with its source and
-    license in `Assets/Audio/SOURCES.md`.
-  - **To decide when it's built:** how one-shots are played without a
-    singleton (an `AudioSource` on each emitter with `PlayOneShot` fits
-    the project's conventions; see `architecture.md`); a cap on how many
-    copies of the same sound play at once, since bullet curtains fire
-    dozens of shots a second; whether the `AudioMixer` (music / voice /
-    SFX groups) comes now, since SFX make three volumes worth balancing;
-    and keeping effects from drowning out bullet readability cues.
-  - **Done when:** firing, getting hit, hitting the boss, the abilities
-    and the deaths all make a sound, and a dense bullet curtain doesn't
-    clip or turn into noise.
+- **Provisional sound effects (first batch built Session 62; see
+  "Implemented" and [systems/audio.md](systems/audio.md))**. Decided when
+  built:
+  - one-shots from each emitter's own `AudioSource`, with no singleton;
+  - a static per-clip voice cap (`SfxVoiceLimit`);
+  - the `AudioMixer` now (Music / Voice / SFX);
+  - AI teammates' shots at full volume.
+
+  Still open:
+  - **Missing sounds**, for a second Claude Design batch:
+    - the Medic aura and the Support speed boost;
+    - a ship going down;
+    - the boss phase change and defeat;
+    - the Warden core's "plink" when hit while shielded;
+    - the UI (menu navigation and confirm, the pause menu).
+  - **Listening pass:** a dense volley must not clip or turn into noise,
+    and music and voices must stay clear. Tune with `GameMixer`'s group
+    faders and the cue volumes.
+  - **Unused clips** already imported (the Halcyon set, crit shots, spare
+    bullet sizes, three particle sounds), listed in
+    `Assets/Audio/SOURCES.md`. They wait for the mechanics or minions
+    that would use them.
+  - **License** for the SFX ("Fill in" in `SOURCES.md`); they're
+    AI-generated, so Steam's AI disclosure applies.
+  - **Player volume controls:** the mixer can't be reached from the game
+    yet. Tracked as [art-roadmap.md](art-roadmap.md)'s "Phase 7b:
+    Settings".
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.
