@@ -682,7 +682,7 @@ reference docs live under `systems/`.
   track on a `Music` object in the persistent `MenuBackground.unity`, so it
   carries across the five menu screens and stops when `Level` loads.
   **Level music:** one track on a `Music` object in `Level.unity` for every
-  boss, at volume 0.7. Both use `MusicTrack`, which loops back to an
+  boss, at volume 0.5 (the menu track at 0.8, so the full-volume cut-in voices stand out). Both use `MusicTrack`, which loops back to an
   Inspector `startAtSeconds` instead of the song's intro, and both keep
   playing under the pause menu. In the level, `BossMusicCue` lands the
   song's **1:27 on the frame boss combat starts** (the ships unfreeze after

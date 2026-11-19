@@ -2588,3 +2588,11 @@ blocks, death bursts, phase change and defeat) and optionally the UI.
 To decide when built: one-shots without a singleton, a cap on copies of
 the same sound for bullet curtains, and whether the `AudioMixer` comes
 with them.
+
+### Later in Session 61: volume balance
+
+The developer wanted the cut-in voices louder and the music quieter. The
+voice sources were already at 1.0 (`AudioSource`'s maximum) and both clips
+peak within 0.6 dB of full scale, so they can't be boosted without
+clipping; the balance comes from the music instead: level track
+0.7 → **0.5**, menu track 1.0 → **0.8**.
