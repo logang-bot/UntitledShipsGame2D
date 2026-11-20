@@ -269,7 +269,7 @@ Tank's own shield/health, per [player-roles.md](../player-roles.md)'s
 "PlayerAbility.cs" — blocks whichever lanes of the wall cross its width for
 free, with zero changes needed to `PlayerAbility.cs` itself. This is the
 mechanic that gives Shield Arc's width a reason to matter, mirroring how
-Halcyon's Static Field gives Support's Speed Boost a reason to matter (see
+Halcyon's Static Field gave Support's Speed Boost (dropped in Session 64) a reason to matter (see
 [halcyon-boss.md](halcyon-boss.md)).
 
 Public API: `CooldownRemaining`, `IsTelegraphing`, `IncomingEdge` (`Edge?`)

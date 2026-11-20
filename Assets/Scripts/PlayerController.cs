@@ -185,6 +185,7 @@ public class PlayerController : MonoBehaviour
         if (TryGetComponent(out ShipSfx sfx)) sfx.PlayShot(kind);
         Bullet b = bulletObj.GetComponent<Bullet>();
         b.damage = damageAmount;
+        b.Kind = kind;
         b.Init(Vector2.up, bulletSpeed, "Player", gameObject);
     }
 }

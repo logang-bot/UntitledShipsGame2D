@@ -18,10 +18,18 @@ public class CutInCharacterRig : MonoBehaviour
 
     public void Play(CutInTiming timing, float elapsed, float coverage)
     {
-        portrait.sprite = frames[(int)CutInPoseTimeline.FrameAt(timing, elapsed)];
+        portrait.sprite = FrameSprite(CutInPoseTimeline.FrameAt(timing, elapsed));
+        portrait.enabled = portrait.sprite != null;
         flash.color = NeonPalette.Get(PaletteColor.White, CutInPoseTimeline.FlashAlpha(timing, elapsed));
         PlaceCharacter(timing, elapsed, coverage);
         speedLines.Tick(elapsed);
+    }
+
+    /// <summary>Null while a role's pilot frames aren't drawn yet, so its card still plays with just the title.</summary>
+    private Sprite FrameSprite(CutInFrame frame)
+    {
+        int index = (int)frame;
+        return frames != null && index < frames.Length ? frames[index] : null;
     }
 
     private void PlaceCharacter(CutInTiming timing, float elapsed, float coverage)

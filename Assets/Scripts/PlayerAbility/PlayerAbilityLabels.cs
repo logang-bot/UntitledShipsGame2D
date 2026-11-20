@@ -9,8 +9,8 @@ public static class PlayerAbilityLabels
         switch (role)
         {
             case PlayerRole.Tank: return "Super Shield";
-            case PlayerRole.Medic: return "Aura Boost";
-            case PlayerRole.Support: return "Speed Boost";
+            case PlayerRole.Medic: return "Sanctuary";
+            case PlayerRole.Support: return "Echo Gate";
             case PlayerRole.Attacker: return "Nova Beam";
             default: return "None";
         }
@@ -29,14 +29,15 @@ public static class PlayerAbilityLabels
     /// <summary>The status while the role's ability is running, or null when it isn't.</summary>
     private static string RunningStatus(PlayerAbility ability, PlayerRole role)
     {
-        if (role == PlayerRole.Support && ability.IsSpeedBoostActive)
-            return $"+{(ability.speedBoostMultiplier - 1f) * 100f:0}% Spd/Rate ({ability.SpeedBoostRemaining:0.0}s)";
-        if (role == PlayerRole.Medic && ability.IsAuraBoosted)
-            return $"Boosted ({ability.AuraBoostRemaining:0.0}s)";
-        if (role == PlayerRole.Tank && ability.Tank.SuperShieldRemaining > 0f)
-            return $"Shielded ({ability.Tank.SuperShieldRemaining:0.0}s)";
-        if (role == PlayerRole.Attacker && ability.AttackerCastElapsed >= 0f)
-            return "Firing";
-        return null;
+        if (role == PlayerRole.Attacker) return ability.AttackerCastElapsed >= 0f ? "Firing" : null;
+        float left = AbilityTimes.ActiveRemaining(ability, role);
+        return left > 0f ? $"{RunningWord(role)} ({left:0.0}s)" : null;
     }
+
+    private static string RunningWord(PlayerRole role) => role switch
+    {
+        PlayerRole.Tank => "Shielded",
+        PlayerRole.Medic => "Sanctuary up",
+        _ => "Gate up",
+    };
 }

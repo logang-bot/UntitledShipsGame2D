@@ -31,8 +31,8 @@ not polled manually.
 Key public fields: `moveSpeed` (a fixed per-role value, see
 [player-roles.md](player-roles.md)'s "Fixed per-role stats" — not a
 hand-set default like `screenPadding`), `screenPadding` (default 0.5, 0.5),
-`speedBuffMultiplier` (default `1`, non-destructive runtime multiplier set
-by Support's party-wide Speed Boost — see [player-roles.md](player-roles.md);
+`speedBuffMultiplier` (default `1`, non-destructive runtime multiplier, set
+by nothing since Speed Boost was dropped in Session 64 and kept for the card layer — see [player-roles.md](player-roles.md);
 `HandleMovement()` reads `moveSpeed * speedBuffMultiplier` rather than ever
 mutating `moveSpeed` itself).
 

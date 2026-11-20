@@ -1624,6 +1624,16 @@ MonoBehaviour:
     voice: {fileID: 8300000, guid: 64eb7b2e4e68a0c4bab40562d69c8e24, type: 3}
     kicker: "AEGIS-04 \xB7 TANK"
     title: SUPER SHIELD
+  - role: 2
+    frames: []
+    voice: {fileID: 0}
+    kicker: "LUMEN-02 \xB7 MEDIC"
+    title: SANCTUARY
+  - role: 3
+    frames: []
+    voice: {fileID: 0}
+    kicker: "ECHO-07 \xB7 SUPPORT"
+    title: ECHO GATE
   kicker: {fileID: 756668034194463668}
   title: {fileID: 5121737055218318321}
   voiceSource: {fileID: 6585643779373631810}
@@ -2971,8 +2981,8 @@ MonoBehaviour:
   roleIcons:
   - {fileID: 21300000, guid: 653b253e034e4834b8d963be89ab6cd4, type: 3}
   - {fileID: 21300000, guid: 79302231baa01ce47aae3e7e28386254, type: 3}
-  - {fileID: 21300000, guid: 7ac1bb7761895c242ab979d8274d98e7, type: 3}
-  - {fileID: 21300000, guid: fdac196996adf0949b31556de57daf08, type: 3}
+  - {fileID: 21300000, guid: bc5eb8404df3e3746be1380d3a281a57, type: 3}
+  - {fileID: 21300000, guid: 503382ab46112c94d86fd6871db926e3, type: 3}
   abilityName: {fileID: 6646210341598805017}
   status: {fileID: 6951579494210630313}
   timer: {fileID: 6164324720272299414}

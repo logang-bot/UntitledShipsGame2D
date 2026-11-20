@@ -62,6 +62,8 @@ GameObject:
   - component: {fileID: 5623958114848087524}
   - component: {fileID: 8006289750419251314}
   - component: {fileID: 555003156928532993}
+  - component: {fileID: 401989214089841538}
+  - component: {fileID: 7812553844819708953}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Player
@@ -371,17 +373,32 @@ MonoBehaviour:
   auraTickInterval: 1
   auraHealPerTick: 1
   auraShieldPerTick: 1
-  auraBoostRadius: 1.5
-  auraBoostTickInterval: 0.25
-  auraBoostDuration: 4
-  auraBoostCooldown: 10
-  auraPulseInterval: 0.25
   healFlashColor:
     key: 34
     alpha: 1
-  speedBoostCooldown: 15
-  speedBoostDuration: 4
-  speedBoostMultiplier: 1.5
+  medicPowers:
+    cooldown: 25
+    timing:
+      seconds: 6
+      openSeconds: 0.3
+      endingSeconds: 1
+      collapseSeconds: 0.25
+    radius: 2
+    tickInterval: 0.25
+    bulletSpeedFactor: 0.4
+    hurtAlliesToCast: 2
+  supportPowers:
+    cooldown: 25
+    timing:
+      seconds: 8
+      openSeconds: 0.3
+      endingSeconds: 1
+      collapseSeconds: 0.25
+    width: 2.4
+    thickness: 0.12
+    heightAboveShip: 1.5
+    splitCount: 3
+    spreadDegrees: 12
   beam:
     windupSeconds: 1.8
     beamSeconds: 3.5
@@ -487,6 +504,12 @@ MonoBehaviour:
   auraIdle: {fileID: 21300000, guid: 3a0ade8b90d42e24a9ac44ac8c793078, type: 3}
   auraBoost: {fileID: 21300000, guid: a542ebd060b1e5c4e972bab5a46697b2, type: 3}
   auraBoostPulse: {fileID: 21300000, guid: 6eab25adfeaa823468176ae4311f5a56, type: 3}
+  sanctuaryFrames:
+  - {fileID: 21300000, guid: b281c1b48ef796844b1417f85cfc4350, type: 3}
+  - {fileID: 21300000, guid: c35ba0f2f766f5b449effceeb26daf84, type: 3}
+  - {fileID: 21300000, guid: 9c0799b782fbdb4448df0eb0cb5cfd5d, type: 3}
+  - {fileID: 21300000, guid: bd8bbaf5399d7c64aac431dccb0a7c65, type: 3}
+  - {fileID: 21300000, guid: f825fe8f3ee6ae34090c6a199ff9f07c, type: 3}
   shieldIdle: {fileID: 21300000, guid: 9c5a22ae8ac48b145baf7db967a07cea, type: 3}
   shieldBlock: {fileID: 21300000, guid: 59629d29f76f33e4fb7b61fdd7621f87, type: 3}
   superShieldFrames:
@@ -504,8 +527,19 @@ MonoBehaviour:
   - {fileID: 21300000, guid: e4b1246a2ff7df94f93b77182c3fa9bd, type: 3}
   - {fileID: 21300000, guid: 81a5de66eebc34a45a93a299f44a7601, type: 3}
   - {fileID: 21300000, guid: 331f79e1280ba8143aa6b21ad3d04330, type: 3}
+  echoGateFrames:
+  - {fileID: 21300000, guid: b5088750cd126084ab5b531000d20b00, type: 3}
+  - {fileID: 21300000, guid: cb8e71514eacbe947bde1af2c8bfba0c, type: 3}
+  - {fileID: 21300000, guid: 2d0a8c483c97046448ed24627f78b795, type: 3}
+  - {fileID: 21300000, guid: 390d4fb6f1a7181488dddbca4069b51c, type: 3}
+  - {fileID: 21300000, guid: b59e19b15937c1c419a70e10c1bd5e34, type: 3}
+  echoGateShatter: {fileID: 21300000, guid: 2ad73b6e6a0d9a94fb724f3f066bf0a4, type: 3}
+  echoSplitSpark: {fileID: 21300000, guid: 10b0e2a94235dc74ebf4a0607d8e9eb9, type: 3}
+  echoTether: {fileID: 21300000, guid: d7712f9f23e4a9942bf205623228127d, type: 3}
+  echoChannelFrames:
+  - {fileID: 21300000, guid: 45e41bd4026c5da4c9a5d93c6ae02dfd, type: 3}
+  - {fileID: 21300000, guid: f80f7185906f51b489b9fc45a65aaf73, type: 3}
   speedRing: {fileID: 21300000, guid: 393659913c20b9343af5a7b57bcdb518, type: 3}
-  speedRingEnd: {fileID: 21300000, guid: bebfc6f9f44789a44b2f921e3718b04d, type: 3}
 --- !u!114 &4152285164259849233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1172,6 +1206,82 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &401989214089841538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039737173953149718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21706f3915e500d42b0a797b9494b5d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::MedicSfx
+  source: {fileID: 555003156928532993}
+  loop: {fileID: 6363174577860940035}
+  open:
+    clips:
+    - {fileID: 8300000, guid: 495df77e49c7dc1458aebbcd08554805, type: 3}
+    volume: 1
+  idleLoop:
+    clips:
+    - {fileID: 8300000, guid: 97d16f236b36cdd47939145edd82802b, type: 3}
+    volume: 1
+  ending:
+    clips:
+    - {fileID: 8300000, guid: 277cd2ce20dee4a499f1f94d54afc835, type: 3}
+    volume: 1
+  collapse:
+    clips:
+    - {fileID: 8300000, guid: 6f2ff41610c0c104a8d556ec67270b50, type: 3}
+    volume: 1
+  healTick:
+    clips:
+    - {fileID: 8300000, guid: d1c9722ede0ad704389e495b5c2ec210, type: 3}
+    volume: 1
+  auraTick:
+    clips:
+    - {fileID: 8300000, guid: 260ef964dfc28f4409da2a82a09893f0, type: 3}
+    volume: 1
+--- !u!114 &7812553844819708953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039737173953149718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cba6af184d381384b8a99055d9e5e7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UntitledShips.Runtime::EchoGateSfx
+  source: {fileID: 555003156928532993}
+  loop: {fileID: 6363174577860940035}
+  open:
+    clips:
+    - {fileID: 8300000, guid: b3cf4c64911b80b42ba87c98d399617b, type: 3}
+    volume: 1
+  idleLoop:
+    clips:
+    - {fileID: 8300000, guid: 62a40fc4a556fc84a97b634c709f0fe7, type: 3}
+    volume: 1
+  ending:
+    clips:
+    - {fileID: 8300000, guid: 78bd1784f458eb14fb566004ac873ba9, type: 3}
+    volume: 1
+  collapse:
+    clips:
+    - {fileID: 8300000, guid: 473ae7fe16f1c924c9c9adb34be47c07, type: 3}
+    volume: 1
+  split:
+    clips:
+    - {fileID: 8300000, guid: fad90fa6cb698c64285647289427cf3f, type: 3}
+    volume: 1
+  shatter:
+    clips:
+    - {fileID: 8300000, guid: 66bb0dd76d6df814c8cf5b8a43c540eb, type: 3}
+    volume: 1
 --- !u!1 &8713791423059384962
 GameObject:
   m_ObjectHideFlags: 0

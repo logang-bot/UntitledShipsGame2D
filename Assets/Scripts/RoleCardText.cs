@@ -9,8 +9,8 @@ public static class RoleCardText
     {
         { PlayerRole.Attacker, new[] { new RoleAbilityLine("ABILITY", "NOVA BEAM", "A plasma beam that burns everything above. Plus a 3-attack combo.") } },
         { PlayerRole.Tank, new[] { new RoleAbilityLine("ABILITY", "SUPER SHIELD", "Refills your shield and grows your shield arc into a huge wall that blocks for free."), new RoleAbilityLine("KEY E", "TAUNT", "Pulls the boss onto you for 3 seconds.") } },
-        { PlayerRole.Medic, new[] { new RoleAbilityLine("ABILITY", "AURA BOOST", "Heals and recharges shields of nearby allies.") } },
-        { PlayerRole.Support, new[] { new RoleAbilityLine("ABILITY", "SPEED BOOST", "Speeds up the whole party.") } },
+        { PlayerRole.Medic, new[] { new RoleAbilityLine("ABILITY", "SANCTUARY", "Plants a dome that heals allies inside fast and slows enemy bullets in it.") } },
+        { PlayerRole.Support, new[] { new RoleAbilityLine("ABILITY", "ECHO GATE", "Drops a gate that splits every shot fired through it into three.") } },
     };
 
     public static string RoleName(PlayerRole role) => role.ToString().ToUpperInvariant();

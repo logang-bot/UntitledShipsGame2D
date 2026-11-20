@@ -16,7 +16,7 @@ the mixer window.
 | Music | `MusicTrack` on `MenuBackground.unity` → `Music` (volume 0.8) and `Level.unity` → `Music` (0.5) |
 | Voice | `PartyFrame.prefab` → `CutInCard`'s voice source |
 | SFX | Every source below, except the superpowers |
-| Superpowers (child of SFX, **+6 dB**) | `Ship.prefab`'s superpower one-shot source (shared by `AttackerBeamSfx`, `SuperShieldSfx`, `TauntSfx`) and their three loop sources |
+| Superpowers (child of SFX, **+6 dB**) | `Ship.prefab`'s superpower one-shot source (shared by `AttackerBeamSfx`, `SuperShieldSfx`, `TauntSfx`, `MedicSfx`, `EchoGateSfx`) and their three loop sources (`MedicSfx` and `EchoGateSfx` share the Super Shield's loop, since a ship has one role); the Echo Gate's own source copies that group (`ZoneAudio`) |
 
 The superpower clips are mastered about as loud as a normal shot (−17 to
 −24 dB RMS), so at full cue volume they disappeared under the fight. A cue's
@@ -54,12 +54,18 @@ No audio manager or singleton: each emitter owns its `AudioSource` and calls
 | Nova Beam impact sparks | `AttackerBeam.prefab` → `AttackerBeam.sparkSound` | `AttackerBeam.EmitSparks` |
 | Super Shield expand + loop / ending / collapse | `Ship.prefab` → `SuperShieldSfx` | `TankSuperShield`, when the drawn frame changes |
 | Taunt activate + loop / end | `Ship.prefab` → `TauntSfx` | `TauntMagnetVisual`, when the drawn frame changes |
+| Sanctuary open + loop / ending / collapse | `Ship.prefab` → `MedicSfx` (the shared `ZonePowerSfx` cues) | `MedicSanctuary`, when the drawn frame changes |
+| Sanctuary heal pulse / passive aura tick | `MedicSfx.healTick` / `auraTick` | `SanctuaryZone.Update` / `PlayerAbilityMedic.CheckTick`, only when someone was actually healed |
+| Echo Gate deploy + loop / ending / collapse | `Ship.prefab` → `EchoGateSfx` | `SupportEchoGate`, when the drawn frame changes |
+| Echo Gate split / shatter | `EchoGateSfx.split` / `shatter`, from the gate's own `AudioSource` | `EchoGateZone.Split` / `EchoGateZone.ShatterRoutine` |
 | Minion and wave-enemy deaths | an `AudioSource` (play on awake) on each death burst prefab in `Assets/Prefabs/FX/` | `SpriteSequence` waits for the sound before destroying the burst |
 
 The ability sounds follow the visual timelines (`SuperShieldTimeline`,
-`TauntMagnetTimeline`) instead of their own timers, so retuning a duration
-keeps sound and picture together. The Super Shield's ending frame flickers
-with Idle, so `SuperShieldSfx` plays its ending once per cast.
+`TauntMagnetTimeline`, `ZonePowerTimeline`) instead of their own timers, so
+retuning a duration keeps sound and picture together. The Super Shield's
+and the placed powers' ending frames flicker with Idle, so their ending
+plays once per cast. The Sanctuary and Echo Gate sets (Claude Design,
+Session 64) are on `Ship.prefab`'s `MedicSfx` and `EchoGateSfx`.
 
 A wave enemy that drifts off the bottom of the screen is removed by
 `Enemy.Despawn`, with no burst and no death sound.
@@ -79,6 +85,6 @@ All SFX sources are 2D (spatial blend 0) and output to `SFX`.
 
 ## Not covered yet
 
-There are no clips yet for the Medic aura, the Support speed boost, a ship
+There are no clips yet for a ship
 going down, the boss phase change and defeat, the Warden core's shielded
 "plink", and the UI. See `roadmap.md`, "Provisional sound effects".

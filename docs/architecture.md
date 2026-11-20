@@ -233,7 +233,7 @@ input path plus one AI path.
 
 ## Non-Destructive Buff Pattern
 
-Temporary effects (Support's Speed Boost) are applied via separate
+Temporary effects (Support's Speed Boost until Session 64; the card layer's passives next) are applied via separate
 runtime-only multiplier fields (`speedBuffMultiplier`,
 `fireRateBuffMultiplier` on `PlayerController`) that are read at the point
 of use, rather than ever being multiplied into the base stat and later

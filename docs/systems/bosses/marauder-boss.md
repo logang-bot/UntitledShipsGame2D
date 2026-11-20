@@ -513,9 +513,9 @@ Drives a CPU-controlled teammate every `Update()`:
   at half or below (`AIControllerTank`). The taunt rule is `MarauderAITactics.ShouldTaunt`, the
   per-boss AI strategy since Session 46; see `docs/architecture.md`'s
   "Per-boss AI behavior". **Medic**
-  fires its aura boost the instant it's off cooldown — flagged as a
-  temporary, need-unaware heuristic, see "Medic positioning + aura" below;
-  **Support**/**Attacker** just retry every frame, safe and cheap since
+  casts Sanctuary when 2+ hurt allies are within its radius and **Support** its Echo Gate when the boss and an ally line up under it (Session 64; this replaced an always-cast aura boost);
+  see "Medic positioning + aura" below;
+  all of them retry every frame, safe and cheap since
   `TryUseAbility()`'s own cooldown gate no-ops until ready.
 
 Key public fields: `bossObject` (drag the `Boss` instance; `MonoBehaviour`-typed
@@ -599,10 +599,9 @@ re-evaluated every frame.
 allies via an always-on aura; pressing `E` triggers a temporary, drastic
 expansion of that aura's radius/tick rate rather than an instant heal.
 
-**AI trigger heuristic — a known, temporary limitation**: `AIController`
-fires the aura boost the instant it's off cooldown, with no awareness of
-whether anyone actually needs it — flagged in code and here for rework (the
-obvious next step is triggering off `FindHurtAlly()` instead).
+**AI trigger (Session 64)**: the aura boost is gone; a CPU Medic casts Sanctuary when `AIControllerMedic.ShouldCastSanctuary()` counts 2+ allies within the dome radius at or below `medicApproachThreshold`. Before that, `AIController`
+fired the aura boost the instant it was off cooldown, with no awareness of
+whether anyone actually needed it.
 
 **Why the aura lives on `PlayerAbility.cs`, not here**: unlike Tank's
 guard-point steering (an AI-only concern — a human Medic just moves via

@@ -8,6 +8,24 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Medic's Sanctuary and Support's Echo Gate (Session 64)** — the last two
+  superpowers, both on **Q / L1**. **Sanctuary** leaves a dome (radius 2)
+  where the Medic stands for 6 s: allies inside, the Medic included, heal
+  health and shield 4 times a second, and enemy bullets inside fly at 40%
+  speed. **Echo Gate** drops a horizontal gate 1.5 units above the Support
+  for 8 s: every regular shot an ally fires through it splits into three
+  in a ±12° fan, each at full damage and credited to the shooter. Combo
+  shots, the Nova Beam and enemy bullets pass through. A tether and a ring
+  on the Support show it's holding the gate, and the gate shatters if the
+  Support dies; the dome closes if the Medic dies. Both have a 25 s
+  cooldown, a cut-in card (title only until the pilot art lands) and CPU
+  rules. Aura Boost and Speed Boost are gone, but the Medic's small passive
+  aura stays. The effects, HUD icons and sounds are the Claude Design
+  batch (prompts in `ArtSource/Medic/` and `ArtSource/Support/`); the
+  pilots' frames and voice lines are still to come (Fable prompts in
+  `ArtSource/CutIns/`). See the
+  [spec](superpowers/specs/2026-11-19-medic-sanctuary-support-echo-gate-design.md)
+  and [systems/player-roles.md](systems/player-roles.md).
 - **Controls rebind (Session 63)** — move on **WASD** (the arrow keys
   still work). Abilities sit on a MOBA-style row filled from Q: **Q** is
   every role's superpower, and **E / R / T** are the Attacker's combo (**E**
@@ -135,19 +153,16 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   **E**, holding the boss's aggro on you for 3 s — see the Boss encounter
   bullet below and
   [systems/player-roles.md](systems/player-roles.md)'s "Aggro/targeting"
-  section), Medic temporarily expands its passive heal/shield aura into a
-  much larger, faster one for a few seconds, Support triggers a **party-wide**
-  Speed Boost (move speed **and** fire rate, all 4 ships, not just itself)
-  with a shared gold ring showing on every ship while it's active, Attacker
-  fires the Nova Beam (see the first bullet above). Medic's aura is always on — a
-  thin ring around it shows the current radius, tiny by default until
-  boosted — and heals/shields any ally (including the human player) who
-  gets close enough, flashing them green when it actually helps. Tank also
+  section), Medic plants its Sanctuary dome, Support drops its Echo Gate
+  (see the first bullet above), Attacker fires the Nova Beam. Medic's aura
+  is always on — a thin ring around it shows its small radius — and
+  heals/shields any ally (including the human player) who gets close
+  enough, flashing them green when it actually helps. Tank also
   always shows a wide curved shield arc above it — passive, always-on,
   independent of `Q` — and it physically blocks incoming fire (draining
   Tank's own shield/health, not a free block) across a width wider than
-  Tank's own body. The party frame shows which ability is boosted/by how
-  much and its cooldown. See
+  Tank's own body. The party frame shows each superpower's running time
+  and its cooldown. See
   [systems/player-roles.md](systems/player-roles.md).
 - **Portrait/crossplay screen layout** — the gameplay area stays locked to a
   9:16 portrait aspect ratio and adapts automatically: full-width on
@@ -379,6 +394,10 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
   are same-scene UI overlays within `Level`, not separate scenes (see
   [systems/combat.md](systems/combat.md)).
+- The Medic's and Support's cut-in cards have no pilot frames or voice
+  lines yet, so they play with the title alone (Fable prompts in
+  `ArtSource/CutIns/Medic/` and `ArtSource/CutIns/Support/`). CPU
+  teammates don't move under an Echo Gate on purpose yet.
 - The menus have no mobile layout yet (PC only), the Main Menu wordmark is
   a placeholder block. Level Select's cards show each boss's portrait.
 - Art is only started: the four player ships are their 3D design models
@@ -388,7 +407,8 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   Halcyon's storm-drowned towers, Warden's walled garrison). Combat FX
   are in (Session 55): designed bullets for players, Marauder, Warden and
   the waves, wave-enemy and Marauder-minion hulls with death bursts, the
-  Medic aura, Tank shield arc, Support speed ring, the three bosses' danger
+  Medic aura, Tank shield arc, Support speed ring (now standing in for the
+  Echo Gate's channel ring), the three bosses' danger
   rings, and a sprite effect for each role's ability. The three bosses are
   their live 3D design models with every phase and telegraph state
   (Session 58). The avatar slot is still a placeholder shape.
@@ -408,8 +428,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   - minion and wave-enemy deaths.
 
   Everything plays through `GameMixer` (Music / Voice / SFX), and a per-clip
-  cap keeps a volley from stacking. Still silent: the Medic aura, the
-  Support speed boost, a ship going down, boss phase change and defeat,
+  cap keeps a volley from stacking. Still silent: a ship going down, boss phase change and defeat,
   and the UI. See [systems/audio.md](systems/audio.md).
 - Some imported Combat FX art isn't used yet: the Halcyon and Warden
   minions and their death bursts (those fights have no minions), the
@@ -548,11 +567,12 @@ real networking last, then art/audio.
    per-role stats". As Medic, notice the dim ring around your ship even
    without pressing anything — that's the passive aura, tiny by default,
    healing/shielding any ally that gets close enough (they flash green when
-   it actually helps); press **Q** to drastically expand the ring and speed
-   up the healing for a few seconds. Press **Q** as Support to trigger a
-   **party-wide** Speed Boost — watch every ship (including AI teammates)
-   light up with a shared gold ring and visibly speed up/fire faster
-   together, not just your own ship. As Tank, notice the wide curved shield
+   it actually helps); press **Q** to plant the Sanctuary: the dome stays
+   where you cast it, allies inside flash green four times a second, and
+   enemy bullets crawl while inside it. Press **Q** as Support to drop the
+   Echo Gate above you: a tether links you to it, and every regular shot
+   fired up through it (yours or a teammate's) fans into three. Combo shots
+   and the Nova Beam pass straight through. As Tank, notice the wide curved shield
    arc above your ship even without pressing anything — that's always on;
    press **E** to taunt: a magnet field shows around your ship and the boss
    panel's aggro row reads TANK / TAUNTED for 3 s, while your frame's Taunt

@@ -25,7 +25,7 @@ are fixed per-role values, overwritten at `Start()` — see
 script default `0.6`), `recoilDamping` (default 8, higher = faster decay).
 Two non-destructive runtime-only buff multipliers, both default `1`:
 `speedBuffMultiplier` (see [movement.md](movement.md)) and
-`fireRateBuffMultiplier` — set only by Support's party-wide Speed Boost
+`fireRateBuffMultiplier` — set by nothing since Support's Speed Boost was dropped (Session 64), kept for the card layer
 (see [player-roles.md](player-roles.md)), read via a computed `FireInterval
 => 1f / (shotsPerSecond * fireRateBuffMultiplier)` wherever the
 fire-cooldown gate needs seconds-until-next-shot, rather than ever mutating

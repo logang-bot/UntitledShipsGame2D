@@ -11,13 +11,19 @@ public class Bullet : MonoBehaviour
     public Vector2 Direction => direction;
     public float Speed => speed;
     public string Owner => owner;
+    public GameObject OwnerObject => ownerObject;
+    /// <summary>Which player shot this is; the Echo Gate splits only Regular ones.</summary>
+    public PlayerShotKind Kind { get; set; }
+    /// <summary>A shot the Echo Gate already split, so it never splits again.</summary>
+    public bool IsEcho { get; set; }
 
     void Awake() { Active.Add(this); }
     void OnDestroy() { Active.Remove(this); }
 
     private Vector2 direction;
     private float speed;
-    
+    private float speedFactor = 1f;
+
     private GameObject ownerObject; // shooter reference, for boss aggro attribution
 private string owner; // "Player" or "Enemy" - determines what it can hit
 
@@ -73,10 +79,19 @@ public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = 
         ScheduleLifetimeCleanup();
     }
 
+    /// <summary>Scales the flight speed while it lasts (the Medic's Sanctuary sets 0.4, then back to 1).</summary>
+    public void SetSpeedFactor(float factor) => speedFactor = factor;
+
+    public void Redirect(Vector2 dir)
+    {
+        direction = dir.normalized;
+        FaceDirection();
+    }
+
     void Update()
     {
         if (homingTarget != null && homingTarget.gameObject.activeInHierarchy) SteerTowardTarget();
-        transform.Translate(direction * speed * Time.deltaTime, Space.World);
+        transform.Translate(direction * speed * speedFactor * Time.deltaTime, Space.World);
     }
 
     private void SteerTowardTarget()

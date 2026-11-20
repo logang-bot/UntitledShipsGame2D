@@ -26,26 +26,13 @@ public class PlayerAbility : MonoBehaviour
     public int auraHealPerTick = 1;
     public int auraShieldPerTick = 1;
 
-    [Header("Medic - Aura Boost (Q ability)")]
-    /// <summary>Drastically larger while active - halved from 3, was flagged overpowered.</summary>
-    public float auraBoostRadius = 2.0f;
-    /// <summary>Much faster while active.</summary>
-    public float auraBoostTickInterval = 0.25f;
-    public float auraBoostDuration = 4f;
-    /// <summary>Must stay >= duration, same constraint as Support's buff.</summary>
-    public float auraBoostCooldown = 10f;
-
-    [Header("Medic - Aura Visual")]
-    /// <summary>Seconds per half-beat of the boosted ring's pulse (boost / boost-peak sprites).</summary>
-    public float auraPulseInterval = 0.25f;
     public PaletteSwatch healFlashColor = new PaletteSwatch(PaletteColor.MedicSoft);
 
-    [Header("Support - Speed Boost")]
-    /// <summary>Up from 8s - flagged overpowered, round placeholder, tunable.</summary>
-    public float speedBoostCooldown = 15f;
-    public float speedBoostDuration = 4f;
-    /// <summary>Applies to move speed AND fire rate, all 4 allies.</summary>
-    public float speedBoostMultiplier = 1.5f;
+    [Header("Medic - Sanctuary (Q)")]
+    public MedicSanctuarySettings medicPowers = new MedicSanctuarySettings();
+
+    [Header("Support - Echo Gate (Q)")]
+    public SupportEchoGateSettings supportPowers = new SupportEchoGateSettings();
 
     [Header("Attacker - Nova Beam")]
     public AttackerBeamSettings beam = new AttackerBeamSettings();
@@ -77,7 +64,6 @@ public class PlayerAbility : MonoBehaviour
     private PlayerController playerController;
     private PlayerHealth playerHealth;
     private float nextAbilityTime;
-    private PlayerAbilityPartyBuffRing partyBuffRing;
     private PlayerAbilityTank tank;
     private PlayerAbilityMedic medic;
     private PlayerAbilitySupport support;
@@ -85,10 +71,6 @@ public class PlayerAbility : MonoBehaviour
     private ShipCombatFx fx;
 
     public float CooldownRemaining => Mathf.Max(0f, nextAbilityTime - Time.time);
-    public bool IsSpeedBoostActive => support.IsActive;
-    public float SpeedBoostRemaining => support.Remaining;
-    public bool IsAuraBoosted => medic.IsBoosted;
-    public float AuraBoostRemaining => medic.BoostRemaining;
     public PlayerController PlayerController => playerController;
     public PlayerHealth Health => playerHealth;
     public ShipCombatFx Fx => fx;
@@ -102,10 +84,26 @@ public class PlayerAbility : MonoBehaviour
     /// <summary>Seconds into the Nova Beam cast, or -1 when idle.</summary>
     public float AttackerCastElapsed => attacker.CastElapsed;
     public PlayerAbilityTank Tank => tank;
+    public PlayerAbilityMedic Medic => medic;
+    public PlayerAbilitySupport Support => support;
+
     /// <summary>Seconds into this ship's superpower (the cut-in card's clock), or -1 when idle.</summary>
-    public float SuperpowerElapsed => roleComponent.role == PlayerRole.Tank ? tank.SuperShieldElapsed : attacker.CastElapsed;
-    /// <summary>When the superpower lands, for the cut-in's shout: the beam firing, or the wall at full size.</summary>
-    public float SuperpowerSnapSeconds => roleComponent.role == PlayerRole.Tank ? tankPowers.growSeconds : beam.windupSeconds;
+    public float SuperpowerElapsed => roleComponent.role switch
+    {
+        PlayerRole.Tank => tank.SuperShieldElapsed,
+        PlayerRole.Medic => medic.Sanctuary.Elapsed,
+        PlayerRole.Support => support.Gate.Elapsed,
+        _ => attacker.CastElapsed,
+    };
+
+    /// <summary>When the superpower lands, for the cut-in's shout: the beam firing, or the wall, dome or gate at full size.</summary>
+    public float SuperpowerSnapSeconds => roleComponent.role switch
+    {
+        PlayerRole.Tank => tankPowers.growSeconds,
+        PlayerRole.Medic => medicPowers.timing.openSeconds,
+        PlayerRole.Support => supportPowers.timing.openSeconds,
+        _ => beam.windupSeconds,
+    };
 
     public string AbilityName => PlayerAbilityLabels.NameFor(roleComponent.role);
     public string StatusText => PlayerAbilityLabels.StatusFor(this, roleComponent.role);
@@ -114,7 +112,6 @@ public class PlayerAbility : MonoBehaviour
     {
         CacheComponents();
         CreateHelpers();
-        partyBuffRing.Create();
     }
 
     private void CacheComponents()
@@ -131,7 +128,6 @@ public class PlayerAbility : MonoBehaviour
         medic = new PlayerAbilityMedic(this);
         support = new PlayerAbilitySupport(this);
         attacker = new PlayerAbilityAttacker(this);
-        partyBuffRing = new PlayerAbilityPartyBuffRing(this);
     }
 
     /// <summary>
@@ -139,8 +135,7 @@ public class PlayerAbility : MonoBehaviour
     /// role-dependent setup below needs the real assigned role, which a
     /// dynamically-Instantiate()'d ship (co-op spawner) only has after
     /// Instantiate() returns, i.e. after Awake() already ran. The ref
-    /// caching and party-buff ring above stay in Awake since they're
-    /// role-agnostic.
+    /// caching and helpers above stay in Awake since they're role-agnostic.
     /// </summary>
     void Start()
     {
@@ -159,8 +154,8 @@ public class PlayerAbility : MonoBehaviour
         switch (role)
         {
             case PlayerRole.Tank: return tankPowers.superShieldCooldown;
-            case PlayerRole.Medic: return auraBoostCooldown;
-            case PlayerRole.Support: return speedBoostCooldown;
+            case PlayerRole.Medic: return medicPowers.cooldown;
+            case PlayerRole.Support: return supportPowers.cooldown;
             case PlayerRole.Attacker: return beam.cooldown;
             default: return 0f;
         }
@@ -168,16 +163,8 @@ public class PlayerAbility : MonoBehaviour
 
     void Update()
     {
-        if (roleComponent.role != PlayerRole.Medic) return;
-        medic.UpdateRing();
-        medic.CheckTick();
+        if (roleComponent.role == PlayerRole.Medic) medic.CheckTick();
     }
-
-    /// <summary>
-    /// Called on every ally by Support's speed boost - shows/hides this
-    /// ship's party-buff ring (always Support purple, per the design).
-    /// </summary>
-    public void SetPartyBuffVisual(bool active) => partyBuffRing?.Show(active);
 
     public void OnAbility(InputValue value)
     {

@@ -30,6 +30,7 @@ are 44.1 kHz mono 16-bit WAV. Who plays what is in
 | `SFX/Minions/Marauder/`, `Wave/` | The death burst prefabs in `Assets/Prefabs/FX/` | Claude Design (AI-generated) | Fill in |
 | `SFX/Superpowers/Attacker/` | `Ship.prefab` → `AttackerBeamSfx` (Nova Beam) | Claude Design (AI-generated) | Fill in |
 | `SFX/Superpowers/Tank/` | `Ship.prefab` → `SuperShieldSfx`, `TauntSfx`, `ShipSfx.superShieldBlock` | Claude Design (AI-generated) | Fill in |
+| `SFX/Superpowers/Medic/`, `Support/` | `Ship.prefab` → `MedicSfx` (incl. `medic_aura_tick`), `EchoGateSfx` | Claude Design (AI-generated), Session 64 batch | Fill in |
 | `SFX/Particles/particle_glow_dot.wav` | `AttackerBeam.prefab` (the beam's impact sparks) | Claude Design (AI-generated) | Fill in |
 
 **Imported but not used yet:**

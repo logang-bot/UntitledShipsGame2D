@@ -2711,3 +2711,115 @@ A side fix for comfort: moving on the arrow keys and casting on E and
 - `cards.md`'s planned gamepad layout (Focus on Left Trigger, card 3 on
   Right Shoulder) now collides with the combo slots. It's flagged there for
   the deck-layer work.
+
+## Session 64 — Medic Sanctuary + Support Echo Gate
+
+The last two superpowers. Brainstormed with the developer first; the art
+and sound are delegated to Claude through written prompts.
+
+### Decisions (asked before building)
+
+- **Medic: Sanctuary**, a dome left where the Medic stands (picked over a
+  channeled revive and healing tethers).
+- **Support: Echo Gate**, the developer's own idea: a gate that multiplies
+  regular shots passing through it, superpower shots excluded. A black
+  hole (Singularity) was picked first, then dropped once the developer
+  noticed it overlapped the Tank: on the Support it worked as a moving
+  bullet shield (the Super Shield in purple), and its pull looked like the
+  Taunt magnet.
+- The gate is **dropped in place**, shows the Support **holding** it, and
+  **vanishes if the Support dies**.
+- **Aura Boost and Speed Boost are dropped**, not moved to E.
+- **Calls made while building, flagged for the developer:**
+  - enemy bullets pass through the gate (else a second Tank wall);
+  - a 3-shot ±12° fan at full damage each, credited to the shooter;
+  - combo shots don't split;
+  - the passive Medic aura stays;
+  - the dome closes if the Medic dies;
+  - the warping grid is deferred with the black hole.
+
+### What changed
+
+- Prompts: `ArtSource/Medic/` and `ArtSource/Support/claude-design-prompts.md`
+  (Combat FX frames, HUD icon, SFX table each), and
+  `ArtSource/CutIns/Medic/` and `ArtSource/CutIns/Support/fable-prompt.md`
+  (four `<role>_talk_1..4` pilot frames, an editable character each).
+- Spec: `docs/superpowers/specs/2026-11-19-medic-sanctuary-support-echo-gate-design.md`.
+- `Bullet`: `Kind` (set by `PlayerController.SpawnBullet`), `IsEcho`,
+  `SetSpeedFactor`, `Redirect`, `OwnerObject`.
+- Shared by both placed powers: `ZonePhaseTiming`, `ZoneFrame`, the pure
+  `ZonePowerTimeline`, `ZonePowerSfx` (base of `MedicSfx` / `EchoGateSfx`),
+  `KinematicTrigger` (bullets have no Rigidbody2D, so a zone needs its own
+  kinematic body to get trigger messages), `ZoneAudio`.
+- Medic: `MedicSanctuarySettings`, `HealArea` + `MedicHeal` (the aura's
+  heal pulse, now shared with the dome), `SanctuaryZone`, `MedicSanctuary`;
+  `PlayerAbilityMedic` keeps only the passive aura.
+- Support: `SupportEchoGateSettings`, the pure `EchoSplit`, `EchoGateZone`,
+  `EchoGateLook`, `EchoGateHoldVisual`, `SupportEchoGate`;
+  `PlayerAbilityPartyBuffRing` deleted. `PlayerController`'s buff
+  multipliers stay for the card layer.
+- `PlayerAbility` reports the cut-in clock and cooldown for all four
+  roles; `AbilityTimes.ActiveRemaining` is now public and feeds
+  `PlayerAbilityLabels`. CPU rules in `AIControllerMedic` /
+  `AIControllerSupport`, which also retire the "always cast" Medic stopgap.
+- `CutInCharacterRig` hides the portrait when a role has no frames, so
+  the new Medic and Support entries on `PartyFrame.prefab` play with the
+  title alone. `Ship.prefab` has `MedicSfx` and `EchoGateSfx` on the
+  existing superpower sources, with their cues empty. `RoleCardText`
+  describes the new powers.
+
+### Verification
+
+- Compiles with no console errors or warnings; all 227 EditMode tests
+  pass, including the new `ZonePowerTimelineTests` and `EchoSplitTests`.
+- Play mode in `Level.unity`, casting through code:
+  - both powers spawned, and the cut-in clock advanced;
+  - 24 of 29 player shots on screen were split copies;
+  - an enemy bullet inside the dome was slowed, and none outside;
+  - killing the Support ended the cast at once, hid the tether and left
+    the gate up for its shatter frame;
+  - no errors through two full casts.
+- Not checked by eye: how the placeholders look, and the CPU Medic and
+  Support casting on their own in a real fight.
+
+### Open
+
+- The delegated art, pilot frames, voice lines and sounds.
+- CPU allies don't move under an Echo Gate on purpose.
+- Every number needs a playtest; 3× regular damage through the gate is
+  strong on purpose.
+
+### Later in Session 64: the delegated art and sounds landed
+
+The developer ran the six Claude Design prompts and dropped three exports
+in the project root (`combat_fx.zip`, `combat_fx_sfx.zip`,
+`neon_fleet_hud_assets.zip`, full re-exports of each project). Only the
+new pieces were taken:
+- 15 PNGs into `Assets/Art/CombatFX/Superpowers/Medic/` and `Support/`;
+- 12 WAVs into `Assets/Audio/SFX/Superpowers/Medic/` and `Support/`
+  (`medic_aura_tick` came under `Auras/Player/` in the ZIP);
+- `ico_sanctuary` and `ico_echogate` into `Assets/Art/UI/HUD/icons/`.
+
+The ZIPs were deleted afterwards.
+
+- **Checked before import:**
+  - every size and name matches the prompts;
+  - the WAVs are 44.1 kHz mono 16-bit;
+  - the dome's corners sit about 386 px from the centre (the code assumes
+    384), and the gate's nodes are 461 px apart;
+  - the dome fill is 2–13% opaque.
+- **Wired:**
+  - the import settings were copied from the Tank's Super Shield frames,
+    the existing icons and the Tank's sounds;
+  - every sprite and cue is assigned on `Ship.prefab`'s `ShipCombatFx`,
+    `MedicSfx` and `EchoGateSfx` (all volumes 1, like the Tank's);
+  - in `PartyFrame.prefab`'s ability cell, `roleIcons` now holds the new
+    icons in place of `ico_aura` / `ico_speed`, which remain on the speed
+    chip.
+- **Play-mode screenshot:**
+  - the dome and gate draw at their gameplay sizes (radius 2, width 2.4);
+  - enemy bullets stay readable over the dome;
+  - the tether and channel ring follow the Support;
+  - both cut-in cards show in role colors with the title;
+  - no console errors.
+- **Still open:** the pilots' frames and voice lines.

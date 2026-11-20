@@ -33,6 +33,22 @@ public class AIControllerMedic
         return hurtAlly;
     }
 
+    /// <summary>Sanctuary pays off most when several hurt allies can stand in it right away.</summary>
+    public bool ShouldCastSanctuary()
+    {
+        MedicSanctuarySettings settings = owner.Ability.medicPowers;
+        return CountHurtAlliesWithin(settings.radius) >= settings.hurtAlliesToCast;
+    }
+
+    private int CountHurtAlliesWithin(float radius)
+    {
+        if (owner.Ability.allies == null) return 0;
+        int count = 0;
+        foreach (Transform ally in owner.Ability.allies)
+            if (IsHurtCandidate(ally, out _) && Vector2.Distance(owner.transform.position, ally.position) <= radius) count++;
+        return count;
+    }
+
     private bool IsHurtCandidate(Transform ally, out float fraction)
     {
         fraction = 0f;

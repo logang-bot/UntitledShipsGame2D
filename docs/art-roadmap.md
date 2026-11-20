@@ -270,8 +270,8 @@ lands, and update it when an asset gets wired.
 | `Bullets/Wave/wave_bullet_m`, `wave_bullet_l` | Wave enemies fire the small orb | Tougher wave enemy types |
 | `Bullets/*/*_fragment_ring` (Marauder, Wave; plus Halcyon and Warden above) | A preview of 8 shards in a ring, from the design; in game each fragment is its own `Bullet` with the shard sprite | Nothing planned; reference only |
 | `Superpowers/Tank/tank_aggro_mark` | The mark already appears inside `tank_taunt_2_activate` / `_3_sustain` | An aggro indicator shown separately, e.g. above whichever ship the boss is targeting |
-| `Superpowers/Medic/medic_aura_boost_3_sustain`, `_4_end` | `AuraBoostFx` plays only wind-up and activate; the boosted aura ring (`medic_aura_boost`) already covers the sustain, and the ring returning to idle is the end | A visible "boost ending" beat if the aura's return to idle feels too abrupt |
-| `Superpowers/Support/support_speed_boost_3_sustain` | The party ring (`Auras/Player/support_speed_ring`) is the same picture and is what every ship shows | Nothing planned; duplicate of the ring |
+| `Superpowers/Medic/medic_aura_boost_3_sustain`, `_4_end` | Aura Boost was dropped (Session 64); `AuraBoostFx` still plays wind-up and activate as Sanctuary's press flash, and `medic_aura_boost` / `_pulse` stand in for the dome | Nothing once the Sanctuary frames land |
+| `Superpowers/Support/support_speed_boost_3_sustain`, `Auras/Player/support_speed_ring_end` | Speed Boost and its party rings were dropped (Session 64); `support_speed_ring` stands in for the Echo Gate's channel ring | Nothing once the Echo Gate frames land |
 | `Particles/particle_streak`, `particle_ring`, `particle_shard` | Only `particle_glow_dot` is used, through `FX-Additive.mat` (the Nova Beam's lightning, muzzle flare and sparks, Session 59) | Hit sparks and explosions (Stretched Billboard), tinted with `PaletteTint` (which now colors a `ParticleSystem`), per the Phase 3 "Make" list above |
 
 ### Phase 4: Powers
@@ -303,8 +303,27 @@ lands, and update it when an asset gets wired.
 
   The old one-shot `TauntFx` ring is no longer played. Sorting: the arc at −5,
   the magnet at −2, both under every bullet.
+- **Third and fourth powers done (Session 64): the Medic's Sanctuary and the
+  Support's Echo Gate.** Built first on placeholders, then the delegated
+  Claude Design art landed the same session (prompts in
+  `ArtSource/Medic/claude-design-prompts.md` and
+  `ArtSource/Support/claude-design-prompts.md`: Combat FX frames, a HUD
+  icon and the sound effects each). The PNGs are in
+  `Assets/Art/CombatFX/Superpowers/<Role>/`, imported like the Tank's
+  (192 px per unit), and assigned on `Ship.prefab`'s `ShipCombatFx`. The
+  icons `ico_sanctuary` / `ico_echogate` replaced `ico_aura` / `ico_speed`
+  in `PartyFrame.prefab`'s ability cell:
+  - `sanctuaryFrames` (5, in `ZoneFrame` order: open, idle, pulse, ending,
+    collapse; drawn with a 384 px circumradius);
+  - `echoGateFrames` (5, same order; 461 px between the end nodes),
+    `echoGateShatter`, `echoSplitSpark`, `echoTether`, `echoChannelFrames`
+    (2).
+
+  Sorting: the dome at −6, the gate and tether at −4, the split spark at
+  −3, all under every bullet. A black hole was considered for the Support
+  and dropped: it overlapped the Tank's Super Shield and Taunt magnet.
 - **Make:**
-  - **The black hole:** a core sprite, an orbiting particle spray,
+  - **The black hole (deferred, Session 64):** no power uses one now. When one does: a core sprite, an orbiting particle spray,
     `ParticleSystemForceField` (gravity plus vortex) pulling nearby
     particles into a swirl, and an implosion pull on the grid.
   - It's then generalized into a reusable "power VFX kit" (core, spray,
@@ -408,8 +427,17 @@ lands, and update it when an asset gets wired.
   The developer's four pilot frames are in `Assets/Art/CutIns/Tank/`
   (`tank_talk_1..4`: smirk, talking, shout with a cyan burst, grin holding
   the hexagon shield), with `ico_supershield` and `ico_magnet` for the
-  frame. **Next:**
-  playtest both cards, then Medic and Support.
+  frame.
+- **Medic and Support (Session 64):** their cards are wired
+  (`LUMEN-02 · MEDIC` / `SANCTUARY`, `ECHO-07 · SUPPORT` / `ECHO GATE`;
+  the shout lands as the dome or gate reaches full size, 0.3 s) and play
+  with the title only until the pilot frames exist. The Fable prompts for
+  the frames (`medic_talk_1..4`, `support_talk_1..4`, with an editable
+  character section each) are in `ArtSource/CutIns/Medic/` and
+  `ArtSource/CutIns/Support/`. Drop the PNGs into
+  `Assets/Art/CutIns/<Role>/` and assign them, with the voice clip, on
+  `PartyFrame.prefab`'s `CutInCardView` roles. **Next:** playtest all four
+  cards.
 - **Voice lines (built Session 61):** the Attacker's and Tank's cards play
   a provisional voice clip starting on the Q press (the clips are full
   lines, so not on the snap); Medic and Support with their cards. The card

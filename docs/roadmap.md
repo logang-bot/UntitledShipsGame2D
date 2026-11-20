@@ -719,6 +719,18 @@ reference docs live under `systems/`.
   the Tank's Taunt). Gamepad: Cross / A fires, L1 = superpower, R1 / L2 /
   R2 = combo. A data-only change to `PlayerControls`, plus HUD keycaps and
   role-card text. See [systems/input.md](systems/input.md).
+- **Medic Sanctuary + Support Echo Gate (Session 64)**: the last two
+  superpowers, replacing Aura Boost and Speed Boost. Sanctuary is a dome
+  left where the Medic stands (6 s: fast heals inside, enemy bullets at
+  40% speed). Echo Gate is a bar dropped above the Support (8 s: regular
+  shots crossing it split into a 3-shot fan, credited to the shooter),
+  tethered to the Support and shattering if it dies. Both share one
+  timeline (`ZonePowerTimeline`) and sound base (`ZonePowerSfx`), have
+  cut-in cards and CPU rules. Their Claude Design art, icons and sounds
+  landed the same session; the pilot frames are still open. The prompts for the art, the pilots and the
+  sound effects are in `ArtSource/`. See the
+  [spec](superpowers/specs/2026-11-19-medic-sanctuary-support-echo-gate-design.md)
+  and [systems/player-roles.md](systems/player-roles.md).
 
 ## In Progress
 
@@ -800,7 +812,10 @@ is independently testable and the one before it de-risks the next.
     dropped: Session 56; grid and particles open);
   - powers (role ability effects done: Session 55; the Attacker's Nova
     Beam done: Session 59; the Tank's Super Shield and Taunt magnet done:
-    Session 60; Medic, Support and the black hole open);
+    Session 60; the Medic's Sanctuary and Support's Echo Gate done, with
+    delegated Claude Design art: Session 64; the
+    black hole and the warping grid open, waiting for a power that needs
+    them);
   - bosses, designed in Claude Design alongside the backgrounds — **in the
     game as live 3D models** (Session 58), with every phase and telegraph
     state on the model and portraits on the Level Select cards. Warden's
@@ -808,7 +823,13 @@ is independently testable and the one before it de-risks the next.
     Phase 5;
   - anime cut-ins (route decided and the Attacker's card built on
     the developer's 4-frame art: Session 59; the Tank's card: Session 60,
-    on the developer's 4-frame art; Medic and Support open);
+    on the developer's 4-frame art; Medic and Support cards wired with
+    their titles: Session 64). **Missing: the Medic's and Support's
+    cut-in art** — the four pilot frames each (`medic_talk_1..4`,
+    `support_talk_1..4`, 1216×362, into `Assets/Art/CutIns/<Role>/`),
+    from the Fable prompts in `ArtSource/CutIns/Medic/` and
+    `ArtSource/CutIns/Support/fable-prompt.md`. Until then their cards
+    play with the title alone;
   - the pre-level screens (main menu through level select) on a shared UI
     kit;
   - the in-level HUD last (PC done: Session 57; phone layout open).
@@ -842,8 +863,8 @@ is independently testable and the one before it de-risks the next.
   - AI teammates' shots at full volume.
 
   Still open:
-  - **Missing sounds**, for a second Claude Design batch:
-    - the Medic aura and the Support speed boost;
+  - **Missing sounds**, for a second Claude Design batch (the Medic aura
+    tick and the Sanctuary and Echo Gate sets landed in Session 64):
     - a ship going down;
     - the boss phase change and defeat;
     - the Warden core's "plink" when hit while shielded;

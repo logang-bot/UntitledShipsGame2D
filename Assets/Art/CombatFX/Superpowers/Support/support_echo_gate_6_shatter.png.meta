@@ -1,0 +1,702 @@
+fileFormatVersion: 2
+guid: 2ad73b6e6a0d9a94fb724f3f066bf0a4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8142353193448794862
+    second: support_echo_gate_6_shatter_0
+  - first:
+      213: -302097915246350032
+    second: support_echo_gate_6_shatter_1
+  - first:
+      213: 1831906911585918728
+    second: support_echo_gate_6_shatter_2
+  - first:
+      213: 7681663998945784075
+    second: support_echo_gate_6_shatter_3
+  - first:
+      213: -3647352528128700560
+    second: support_echo_gate_6_shatter_4
+  - first:
+      213: -1819942045420622578
+    second: support_echo_gate_6_shatter_5
+  - first:
+      213: -7858173435009760489
+    second: support_echo_gate_6_shatter_6
+  - first:
+      213: -5302491982724002037
+    second: support_echo_gate_6_shatter_7
+  - first:
+      213: -2719078721899048898
+    second: support_echo_gate_6_shatter_8
+  - first:
+      213: -4929157280521201194
+    second: support_echo_gate_6_shatter_9
+  - first:
+      213: -8889424229205639545
+    second: support_echo_gate_6_shatter_10
+  - first:
+      213: 6235831097566158053
+    second: support_echo_gate_6_shatter_11
+  - first:
+      213: 511021794470391333
+    second: support_echo_gate_6_shatter_12
+  - first:
+      213: 8552174986611344945
+    second: support_echo_gate_6_shatter_13
+  - first:
+      213: 7540456873259883464
+    second: support_echo_gate_6_shatter_14
+  - first:
+      213: -9193303000443841224
+    second: support_echo_gate_6_shatter_15
+  - first:
+      213: 6631860977630787957
+    second: support_echo_gate_6_shatter_16
+  - first:
+      213: 2797419848001409545
+    second: support_echo_gate_6_shatter_17
+  - first:
+      213: 7899780536135685875
+    second: support_echo_gate_6_shatter_18
+  - first:
+      213: 4367451476142966610
+    second: support_echo_gate_6_shatter_19
+  - first:
+      213: 6266292746681570797
+    second: support_echo_gate_6_shatter_20
+  - first:
+      213: 6163940232754439628
+    second: support_echo_gate_6_shatter_21
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_0
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 175
+        width: 25
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eea6843e6137ff070800000000000000
+      internalID: 8142353193448794862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_1
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 104
+        width: 59
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 031fa52fb8bbecbf0800000000000000
+      internalID: -302097915246350032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_2
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 167
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80f59a651ad3c6910800000000000000
+      internalID: 1831906911585918728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_3
+      rect:
+        serializedVersion: 2
+        x: 658
+        y: 171
+        width: 32
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b01f11535b0ca9a60800000000000000
+      internalID: 7681663998945784075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_4
+      rect:
+        serializedVersion: 2
+        x: 697
+        y: 176
+        width: 24
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07f044e3330026dc0800000000000000
+      internalID: -3647352528128700560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_5
+      rect:
+        serializedVersion: 2
+        x: 241
+        y: 89
+        width: 81
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0de7e62a544eb6e0800000000000000
+      internalID: -1819942045420622578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_6
+      rect:
+        serializedVersion: 2
+        x: 344
+        y: 147
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 71305de25e822f290800000000000000
+      internalID: -7858173435009760489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_7
+      rect:
+        serializedVersion: 2
+        x: 374
+        y: 134
+        width: 27
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0f0161b2a3c966b0800000000000000
+      internalID: -5302491982724002037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_8
+      rect:
+        serializedVersion: 2
+        x: 498
+        y: 102
+        width: 74
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3052e80f44e34ad0800000000000000
+      internalID: -2719078721899048898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_9
+      rect:
+        serializedVersion: 2
+        x: 641
+        y: 155
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d9d084b19d189bb0800000000000000
+      internalID: -4929157280521201194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_10
+      rect:
+        serializedVersion: 2
+        x: 680
+        y: 148
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78e727003cb62a480800000000000000
+      internalID: -8889424229205639545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_11
+      rect:
+        serializedVersion: 2
+        x: 713
+        y: 90
+        width: 59
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ecd3c9285f1a8650800000000000000
+      internalID: 6235831097566158053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_12
+      rect:
+        serializedVersion: 2
+        x: 456
+        y: 69
+        width: 65
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52ee3e35d93871700800000000000000
+      internalID: 511021794470391333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_13
+      rect:
+        serializedVersion: 2
+        x: 618
+        y: 71
+        width: 90
+        height: 69
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13643f5c6dd6fa670800000000000000
+      internalID: 8552174986611344945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_14
+      rect:
+        serializedVersion: 2
+        x: 646
+        y: 134
+        width: 10
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cbdece339515a860800000000000000
+      internalID: 7540456873259883464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_15
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 64
+        width: 39
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 835130a11a3da6080800000000000000
+      internalID: -9193303000443841224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_16
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 102
+        width: 36
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 579357b0c6a190c50800000000000000
+      internalID: 6631860977630787957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_17
+      rect:
+        serializedVersion: 2
+        x: 391
+        y: 74
+        width: 44
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90250c7c78e62d620800000000000000
+      internalID: 2797419848001409545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_18
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 97
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f699e3fa88a1ad60800000000000000
+      internalID: 7899780536135685875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_19
+      rect:
+        serializedVersion: 2
+        x: 538
+        y: 91
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 257c1415afd4c9c30800000000000000
+      internalID: 4367451476142966610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_20
+      rect:
+        serializedVersion: 2
+        x: 562
+        y: 74
+        width: 67
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de5df888d0856f650800000000000000
+      internalID: 6266292746681570797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_6_shatter_21
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 71
+        width: 29
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc52116dbf6ba8550800000000000000
+      internalID: 6163940232754439628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      support_echo_gate_6_shatter_0: 8142353193448794862
+      support_echo_gate_6_shatter_1: -302097915246350032
+      support_echo_gate_6_shatter_10: -8889424229205639545
+      support_echo_gate_6_shatter_11: 6235831097566158053
+      support_echo_gate_6_shatter_12: 511021794470391333
+      support_echo_gate_6_shatter_13: 8552174986611344945
+      support_echo_gate_6_shatter_14: 7540456873259883464
+      support_echo_gate_6_shatter_15: -9193303000443841224
+      support_echo_gate_6_shatter_16: 6631860977630787957
+      support_echo_gate_6_shatter_17: 2797419848001409545
+      support_echo_gate_6_shatter_18: 7899780536135685875
+      support_echo_gate_6_shatter_19: 4367451476142966610
+      support_echo_gate_6_shatter_2: 1831906911585918728
+      support_echo_gate_6_shatter_20: 6266292746681570797
+      support_echo_gate_6_shatter_21: 6163940232754439628
+      support_echo_gate_6_shatter_3: 7681663998945784075
+      support_echo_gate_6_shatter_4: -3647352528128700560
+      support_echo_gate_6_shatter_5: -1819942045420622578
+      support_echo_gate_6_shatter_6: -7858173435009760489
+      support_echo_gate_6_shatter_7: -5302491982724002037
+      support_echo_gate_6_shatter_8: -2719078721899048898
+      support_echo_gate_6_shatter_9: -4929157280521201194
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

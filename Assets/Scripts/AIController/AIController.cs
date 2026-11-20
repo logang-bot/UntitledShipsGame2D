@@ -202,18 +202,19 @@ public class AIController : MonoBehaviour
     /// <summary>
     /// Tank's Taunt is decided per boss by tactics.ShouldTaunt (see
     /// AIBossTactics and its subclasses) and its Super Shield by its own
-    /// shield (AIControllerTank); every other role retries every
-    /// frame, which the ability's own cooldown gate makes safe. Attacker
-    /// always requests the slot that continues its combo, so bots play a
-    /// perfect rotation paced by comboAttackCooldown. TEMPORARY for Medic:
-    /// fires the aura boost the instant it's off cooldown regardless of
-    /// whether anyone needs it - flagged for rework once the aura AI is
-    /// revisited (see docs/systems/bosses/marauder-boss.md's "AI teammate behavior").
+    /// shield (AIControllerTank). Attacker always requests the slot that
+    /// continues its combo, so bots play a perfect rotation paced by
+    /// comboAttackCooldown. The Medic casts Sanctuary when enough hurt allies
+    /// are close, the Support its Echo Gate when the boss and an ally line up
+    /// under it; the ability's own cooldown gate makes retrying every frame safe.
     /// </summary>
     private void UpdateAbilityUsage()
     {
         if (role.role == PlayerRole.Attacker) attacker.UseAbilities();
         else if (role.role == PlayerRole.Tank) tank.UseAbilities();
-        else ability.TryUseAbility();
+        else if (WantsPlacedSuperpower()) ability.TryUseAbility();
     }
+
+    private bool WantsPlacedSuperpower() =>
+        role.role == PlayerRole.Medic ? medic.ShouldCastSanctuary() : support.ShouldCastEchoGate();
 }
