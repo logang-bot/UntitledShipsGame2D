@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// The Attacker's combo box (design: HUD Party Frame): the 1-2-3 keycaps
+// The Attacker's combo box (design: HUD Party Frame): the E-R-T keycaps
 // (landed = filled role color, next = white edge, rest = slate) and its
 // headline, NEXT ▸ n / COMBO ✓ / BROKEN. Hidden on every other role.
 public class ComboKeysView : MonoBehaviour

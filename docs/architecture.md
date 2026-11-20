@@ -28,7 +28,7 @@ classes it alone constructs (e.g. `MarauderBoss/` holds `MarauderBoss.cs`
 plus `MarauderBossMovement`/`Shockwave`/`Attacks`/`Aggro`/its two
 `[System.Serializable]` settings classes; `HalcyonBoss/` holds
 `HalcyonBoss.cs` plus its three sibling `MonoBehaviour`s;
-`AIController/`/`PlayerAbility/` follow the same shape). The Session 54
+`AIController/`/`PlayerAbility/` follow the same shape; `AttackerBeam/`, Session 59, holds `AttackerBeam.cs` plus `BeamColumnDamage`, its visual and lightning components and two small structs). The Session 54
 menus added ~60 small one-purpose files (the `Menu*`, `Palette*`,
 `Role*`/`Level*` view, `TagChip*`, `Join*` families), bringing it to ~140
 scripts. They stayed flat because they're shared by several screens
@@ -43,7 +43,9 @@ data and lookups: static lookup tables (`PlayerRoleStats`, `NeonPalette`,
 `RolePalette`, the `*Looks`/`*Styles`/`*Text` presets), static carriers
 (`PartyRoleAssignment`, `CoOpRoster`, `GameModeSelection`,
 `LevelSelection`, `MenuTransitionState`), pure helpers (`MenuTween`,
-`MenuEase`, `RoleStatScale`, `SquadLineup`, `JoinPressRouter`), small
+`MenuEase`, `RoleStatScale`, `SquadLineup`, `JoinPressRouter`,
+`SfxPlayback`), the per-clip sound cap `SfxVoiceLimit` (a static registry
+like `Bullet.Active`; see `systems/audio.md`), small
 value structs (`PaletteSwatch`, `NeonFrameLook`, `TweenSpec`…), and the
 plain helper classes a feature folder's `MonoBehaviour` constructs. There are no component
 hierarchies. The only interfaces or base classes are the two documented
@@ -231,7 +233,7 @@ input path plus one AI path.
 
 ## Non-Destructive Buff Pattern
 
-Temporary effects (Support's Speed Boost) are applied via separate
+Temporary effects (Support's Speed Boost until Session 64; the card layer's passives next) are applied via separate
 runtime-only multiplier fields (`speedBuffMultiplier`,
 `fireRateBuffMultiplier` on `PlayerController`) that are read at the point
 of use, rather than ever being multiplied into the base stat and later

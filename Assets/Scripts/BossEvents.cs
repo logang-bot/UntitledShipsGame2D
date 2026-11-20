@@ -38,9 +38,10 @@ public static class BossEvents
         if (staticField != null) staticField.ships = ships;
     }
 
-    public static void Taunt(MonoBehaviour boss, GameObject taunter)
+    /// <summary>Holds the boss on the taunter for <paramref name="seconds"/> (the Tank's tauntSeconds).</summary>
+    public static void Taunt(MonoBehaviour boss, GameObject taunter, float seconds)
     {
-        if (boss is MarauderBoss marauder) marauder.TauntedBy(taunter);
-        if (boss is WardenBoss warden) warden.TauntedBy(taunter);
+        if (boss is MarauderBoss marauder) marauder.TauntedBy(taunter, seconds);
+        if (boss is WardenBoss warden) warden.TauntedBy(taunter, seconds);
     }
 }

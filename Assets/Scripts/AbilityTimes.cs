@@ -1,8 +1,8 @@
 using UnityEngine;
 
 // The raw timers behind one ship's ability cell, read off PlayerAbility so
-// AbilityCellState can stay a pure mapping. "Active" is the ability's own
-// running effect (Speed Boost, Aura Boost); instant abilities have none.
+// AbilityCellState can stay a pure mapping. "Active" is the superpower's own
+// running effect (Nova Beam, Super Shield, Sanctuary, Echo Gate).
 public struct AbilityTimes
 {
     public float cooldownRemaining;
@@ -20,16 +20,22 @@ public struct AbilityTimes
         down = down,
     };
 
-    private static float ActiveRemaining(PlayerAbility ability, PlayerRole role)
+    public static float ActiveRemaining(PlayerAbility ability, PlayerRole role) => role switch
     {
-        if (role == PlayerRole.Support && ability.IsSpeedBoostActive) return ability.SpeedBoostRemaining;
-        if (role == PlayerRole.Medic && ability.IsAuraBoosted) return ability.AuraBoostRemaining;
-        return 0f;
-    }
+        PlayerRole.Tank => ability.Tank.SuperShieldRemaining,
+        PlayerRole.Medic => ability.Medic.Sanctuary.Remaining,
+        PlayerRole.Support => ability.Support.Gate.Remaining,
+        _ => AttackerBeamRemaining(ability),
+    };
 
-    private static float ActiveTotal(PlayerAbility ability, PlayerRole role)
+    private static float AttackerBeamRemaining(PlayerAbility ability) =>
+        ability.AttackerCastElapsed >= 0f ? Mathf.Max(0f, ability.beam.TotalSeconds - ability.AttackerCastElapsed) : 0f;
+
+    private static float ActiveTotal(PlayerAbility ability, PlayerRole role) => role switch
     {
-        if (role == PlayerRole.Support) return ability.speedBoostDuration;
-        return role == PlayerRole.Medic ? ability.auraBoostDuration : 0f;
-    }
+        PlayerRole.Tank => ability.tankPowers.superShieldSeconds,
+        PlayerRole.Medic => ability.medicPowers.timing.seconds,
+        PlayerRole.Support => ability.supportPowers.timing.seconds,
+        _ => ability.beam.TotalSeconds,
+    };
 }

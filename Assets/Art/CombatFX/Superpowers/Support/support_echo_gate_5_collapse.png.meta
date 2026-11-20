@@ -1,0 +1,494 @@
+fileFormatVersion: 2
+guid: b59e19b15937c1c419a70e10c1bd5e34
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 5343362512327182213
+    second: support_echo_gate_5_collapse_0
+  - first:
+      213: 853474265433354206
+    second: support_echo_gate_5_collapse_1
+  - first:
+      213: -2727869812962390476
+    second: support_echo_gate_5_collapse_2
+  - first:
+      213: 1223491625709818282
+    second: support_echo_gate_5_collapse_3
+  - first:
+      213: -7698984787767203247
+    second: support_echo_gate_5_collapse_4
+  - first:
+      213: 6551339958525305197
+    second: support_echo_gate_5_collapse_5
+  - first:
+      213: 394398591576346133
+    second: support_echo_gate_5_collapse_6
+  - first:
+      213: -8272898286296262688
+    second: support_echo_gate_5_collapse_7
+  - first:
+      213: -3334224570449211045
+    second: support_echo_gate_5_collapse_8
+  - first:
+      213: 6627836221708421698
+    second: support_echo_gate_5_collapse_9
+  - first:
+      213: 1718449283717092469
+    second: support_echo_gate_5_collapse_10
+  - first:
+      213: -5375418204936880049
+    second: support_echo_gate_5_collapse_11
+  - first:
+      213: 3499311772322123043
+    second: support_echo_gate_5_collapse_12
+  - first:
+      213: 5644614078069222035
+    second: support_echo_gate_5_collapse_13
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_0
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 81
+        width: 159
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 587866505ef672a40800000000000000
+      internalID: 5343362512327182213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_1
+      rect:
+        serializedVersion: 2
+        x: 397
+        y: 114
+        width: 11
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: edfa710925628db00800000000000000
+      internalID: 853474265433354206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_2
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 114
+        width: 21
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43e8dd4abd8a42ad0800000000000000
+      internalID: -2727869812962390476
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_3
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 114
+        width: 21
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa15918b627baf010800000000000000
+      internalID: 1223491625709818282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_4
+      rect:
+        serializedVersion: 2
+        x: 469
+        y: 122
+        width: 11
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15aeff16026b72590800000000000000
+      internalID: -7698984787767203247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_5
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 114
+        width: 19
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6129b65bf80bea50800000000000000
+      internalID: 6551339958525305197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_6
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 114
+        width: 13
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51e82deed6f297500800000000000000
+      internalID: 394398591576346133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_7
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 114
+        width: 11
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e79f5e17d2c03d80800000000000000
+      internalID: -8272898286296262688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_8
+      rect:
+        serializedVersion: 2
+        x: 527
+        y: 114
+        width: 21
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b51defc2b647ab1d0800000000000000
+      internalID: -3334224570449211045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_9
+      rect:
+        serializedVersion: 2
+        x: 544
+        y: 122
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24ac5688dedcafb50800000000000000
+      internalID: 6627836221708421698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_10
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 114
+        width: 21
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5745b70d48829d710800000000000000
+      internalID: 1718449283717092469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_11
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 114
+        width: 21
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f40c19f6f9da665b0800000000000000
+      internalID: -5375418204936880049
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_12
+      rect:
+        serializedVersion: 2
+        x: 611
+        y: 114
+        width: 21
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32d4a9b448d009030800000000000000
+      internalID: 3499311772322123043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: support_echo_gate_5_collapse_13
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 81
+        width: 151
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39a2c79f892b55e40800000000000000
+      internalID: 5644614078069222035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      support_echo_gate_5_collapse_0: 5343362512327182213
+      support_echo_gate_5_collapse_1: 853474265433354206
+      support_echo_gate_5_collapse_10: 1718449283717092469
+      support_echo_gate_5_collapse_11: -5375418204936880049
+      support_echo_gate_5_collapse_12: 3499311772322123043
+      support_echo_gate_5_collapse_13: 5644614078069222035
+      support_echo_gate_5_collapse_2: -2727869812962390476
+      support_echo_gate_5_collapse_3: 1223491625709818282
+      support_echo_gate_5_collapse_4: -7698984787767203247
+      support_echo_gate_5_collapse_5: 6551339958525305197
+      support_echo_gate_5_collapse_6: 394398591576346133
+      support_echo_gate_5_collapse_7: -8272898286296262688
+      support_echo_gate_5_collapse_8: -3334224570449211045
+      support_echo_gate_5_collapse_9: 6627836221708421698
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

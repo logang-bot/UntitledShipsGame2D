@@ -4,8 +4,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerAbility : MonoBehaviour
 {
-    [Header("Tank - Taunt")]
-    public float tauntCooldown = 5f;
+    [Header("Tank - Taunt (E), Super Shield (Q) and shield arc")]
+    public TankAbilitySettings tankPowers = new TankAbilitySettings();
     public UnityEvent OnTaunt;
 
     [Header("Medic - Aura")]
@@ -17,7 +17,7 @@ public class PlayerAbility : MonoBehaviour
     public Transform[] allies;
     /// <summary>
     /// Ship colliders are ~0.6 world units across, and ship-vs-ship overlap
-    /// resolution (PlayerController.ResolveShipCollisions) never lets two
+    /// resolution (ShipCollisionResolver) never lets two
     /// ships get closer than roughly that - so this must stay comfortably
     /// above ~0.6 or the Medic can never physically get an ally in range.
     /// </summary>
@@ -26,38 +26,21 @@ public class PlayerAbility : MonoBehaviour
     public int auraHealPerTick = 1;
     public int auraShieldPerTick = 1;
 
-    [Header("Medic - Aura Boost (E ability)")]
-    /// <summary>Drastically larger while active - halved from 3, was flagged overpowered.</summary>
-    public float auraBoostRadius = 2.0f;
-    /// <summary>Much faster while active.</summary>
-    public float auraBoostTickInterval = 0.25f;
-    public float auraBoostDuration = 4f;
-    /// <summary>Must stay >= duration, same constraint as Support's buff.</summary>
-    public float auraBoostCooldown = 10f;
-
-    [Header("Medic - Aura Visual")]
-    /// <summary>Seconds per half-beat of the boosted ring's pulse (boost / boost-peak sprites).</summary>
-    public float auraPulseInterval = 0.25f;
     public PaletteSwatch healFlashColor = new PaletteSwatch(PaletteColor.MedicSoft);
 
-    [Header("Support - Speed Boost")]
-    /// <summary>Up from 8s - flagged overpowered, round placeholder, tunable.</summary>
-    public float speedBoostCooldown = 15f;
-    public float speedBoostDuration = 4f;
-    /// <summary>Applies to move speed AND fire rate, all 4 allies.</summary>
-    public float speedBoostMultiplier = 1.5f;
+    [Header("Medic - Sanctuary (Q)")]
+    public MedicSanctuarySettings medicPowers = new MedicSanctuarySettings();
 
-    [Header("Attacker - Big Shot")]
-    public float bigShotCooldown = 3f;
-    public float bigShotWidthMultiplier = 3f;
-    /// <summary>Live multiplier of the caster's current fireDamage, not a flat number.</summary>
-    public float bigShotDamageMultiplier = 2f;
-    public float recoilForce = 6f;
+    [Header("Support - Echo Gate (Q)")]
+    public SupportEchoGateSettings supportPowers = new SupportEchoGateSettings();
+
+    [Header("Attacker - Nova Beam")]
+    public AttackerBeamSettings beam = new AttackerBeamSettings();
 
     [Header("Attacker - Combo")]
     /// <summary>
-    /// Per-slot cooldown on Combo1/2/3 - independent of bigShotCooldown
-    /// above. This is what stops mashing a single key instead of actually
+    /// Per-slot cooldown on Combo1/2/3 - independent of the Nova Beam's
+    /// cooldown above. This is what stops mashing a single key instead of actually
     /// playing the 1->2->3 rotation, not a timing/order requirement.
     /// </summary>
     public float comboAttackCooldown = 0.5f;
@@ -65,7 +48,7 @@ public class PlayerAbility : MonoBehaviour
     /// Damage multiplier for each step of a correctly-played rotation, index
     /// 0 = combo slot 1. The 3rd entry is the finisher bonus for actually
     /// completing the sequence. Live multiplier of the caster's current
-    /// fireDamage, same convention as bigShotDamageMultiplier.
+    /// fireDamage, same convention as beam.tickDamageMultiplier.
     /// </summary>
     public float[] comboStepDamageMultipliers = { 1f, 1.3f, 1.8f };
     /// <summary>Bullet width per correct combo step, purely visual escalation toward the finisher.</summary>
@@ -77,19 +60,10 @@ public class PlayerAbility : MonoBehaviour
     /// </summary>
     public float comboBreakDamageMultiplier = 0.5f;
 
-    [Header("Tank - Shield Arc")]
-    /// <summary>Arc width = Tank's own collider width x this.</summary>
-    public float shieldArcWidthMultiplier = 3f;
-    /// <summary>Bulge/thickness of the curve.</summary>
-    public float shieldArcHeight = 0.4f;
-    /// <summary>Local offset above the ship.</summary>
-    public float shieldArcYOffset = 0.3f;
-
     private PlayerRoleComponent roleComponent;
     private PlayerController playerController;
     private PlayerHealth playerHealth;
     private float nextAbilityTime;
-    private PlayerAbilityPartyBuffRing partyBuffRing;
     private PlayerAbilityTank tank;
     private PlayerAbilityMedic medic;
     private PlayerAbilitySupport support;
@@ -97,19 +71,39 @@ public class PlayerAbility : MonoBehaviour
     private ShipCombatFx fx;
 
     public float CooldownRemaining => Mathf.Max(0f, nextAbilityTime - Time.time);
-    public bool IsSpeedBoostActive => support.IsActive;
-    public float SpeedBoostRemaining => support.Remaining;
-    public bool IsAuraBoosted => medic.IsBoosted;
-    public float AuraBoostRemaining => medic.BoostRemaining;
     public PlayerController PlayerController => playerController;
+    public PlayerHealth Health => playerHealth;
     public ShipCombatFx Fx => fx;
     public Color TintColor => roleComponent.Stats.tintColor;
-    // Which combo key (1/2/3) continues the rotation correctly right now -
+    // Which combo slot (1/2/3, keys E/R/T) continues the rotation correctly right now -
     // read by the HUD and by AIController so Attacker bots always feed
     // TryComboAttack() the right slot.
     public int AttackerComboExpectedSlot => attacker.ExpectedSlot;
     public float AttackerComboBrokenAt => attacker.LastBreakTime;
     public float AttackerComboFinishedAt => attacker.LastFinishTime;
+    /// <summary>Seconds into the Nova Beam cast, or -1 when idle.</summary>
+    public float AttackerCastElapsed => attacker.CastElapsed;
+    public PlayerAbilityTank Tank => tank;
+    public PlayerAbilityMedic Medic => medic;
+    public PlayerAbilitySupport Support => support;
+
+    /// <summary>Seconds into this ship's superpower (the cut-in card's clock), or -1 when idle.</summary>
+    public float SuperpowerElapsed => roleComponent.role switch
+    {
+        PlayerRole.Tank => tank.SuperShieldElapsed,
+        PlayerRole.Medic => medic.Sanctuary.Elapsed,
+        PlayerRole.Support => support.Gate.Elapsed,
+        _ => attacker.CastElapsed,
+    };
+
+    /// <summary>When the superpower lands, for the cut-in's shout: the beam firing, or the wall, dome or gate at full size.</summary>
+    public float SuperpowerSnapSeconds => roleComponent.role switch
+    {
+        PlayerRole.Tank => tankPowers.growSeconds,
+        PlayerRole.Medic => medicPowers.timing.openSeconds,
+        PlayerRole.Support => supportPowers.timing.openSeconds,
+        _ => beam.windupSeconds,
+    };
 
     public string AbilityName => PlayerAbilityLabels.NameFor(roleComponent.role);
     public string StatusText => PlayerAbilityLabels.StatusFor(this, roleComponent.role);
@@ -118,7 +112,6 @@ public class PlayerAbility : MonoBehaviour
     {
         CacheComponents();
         CreateHelpers();
-        partyBuffRing.Create();
     }
 
     private void CacheComponents()
@@ -135,7 +128,6 @@ public class PlayerAbility : MonoBehaviour
         medic = new PlayerAbilityMedic(this);
         support = new PlayerAbilitySupport(this);
         attacker = new PlayerAbilityAttacker(this);
-        partyBuffRing = new PlayerAbilityPartyBuffRing(this);
     }
 
     /// <summary>
@@ -143,13 +135,12 @@ public class PlayerAbility : MonoBehaviour
     /// role-dependent setup below needs the real assigned role, which a
     /// dynamically-Instantiate()'d ship (co-op spawner) only has after
     /// Instantiate() returns, i.e. after Awake() already ran. The ref
-    /// caching and party-buff ring above stay in Awake since they're
-    /// role-agnostic.
+    /// caching and helpers above stay in Awake since they're role-agnostic.
     /// </summary>
     void Start()
     {
         if (roleComponent.role == PlayerRole.Medic) medic.CreateAuraRing();
-        if (roleComponent.role == PlayerRole.Tank) tank.CreateShieldArc();
+        if (roleComponent.role == PlayerRole.Tank) tank.Build();
         nextAbilityTime = Time.time + CooldownFor(roleComponent.role);
     }
 
@@ -162,26 +153,18 @@ public class PlayerAbility : MonoBehaviour
     {
         switch (role)
         {
-            case PlayerRole.Tank: return tauntCooldown;
-            case PlayerRole.Medic: return auraBoostCooldown;
-            case PlayerRole.Support: return speedBoostCooldown;
-            case PlayerRole.Attacker: return bigShotCooldown;
+            case PlayerRole.Tank: return tankPowers.superShieldCooldown;
+            case PlayerRole.Medic: return medicPowers.cooldown;
+            case PlayerRole.Support: return supportPowers.cooldown;
+            case PlayerRole.Attacker: return beam.cooldown;
             default: return 0f;
         }
     }
 
     void Update()
     {
-        if (roleComponent.role != PlayerRole.Medic) return;
-        medic.UpdateRing();
-        medic.CheckTick();
+        if (roleComponent.role == PlayerRole.Medic) medic.CheckTick();
     }
-
-    /// <summary>
-    /// Called on every ally by Support's speed boost - shows/hides this
-    /// ship's party-buff ring (always Support purple, per the design).
-    /// </summary>
-    public void SetPartyBuffVisual(bool active) => partyBuffRing?.Show(active);
 
     public void OnAbility(InputValue value)
     {
@@ -212,9 +195,18 @@ public class PlayerAbility : MonoBehaviour
         }
     }
 
+    /// <summary>Combo1 (key E) is the Attacker's first combo slot and the Tank's Taunt; each call is role-guarded.</summary>
     public void OnCombo1(InputValue value)
     {
-        if (value.isPressed) TryComboAttack(1);
+        if (!value.isPressed) return;
+        TryComboAttack(1);
+        TryTaunt();
+    }
+
+    /// <summary>Non-input entry point for the Tank's Taunt, so AIController uses the same cooldown gate.</summary>
+    public void TryTaunt()
+    {
+        if (roleComponent.role == PlayerRole.Tank) tank.Taunt.TryTaunt();
     }
 
     public void OnCombo2(InputValue value)

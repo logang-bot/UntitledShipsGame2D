@@ -10,9 +10,11 @@ public class PlayerHealth : MonoBehaviour
 
     private int currentHealth;
     private int currentShield;
+    private float invulnerableUntil = float.NegativeInfinity;
 
     public int CurrentHealth => currentHealth;
     public int CurrentShield => currentShield;
+    public bool IsInvulnerable => Time.time < invulnerableUntil;
 
     // Start, not Awake: see PlayerRoleComponent.cs's Start() comment - a
     // dynamically-Instantiate()'d ship (co-op spawner) only has its role
@@ -43,24 +45,30 @@ public class PlayerHealth : MonoBehaviour
         currentShield = Mathf.Min(currentShield + amount, maxShield);
     }
 
+    /// <summary>
+    /// Ignores every hit for the given seconds (the Attacker's Nova Beam cast).
+    /// Extends, never shortens, a window that is already running.
+    /// </summary>
+    public void GrantInvulnerability(float seconds)
+    {
+        invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + seconds);
+    }
+
     public void TakeDamage(int amount)
     {
-        // Shield absorbs first; only the overflow touches health.
-        int remaining = amount;
-        if (currentShield > 0)
-        {
-            int absorbed = Mathf.Min(currentShield, remaining);
-            currentShield -= absorbed;
-            remaining -= absorbed;
-        }
+        if (IsInvulnerable) return;
+        int overflow = AbsorbWithShield(amount);
+        if (overflow > 0) currentHealth -= overflow;
+        if (currentHealth <= 0) Die();
+        else OnDamaged?.Invoke();
+    }
 
-        if (remaining > 0)
-            currentHealth -= remaining;
-
-        if (currentHealth <= 0)
-            Die();
-        else
-            OnDamaged?.Invoke();
+    /// <summary>The shield soaks the hit first; returns what spills over to health.</summary>
+    private int AbsorbWithShield(int amount)
+    {
+        int absorbed = Mathf.Min(currentShield, amount);
+        currentShield -= absorbed;
+        return amount - absorbed;
     }
 
     void Die()

@@ -89,4 +89,8 @@ public enum PaletteColor
     WardenIce = 111,
     WardenPale = 112,
     WardenSocket = 113,
+    BeamCore = 114,
+    BeamAmber = 115,
+    BeamRedGold = 116,
+    BeamArc = 117,
 }

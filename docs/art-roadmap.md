@@ -25,7 +25,7 @@ Two rules keep the parallel work safe:
 | Blender | **Optional, not a foundation.** Only for refining a 3D model. | It was the biggest learning cost in the old plan, and none of the current designs need it. |
 | How they're lit | Ships: a custom unlit `ShipMesh.shader` (fixed-direction Lambert from mesh normals, plus HDR emission for the neon). Everything else: URP **2D Renderer**, `Sprite-Lit-Default`, `Light2D`. Bloom does most of the glow. | URP's `Mesh2D-Lit` lights meshes only through normal-map textures and ignores mesh normals, so the models would look flat. |
 | Effects and powers | Neon style inspired by the Tuts+ "Neon Vector Shooter" (Shape Blaster): bloom, additive particles stretched by speed, a warping background grid, black-hole-style powers | The effects are what sell the neon look. They're independent of how the ships are made. |
-| Anime ability cut-ins | **Decided at the start of Phase 6**, between two routes, neither needing Blender: **2D illustrated** characters animated in Unity, or **VRoid → Unity** through UniVRM and its toon shader (MToon). | 2D matches 2D ships, and it's how Touhou's own spell-card cut-ins work. VRoid → Unity keeps the anime-3D look while skipping Blender entirely. |
+| Anime ability cut-ins | **2D illustrated, key poses** (Session 59): layered character art, animated in Unity with anime limited animation (wind-up pose → flash and smear → pointing pose, plus blink, hair sway, push-in). Drawn with **Claude Fable 5.2** in a claude.ai artifact as layered SVG, exported as PNG layers; a commissioned illustrator may replace it for release. Rigging the same layers (Spine or Unity 2D Animation) is the upgrade path. | Fits the small strip at the screen's edge where the card plays, costs 2–3 drawings per character, and is how anime itself does it. VRoid / ZZZ-style 3D was the most work, and its detail is lost in a 608×181 card. |
 | Mobile | **One project** with per-platform quality settings | No duplicated code, and it keeps crossplay possible. Sprites cost a phone the same however they were made. |
 | Priority | Ships, bosses, effects and powers first; then the pre-level screens (main menu through level select); then the in-level HUD | The screens before the level show the ships and bosses, so they come after those exist. |
 | Screens and HUD style | One shared **UI kit**, first from the `Neon Fleet HUD` design and built from the `Pre-Fight Menus` design (Session 54, see `systems/ui-kit.md`): dark panels, neon role-colored frames, **Chakra Petch** and **JetBrains Mono** fonts. Every menu and the HUD use it. | One look across all screens, built once. Both fonts are free Google Fonts (SIL Open Font License), usable in Unity through TextMesh Pro. |
@@ -270,14 +270,60 @@ lands, and update it when an asset gets wired.
 | `Bullets/Wave/wave_bullet_m`, `wave_bullet_l` | Wave enemies fire the small orb | Tougher wave enemy types |
 | `Bullets/*/*_fragment_ring` (Marauder, Wave; plus Halcyon and Warden above) | A preview of 8 shards in a ring, from the design; in game each fragment is its own `Bullet` with the shard sprite | Nothing planned; reference only |
 | `Superpowers/Tank/tank_aggro_mark` | The mark already appears inside `tank_taunt_2_activate` / `_3_sustain` | An aggro indicator shown separately, e.g. above whichever ship the boss is targeting |
-| `Superpowers/Medic/medic_aura_boost_3_sustain`, `_4_end` | `AuraBoostFx` plays only wind-up and activate; the boosted aura ring (`medic_aura_boost`) already covers the sustain, and the ring returning to idle is the end | A visible "boost ending" beat if the aura's return to idle feels too abrupt |
-| `Superpowers/Support/support_speed_boost_3_sustain` | The party ring (`Auras/Player/support_speed_ring`) is the same picture and is what every ship shows | Nothing planned; duplicate of the ring |
-| `Particles/particle_glow_dot`, `particle_streak`, `particle_ring`, `particle_shard` | No particle systems yet. `FX-Additive.mat` (URP Particles/Unlit, additive, glow dot as its texture) is ready | Hit sparks and explosions (Stretched Billboard), tinted with Start Color, per the Phase 3 "Make" list above |
+| `Superpowers/Medic/medic_aura_boost_3_sustain`, `_4_end` | Aura Boost was dropped (Session 64); `AuraBoostFx` still plays wind-up and activate as Sanctuary's press flash, and `medic_aura_boost` / `_pulse` stand in for the dome | Nothing once the Sanctuary frames land |
+| `Superpowers/Support/support_speed_boost_3_sustain`, `Auras/Player/support_speed_ring_end` | Speed Boost and its party rings were dropped (Session 64); `support_speed_ring` stands in for the Echo Gate's channel ring | Nothing once the Echo Gate frames land |
+| `Particles/particle_streak`, `particle_ring`, `particle_shard` | Only `particle_glow_dot` is used, through `FX-Additive.mat` (the Nova Beam's lightning, muzzle flare and sparks, Session 59) | Hit sparks and explosions (Stretched Billboard), tinted with `PaletteTint` (which now colors a `ParticleSystem`), per the Phase 3 "Make" list above |
 
 ### Phase 4: Powers
 
+- **First power done (Session 59): the Attacker's Nova Beam.** A
+  hand-written additive HDR shader (`Assets/Art/VFX/AttackerBeam.shader`
+  on a stretched quad): a white core, edges drifting through Attacker
+  orange → `BeamAmber` → `BeamRedGold`, noise streaks flowing up, a rippling
+  width. Plus `BeamLightning` (jagged LineRenderer arcs up both edges and
+  flickering side branches) and two particle systems (muzzle flare, and
+  impact sparks emitted where the beam meets each target), on
+  `FX-Additive.mat`. Sorting −2 / −1 (sparks 8), so enemy bullets stay on
+  top. The first brightness pass (core × 3) bloomed into a flat white
+  column that washed out the playfield; × 1.3 core and × 1.6 edges keep the
+  colors. Prefab: `Assets/Prefabs/FX/AttackerBeam.prefab`.
+- **Second power done (Session 60): the Tank's Super Shield and Taunt
+  magnet.** Both are Claude Design Combat FX sprites (prompt in
+  `ArtSource/Tank/claude-design-prompts.md`), in
+  `Assets/Art/CombatFX/Superpowers/Tank/`:
+  - **Super Shield:** `tank_supershield_*` (1024×512): expand, idle + pulse
+    + two plasma idles (a 4-frame shimmer), block flash, ending flicker and
+    collapse. Its end caps sit 900 px apart, 64 px below the image's centre
+    (`ShieldArcSpriteFit.Super`), drawn at the full size while the
+    collider grows under it. Drawn for 2.5×; since the shield went to
+    3.5× (later in Session 60) the sprite is stretched 1.4× to fit, so
+    check it still looks sharp in play.
+  - **Taunt magnet:** `tank_taunt_magnet_*` (512×512): activate, a 3-frame
+    inward-pull loop, end.
+
+  The old one-shot `TauntFx` ring is no longer played. Sorting: the arc at −5,
+  the magnet at −2, both under every bullet.
+- **Third and fourth powers done (Session 64): the Medic's Sanctuary and the
+  Support's Echo Gate.** Built first on placeholders, then the delegated
+  Claude Design art landed the same session (prompts in
+  `ArtSource/Medic/claude-design-prompts.md` and
+  `ArtSource/Support/claude-design-prompts.md`: Combat FX frames, a HUD
+  icon and the sound effects each). The PNGs are in
+  `Assets/Art/CombatFX/Superpowers/<Role>/`, imported like the Tank's
+  (192 px per unit), and assigned on `Ship.prefab`'s `ShipCombatFx`. The
+  icons `ico_sanctuary` / `ico_echogate` replaced `ico_aura` / `ico_speed`
+  in `PartyFrame.prefab`'s ability cell:
+  - `sanctuaryFrames` (5, in `ZoneFrame` order: open, idle, pulse, ending,
+    collapse; drawn with a 384 px circumradius);
+  - `echoGateFrames` (5, same order; 461 px between the end nodes),
+    `echoGateShatter`, `echoSplitSpark`, `echoTether`, `echoChannelFrames`
+    (2).
+
+  Sorting: the dome at −6, the gate and tether at −4, the split spark at
+  −3, all under every bullet. A black hole was considered for the Support
+  and dropped: it overlapped the Tank's Super Shield and Taunt magnet.
 - **Make:**
-  - **The black hole:** a core sprite, an orbiting particle spray,
+  - **The black hole (deferred, Session 64):** no power uses one now. When one does: a core sprite, an orbiting particle spray,
     `ParticleSystemForceField` (gravity plus vortex) pulling nearby
     particles into a swirl, and an implosion pull on the grid.
   - It's then generalized into a reusable "power VFX kit" (core, spray,
@@ -364,7 +410,40 @@ lands, and update it when an asset gets wired.
 
 ### Phase 6: Anime cut-ins
 
-- **Decide first:** make a quick mockup of one character's cut-in each way,
+- **Started (Session 59), Attacker demo:** route decided (2D illustrated,
+  key poses; see Decisions). Pressing E now plays the cut-in card over the
+  Attacker's party frame, synced to the new **Nova Beam** (see Phase 4).
+  **The final art is in:** instead of layers, the developer made four
+  static whole-character frames (`Assets/Art/CutIns/Attacker/
+  attacker_talk_1..4.png`: smirk, talking, shout with fingertip flash,
+  smirk with glowing suit). The card flips the two talk frames until the
+  beam fires, then shows the shout (with flash, push-in and shake), then
+  holds the last frame. Static frames mean no hair sway or blink. Design:
+  `docs/superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md`.
+  The card and its scripts are in `systems/hud-layout.md`.
+- **Tank (Session 60):** the card is per role now (`CutInRoleArt`), and
+  the Tank's (`AEGIS-04 · TANK`, `SUPER SHIELD`, Tank cyan) plays with the
+  Super Shield, its shout landing as the wall reaches full size (0.4 s).
+  The developer's four pilot frames are in `Assets/Art/CutIns/Tank/`
+  (`tank_talk_1..4`: smirk, talking, shout with a cyan burst, grin holding
+  the hexagon shield), with `ico_supershield` and `ico_magnet` for the
+  frame.
+- **Medic and Support (Session 64):** their cards are wired
+  (`LUMEN-02 · MEDIC` / `SANCTUARY`, `ECHO-07 · SUPPORT` / `ECHO GATE`;
+  the shout lands as the dome or gate reaches full size, 0.3 s) and play
+  with the title only until the pilot frames exist. The Fable prompts for
+  the frames (`medic_talk_1..4`, `support_talk_1..4`, with an editable
+  character section each) are in `ArtSource/CutIns/Medic/` and
+  `ArtSource/CutIns/Support/`. Drop the PNGs into
+  `Assets/Art/CutIns/<Role>/` and assign them, with the voice clip, on
+  `PartyFrame.prefab`'s `CutInCardView` roles. **Next:** playtest all four
+  cards.
+- **Voice lines (built Session 61):** the Attacker's and Tank's cards play
+  a provisional voice clip starting on the Q press (the clips are full
+  lines, so not on the snap); Medic and Support with their cards. The card
+  now leaves 1.5 s after the snap (`slideOutAfterSnapSeconds`). See
+  [roadmap.md](roadmap.md)'s "Provisional audio".
+- **Original plan (kept for reference) — decide first:** make a quick mockup of one character's cut-in each way,
   then pick one route for all four roles.
   - **2D illustrated:** a drawn character (drawn yourself or commissioned),
     split into a few layers, animated in Unity: slide in, slight parallax,
@@ -398,8 +477,9 @@ Menu), with the UI kit, the two fonts, one project-wide palette
 `MenuBackground` scene with the drifting fleet, and the design's
 transitions. Details in [systems/ui-kit.md](systems/ui-kit.md). Still
 open: the mobile layouts, a real logo for the wordmark slot, QUIT's
-confirm modal, and a check with real gamepads. The table below is the
-original brief.
+confirm modal, and a check with real gamepads. Provisional menu music
+(one loop on `MenuBackground`) is in since Session 61; see
+[roadmap.md](roadmap.md)'s "Provisional audio". The table below is the original brief.
 
 | Screen | What it does today | What the art adds |
 | --- | --- | --- |
@@ -443,6 +523,39 @@ original brief.
   placeholder UI left.
 - **Mobile check:** the screens fit 9:16 portrait, buttons are large enough
   to tap, and nothing sits under the phone's notch or rounded corners.
+
+### Phase 7b: Settings (volume controls)
+
+**Status: not started (added Session 62).** `GameMixer` exists (Master →
+Music / Voice / SFX → Superpowers; see
+[systems/audio.md](systems/audio.md)), but players can't reach it: the
+Main Menu has only PLAY and QUIT, and the pause menu has no audio options.
+Volumes can only be changed with the mixer's faders in the Editor.
+
+- **Where it lives (to decide):**
+  - **A. A Settings screen** reached from a SETTINGS button between PLAY
+    and QUIT. It's a new `MenuScreen` scene with the same slide
+    transition as the other menus, at the next free Build Settings index.
+    It's the cleanest fit, but works only from the main menu.
+  - **B. One volume panel opened from both the main menu and the pause
+    menu.** It's a bit more work (it has to sit in both canvases), but
+    the mix can be tuned mid-fight, where the SFX are heard against the
+    music. Session 62 leaned towards this one.
+- **Proposed defaults:**
+  - sliders for Master, Music, Voice and SFX (the Superpowers +6 dB stays
+    an internal balance);
+  - values saved between launches (`PlayerPrefs`).
+- **Design first:** a mockup in the `Pre-Fight Menus` / `Neon Fleet HUD`
+  style (a slider control joins the UI kit), made in Claude's Design
+  artifacts like the other new mockups.
+- **Code touchpoint:**
+  - expose each group's volume as a mixer parameter;
+  - a small script that maps slider values to decibels and saves them;
+  - the saved volumes applied at startup, before the menu music plays.
+- **Done when:** a player can change each volume from the game and it's
+  kept on the next launch. If B: also from the pause menu mid-fight.
+- **Later:** the same screen is the natural home for other settings
+  (controls, display, accessibility) once they exist.
 
 ### Phase 8: In-level HUD and later
 
@@ -503,8 +616,10 @@ art:
   or need baking or mesh merging.
 - **Explosion lighting on ships:** `ShipMesh.shader` uses a fixed light
   direction; reacting to `Light2D`s would need extra shader work.
-- **Cut-in route:** 2D illustrated or VRoid → Unity, decided at the start of
-  Phase 6. Commissioning an artist later could raise the quality of either.
+- ~~**Cut-in route:**~~ **Decided (Session 59):** 2D illustrated, key
+  poses. Still open: the pilots' character concepts, and whether release
+  art is commissioned (Steam requires disclosing AI-generated content if
+  Claude-made art ships).
 - ~~**Each boss's signature color:**~~ **Decided (Session 58):** the boss
   designs' colors are final: Marauder `#FF2D95`, Halcyon `#FFE14A`,
   Warden `#5470FF`, used for each boss's bullets, glow and model.
@@ -516,3 +631,6 @@ art:
 - **The roll mechanic:** purely visual, or does it give i-frames? That's the
   phase 3 developer's call.
 - **Audio direction** (FMOD is planned) is out of scope for this roadmap.
+  The provisional voice lines and music (planned Session 60, built
+  Session 61) and the provisional sound effects (Session 62) are tracked in
+  [roadmap.md](roadmap.md)'s "Provisional audio" and "Provisional sound effects".

@@ -19,8 +19,10 @@ public class PartyFrameUI : MonoBehaviour
     public FrameStatsView stats;
     public AbilityCellView ability;
     public ComboKeysView combo;
+    public TauntKeyView tauntKey;
     public GameObject downOverlay;
     public CanvasGroup content;
+    public CutInCardView cutIn;
 
     private GameObject ship;
     private PlayerHealth health;
@@ -29,6 +31,7 @@ public class PartyFrameUI : MonoBehaviour
     private PlayerRole role;
     private FrameSeat seat;
     private bool isDown;
+    private bool hasCutIn;
 
     public void Initialize(GameObject player, FrameSeat frameSeat)
     {
@@ -37,6 +40,8 @@ public class PartyFrameUI : MonoBehaviour
         ShowSeat();
         ability.Bind(role, !seat.isHuman, shipAbility);
         combo.Bind(role);
+        tauntKey.Bind(role);
+        hasCutIn = cutIn.Bind(role, shipAbility.SuperpowerSnapSeconds);
         downOverlay.SetActive(false);
     }
 
@@ -84,8 +89,19 @@ public class PartyFrameUI : MonoBehaviour
         identity.SetConditions(FrameVitalsView.IsLow(health), controller.speedBuffMultiplier > 1f);
         stats.Show(controller, Dps(), !seat.isHuman);
         ability.Show(AbilityCellState.From(AbilityTimes.Read(shipAbility, role, isDown)));
-        if (role == PlayerRole.Attacker && !isDown) combo.Show(ComboNow());
+        if (!isDown) PaintRoleExtras();
     }
+
+    /// <summary>The Attacker's combo keys or the Tank's Taunt box, and the superpower cut-in card fading the stats out as it covers them.</summary>
+    private void PaintRoleExtras()
+    {
+        if (role == PlayerRole.Attacker) combo.Show(ComboNow());
+        if (role == PlayerRole.Tank) tauntKey.Show(TauntNow());
+        if (hasCutIn) content.alpha = 1f - cutIn.Show(shipAbility.SuperpowerElapsed);
+    }
+
+    private TauntDisplay TauntNow() => TauntDisplay.From(
+        shipAbility.Tank.Taunt.ActiveRemaining, shipAbility.Tank.Taunt.CooldownRemaining, shipAbility.tankPowers);
 
     private float Dps() => controller.bossObject is IBoss boss ? boss.DamageLedger.Dps(ship) : 0f;
 

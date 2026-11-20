@@ -98,6 +98,10 @@ public static class NeonPalette
         { PaletteColor.WardenIce, Hex(0xA9B8FF) },
         { PaletteColor.WardenPale, Hex(0xDCE3FF) },
         { PaletteColor.WardenSocket, Hex(0x2C3878) },
+        { PaletteColor.BeamCore, Hex(0xFFF6EA) },
+        { PaletteColor.BeamAmber, Hex(0xFFA33A) },
+        { PaletteColor.BeamRedGold, Hex(0xFF5A1F) },
+        { PaletteColor.BeamArc, Hex(0xFFD9B0) },
     };
 
     public static Color Get(PaletteColor key) => colors[key];

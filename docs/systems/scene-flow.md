@@ -263,7 +263,10 @@ title text, and Button children) — see [combat.md](combat.md) for
   scene-transition method (`Restart`, `ChangeRoles`, `QuitToMainMenu`) reset
   it to `1` *before* calling `SceneManager.LoadScene` — `Time.timeScale` is
   a global engine setting, not scene-scoped, so a reload while paused would
-  otherwise stay frozen in the next scene too.
+  otherwise stay frozen in the next scene too. Since Session 61 the same
+  `SetPaused` also sets `AudioListener.pause` (equally global), which
+  freezes the cut-in voices; the music's `AudioSource` has Ignore Listener
+  Pause on, so it plays on under the pause menu.
 - **Gating**: pressing Escape does nothing if `GameOverPanel`/`VictoryPanel`
   is already showing (`PauseUI` holds `gameOverPanelRoot`/`victoryPanelRoot`
   references and checks `activeSelf` — mirrors the mutual-exclusion guard
@@ -302,13 +305,13 @@ itself is attached to.
 
 | Scene | Key GameObjects |
 | --- | --- |
-| `MenuBackground` | `Main Camera` (`PaletteTint`, post-processing on), `EventSystem` (`InputSystemUIInputModule`), `Global Volume`, `Grid`, `Vignette`, `MenuFleet` (4 ships with `MenuShipDrift`), `ShipPortraitStudio` (4 ships + cameras → portrait render textures, layer `ShipPortrait`) |
+| `MenuBackground` | `Main Camera` (`PaletteTint`, post-processing on), `EventSystem` (`InputSystemUIInputModule`), `Global Volume`, `Grid`, `Vignette`, `MenuFleet` (4 ships with `MenuShipDrift`), `ShipPortraitStudio` (4 ships + cameras → portrait render textures, layer `ShipPortrait`), `Music` (`AudioSource` + `MusicTrack`: the menu track, carried across all five screens) |
 | `MainMenu` | `Canvas` (`MainMenuUI`, `MenuScreen`; `Content` [wordmark, PLAY/QUIT `MenuButton`s], `MenuFooter`) |
 | `Lobby` | `Canvas` (`LobbyUI`, `MenuScreen`; `MenuHeader`, `Content` [LOCAL card, ONLINE locked card, `Toast`], `Footer` [BACK, hints], `BackHotkey`) |
 | `JoinLobby` | `Canvas` (`JoinLobbyUI`, `JoinDeviceInput`, `MenuScreen`; `MenuHeader`, `Content` [title row + counter, 4 `JoinSlotView`s], `Footer` [BACK, CONTINUE, hints]), `PlayerInputManager` |
 | `RoleSelect` | `Canvas` (`RoleSelectUI`, `MenuScreen`; `MenuHeader`, `SinglePickerPanel` [4 `RoleCardView`s, BACK, START, `BackHotkey`, `StartGameHotkey`], `MultiPickerPanel` [`RoleSelectMultiUI`, squad strip, `RowContainer` of `RolePickerRow.prefab` instances, BACK, START, hotkeys]) |
 | `LevelSelect` | `Canvas` (`LevelSelectUI`, `MenuScreen`; `MenuHeader`, `Content` [title row + squad chips, 3 `LevelCardView`s], `Footer` [BACK, hints], `Blackout`, `BackHotkey`) |
-| `Level` | `LevelSetup` (three `BossEntry` rows — see "Level setup" above); `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons), `LeftSidebar` (party frames + damage meter) and `RightSidebar/BossPanel` (one shared panel with the three boss feeds — see [hud-layout.md](hud-layout.md)); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`: the 4 scene ships plus the dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` (its `bossObject` is set at runtime by `LevelSetup`); `Global Volume` (Bloom, `Assets/Settings/LevelVolumeProfile.asset`) |
+| `Level` | `LevelSetup` (three `BossEntry` rows — see "Level setup" above); `HUDCanvas/PausePanel` (Resume/Restart/ChangeRoles/QuitToMainMenu buttons), `LeftSidebar` (party frames + damage meter) and `RightSidebar/BossPanel` (one shared panel with the three boss feeds — see [hud-layout.md](hud-layout.md)); standalone `PauseController` (`PauseUI`, `panelRoot` → `PausePanel`, `gameOverPanelRoot` → `GameOverPanel`, `victoryPanelRoot` → `VictoryPanel`); `PartySetup` (`PartySetupBootstrap`: the 4 scene ships plus the dynamic co-op spawner fields — see [player-roles.md](player-roles.md)); `LevelSequencer` (its `bossObject` is set at runtime by `LevelSetup`); `Global Volume` (Bloom, `Assets/Settings/LevelVolumeProfile.asset`); `Music` (`AudioSource` + `MusicTrack` + `BossMusicCue` → `LevelSequencer`: the level track, every boss, its 1:27 on boss combat) |
 
 ## Not yet built
 
@@ -317,7 +320,9 @@ itself is attached to.
   networking").
 - Mobile layouts of the menus (the design has them) wait for the deferred
   phone work; QUIT has no confirm modal yet.
-- No Settings/Credits screens — not yet needed (no audio system).
+- No Settings/Credits screens yet. Music, voices and SFX play through
+  `GameMixer` (Session 62), but players have no volume controls; that's
+  [art-roadmap.md](../art-roadmap.md)'s "Phase 7b: Settings".
 - No `DeckBuild.unity` — the deck loadout screen is designed but not built.
   It will sit between `RoleSelect` and whichever level scene is chosen, in
   flow order, while being appended at whatever the next available Build

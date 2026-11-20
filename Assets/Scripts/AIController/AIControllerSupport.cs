@@ -30,6 +30,31 @@ public class AIControllerSupport
     }
 
     /// <summary>
+    /// The gate only pays off when the boss is above it and someone besides
+    /// the Support fires through it, so both must be inside its span.
+    /// </summary>
+    public bool ShouldCastEchoGate()
+    {
+        MonoBehaviour boss = owner.bossObject;
+        if (boss == null || !boss.gameObject.activeInHierarchy) return false;
+        return IsUnderGate(boss.transform) && AnyAllyUnderGate();
+    }
+
+    private bool AnyAllyUnderGate()
+    {
+        if (owner.Ability.allies == null) return false;
+        foreach (Transform ally in owner.Ability.allies)
+            if (IsOtherLiveShip(ally) && IsUnderGate(ally)) return true;
+        return false;
+    }
+
+    private bool IsOtherLiveShip(Transform ally) =>
+        ally != null && ally != owner.transform && ally.gameObject.activeInHierarchy;
+
+    private bool IsUnderGate(Transform target) =>
+        Mathf.Abs(target.position.x - owner.transform.position.x) <= owner.Ability.supportPowers.width * 0.5f;
+
+    /// <summary>
     /// Same viewport bounds PlayerController.HandleMovement() clamps
     /// movement to, reusing its screenPadding as the single source of truth
     /// for the inset so this can't drift out of sync with the actual clamp.

@@ -20,7 +20,7 @@ scene holds a color value of its own.
 | `NeonPalette` | `Get(token)`, `Get(token, alpha)`, `RichTextHex(token)` (for TMP `<color>` tags). The only place a color literal may live. |
 | `RolePalette` | Each role's family from the design: main, dim stroke, dark card fill, and glow/fill variants (`For(role)`, `TokenFor`, `DimTokenFor`, `BgTokenFor`). `PlayerRoleStats.tintColor` reads it. |
 | `PaletteSwatch` | `[Serializable]` `{ key, alpha }`, converts implicitly to `Color`. Replaces Inspector `Color` fields (shockwave/static-field rings, Medic aura, Tank shield arc, damage flash, DPS meter, explosive tint). |
-| `PaletteTint` | Component that colors its sibling `Graphic` (Image, RawImage, TMP text), `SpriteRenderer` or `Camera` background from a swatch, in the editor too. Every scene camera uses it with `Bg`. |
+| `PaletteTint` | Component that colors its sibling `Graphic` (Image, RawImage, TMP text), `SpriteRenderer`, `Camera` background or `ParticleSystem` start color (Session 59) from a swatch, in the editor too. Every scene camera uses it with `Bg`. |
 
 Token groups: UI neutrals (`Bg`, `Panel`, `Line`/`Line2`, `Slate`, `Muted`,
 `Text`…`Text5`, `TextSoft`, `Ink`), notice amber, boss magenta and its
@@ -39,6 +39,13 @@ the GLB import. The boss models' runtime state changes do use tokens
 (`BossModel.Glow`). Session 58 added these: `MarauderPale`, `HalcyonTrim`,
 `HalcyonPale`, `WardenIce`, `WardenPale` and `WardenSocket`. Marauder's trim
 reuses `BossSoft`, which has the same value.
+
+Session 59 added the Attacker's Nova Beam tokens: `BeamCore` (`#FFF6EA`,
+the white core), `BeamAmber` (`#FFA33A`) and `BeamRedGold` (`#FF5A1F`), the
+beam's edge colors next to `Attacker`, and `BeamArc` (`#FFD9B0`, the
+lightning). All stay clear of the three boss colors. The beam's HDR
+brightness is a multiplier on these in `AttackerBeamVisual` /
+`BeamLightning`, not a separate color.
 
 **Linear color space:** the project renders in linear space, so a
 translucent layer blends brighter than the design's CSS (which blends in

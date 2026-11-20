@@ -8,6 +8,64 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
 
 ## What's playable
 
+- **Medic's Sanctuary and Support's Echo Gate (Session 64)** — the last two
+  superpowers, both on **Q / L1**. **Sanctuary** leaves a dome (radius 2)
+  where the Medic stands for 6 s: allies inside, the Medic included, heal
+  health and shield 4 times a second, and enemy bullets inside fly at 40%
+  speed. **Echo Gate** drops a horizontal gate 1.5 units above the Support
+  for 8 s: every regular shot an ally fires through it splits into three
+  in a ±12° fan, each at full damage and credited to the shooter. Combo
+  shots, the Nova Beam and enemy bullets pass through. A tether and a ring
+  on the Support show it's holding the gate, and the gate shatters if the
+  Support dies; the dome closes if the Medic dies. Both have a 25 s
+  cooldown, a cut-in card (title only until the pilot art lands) and CPU
+  rules. Aura Boost and Speed Boost are gone, but the Medic's small passive
+  aura stays. The effects, HUD icons and sounds are the Claude Design
+  batch (prompts in `ArtSource/Medic/` and `ArtSource/Support/`); the
+  pilots' frames and voice lines are still to come (Fable prompts in
+  `ArtSource/CutIns/`). See the
+  [spec](superpowers/specs/2026-11-19-medic-sanctuary-support-echo-gate-design.md)
+  and [systems/player-roles.md](systems/player-roles.md).
+- **Controls rebind (Session 63)** — move on **WASD** (the arrow keys
+  still work). Abilities sit on a MOBA-style row filled from Q: **Q** is
+  every role's superpower, and **E / R / T** are the Attacker's combo (**E**
+  is also the Tank's Taunt). Gamepad: Cross / A fires, **L1 / LB** is the
+  superpower, **R1 / L2 / R2** (RB / LT / RT) the combo. The HUD keycaps
+  read E / R / T. See [systems/input.md](systems/input.md).
+- **Tank's Super Shield and Taunt magnet (Session 60)** — the Tank now has
+  two abilities. **Q is the Super Shield**, its superpower: the shield
+  refills to 20 and the shield arc grows to 3.5× its width and height
+  (about two thirds of the playfield's width), centered on the ship, for
+  9 s. Bullets hitting the big arc cost
+  nothing; it flickers in its last second, then shrinks back. The Tank can
+  still move, and its body can still be hit. Cooldown 25 s. The Tank's
+  party frame plays a cut-in card (`AEGIS-04 · TANK`, `SUPER SHIELD`) like
+  the Attacker's. **E (gamepad R1 / RB) is Taunt**: the boss is held on the
+  Tank for 3 s (Marauder keeps it as its target even if someone
+  out-damages it, Warden's arms lean toward it, Halcyon ignores it), shown
+  by a magnet field around the ship. Cooldown 8 s from the press, so the
+  magnet is up 3 s out of every 8. The frame's new Taunt box reads READY / PULLING /
+  COOLDOWN. An AI Tank taunts on its boss's rules and casts the Super
+  Shield when its shield drops to half. The sprites are the Claude Design
+  Combat FX export, and the card is the developer's 4-frame pilot art
+  (`Assets/Art/CutIns/Tank/tank_talk_1..4.png`). Numbers want a playtest. See the
+  [spec](superpowers/specs/2026-11-18-tank-super-shield-taunt-design.md),
+  [systems/player-roles.md](systems/player-roles.md) and
+  [systems/hud-layout.md](systems/hud-layout.md).
+- **Attacker's Nova Beam and anime cut-in (Session 59, demo)** — the
+  Attacker's superpower (Q) is no longer Big Shot. Pressing it makes the ship
+  invulnerable and locks it in place. The Attacker's party frame slides
+  over into a cut-in card where the pilot talks, then shouts with a white
+  flash and a glowing fingertip as, 1.8 s in, a 3.5 s plasma beam fires
+  from the cannons to the top of the screen. The beam is a white core with
+  warm orange-to-red-gold edges, lightning and sparks, and burns everything
+  in its column. The card slides back out to the stats while the beam is
+  still firing. Cooldown 20 s. The character is the developer's own
+  4-frame art (`Assets/Art/CutIns/Attacker/attacker_talk_1..4.png`). All
+  numbers want a playtest. See the
+  [spec](superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md),
+  [systems/player-roles.md](systems/player-roles.md) and
+  [systems/hud-layout.md](systems/hud-layout.md).
 - **Boss models (Session 58)** — Marauder, Halcyon and Warden are the
   finished Claude Design boss models, rendered live in 3D like the ships.
   Every phase and telegraph shows on the model: Marauder's shockwave core,
@@ -23,7 +81,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   HUD follows the Claude Design "Neon Fleet HUD v2" design. Left rail:
   four squad frames in fixed role order (who-tag, HP pips, shield segments,
   SPD / FIRE / DPS, the ability's square cooldown sweep, the Attacker's
-  1-2-3 combo, LOW HP / BROKEN / DOWN states; CPU abilities are still
+  E-R-T combo, LOW HP / BROKEN / DOWN states; CPU abilities are still
   click-to-trigger) and the damage meter. Right rail: one shared boss panel
   (name, phase, HP, SHIELDED; warning bars for the missile lock-on,
   barrages, Surge, lockdown and Big Shot; OPENING!; aggro and TAUNTED;
@@ -88,26 +146,23 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   to fixed, role-specific values (see
   [systems/player-roles.md](systems/player-roles.md)'s "Fixed per-role
   stats" for the full table). Shield absorbs damage before health and only
-  refills via Medic's proximity aura — see
+  refills via Medic's proximity aura or the Tank's own Super Shield — see
   [systems/player-roles.md](systems/player-roles.md)'s "Shield stat". The
-  party frame shows a shield bar alongside the health bar. Press **E** to
-  use the role's ability: Tank taunts (redirects the boss's aggro to you —
-  see the Boss encounter bullet below and
+  party frame shows a shield bar alongside the health bar. Press **Q** to
+  use the role's ability: Tank raises its Super Shield (and taunts on
+  **E**, holding the boss's aggro on you for 3 s — see the Boss encounter
+  bullet below and
   [systems/player-roles.md](systems/player-roles.md)'s "Aggro/targeting"
-  section), Medic temporarily expands its passive heal/shield aura into a
-  much larger, faster one for a few seconds, Support triggers a **party-wide**
-  Speed Boost (move speed **and** fire rate, all 4 ships, not just itself)
-  with a shared gold ring showing on every ship while it's active, Attacker
-  fires a wider, harder-hitting bullet (damage scales live off its own
-  current fire damage) with visible recoil. Medic's aura is always on — a
-  thin ring around it shows the current radius, tiny by default until
-  boosted — and heals/shields any ally (including the human player) who
-  gets close enough, flashing them green when it actually helps. Tank also
+  section), Medic plants its Sanctuary dome, Support drops its Echo Gate
+  (see the first bullet above), Attacker fires the Nova Beam. Medic's aura
+  is always on — a thin ring around it shows its small radius — and
+  heals/shields any ally (including the human player) who gets close
+  enough, flashing them green when it actually helps. Tank also
   always shows a wide curved shield arc above it — passive, always-on,
-  independent of `E` — and it physically blocks incoming fire (draining
+  independent of `Q` — and it physically blocks incoming fire (draining
   Tank's own shield/health, not a free block) across a width wider than
-  Tank's own body. The party frame shows which ability is boosted/by how
-  much and its cooldown. See
+  Tank's own body. The party frame shows each superpower's running time
+  and its cooldown. See
   [systems/player-roles.md](systems/player-roles.md).
 - **Portrait/crossplay screen layout** — the gameplay area stays locked to a
   9:16 portrait aspect ratio and adapts automatically: full-width on
@@ -214,7 +269,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   Separately, the human can now click a teammate's ability status line
   (bottom of its party frame) to force that teammate's ability to fire
   right now, subject to its own cooldown — the human's own frame has no
-  such button, since **E** already does this for the human. See
+  such button, since **Q** already does this for the human. See
   [systems/bosses/marauder-boss.md](systems/bosses/marauder-boss.md)'s "Bullet-dodging" and
   [systems/player-roles.md](systems/player-roles.md)'s "PlayerAbility.cs".
 - **Minions around the boss** — up to 2 smaller enemy ships flank the boss
@@ -293,7 +348,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   fires. Touching the
   boss directly still costs a ship 2x bullet damage, same as Marauder. It
   has no aggro/target system at all — Tank's Taunt does nothing against it
-  (still flashes/shakes as feedback, just doesn't redirect anything). See
+  (the magnet still shows as feedback, it just doesn't redirect anything). See
   [systems/bosses/halcyon-boss.md](systems/bosses/halcyon-boss.md).
 - **Warden (Level 3's boss)** — a dual/triple-lane coverage fight: two
   turret-arms (three from Phase 2 on) each independently pick a random
@@ -310,7 +365,7 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   width for free, rather than trying to dodge it. Every ~8s (6s in phase
   2) it also charges for 0.6s (white core, flash ring and lane on the
   model) and fires a **Big Shot** — one
-  3×-wide, 2-damage bullet straight down, like the Attacker's own Big
+  3×-wide, 2-damage bullet straight down, like the Attacker's old Big
   Shot. It glides in from above the screen like the other bosses and is
   the slowest mover of the three (eased legs, 1.5–2.5 u/s average). **The
   arms shield the boss.** Warden takes no damage while any active arm is
@@ -339,6 +394,10 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   [systems/scene-flow.md](systems/scene-flow.md). Game Over/Victory/Pause
   are same-scene UI overlays within `Level`, not separate scenes (see
   [systems/combat.md](systems/combat.md)).
+- The Medic's and Support's cut-in cards have no pilot frames or voice
+  lines yet, so they play with the title alone (Fable prompts in
+  `ArtSource/CutIns/Medic/` and `ArtSource/CutIns/Support/`). CPU
+  teammates don't move under an Echo Gate on purpose yet.
 - The menus have no mobile layout yet (PC only), the Main Menu wordmark is
   a placeholder block. Level Select's cards show each boss's portrait.
 - Art is only started: the four player ships are their 3D design models
@@ -348,10 +407,29 @@ see [roadmap.md](roadmap.md); for the full history of how we got here, see
   Halcyon's storm-drowned towers, Warden's walled garrison). Combat FX
   are in (Session 55): designed bullets for players, Marauder, Warden and
   the waves, wave-enemy and Marauder-minion hulls with death bursts, the
-  Medic aura, Tank shield arc, Support speed ring, the three bosses' danger
+  Medic aura, Tank shield arc, Support speed ring (now standing in for the
+  Echo Gate's channel ring), the three bosses' danger
   rings, and a sprite effect for each role's ability. The three bosses are
   their live 3D design models with every phase and telegraph state
-  (Session 58). The avatar slot is still a placeholder shape. No audio.
+  (Session 58). The avatar slot is still a placeholder shape.
+- Provisional audio (Session 61): one music track plays across all five
+  menu screens (from `MenuBackground`) and another plays in the fight (from
+  `Level`); both loop and keep playing under the pause menu. The
+  Attacker's and Tank's cut-ins speak a voice line on the Q press. The
+  level track is synced so its 1:27 lands as boss combat starts
+  (`BossMusicCue`). Medic and Support have no voice yet. Both music
+  tracks are placeholders that can't ship (see `Assets/Audio/SOURCES.md`
+  and [roadmap.md](roadmap.md)'s "Provisional audio").
+- Provisional sound effects (Session 62) cover:
+  - firing (per role, plus the Attacker's combo shots), shots landing,
+    hits taken, Super Shield blocks;
+  - the Nova Beam, Super Shield and Taunt;
+  - every enemy bullet, the Marauder missile and the Warden's volleys;
+  - minion and wave-enemy deaths.
+
+  Everything plays through `GameMixer` (Music / Voice / SFX), and a per-clip
+  cap keeps a volley from stacking. Still silent: a ship going down, boss phase change and defeat,
+  and the UI. See [systems/audio.md](systems/audio.md).
 - Some imported Combat FX art isn't used yet: the Halcyon and Warden
   minions and their death bursts (those fights have no minions), the
   Halcyon bullet set, several spare orb sizes, the standalone aggro mark,
@@ -416,11 +494,13 @@ real networking last, then art/audio.
    combat begins. See [systems/level-sequencing.md](systems/level-sequencing.md).
    *(To iterate faster while testing, temporarily lower `LevelSequencer`'s
    `minionPhase1Duration` in the Inspector.)*
-5. Move with **WASD** (or a gamepad's left stick, if you joined that way).
-   Hold **Space**/**left mouse button** (or a gamepad's South button) to
-   fire — it auto-fires while held. Press **E** (or a gamepad's West
-   button) to use the current role's ability (see step 9 for what each role
-   does). Any AI-controlled ships fight alongside you fully autonomously —
+5. Move with **WASD** or the **arrow keys** (or a gamepad's left stick, if
+   you joined that way). Hold **Space**/**left mouse button** (or a
+   gamepad's South button: Cross / A) to fire — it auto-fires while held.
+   Press **Q** (gamepad L1 / LB) to use the current role's superpower (see
+   step 9 for what each role does). Keys **E/R/T** (gamepad R1 / L2 / R2,
+   Xbox RB / LT / RT) are the Attacker's combo shots; **E** is also the
+   Tank's Taunt. Any AI-controlled ships fight alongside you fully autonomously —
    no input needed for them.
 6. Watch the boss run its scripted pattern (snap to a side, advance toward
    the party, retreat, return to center, pause, repeat mirrored) — it fires at
@@ -458,7 +538,7 @@ real networking last, then art/audio.
    the role. Each teammate's ability line is clickable — click it (e.g. on
    the Tank's frame) to force that teammate's ability to fire right now,
    subject to its own cooldown (it visibly greys out while on cooldown);
-   your own frame has no such button since **E** already covers you. Watch
+   your own frame has no such button since **Q** already covers you. Watch
    a teammate near the boss during a Pattern Barrage or a regular shot and
    you'll see it occasionally juke sideways out of a bullet's path without
    abandoning its role positioning (Tank still roughly holds its guard
@@ -487,18 +567,21 @@ real networking last, then art/audio.
    per-role stats". As Medic, notice the dim ring around your ship even
    without pressing anything — that's the passive aura, tiny by default,
    healing/shielding any ally that gets close enough (they flash green when
-   it actually helps); press **E** to drastically expand the ring and speed
-   up the healing for a few seconds. Press **E** as Support to trigger a
-   **party-wide** Speed Boost — watch every ship (including AI teammates)
-   light up with a shared gold ring and visibly speed up/fire faster
-   together, not just your own ship. As Tank, notice the wide curved shield
+   it actually helps); press **Q** to plant the Sanctuary: the dome stays
+   where you cast it, allies inside flash green four times a second, and
+   enemy bullets crawl while inside it. Press **Q** as Support to drop the
+   Echo Gate above you: a tether links you to it, and every regular shot
+   fired up through it (yours or a teammate's) fans into three. Combo shots
+   and the Nova Beam pass straight through. As Tank, notice the wide curved shield
    arc above your ship even without pressing anything — that's always on;
-   press **E** to fire the taunt event instead, which has a real effect: it
-   forces the boss to switch its target to you (watch `BossPanel`'s
-   "Target:" text change) — watch the party frame's ability line show the
-   boost amount and cooldown countdown. As Attacker, **E** fires a wider,
-   harder-hitting shot (damage scales with your own current fire damage)
-   with a visible backward recoil kick.
+   press **E** to taunt: a magnet field shows around your ship and the boss
+   panel's aggro row reads TANK / TAUNTED for 3 s, while your frame's Taunt
+   box reads PULLING. Press **Q** for the Super Shield: your cut-in card
+   plays, your shield refills, and the arc grows into a big wall that
+   blocks for free for 9 s (watch the shield bar stay full). As Attacker, **Q** fires the Nova Beam:
+   your cut-in card plays, the ship locks in place, invulnerable, and 1.8 s
+   later a 3.5 s beam burns everything in its column; **E/R/T** fire the
+   combo shots.
 10. *(Optional)* Resize the Game view window (or check the Scene view via
    Main Camera) to see the portrait pillarboxing adapt live — the
    `AspectRatioFitter`/`HUDSidebarFitter` combo is marked `[ExecuteAlways]`

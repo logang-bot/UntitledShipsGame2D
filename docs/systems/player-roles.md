@@ -71,19 +71,38 @@ above).
 
 One script, not four — branches on `PlayerRoleComponent.role` in a single
 `OnAbility(InputValue)` handler (auto-called by `Player Input`'s Send
-Messages behavior on the `Ability` action, bound to `E` — see
+Messages behavior on the `Ability` action, bound to `Q` — see
 [input.md](input.md)). A single `Time.time`-based cooldown gate
 (`nextAbilityTime`, same pattern as `PlayerController`'s `nextFireTime`)
 blocks re-activation until the current role's cooldown elapses.
 
-- **Tank — Taunt**: `public UnityEvent OnTaunt`, invoked on activation. A
-  persistent listener redirects the boss's target to the taunter
-  (`MarauderBoss.TauntedBy(GameObject)` — see [marauder-boss.md](bosses/marauder-boss.md)'s "Aggro /
-  targeting"), alongside `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`
-  feedback.
-- **Tank — Shield Arc** (passive/always-on, independent of Taunt, not
-  `E`-triggered): a wide, curved shield in front of Tank, both visual and
-  **functional**. Built procedurally in `Awake()` only for `role == Tank`:
+- **Tank — Super Shield (E, Session 60)**: the Tank's superpower. On the
+  press (`TankSuperShield`) the Tank's shield refills to max, and the
+  Shield Arc below grows to `superShieldScale` (3.5×) its width **and**
+  height around the ship's centre line over `growSeconds` (0.4 s), holds,
+  flickers for the last `endingSeconds` (1 s), and shrinks back over
+  `collapseSeconds` (0.25 s): `superShieldSeconds` (9 s) in all. For the
+  whole cast the arc is a **free block** (`TankShieldArc.FreeBlock`:
+  `Bullet.HitPlayer` destroys the bullet without damage). The Tank is not
+  locked or invulnerable; a bullet that reaches its body still hits.
+  Cooldown `superShieldCooldown` (25 s). The arc shows the Combat FX
+  `tank_supershield_*` frames from the pure `SuperShieldTimeline` (expand,
+  a 4-frame shimmer, the ending flicker, collapse), and the Tank's cut-in
+  card plays with it (see [hud-layout.md](hud-layout.md)).
+- **Tank — Taunt (key E, Session 60)**: on the `Combo1` action (key E /
+  gamepad R1 / RB), with its own cooldown (`tauntCooldown`, 8 s) separate from
+  the superpower's. `TankTaunt` invokes `public UnityEvent OnTaunt`; `PartyBossWiring`'s
+  runtime listener calls `BossEvents.Taunt(boss, ship, tauntSeconds)`,
+  which holds the boss on the taunter for `tauntSeconds` (3 s): Marauder
+  keeps it as its target for the window even if someone out-damages it
+  (see [marauder-boss.md](bosses/marauder-boss.md)'s "Aggro / targeting"),
+  Warden opens its arm-bias window for that long, Halcyon ignores it.
+  `TauntMagnetVisual` shows the magnet (`tank_taunt_magnet_*`, pure
+  `TauntMagnetTimeline`) for the same 3 s. `PlayerDamageFlash.Flash()` +
+  `CameraShake.Shake()` feedback as before.
+- **Tank — Shield Arc** (passive/always-on, the base the Super Shield
+  grows): a wide, curved shield in front of Tank, both visual and
+  **functional**. Built procedurally (`TankShieldArc.Create`, from `Start()`) only for `role == Tank`:
   a child `ShieldArc` GameObject, tagged `Player`, with a local-space
   `EdgeCollider2D` (`isTrigger`) sampling a shallow-parabola point set —
   `shieldArcWidthMultiplier` (3x Tank's own `BoxCollider2D` width) wide,
@@ -102,45 +121,79 @@ blocks re-activation until the current role's cooldown elapses.
   shield/health, not a free block. Player-owned bullets pass through
   untouched (`Bullet.cs`'s player-bullet branch only checks the `Enemy`
   tag, and the arc is tagged `Player`).
-- **Medic — Aura Boost**: Medic passively regenerates health *and* shield
-  of every ally in `allies[]` within `auraRadius` every `auraTickInterval`,
-  whether human- or AI-controlled. The default aura is **deliberately
-  tiny** (`auraRadius` 0.5 — allies must nearly touch the Medic); pressing
-  `E` (`TriggerAuraBoost()`) temporarily swaps to a larger
-  `auraBoostRadius` (1.5) and a much faster `auraBoostTickInterval` (0.25s
-  vs. 1s) for `auraBoostDuration` (4s), via a `StopCoroutine`/
-  `StartCoroutine` restart-safety pattern — `auraBoostCooldown` (10s) must
-  stay ≥ `auraBoostDuration` to avoid double-applying. A Combat FX
-  ring around the Medic (dim dashed idle sprite; while boosted, the bright
-  boost sprite alternating with its pulse frame every `auraPulseInterval`)
-  is scaled so the drawn ring sits exactly on the live radius, and allies
-  actually healed by a tick get a distinct green flash
-  (`PlayerDamageFlash.Flash(Color)`) plus the `HealFlash` sprite burst —
-  all purely visual.
-- **Support — Speed Boost**: a **party-wide**, non-destructive multiplier
-  on both move speed and fire rate, not a self-only effect.
-  `TriggerSpeedBoost()` loops over `allies[]` (all 4 ships, self-included)
-  and sets each ally's `PlayerController.speedBuffMultiplier`/
-  `fireRateBuffMultiplier` to `speedBoostMultiplier` (1.5) for
-  `speedBoostDuration` (4s), then resets both to `1f` when it ends — plain
-  assignment on both ends, no revert arithmetic. `speedBoostCooldown` is
-  15s (round placeholder, tunable — flagged as a strong effect given it's
-  party-wide). Every ship has its own initially-hidden `PartyBuffRing`,
-  toggled by the caster's `SetPartyBuffVisual(bool)` call on each ally —
-  all 4 Combat FX speed rings (always Support purple, per the design)
-  light up the instant the boost starts, and when it ends each shows the
-  ring breaking up for 0.25 s before hiding.
-- **Attacker — Big Shot**: calls `PlayerController.FireBigShot(widthMultiplier,
-  damageAmount, PlayerShotKind.BigShot)` (`3x` hitbox width) and `PlayerController.AddRecoil(Vector2.down
-  * recoilForce)`. Damage is a live multiplier of the caster's current
-  `fireDamage` (`bigShotDamageMultiplier`, `2x`), computed at cast time —
-  so it automatically stays proportional if `fireDamage` is ever retuned.
-  See [combat.md](combat.md) for why recoil has to be a decaying velocity
-  blended into `HandleMovement()` rather than a physics impulse
-  (`MovePosition` overwrites plain `AddForce` every `FixedUpdate`).
-- **Attacker — 3-attack combo**: separate from Big Shot above, bound to
-  three dedicated inputs (`Combo1`/`Combo2`/`Combo3` — keyboard `1`/`2`/`3`,
-  gamepad North/L1/R1). `PlayerAbilityAttacker` tracks a single
+- **Medic — passive aura**: the Medic regenerates health *and* shield of
+  every other ally in `allies[]` within `auraRadius` every
+  `auraTickInterval`, whether human- or AI-controlled. The aura is
+  **deliberately tiny** (`auraRadius` 0.5 on `Ship.prefab`: allies must
+  nearly touch the Medic). The dim dashed Combat FX ring around the Medic
+  is scaled so the drawn ring sits exactly on the radius. The heal pulse
+  itself is `MedicHeal.Pulse(medic, HealArea)`, shared with the Sanctuary
+  below: allies it actually helps get a green flash
+  (`PlayerDamageFlash.Flash(Color)`) plus the `HealFlash` sprite burst.
+  Aura Boost (the old Q) was dropped in Session 64.
+- **Medic — Sanctuary (Q, Session 64)**: the Medic's superpower
+  (`MedicSanctuary`, design in
+  [the spec](../superpowers/specs/2026-11-19-medic-sanctuary-support-echo-gate-design.md)).
+  On the press a `SanctuaryZone` is spawned **where the Medic stands and
+  stays there**: a dome of `medicPowers.radius` (2 units). Every
+  `tickInterval` (0.25 s) it heals every ally inside, the Medic included,
+  by the aura's per-tick amounts. While an enemy bullet is inside its
+  trigger, the bullet flies at `bulletSpeedFactor` (40%) through
+  `Bullet.SetSpeedFactor`, restored on exit or when the dome closes. The
+  bullets stay at full brightness. The cast runs `timing.seconds` (6 s)
+  with a 0.3 s open, a 1 s ending flicker and a 0.25 s collapse, read off
+  the pure `ZonePowerTimeline`, shared with the Echo Gate. The Medic moves
+  freely and isn't invulnerable; if it dies (`PlayerHealth.OnDeath`) the
+  dome closes. Cooldown `medicPowers.cooldown` (25 s). Until the Claude
+  Design frames land (`ShipCombatFx.sanctuaryFrames`), the old aura-boost
+  ring sprites stand in. A CPU Medic casts when `hurtAlliesToCast` (2)
+  allies within the radius are at or below `medicApproachThreshold`
+  (`AIControllerMedic.ShouldCastSanctuary`).
+- **Support — Echo Gate (Q, Session 64)**: the Support's superpower
+  (`SupportEchoGate`). On the press an `EchoGateZone` is dropped
+  `supportPowers.heightAboveShip` (1.5 units) above the Support and
+  **stays there**: a horizontal trigger bar, `width` 2.4 × `thickness` 0.12.
+  Every player shot crossing it that `EchoSplit.ShouldSplit` accepts
+  (player-owned, `Bullet.Kind == PlayerShotKind.Regular`, not already
+  `IsEcho`) splits into `splitCount` (3) shots in a ±`spreadDegrees` (12°)
+  fan. The original keeps the middle direction, and the copies are
+  `Instantiate`d with the same damage and shooter, so the damage meter and
+  Marauder's aggro credit the shooter. Every piece is marked `IsEcho`, so
+  nothing splits twice. Combo shots, the Nova Beam and enemy bullets pass
+  through untouched. `EchoGateHoldVisual` shows the Support is holding it:
+  a tether from the ship to the gate's centre and a channel ring on the
+  ship, for the whole cast. The cast runs `timing.seconds` (8 s) on the same
+  `ZonePowerTimeline`. If the Support dies, the gate **shatters**: its
+  collider goes off, the shatter frame shows for 0.3 s, and the shatter
+  sound plays from the gate's own `AudioSource` (`ZoneAudio`), since the
+  ship is gone. Cooldown 25 s. Until the Claude Design frames land, a plain
+  bar and line in the Support's color and the old speed ring stand in. A
+  CPU Support casts when the boss and at least one other ally are
+  horizontally inside the gate's span
+  (`AIControllerSupport.ShouldCastEchoGate`). Speed Boost (the old Q) was
+  dropped in Session 64, along with the party speed rings.
+- **Attacker — Nova Beam** (replaced Big Shot, Session 59; design in
+  [the spec](../superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md)):
+  `PlayerAbilityAttacker.Trigger()` starts an `AttackerBeamCast` coroutine.
+  From the press the ship is **invulnerable**
+  (`PlayerHealth.GrantInvulnerability`) and **locked in place**
+  (`PlayerController.castLocked`: no movement, no normal fire, and
+  `TryComboAttack` no-ops). After `beam.windupSeconds` (1.8 s, while the HUD
+  cut-in card plays) `ShipCombatFx.SpawnBeam` fires the beam for
+  `beam.beamSeconds` (3.5 s), then the lock lifts. The beam
+  (`AttackerBeam`, `Prefabs/FX/AttackerBeam.prefab`) runs from the
+  `FirePoint` to the top of the screen, 0.9 × the ship's width, and every
+  `beam.tickInterval` (0.1 s) strikes each enemy in its column once for
+  `max(1, fireDamage × beam.tickDamageMultiplier)` (0.5×, so 1 per tick for
+  the Attacker) through `EnemyDamage`. It pierces everything, credits the
+  ship (DPS meter, aggro), doesn't erase bullets, and a shielded Warden
+  still takes nothing. The cooldown (`beam.cooldown`, 20 s) counts from the
+  press. All numbers are placeholders for a playtest. A CPU Attacker only
+  casts when its focus point sits inside the beam's column
+  (`AIControllerAttacker.UseAbilities`), since the cast anchors it for 3.8 s.
+- **Attacker — 3-attack combo**: separate from the Nova Beam above, bound to
+  three dedicated inputs (`Combo1`/`Combo2`/`Combo3` — keyboard `E`/`R`/`T`,
+  gamepad R1/L2/R2). `PlayerAbilityAttacker` tracks a single
   `expectedSlot` (1→2→3→1…, the fixed "correct rotation"). Landing the
   expected slot fires `FireBigShot` with that step's damage/width
   multiplier (`comboStepDamageMultipliers`/`comboStepWidthMultipliers` —
@@ -148,39 +201,56 @@ blocks re-activation until the current role's cooldown elapses.
   landing the wrong slot ("bad execution") fires at
   `comboBreakDamageMultiplier` (0.5x) instead and resets `expectedSlot` back
   to 1, rather than dealing no damage at all. Each slot has its own short
-  `comboAttackCooldown` (0.5s) — independent of `bigShotCooldown` — so the
+  `comboAttackCooldown` (0.5s) — independent of the beam's cooldown — so the
   gate is "don't mash one key", not the sequencing itself; the sequencing is
   entirely on the player picking the right key. `AIController` always feeds
   `TryComboAttack()` the current `AttackerComboExpectedSlot`, so Attacker
   bots play a perfect rotation every time — there's no "bad execution" mode
   for bots yet, only for human input.
 
-Key public fields: `tauntCooldown` (5s), `OnTaunt`; `shieldArcWidthMultiplier`
-(3), `shieldArcHeight` (0.2), `shieldArcYOffset` (0.3); `allies[]`, `auraRadius` (0.5),
+Key public fields: `tankPowers` (`TankAbilitySettings`: `tauntCooldown` 8,
+`tauntSeconds` 3, `superShieldCooldown` 25, `superShieldSeconds` 9,
+`superShieldScale` 3.5, `growSeconds` 0.4, `collapseSeconds` 0.25,
+`endingSeconds` 1, `shieldArcWidthMultiplier` 3, `shieldArcHeight` 0.2,
+`shieldArcYOffset` 0.3), `OnTaunt`; `allies[]`, `auraRadius` (0.5),
 `auraTickInterval` (1s), `auraHealPerTick`/`auraShieldPerTick` (1 each),
-`auraBoostRadius` (1.5), `auraBoostTickInterval` (0.25s), `auraBoostDuration`
-(4s), `auraBoostCooldown` (10s), `auraPulseInterval` (0.25s), `healFlashColor`; `speedBoostCooldown`
-(15s), `speedBoostDuration` (4s), `speedBoostMultiplier` (1.5); `bigShotCooldown` (3s),
-`bigShotWidthMultiplier` (3), `bigShotDamageMultiplier` (2), `recoilForce`
-(6); `comboAttackCooldown` (0.5s), `comboStepDamageMultipliers` (`1, 1.3,
+`healFlashColor`; `medicPowers` (`MedicSanctuarySettings`: `cooldown` 25,
+`timing` 6 s / 0.3 / 1 / 0.25, `radius` 2, `tickInterval` 0.25,
+`bulletSpeedFactor` 0.4, `hurtAlliesToCast` 2); `supportPowers`
+(`SupportEchoGateSettings`: `cooldown` 25, `timing` 8 s / 0.3 / 1 / 0.25,
+`width` 2.4, `thickness` 0.12, `heightAboveShip` 1.5, `splitCount` 3,
+`spreadDegrees` 12); `beam`
+(`AttackerBeamSettings`: `windupSeconds` 0.8, `beamSeconds` 3, `cooldown`
+20, `tickInterval` 0.1, `tickDamageMultiplier` 0.5, `widthOfShip` 0.9);
+`comboAttackCooldown` (0.5s), `comboStepDamageMultipliers` (`1, 1.3,
 1.8`), `comboStepWidthMultipliers` (`1, 1.5, 2.5`),
 `comboBreakDamageMultiplier` (0.5). Key public methods: `OnAbility(InputValue)`,
-`OnCombo1/2/3(InputValue)`.
+`OnCombo1/2/3(InputValue)` (`OnCombo1` is also the Tank's Taunt), `TryTaunt()`.
 
 **Ability effects (Combat FX).** `ShipCombatFx` on `Ship.prefab` holds every
 role's art: after a successful `TryUseAbility()`, `PlayerAbility` calls
 `Fx.PlayAbility(role)`, which spawns that role's `SpriteSequence` prefab
-(`Prefabs/FX/TauntFx`, `AuraBoostFx`, `SpeedBoostFx`, `BigShotFx`) as a ship
-child. Purely cosmetic: the mechanic itself still fires instantly. Taunt
-holds its aggro-mark frame for 2 s (`holdSeconds` on the prefab); the Medic
-and Support sequences are wind-up + activate only, since the boosted aura
-and the party speed rings show the sustain. `ShipCombatFx` also holds the
-aura, shield-arc and speed-ring sprites the helpers above draw.
+(`AuraBoostFx`, `SpeedBoostFx`, `BigShotFx`) as a ship
+child. Purely cosmetic: the mechanic itself still fires instantly (the
+Attacker's `BigShotFx` frames now play as the Nova Beam's wind-up flash at
+the muzzle, and the beam follows 1.8 s later). The Tank has no one-shot
+sequence any more (the old `TauntFx` ring is unused since Session 60): its
+Super Shield is drawn on the arc and its Taunt by the magnet. The Medic
+and Support still play their old wind-up + activate sequences
+(`AuraBoostFx`, `SpeedBoostFx`) as the press flash, while the dome and the
+gate show the sustain. `ShipCombatFx` also holds the aura, Sanctuary
+(`sanctuaryFrames` in `ZoneFrame` order), shield-arc, Super Shield
+(`superShieldFrames` in `SuperShieldFrame` order + `superShieldBlock`),
+Taunt magnet (`tauntMagnetFrames`) and Echo Gate (`echoGateFrames`,
+`echoGateShatter`, `echoSplitSpark`, `echoTether`, `echoChannelFrames`)
+sprites the helpers above draw. Each placed power falls back to a
+placeholder while its frame set is incomplete.
 
 Also exposes read-only status for the HUD (see `PartyFrameUI.cs` in
-[hud-layout.md](hud-layout.md)): `CooldownRemaining`, `IsSpeedBoostActive`,
-`SpeedBoostRemaining`, `AbilityName` (per-role display name), and
-`StatusText` (formatted cooldown/`Ready`/active-boost string) — these are
+[hud-layout.md](hud-layout.md)): `CooldownRemaining`, `SuperpowerElapsed`
+/ `SuperpowerSnapSeconds` (the cut-in card's clock, for all four roles),
+`AbilityName` (per-role display name), and `StatusText` (formatted
+cooldown/`Ready`/running string, built on `AbilityTimes.ActiveRemaining`) — these are
 the single source of truth for ability state so the HUD never duplicates
 cooldown math.
 
@@ -200,7 +270,7 @@ existing text element (reusing it as its own click surface rather than
 adding a separate button, since it already shows exactly the state a
 manual trigger needs, e.g. `"Taunt: Ready"`) — wired to call that
 teammate's `TryUseAbility()` on click. This is a third caller of the same
-method alongside `AIController`'s auto-retry and the human's own `E`
+method alongside `AIController`'s auto-retry and the human's own `Q`
 binding, so it needed **no changes to `PlayerAbility.cs` itself**. The
 click deliberately bypasses `AIController`'s extra Tank-specific condition
 (`if (boss.CurrentTarget != gameObject)`) — a manual click can force a
@@ -231,8 +301,9 @@ per-role stats" below):
   before (see [combat.md](combat.md)).
 - **No passive regen of its own** — `PlayerHealth.RestoreShield(int)`
   (symmetric to `Heal(int)`, clamps at `maxShield`) is only ever called by
-  Medic's proximity aura, never on its own over time. Keeps Tank
-  meaningfully dependent on Medic, matching the MMO-raid "tank and healer"
+  Medic's proximity aura and Sanctuary dome and the Tank's Super Shield (a full refill on a
+  25 s cooldown, Session 60), never on its own over time. Keeps Tank
+  meaningfully dependent on Medic between Super Shields, matching the MMO-raid "tank and healer"
   coupling this project is modeled on (`../overview.md`).
 - **Shield bar**: a fixed shield-blue bar on the party frame, not
   role-tinted — see [hud-layout.md](hud-layout.md).
@@ -281,13 +352,13 @@ one of its two inputs was tuned.
 This is a **ceiling, not a prediction**: ships fire straight up (`Vector2.up`)
 at a boss that moves side to side, so real output is this minus everything that
 missed. The damage meter (`DamageMeterView`, see [hud-layout.md](hud-layout.md)) reports what actually
-landed, and the gap between the two numbers is the positioning skill. Attacker's
-Big Shot widens its bullet 3x on top of doubling its damage, so part of that
-ability's value is accuracy against a moving target, not raw damage.
+landed, and the gap between the two numbers is the positioning skill. The
+Attacker's Nova Beam rewards the same skill differently: the ship is anchored
+for the whole cast, so its value depends on lining up under the boss first.
 
 `PlayerController.CurrentDps` is the *live* equivalent —
 `fireDamage * shotsPerSecond * fireRateBuffMultiplier` — so it reflects
-Support's party-wide fire-rate boost while it is up. It's still a valid
+any fire-rate buff while it is up (none sets one since Speed Boost was dropped in Session 64). It's still a valid
 stat, but as of the Attacker combo it's no longer what the party frame's DPS
 line displays — see [hud-layout.md](hud-layout.md)'s "DPS line" for why that
 switched to real damage-dealt-to-boss instead.
@@ -303,8 +374,8 @@ real playtesting lands.
 at the point of use (`HandleMovement()`'s move vector, and a computed
 `FireInterval => 1f / (shotsPerSecond * fireRateBuffMultiplier)` for the
 fire-cooldown gate) rather than ever being multiplied into `moveSpeed`/
-`shotsPerSecond` themselves. Only `PlayerAbility` (Support's Speed Boost,
-see above) ever sets them, and only ever via plain assignment.
+`shotsPerSecond` themselves. Nothing sets them since Support's Speed Boost was
+dropped (Session 64); they stay for the card layer's passives (`cards.md`), set only ever via plain assignment.
 
 ## Role Select scene
 
@@ -478,7 +549,7 @@ aggro table all stay untouched by this feature.
 | Component               | Key inspector values                            |
 | ------------------------ | -------------------------------------------------- |
 | **PlayerRoleComponent**  | role: Attacker (`Ship.prefab` default — overwritten at runtime by the Role Select flow, see "Role Select scene" above; used as-is when a level scene is opened directly) |
-| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`. Only `Flash` works straight from the prefab, since it targets the ship itself. A prefab can't reference scene objects, so the shake call has a null target in `Ship.prefab` (`Teammate.prefab` also still carries a null-target `MarauderBoss.TauntedBy`, which does nothing). Taunt is added at runtime to every ship by `PartyBossWiring` (`OnTaunt` → `BossEvents.Taunt`). Co-op-spawned ships get camera shake at runtime from `SpawnedShipEventWiring`. See [marauder-boss.md](bosses/marauder-boss.md)'s Taunt-wiring notes |
+| **PlayerAbility.cs**     | defaults as listed above; `OnTaunt`: self `PlayerDamageFlash.Flash()` + `CameraShake.Shake()`. Only `Flash` works straight from the prefab, since it targets the ship itself. A prefab can't reference scene objects, so the shake call has a null target in `Ship.prefab`. Taunt is added at runtime to every ship by `PartyBossWiring` (`OnTaunt` → `BossEvents.Taunt`). Co-op-spawned ships get camera shake at runtime from `SpawnedShipEventWiring`. See [marauder-boss.md](bosses/marauder-boss.md)'s Taunt-wiring notes |
 
 ## Not yet built
 

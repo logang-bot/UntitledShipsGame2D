@@ -213,9 +213,14 @@ currently holds the highest aggro. No decay. `PickTarget()` uses
 `Dictionary.TryGetValue` rather than a raw indexer, so it stays safe even
 if `aggro` and `targets[]` were ever to drift out of sync.
 
-`TauntedBy(GameObject taunter)` — the listener for Tank taunt (see
+`TauntedBy(GameObject taunter, float seconds)` — the listener for Tank taunt (see
 below) — sets the caster's aggro to `(current highest aggro) + tauntBonus`
-(100), guaranteeing an immediate target switch to the taunter.
+(100), guaranteeing an immediate target switch to the taunter, and
+**holds** the boss on the taunter for `seconds` (the Tank's
+`tauntSeconds`, 3 s; Session 60): while that window is open and the
+taunter is alive, `PickTarget()` keeps it as `CurrentTarget` even if
+someone else's aggro climbs past it. The Tank's magnet shows for the same
+window, so the boss never shoots someone else while it's up.
 
 ### Public API
 
@@ -303,7 +308,7 @@ happened — so the same overlap check that computes the push-back also
 drives Body contact damage below, instead of relying on Unity's trigger
 callbacks (which would stop firing once real overlap is actively
 prevented). Ship-vs-ship overlap only ever gets pushed apart, no damage.
-`ResolveShipCollisions()` runs two more of these loops the same way, over
+`ShipCollisionResolver.Resolve()` runs two more of these loops the same way, over
 `Minion.Active` (below) and `Enemy.Active` (see
 [combat.md](../combat.md)'s `Enemy.cs`) — both apply kamikaze contact damage
 on overlap, unlike the ship-vs-ship push-only case here.
@@ -321,7 +326,7 @@ path rather than being blocked by them.
 Reworked alongside the solid-body collision above. Previously fired off
 Unity's `OnTriggerStay2D` (the boss's `BoxCollider2D` is non-trigger, ship
 colliders are triggers, so Unity fired the callback on genuine overlap);
-now fires from `PlayerController.ResolveShipCollisions()`'s own box-overlap
+now fires from `ShipCollisionResolver`'s own box-overlap
 check the moment it detects a ship overlapping the boss, calling a new
 `public MarauderBoss.ApplyContactDamage(GameObject ship)`. Same math as before:
 gated per-target by `contactDamageCooldown` (1s, a private
@@ -480,8 +485,8 @@ calling `boss.TakeDamage(damage, ownerObject)` on the latter. See
 
 ## AIController.cs
 
-**Attached to:** the 3 `Teammate_*` GameObjects (`Assets/Prefabs/Teammate.prefab`
-instances — see below), replacing `PlayerInput`.
+**Attached to:** every ship (`Assets/Prefabs/Ship.prefab`), enabled on the
+CPU-flown `Teammate_*` ships in place of `PlayerInput`.
 **Requires:** `PlayerController`, `PlayerAbility`, `PlayerHealth`,
 `PlayerRoleComponent` on the same GameObject (same component set as the
 human `Player`) — reused as-is, no AI-specific duplicate logic.
@@ -503,13 +508,14 @@ Drives a CPU-controlled teammate every `Update()`:
   the equivalent non-input entry point for `OnFire(InputValue)`.
 - **Abilities**: `PlayerAbility.TryUseAbility()` — a public method that goes
   through the same cooldown gate and role-dispatch switch the human player
-  uses. Per-role heuristic: **Tank** taunts whenever it doesn't currently
-  hold the boss's aggro. That's `MarauderAITactics.ShouldTaunt`, the
+  uses. Per-role heuristic: **Tank** taunts (key 1, `TryTaunt()`) whenever it doesn't currently
+  hold the boss's aggro, and casts its Super Shield once its own shield is
+  at half or below (`AIControllerTank`). The taunt rule is `MarauderAITactics.ShouldTaunt`, the
   per-boss AI strategy since Session 46; see `docs/architecture.md`'s
   "Per-boss AI behavior". **Medic**
-  fires its aura boost the instant it's off cooldown — flagged as a
-  temporary, need-unaware heuristic, see "Medic positioning + aura" below;
-  **Support**/**Attacker** just retry every frame, safe and cheap since
+  casts Sanctuary when 2+ hurt allies are within its radius and **Support** its Echo Gate when the boss and an ally line up under it (Session 64; this replaced an always-cast aura boost);
+  see "Medic positioning + aura" below;
+  all of them retry every frame, safe and cheap since
   `TryUseAbility()`'s own cooldown gate no-ops until ready.
 
 Key public fields: `bossObject` (drag the `Boss` instance; `MonoBehaviour`-typed
@@ -593,10 +599,9 @@ re-evaluated every frame.
 allies via an always-on aura; pressing `E` triggers a temporary, drastic
 expansion of that aura's radius/tick rate rather than an instant heal.
 
-**AI trigger heuristic — a known, temporary limitation**: `AIController`
-fires the aura boost the instant it's off cooldown, with no awareness of
-whether anyone actually needs it — flagged in code and here for rework (the
-obvious next step is triggering off `FindHurtAlly()` instead).
+**AI trigger (Session 64)**: the aura boost is gone; a CPU Medic casts Sanctuary when `AIControllerMedic.ShouldCastSanctuary()` counts 2+ allies within the dome radius at or below `medicApproachThreshold`. Before that, `AIController`
+fired the aura boost the instant it was off cooldown, with no awareness of
+whether anyone actually needed it.
 
 **Why the aura lives on `PlayerAbility.cs`, not here**: unlike Tank's
 guard-point steering (an AI-only concern — a human Medic just moves via
@@ -762,7 +767,7 @@ going through `PlayerInput`'s input-callback path:
   which just unwrap the `InputValue` and call these.
 - `PlayerAbility.TryUseAbility()` — the non-input equivalent of the
   dispatch inside `OnAbility(InputValue)`. The four `Trigger*` methods
-  (`TriggerTaunt`, `TriggerAuraBoost`, `TriggerSpeedBoost`, `TriggerBigShot`)
+  (now per-role helpers: `PlayerAbilityTank`/`Medic`/`Support`/`Attacker`, the last starting the Nova Beam cast)
   stay private.
 
 `TryUseAbility()`'s public, self-cooldown-gated design is also what makes
@@ -794,7 +799,7 @@ earlier. This is deliberately *not* tied to `SetVisible()` (which fires at
 the *start* of the entrance glide, several seconds earlier): starting
 minions there let them spawn and overlap ships that were still frozen for
 the rest of the entrance (`PlayerController.enabled == false`, so
-`FixedUpdate`/`ResolveShipCollisions` never runs) — kamikaze contact would
+`FixedUpdate`/`ShipCollisionResolver.Resolve` never runs) — kamikaze contact would
 silently do nothing against a frozen ship even while visibly overlapping
 it. Gating on `OnEnable()` instead guarantees ships are already unfrozen
 before any minion exists.
@@ -906,7 +911,7 @@ pinned to a fixed flank slot.
 
 **Solid-body collision**: minions physically block ships, same as the boss
 does (see "Solid-body collision (ships + boss)" above).
-`PlayerController.ResolveShipCollisions()` gained a loop over `Minion.Active`
+`ShipCollisionResolver` (`PlayerController.ResolveShipCollisions()` until Session 59) gained a loop over `Minion.Active`
 after its existing ally/boss checks, calling `ShipCollisionUtil
 .ResolveBoxOverlap()` against each minion's live position/`HalfExtents` and
 `minion.ApplyContactDamage(gameObject)` on overlap — same shape as the
@@ -931,7 +936,7 @@ through a dash exactly (`boss.position + flankOffset`, wobble within
 `boss.CurrentTarget` exactly for two different minions/targets; `TakeDamage`
 reduces health and destroys at 0, and `MinionSpawner` immediately refills
 the freed slot on its next `Update()` (cap never exceeded 2 across repeated
-forced spawns); `ResolveShipCollisions` (invoked directly) correctly
+forced spawns); `ResolveShipCollisions` (invoked directly, before it moved to `ShipCollisionResolver`) correctly
 resolves a ship/minion overlap using `Minion.Active`; invoking
 `MarauderBoss.OnDefeated` destroys every live minion immediately
 (`Minion.Active.Count` → 0).
@@ -1009,12 +1014,9 @@ tag logic treats them exactly like the human player), with a distinct
 `PlayerRoleComponent.role` (Tank / Medic / Support — `Player` itself
 defaults to `Attacker`, all overwritten at runtime by Role Select — see
 [player-roles.md](../player-roles.md)'s "Role Select scene") so all 4 roles
-are covered exactly once. `Teammate_Tank` is linked to
-`Assets/Prefabs/Teammate.prefab`; `Teammate_Medic`/`Teammate_Support` are
-plain independent GameObjects with the same component values, not prefab
-instances — an edit meant to apply to all three teammates has to be applied
-to each individually (or to `Teammate.prefab` **plus** the two non-linked
-copies).
+are covered exactly once. All four ships come from
+`Assets/Prefabs/Ship.prefab`, so one prefab edit reaches every ship (the
+old, unused `Teammate.prefab` was deleted in Session 60).
 
 | Component            | Key inspector values                                                        |
 | --------------------- | ----------------------------------------------------------------------------- |

@@ -58,7 +58,7 @@ public class BossEventsTests
     {
         WardenBoss boss = CreateBoss<WardenBoss>();
         GameObject taunter = Ships()[0];
-        BossEvents.Taunt(boss, taunter);
+        BossEvents.Taunt(boss, taunter, 3f);
         Assert.AreSame(taunter, boss.TauntedShip);
     }
 
@@ -66,7 +66,7 @@ public class BossEventsTests
     public void Taunt_Halcyon_DoesNothing()
     {
         HalcyonBoss boss = CreateBoss<HalcyonBoss>();
-        Assert.DoesNotThrow(() => BossEvents.Taunt(boss, Ships()[0]));
+        Assert.DoesNotThrow(() => BossEvents.Taunt(boss, Ships()[0], 3f));
     }
 
     [Test]

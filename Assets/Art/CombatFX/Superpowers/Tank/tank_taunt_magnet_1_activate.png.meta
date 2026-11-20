@@ -1,0 +1,1066 @@
+fileFormatVersion: 2
+guid: 168aa037ada5b0b468f5ce848f7012a2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2178773426207766018
+    second: tank_taunt_magnet_1_activate_0
+  - first:
+      213: -7101582686359047339
+    second: tank_taunt_magnet_1_activate_1
+  - first:
+      213: -753184294440727930
+    second: tank_taunt_magnet_1_activate_2
+  - first:
+      213: -8223430663283301130
+    second: tank_taunt_magnet_1_activate_3
+  - first:
+      213: -4702448684845901954
+    second: tank_taunt_magnet_1_activate_4
+  - first:
+      213: -5067046667441754400
+    second: tank_taunt_magnet_1_activate_5
+  - first:
+      213: 8711708859917760694
+    second: tank_taunt_magnet_1_activate_6
+  - first:
+      213: -2961710515220492932
+    second: tank_taunt_magnet_1_activate_7
+  - first:
+      213: -1703936153145615554
+    second: tank_taunt_magnet_1_activate_8
+  - first:
+      213: -2847270477567129370
+    second: tank_taunt_magnet_1_activate_9
+  - first:
+      213: 5073538641301881003
+    second: tank_taunt_magnet_1_activate_10
+  - first:
+      213: -2576225228969376929
+    second: tank_taunt_magnet_1_activate_11
+  - first:
+      213: 1568016185616076942
+    second: tank_taunt_magnet_1_activate_12
+  - first:
+      213: -8897472868869276900
+    second: tank_taunt_magnet_1_activate_13
+  - first:
+      213: 937389523668737825
+    second: tank_taunt_magnet_1_activate_14
+  - first:
+      213: 6251555107410481132
+    second: tank_taunt_magnet_1_activate_15
+  - first:
+      213: -6189673100557721248
+    second: tank_taunt_magnet_1_activate_16
+  - first:
+      213: -4212020616760781063
+    second: tank_taunt_magnet_1_activate_17
+  - first:
+      213: 2394806766709504985
+    second: tank_taunt_magnet_1_activate_18
+  - first:
+      213: 4823217813535645823
+    second: tank_taunt_magnet_1_activate_19
+  - first:
+      213: 1158550860793584644
+    second: tank_taunt_magnet_1_activate_20
+  - first:
+      213: -66579160097185325
+    second: tank_taunt_magnet_1_activate_21
+  - first:
+      213: -8022781397812216053
+    second: tank_taunt_magnet_1_activate_22
+  - first:
+      213: -1293532618662462214
+    second: tank_taunt_magnet_1_activate_23
+  - first:
+      213: 2977212328826251857
+    second: tank_taunt_magnet_1_activate_24
+  - first:
+      213: 7341059302274192955
+    second: tank_taunt_magnet_1_activate_25
+  - first:
+      213: 5270527210696348746
+    second: tank_taunt_magnet_1_activate_26
+  - first:
+      213: -6875801108282637121
+    second: tank_taunt_magnet_1_activate_27
+  - first:
+      213: -7844836593127203859
+    second: tank_taunt_magnet_1_activate_28
+  - first:
+      213: 5545893131418085889
+    second: tank_taunt_magnet_1_activate_29
+  - first:
+      213: 1479987160893405159
+    second: tank_taunt_magnet_1_activate_30
+  - first:
+      213: 1320972576443401314
+    second: tank_taunt_magnet_1_activate_31
+  - first:
+      213: -534286474197802797
+    second: tank_taunt_magnet_1_activate_32
+  - first:
+      213: 9123981356439984022
+    second: tank_taunt_magnet_1_activate_33
+  - first:
+      213: 2304024942424156386
+    second: tank_taunt_magnet_1_activate_34
+  - first:
+      213: 5105158855363166232
+    second: tank_taunt_magnet_1_activate_35
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 0
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 192
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_0
+      rect:
+        serializedVersion: 2
+        x: 60
+        y: 209
+        width: 392
+        height: 225
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 206bc2333ee8c3e10800000000000000
+      internalID: 2178773426207766018
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_1
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 414
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 553318c2c2c127d90800000000000000
+      internalID: -7101582686359047339
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_2
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 419
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68a057fefd62c85f0800000000000000
+      internalID: -753184294440727930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_3
+      rect:
+        serializedVersion: 2
+        x: 308
+        y: 420
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f4a1ff916180ed80800000000000000
+      internalID: -8223430663283301130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_4
+      rect:
+        serializedVersion: 2
+        x: 425
+        y: 290
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e77d145f5db8dbeb0800000000000000
+      internalID: -4702448684845901954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_5
+      rect:
+        serializedVersion: 2
+        x: 86
+        y: 196
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eeaecef6eb3ea9b0800000000000000
+      internalID: -5067046667441754400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_6
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 184
+        width: 14
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b8750e2d0536e870800000000000000
+      internalID: 8711708859917760694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_7
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 184
+        width: 21
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7d4ebc6af3e5e6d0800000000000000
+      internalID: -2961710515220492932
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_8
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 199
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3b5fc7b8176a58e0800000000000000
+      internalID: -1703936153145615554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_9
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 184
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e8872d06967c78d0800000000000000
+      internalID: -2847270477567129370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_10
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 173
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba044057384d86640800000000000000
+      internalID: 5073538641301881003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_11
+      rect:
+        serializedVersion: 2
+        x: 411
+        y: 175
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5381edbdc86f3cd0800000000000000
+      internalID: -2576225228969376929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_12
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 161
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8095b1c966b2c510800000000000000
+      internalID: 1568016185616076942
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_13
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 164
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1bfe5c0193d58480800000000000000
+      internalID: -8897472868869276900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_14
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 150
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12f92762ec6420d00800000000000000
+      internalID: 937389523668737825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_15
+      rect:
+        serializedVersion: 2
+        x: 398
+        y: 153
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cef0bfe7f3cf1c650800000000000000
+      internalID: 6251555107410481132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_16
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 140
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 061677dfb1dd91aa0800000000000000
+      internalID: -6189673100557721248
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_17
+      rect:
+        serializedVersion: 2
+        x: 390
+        y: 142
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f61a57b095eb85c0800000000000000
+      internalID: -4212020616760781063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_18
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 131
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9dbfb6be0101c3120800000000000000
+      internalID: 2394806766709504985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_19
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 133
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f70e0220c038fe240800000000000000
+      internalID: 4823217813535645823
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_20
+      rect:
+        serializedVersion: 2
+        x: 135
+        y: 122
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40c13df9edff31010800000000000000
+      internalID: 1158550860793584644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_21
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 124
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d1a6fc4b96731ff0800000000000000
+      internalID: -66579160097185325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_22
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 113
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0f7ac043da59a090800000000000000
+      internalID: -8022781397812216053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_23
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 115
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afc3e3fcfe27c0ee0800000000000000
+      internalID: -1293532618662462214
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_24
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 106
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15a2a90d6de215920800000000000000
+      internalID: 2977212328826251857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_25
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 97
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3651237a8ea0e560800000000000000
+      internalID: 7341059302274192955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_26
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 90
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a44169cd29ca42940800000000000000
+      internalID: 5270527210696348746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_27
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 108
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb48392525f3490a0800000000000000
+      internalID: -6875801108282637121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_28
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 99
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: debdaa9aeaa812390800000000000000
+      internalID: -7844836593127203859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_29
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 95
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10a247c6b68f6fc40800000000000000
+      internalID: 5545893131418085889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_30
+      rect:
+        serializedVersion: 2
+        x: 341
+        y: 101
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e7b0354b78f98410800000000000000
+      internalID: 1479987160893405159
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_31
+      rect:
+        serializedVersion: 2
+        x: 178
+        y: 93
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26401f83f89055210800000000000000
+      internalID: 1320972576443401314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_32
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 88
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d0e4215845d598f0800000000000000
+      internalID: -534286474197802797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_33
+      rect:
+        serializedVersion: 2
+        x: 203
+        y: 84
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69754e7e3b4ee9e70800000000000000
+      internalID: 9123981356439984022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_34
+      rect:
+        serializedVersion: 2
+        x: 215
+        y: 78
+        width: 33
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e8e4d65a7a89ff10800000000000000
+      internalID: 2304024942424156386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tank_taunt_magnet_1_activate_35
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 78
+        width: 58
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8108cdf3eea29d640800000000000000
+      internalID: 5105158855363166232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      tank_taunt_magnet_1_activate_0: 2178773426207766018
+      tank_taunt_magnet_1_activate_1: -7101582686359047339
+      tank_taunt_magnet_1_activate_10: 5073538641301881003
+      tank_taunt_magnet_1_activate_11: -2576225228969376929
+      tank_taunt_magnet_1_activate_12: 1568016185616076942
+      tank_taunt_magnet_1_activate_13: -8897472868869276900
+      tank_taunt_magnet_1_activate_14: 937389523668737825
+      tank_taunt_magnet_1_activate_15: 6251555107410481132
+      tank_taunt_magnet_1_activate_16: -6189673100557721248
+      tank_taunt_magnet_1_activate_17: -4212020616760781063
+      tank_taunt_magnet_1_activate_18: 2394806766709504985
+      tank_taunt_magnet_1_activate_19: 4823217813535645823
+      tank_taunt_magnet_1_activate_2: -753184294440727930
+      tank_taunt_magnet_1_activate_20: 1158550860793584644
+      tank_taunt_magnet_1_activate_21: -66579160097185325
+      tank_taunt_magnet_1_activate_22: -8022781397812216053
+      tank_taunt_magnet_1_activate_23: -1293532618662462214
+      tank_taunt_magnet_1_activate_24: 2977212328826251857
+      tank_taunt_magnet_1_activate_25: 7341059302274192955
+      tank_taunt_magnet_1_activate_26: 5270527210696348746
+      tank_taunt_magnet_1_activate_27: -6875801108282637121
+      tank_taunt_magnet_1_activate_28: -7844836593127203859
+      tank_taunt_magnet_1_activate_29: 5545893131418085889
+      tank_taunt_magnet_1_activate_3: -8223430663283301130
+      tank_taunt_magnet_1_activate_30: 1479987160893405159
+      tank_taunt_magnet_1_activate_31: 1320972576443401314
+      tank_taunt_magnet_1_activate_32: -534286474197802797
+      tank_taunt_magnet_1_activate_33: 9123981356439984022
+      tank_taunt_magnet_1_activate_34: 2304024942424156386
+      tank_taunt_magnet_1_activate_35: 5105158855363166232
+      tank_taunt_magnet_1_activate_4: -4702448684845901954
+      tank_taunt_magnet_1_activate_5: -5067046667441754400
+      tank_taunt_magnet_1_activate_6: 8711708859917760694
+      tank_taunt_magnet_1_activate_7: -2961710515220492932
+      tank_taunt_magnet_1_activate_8: -1703936153145615554
+      tank_taunt_magnet_1_activate_9: -2847270477567129370
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

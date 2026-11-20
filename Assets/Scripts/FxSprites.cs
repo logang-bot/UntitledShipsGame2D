@@ -7,6 +7,17 @@ public static class FxSprites
     public const float PixelsPerUnit = 192f;
     private const string UnlitShader = "Universal Render Pipeline/2D/Sprite-Unlit-Default";
 
+    private static Sprite whiteUnitSprite;
+
+    /// <summary>A plain white sprite one world unit square, for placeholder bars and lines tinted at runtime.</summary>
+    public static Sprite WhiteUnitSprite => whiteUnitSprite != null ? whiteUnitSprite : whiteUnitSprite = CreateWhiteUnitSprite();
+
+    private static Sprite CreateWhiteUnitSprite()
+    {
+        Texture2D white = Texture2D.whiteTexture;
+        return Sprite.Create(white, new Rect(0f, 0f, white.width, white.height), new Vector2(0.5f, 0.5f), white.width);
+    }
+
     public static SpriteRenderer CreateChild(Transform parent, string name, int sortingOrder)
     {
         GameObject child = new GameObject(name);

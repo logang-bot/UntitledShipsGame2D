@@ -1,6 +1,6 @@
 // What the Attacker's combo box shows (design: HUD Party Frame): how many of
-// the 1-2-3 keys have landed and the headline. COMBO ✓ and BROKEN each hold
-// for FlashSeconds after they happen, while the rotation is back at key 1.
+// the E-R-T keys have landed and the headline. COMBO ✓ and BROKEN each hold
+// for FlashSeconds after they happen, while the rotation is back at key E.
 public struct ComboDisplay
 {
     public const float FlashSeconds = 0.6f;

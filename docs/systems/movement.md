@@ -21,15 +21,18 @@ Handles ship movement, clamped to stay within the camera viewport. Before
 that clamp, `HandleMovement()` also resolves the candidate position against
 every other ship and the boss so none of them can physically overlap — see
 [marauder-boss.md](bosses/marauder-boss.md)'s "Solid-body collision (ships + boss)" for the full
-mechanics (`ShipCollisionUtil.cs`). Move input arrives via
+mechanics (`ShipCollisionUtil.cs`; the per-ship loops live in
+`ShipCollisionResolver`, split out of `PlayerController` in Session 59).
+While `castLocked` is set (the Attacker's Nova Beam cast) the ship holds
+still and skips its normal fire. Move input arrives via
 `OnMove(InputValue)`, called automatically by the `Player Input` component —
 not polled manually.
 
 Key public fields: `moveSpeed` (a fixed per-role value, see
 [player-roles.md](player-roles.md)'s "Fixed per-role stats" — not a
 hand-set default like `screenPadding`), `screenPadding` (default 0.5, 0.5),
-`speedBuffMultiplier` (default `1`, non-destructive runtime multiplier set
-by Support's party-wide Speed Boost — see [player-roles.md](player-roles.md);
+`speedBuffMultiplier` (default `1`, non-destructive runtime multiplier, set
+by nothing since Speed Boost was dropped in Session 64 and kept for the card layer — see [player-roles.md](player-roles.md);
 `HandleMovement()` reads `moveSpeed * speedBuffMultiplier` rather than ever
 mutating `moveSpeed` itself).
 

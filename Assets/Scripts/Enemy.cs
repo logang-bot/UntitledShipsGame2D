@@ -115,8 +115,14 @@ public class Enemy : MonoBehaviour
             Fire();
         }
 
-        // Destroy if it drifts off the bottom of the screen
-        if (transform.position.y < -10f) Die();
+        if (transform.position.y < -10f) Despawn();
+    }
+
+    /// <summary>Drifted off the bottom of the screen: removed with no burst, fragments or death sound.</summary>
+    void Despawn()
+    {
+        isDead = true;
+        Destroy(gameObject);
     }
 
     void Fire()
@@ -134,7 +140,7 @@ public class Enemy : MonoBehaviour
         if (health <= 0) Die();
     }
 
-    // Called by a ship's own PlayerController.ResolveShipCollisions() the
+    // Called by a ship's own ShipCollisionResolver the
     // moment its overlap-resolution math detects it overlapping this enemy -
     // same shape as Minion.ApplyContactDamage (kamikaze: doesn't survive the hit).
     public void ApplyContactDamage(GameObject ship)

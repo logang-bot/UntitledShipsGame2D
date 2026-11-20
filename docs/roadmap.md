@@ -26,8 +26,12 @@ reference docs live under `systems/`.
 5. **Art & audio — final pass**, once everything above works with
    placeholder assets. **Exception (Session 49): art starts now, in
    parallel with step 3.** Each asset replaces a placeholder that already
-   works, so it never blocks gameplay. See `art-roadmap.md`. Audio is still
-   last.
+   works, so it never blocks gameplay. See `art-roadmap.md`. The final
+   audio (FMOD) is still last, but **provisional audio came first
+   (planned Session 60, in Session 61)**: cut-in voice lines and
+   placeholder music for the menus and the level. See "Provisional audio"
+   under "Implemented" and "Art & audio" below. Provisional sound effects
+   followed in Session 62 ("Provisional sound effects" in both sections).
 
 ## Implemented
 
@@ -641,6 +645,92 @@ reference docs live under `systems/`.
   Marauder's minions stay Combat FX sprites. The old sprite tints are
   gone. Level Select shows each boss's portrait. See `art-roadmap.md`'s
   Phase 5.
+- **Attacker Nova Beam + anime cut-in demo (Session 59)** — art Phases 4
+  and 6 started. The Attacker's E replaces Big Shot with the **Nova Beam**:
+  invulnerable and locked in place from the press, a 0.8 s wind-up (1.8 s since Session 61), then a
+  3 s (now 3.5 s) plasma column from the cannons to the top of the screen that strikes
+  everything in it every 0.1 s (HLSL beam shader, LineRenderer lightning,
+  particles; 20 s cooldown; CPU Attackers cast only when lined up). The
+  Attacker's party frame plays an anime **cut-in card** synced to it: key
+  poses (wind-up → flash and smear → pointing at the camera), blink, hair
+  sway and push-in, first on generated placeholder layers; the developer's
+  own four static frames (talking → shout → afterglow) replaced them.
+  Supporting changes: `EnemyDamage` (bullet and beam share one damage
+  dispatch), `PlayerHealth.GrantInvulnerability`,
+  `PlayerController.castLocked`, and `ShipCollisionResolver` (split out of
+  `PlayerController`). See the
+  [spec](superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md).
+- **Tank Super Shield + Taunt magnet (Session 60)** — the second role
+  reworked in the Nova Beam's style. **E = Super Shield**: refills the
+  shield and grows the shield arc to 3.5× its width and height (sized from
+  the Tank, not the screen) for 9 s, every hit on it free, then a 1 s
+  flicker and a collapse; 25 s cooldown; plays the Tank's cut-in card.
+  **Key 1 = Taunt** (the existing `Combo1` action), now 8 s cooldown and a
+  3 s window on every boss: Marauder holds the taunter as its target for
+  the window, Warden's bias window follows the Tank's number, and a magnet
+  field shows the whole time. New: `TankAbilitySettings`, `TankShieldArc`
+  (with `ShieldArcShape` / `ShieldArcSpriteFit`), `TankSuperShield` +
+  `SuperShieldTimeline`, `TankTaunt` + `TauntMagnetVisual` /
+  `TauntMagnetTimeline`, `AIControllerTank`, the per-role cut-in card
+  (`CutInRoleArt`, `PlayerAbility.SuperpowerElapsed`) and the frame's
+  `TauntKeyView` (`TauntDisplay`). Art from Claude Design (Combat FX and
+  Neon Fleet HUD prompts in `ArtSource/Tank/claude-design-prompts.md`) and
+  the developer's pilot frames. See the
+  [spec](superpowers/specs/2026-11-18-tank-super-shield-taunt-design.md).
+- **Provisional audio (Session 61)** — the game stops being silent. Plain
+  Unity `AudioSource`s, no FMOD and no `AudioMixer` yet. **Menu music:** one
+  track on a `Music` object in the persistent `MenuBackground.unity`, so it
+  carries across the five menu screens and stops when `Level` loads.
+  **Level music:** one track on a `Music` object in `Level.unity` for every
+  boss, at volume 0.5 (the menu track at 0.8, so the full-volume cut-in voices stand out). Both use `MusicTrack`, which loops back to an
+  Inspector `startAtSeconds` instead of the song's intro, and both keep
+  playing under the pause menu. In the level, `BossMusicCue` lands the
+  song's **1:27 on the frame boss combat starts** (the ships unfreeze after
+  the entrance): the song starts at 1:27 minus the timed pre-fight
+  (intro + free movement + waves + entrance, 27 s → 1:00), and when the
+  boss entrance begins it dips the volume and re-seeks if the untimed
+  wait for the last wave enemy threw it off by more than 0.25 s. Once the
+  fight starts, the song loops back to 1:27. **Cut-in voices:** the Attacker's and Tank's clips sit on
+  `CutInRoleArt.voice` and start **on the press** (the cast's first frame,
+  `CutInTimeline.CastStarted`), from an `AudioSource` on
+  `PartyFrame.prefab`'s `CutInCard`. Pause now also sets
+  `AudioListener.pause`, so voices freeze with the card. Files and their
+  license status are in `Assets/Audio/SOURCES.md`: both music tracks are
+  **not cleared** and must be replaced before any build is shared.
+- **Provisional sound effects (Session 62)**: the Claude Design SFX set in
+  `Assets/Audio/SFX/`, through a new `GameMixer` (Music / Voice / SFX,
+  Compressor on SFX). Sounds:
+  - **Ships:** each role's fire, the Attacker's four combo sounds, hit-confirm
+    when a shot lands, the hit a ship takes (sized per bullet), Super Shield
+    blocks.
+  - **Abilities:** the Nova Beam (wind-up, start, loop, end, impact sparks),
+    the Super Shield (expand, loop, ending, collapse), the Taunt (activate,
+    loop, end).
+  - **Enemies:** every enemy bullet prefab's shot, the Marauder missile
+    (launch, flight loop, hit), Warden turrets / big shot / Lockdown wall,
+    minion and wave-enemy deaths.
+
+  No audio manager: each emitter's own `AudioSource` plays through
+  `SfxPlayback`, and `SfxVoiceLimit` caps copies of a clip so a volley plays
+  once. See [systems/audio.md](systems/audio.md).
+- **Controls rebind (Session 63)**: movement on WASD (arrows kept as a
+  second binding). Abilities move to a MOBA-style row that fills from Q:
+  Q = every role's superpower, E / R / T = the Attacker's combo (E is also
+  the Tank's Taunt). Gamepad: Cross / A fires, L1 = superpower, R1 / L2 /
+  R2 = combo. A data-only change to `PlayerControls`, plus HUD keycaps and
+  role-card text. See [systems/input.md](systems/input.md).
+- **Medic Sanctuary + Support Echo Gate (Session 64)**: the last two
+  superpowers, replacing Aura Boost and Speed Boost. Sanctuary is a dome
+  left where the Medic stands (6 s: fast heals inside, enemy bullets at
+  40% speed). Echo Gate is a bar dropped above the Support (8 s: regular
+  shots crossing it split into a 3-shot fan, credited to the shooter),
+  tethered to the Support and shattering if it dies. Both share one
+  timeline (`ZonePowerTimeline`) and sound base (`ZonePowerSfx`), have
+  cut-in cards and CPU rules. Their Claude Design art, icons and sounds
+  landed the same session; the pilot frames are still open. The prompts for the art, the pilots and the
+  sound effects are in `ArtSource/`. See the
+  [spec](superpowers/specs/2026-11-19-medic-sanctuary-support-echo-gate-design.md)
+  and [systems/player-roles.md](systems/player-roles.md).
 
 ## In Progress
 
@@ -720,13 +810,26 @@ is independently testable and the one before it de-risks the next.
     (first draft done: Session 53);
   - effects (Combat FX sprites done: Session 55, Sprite Atlases tested and
     dropped: Session 56; grid and particles open);
-  - powers (role ability effects done: Session 55; black hole open);
+  - powers (role ability effects done: Session 55; the Attacker's Nova
+    Beam done: Session 59; the Tank's Super Shield and Taunt magnet done:
+    Session 60; the Medic's Sanctuary and Support's Echo Gate done, with
+    delegated Claude Design art: Session 64; the
+    black hole and the warping grid open, waiting for a power that needs
+    them);
   - bosses, designed in Claude Design alongside the backgrounds — **in the
     game as live 3D models** (Session 58), with every phase and telegraph
     state on the model and portraits on the Level Select cards. Warden's
     arms moved onto the hull and need a playtest. See `art-roadmap.md`'s
     Phase 5;
-  - anime cut-ins;
+  - anime cut-ins (route decided and the Attacker's card built on
+    the developer's 4-frame art: Session 59; the Tank's card: Session 60,
+    on the developer's 4-frame art; Medic and Support cards wired with
+    their titles: Session 64). **Missing: the Medic's and Support's
+    cut-in art** — the four pilot frames each (`medic_talk_1..4`,
+    `support_talk_1..4`, 1216×362, into `Assets/Art/CutIns/<Role>/`),
+    from the Fable prompts in `ArtSource/CutIns/Medic/` and
+    `ArtSource/CutIns/Support/fable-prompt.md`. Until then their cards
+    play with the title alone;
   - the pre-level screens (main menu through level select) on a shared UI
     kit;
   - the in-level HUD last (PC done: Session 57; phone layout open).
@@ -737,4 +840,45 @@ is independently testable and the one before it de-risks the next.
   (glTFast + `ShipMesh.shader`) under the URP 2D Renderer, plus bloom and
   Shape Blaster-inspired neon effects. Blender is optional.
 
+- **Provisional audio (planned Session 60, built Session 61; see
+  "Implemented")** — placeholder sound while the art lands; the FMOD pass
+  below replaces it. Decided when built: plain `AudioSource`s, **no
+  `AudioMixer` until a Settings screen needs volumes**; voice clips start
+  **on the press**, not on the snap (the developer's clips are full lines,
+  3 s and 4 s, so the old "fit inside the wind-up" rule is dropped); MP3s
+  imported as-is (the songs aren't written to loop, so the MP3 gap
+  doesn't matter). Still open:
+  - **Medic and Support voice lines**, with their own cut-in cards
+    (`Assets/Audio/Voice/<Role>/`, set on `CutInRoleArt.voice`).
+  - **A track per boss:** an `AudioClip` on `LevelSetup`'s `BossEntry`,
+    next to its background.
+  - **Cleared music:** both tracks are placeholders the project can't ship
+    (`Assets/Audio/SOURCES.md`); replace them before any build is shared.
+- **Provisional sound effects (first batch built Session 62; see
+  "Implemented" and [systems/audio.md](systems/audio.md))**. Decided when
+  built:
+  - one-shots from each emitter's own `AudioSource`, with no singleton;
+  - a static per-clip voice cap (`SfxVoiceLimit`);
+  - the `AudioMixer` now (Music / Voice / SFX);
+  - AI teammates' shots at full volume.
+
+  Still open:
+  - **Missing sounds**, for a second Claude Design batch (the Medic aura
+    tick and the Sanctuary and Echo Gate sets landed in Session 64):
+    - a ship going down;
+    - the boss phase change and defeat;
+    - the Warden core's "plink" when hit while shielded;
+    - the UI (menu navigation and confirm, the pause menu).
+  - **Listening pass:** a dense volley must not clip or turn into noise,
+    and music and voices must stay clear. Tune with `GameMixer`'s group
+    faders and the cue volumes.
+  - **Unused clips** already imported (the Halcyon set, crit shots, spare
+    bullet sizes, three particle sounds), listed in
+    `Assets/Audio/SOURCES.md`. They wait for the mechanics or minions
+    that would use them.
+  - **License** for the SFX ("Fill in" in `SOURCES.md`); they're
+    AI-generated, so Steam's AI disclosure applies.
+  - **Player volume controls:** the mixer can't be reached from the game
+    yet. Tracked as [art-roadmap.md](art-roadmap.md)'s "Phase 7b:
+    Settings".
 - **Audio** — FMOD adaptive music, intensity/phase shifts tied to boss HP thresholds.

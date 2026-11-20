@@ -97,11 +97,12 @@ role stroke, glow and a 3 px inset edge; other human = dim role stroke; CPU
 
 | View | Shows |
 | --- | --- |
-| `FrameIdentityView` | Who-tag (`◤ P1` filled / `P2` outlined / `◇ CPU 1` dashed), ship name (`RoleCardText.ShipName`), role, `LOW HP` tag (≤ ⅓ HP), Speed Boost buff chip |
+| `FrameIdentityView` | Who-tag (`◤ P1` filled / `P2` outlined / `◇ CPU 1` dashed), ship name (`RoleCardText.ShipName`), role, `LOW HP` tag (≤ ⅓ HP), speed-buff chip (nothing raises the buff since Speed Boost was dropped in Session 64; kept for the card layer) |
 | `FrameVitalsView` + 2× `PipRowView` | HP as 14 px square pips (amber when low), shield as 9×14 segments (fixed width per point), the n/max numbers, `BROKEN` at 0 shield. A shield over 12 points (the Tank's 20) moves to its own line |
-| `FrameStatsView` | SPD, FIRE (live, with buff multipliers) and real DPS from the boss's `BossDamageLedger`. Values boosted by Speed Boost turn light purple with a `+` (the design's ▲ isn't in the fonts) |
+| `FrameStatsView` | SPD, FIRE (live, with buff multipliers) and real DPS from the boss's `BossDamageLedger`. Values raised by a buff multiplier turn light purple with a `+` (the design's ▲ isn't in the fonts) |
 | `AbilityCellView` | The square sweep around the icon (`AbilityCellState`): solid = ready, filling = active time left, grey track filling back up = cooldown; name, status, seconds, 3 px active bar |
-| `ComboKeysView` | Attacker only: the 1-2-3 keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`) |
+| `ComboKeysView` | Attacker only: the E-R-T keycaps and `NEXT ▸ n` / `COMBO ✓` / `BROKEN` (`ComboDisplay`) |
+| `TauntKeyView` | Tank only (Session 60), the `TauntBox` next to the hidden combo box: `READY` (white-edged `E` keycap), `PULLING · n s` (filled cyan keycap, magnet, the 3 px bar emptying over the 3 s taunt), `COOLDOWN · n s` (slate keycap refilled by a radial sweep). Mapped by the pure, tested `TauntDisplay`. Built from the Neon Fleet HUD screenshots in `ArtSource/Tank/hud-reference/`, with its `ico_magnet` |
 
 `PipRowView` resizes to the ship's max each time it changes, because
 `PlayerRoleComponent` applies the role's max HP and shield in `Start()`,
@@ -112,13 +113,49 @@ after the frames are bound.
 its ship): `CLICK` keycap when ready, white border and `TRIGGER` on hover,
 `WAIT` + lock while cooling. The human's own frame shows no key.
 
+**Anime cut-in card (Session 59 Attacker, Session 60 Tank).** Each `PartyFrame` has a
+`CutInCard` child (last sibling, `LayoutElement.ignoreLayout`, a
+`RectMask2D` so it's clipped to the frame). `CutInCardView.Bind(role, snap)`
+picks the role's `CutInRoleArt` (frames, kicker, title, and the optional
+`voice` clip, played from the card's `voiceSource` on the cast's first
+frame, `CutInTimeline.CastStarted`; Session 61) from `roles[]`,
+recolors the card (`roleTints` → the role color, `roleBgTints` → its dark
+card color) and returns false for a role with no entry, whose card never shows. All four roles have one since Session 64; the Medic's and Support's have no frames yet, so `CutInCharacterRig` hides the portrait and the card plays with the title alone. For a role with a card,
+`PartyFrameUI.Paint()` hands `CutInCardView.Show()` the ship's
+superpower clock (`PlayerAbility.SuperpowerElapsed`: the Nova Beam cast or
+the Super Shield, Sanctuary or Echo Gate, -1 when idle) and fades the stats `content` out by
+however much of the frame the card covers. Pure reads, scaled time, so
+pause freezes it with the game.
+
+| Piece | Does |
+| --- | --- |
+| `CutInTiming` | The timeline numbers: slide in 0–0.25 s, talk frames flipping every 0.12 s, snap when the power lands (`PlayerAbility.SuperpowerSnapSeconds`: the beam's 1.8 s wind-up, or the Super Shield's 0.4 s growth), shout held 0.6 s, flash, 1.06× push-in, 0.15 s shake, slide out `slideOutAfterSnapSeconds` (1.5 s) after the snap, over 0.25 s (`SlideOutAt`: Attacker 3.3 s, Tank 1.9 s) |
+| `CutInTimeline` | How much of the frame the card covers at a moment (ease-out in, ease-in out). Tested |
+| `CutInPoseTimeline` | Which drawn frame shows (`CutInFrame`: TalkClosed / TalkOpen flipping until the snap, then Shout, then Afterglow), plus the flash alpha, push-in scale and shake strength. Tested |
+| `CutInCardView` | Slides `Panel` in from the frame's left edge and back, and shows or hides the card |
+| `CutInCharacterRig` | Swaps the `Portrait` sprite between `frames[]`, sets the flash, and does the parallax, push-in and shake on `Character` |
+| `CutInSpeedLines` | The diagonal speed lines streaming behind the character |
+
+Inside `Panel`: the `AttackerBg` fill, the speed lines, `Character` with one
+full-card `Portrait` image, the `NOVA-11 · ATTACKER` kicker and `NOVA BEAM`
+title (44 pt, kept right of the pointing hand), an orange `frame_stroke`
+edge, and the white `Flash`. The frames are the developer's four static
+PNGs in `Assets/Art/CutIns/Attacker/`, `attacker_talk_1..4.png` (1216×362,
+transparent, 200 px/unit, uncompressed), in `CutInFrame` order:
+smirk / talking / shout with fingertip flash / smirk with glowing suit.
+The Tank's card (`AEGIS-04 · TANK`, `SUPER SHIELD`, in Tank cyan) uses
+`Assets/Art/CutIns/Tank/tank_talk_1..4.png`, the same format: smirk /
+talking / shout with the cyan burst / grin holding the hexagon shield.
+The ability cell's Attacker icon is `ico_beam`; the Tank's is
+`ico_supershield`.
+
 **DOWN.** There is no revive, so a dead ship's frame stays in its slot,
 fades to 40% under a hatch and shows a `DOWN` badge; its ability reads
 `OFFLINE`.
 
 `AbilityTimes.Read` takes the cooldown remaining and total from
 `PlayerAbility` (`CooldownRemaining`, `CooldownFor(role)`) and the active
-time from Speed Boost / Aura Boost. The Attacker combo reads
+time from `AbilityTimes.ActiveRemaining` (Nova Beam, Super Shield, Sanctuary, Echo Gate). The Attacker combo reads
 `AttackerComboExpectedSlot`, `AttackerComboBrokenAt` and
 `AttackerComboFinishedAt`.
 
@@ -241,3 +278,7 @@ eye icon in the Hierarchy while doing world-space work.
 - The "in Medic aura" buff chip: nothing tracks which ships an aura is
   reaching.
 - The PC rails sliding in with the level (`ui-kit.md`'s transitions).
+- Pilot frames and voice lines for the Medic's and Support's cut-in cards, the Tank's frames 1 and 3, and
+  the final character art. Where the card goes on phones, which have no rails.
+- A CPU Tank's Taunt can't be clicked from its frame (the ability cell
+  triggers its Super Shield).

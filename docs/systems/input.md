@@ -18,13 +18,26 @@ over action names, since `Player Input`'s Send Messages behavior matches
 methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
 
 - Action map: `Player`
-  - `Move` — Value / Vector2, 2D Vector composite (WASD, `Keyboard&Mouse`
-    scheme) plus a `<Gamepad>/leftStick` binding (`Gamepad` scheme) — arrow
-    keys are still **not** bound
+  - `Move` — Value / Vector2, two 2D Vector composites (WASD, the main one,
+    and the arrow keys; both `Keyboard&Mouse`) plus a `<Gamepad>/leftStick`
+    binding (`Gamepad` scheme)
   - `Fire` — Button (Space and left mouse button, `Keyboard&Mouse`;
-    `<Gamepad>/buttonSouth`, `Gamepad`)
-  - `Ability` — Button (`E`, `Keyboard&Mouse`; `<Gamepad>/buttonWest`,
-    `Gamepad`)
+    `<Gamepad>/buttonSouth`, i.e. Cross / A, `Gamepad`)
+  - `Ability` — Button (`Q`, `Keyboard&Mouse`; `<Gamepad>/leftShoulder`,
+    L1 / LB, `Gamepad`). Every role's superpower: the Attacker's Nova Beam,
+    the Tank's Super Shield
+  - `Combo1` / `Combo2` / `Combo3` — Buttons (keys `E` / `R` / `T`,
+    `Keyboard&Mouse`; `<Gamepad>/rightShoulder` / `leftTrigger` /
+    `rightTrigger`, i.e. R1 / L2 / R2 or RB / LT / RT, `Gamepad`). The
+    Attacker's combo shots; `Combo1` is also the Tank's **Taunt** (Session 60)
+
+Ability keys follow a MOBA-style row that **fills from Q** (Session 63): the
+superpower is always Q / L1, and a role's extra abilities take E, R, T in
+order (keyboard), or R1, L2, R2 (gamepad). Only a four-ability ship (today
+the Attacker) reaches T. The action names were kept as they were, so the
+Send Messages handlers (`OnAbility`, `OnCombo1..3`) didn't change. The
+triggers work as Buttons through the default press point. Square / X and
+Triangle / Y are unbound in a fight.
 - Control schemes (added for local co-op — see
   [scene-flow.md](scene-flow.md)'s "JoinLobbyUI.cs" section): `Keyboard&Mouse`
   (requires both a `<Keyboard>` and a `<Mouse>`) and `Gamepad` (requires a
@@ -34,8 +47,9 @@ methods by name (`Move` action → `OnMove`, `Fire` action → `OnFire`).
   same scene don't both respond to every binding.
 
 `OnMove`/`OnFire` are consumed by `PlayerController.cs` — see
-[movement.md](movement.md) and [combat.md](combat.md). `OnAbility` is
-consumed by `PlayerAbility.cs` — see [player-roles.md](player-roles.md). None
+[movement.md](movement.md) and [combat.md](combat.md). `OnAbility` and
+`OnCombo1..3` are consumed by `PlayerAbility.cs` — see
+[player-roles.md](player-roles.md). None
 of these consumers needed any code change for gamepad support — they already
 only handle input through `PlayerInput`'s Send Messages, agnostic to which
 device/scheme triggered it.

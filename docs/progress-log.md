@@ -2259,3 +2259,567 @@ the editor and rendered the boss up close:
 No console errors. Not checked live: Marauder's missile, barrage and bay
 looks (minions are off), Warden's Lockdown chevrons, and bloom on the
 boss glow in a full fight.
+
+## Session 59 — Attacker Nova Beam + Anime Cut-in Demo (Art Phases 4 and 6)
+
+The developer wanted the role superpowers to feel like superpowers, starting
+with the Attacker, plus an anime character cut-in before the power fires.
+Design talk first, then the build. The spec is
+`docs/superpowers/specs/2026-11-12-attacker-nova-beam-cutin-design.md`.
+
+### Decisions
+
+- **Big Shot is replaced by the Nova Beam:** a 3 s plasma column, 0.9 × the
+  ship's width, from the cannons to the top of the screen, after a 0.8 s
+  wind-up that the cut-in plays over. The caster is **invulnerable** and
+  **locked in place** for the whole 3.8 s (the developer's picks). Colors
+  stay in a warm Attacker range (never a boss color).
+- **Cut-in route: 2D key poses.** The developer first said "like ZZZ", then
+  asked for the industry standard. The options covered were still +
+  motion graphics (Touhou), key poses (anime limited animation), rigged 2D
+  (Spine / Live2D / Unity 2D Animation) and 3D toon (ZZZ). Key poses won:
+  the "pose and point at the camera" moment for 2–3 drawings. A
+  foreshortened point needs its own drawing in any 2D route anyway.
+- **Art source:** Claude draws by writing code (SVG), so the character
+  comes from **Claude Fable 5.2** in a claude.ai artifact as layered vector
+  art, exported as PNG layers. The prompt is
+  `ArtSource/CutIns/Attacker/fable-prompt.md`. Commissioned art may replace
+  it for release (Steam needs an AI-content disclosure if Claude art ships).
+
+### Built
+
+- **`EnemyDamage`**: `Bullet`'s boss / arm / enemy / minion dispatch moved
+  into a shared static helper, so the beam damages exactly what bullets do.
+- **`PlayerHealth.GrantInvulnerability`** and
+  **`PlayerController.castLocked`** (no movement, recoil or normal fire).
+  `PlayerController` was 268 lines, so its collision code moved to
+  **`ShipCollisionResolver`** (behavior unchanged).
+- **Cast:** `AttackerBeamCast` (coroutine on `PlayerAbility`, like
+  Support's boost) with `AttackerBeamSettings` replacing the four Big Shot
+  fields. The combo keys are paused while casting. `AIControllerAttacker`
+  only casts when its focus point is inside the beam's column.
+- **Beam:** `AttackerBeam` + `BeamColumnDamage` (one `OverlapBoxAll` per
+  0.1 s tick) + `AttackerBeamVisual` + `BeamLightning`, the
+  `AttackerBeam.shader`, and `Prefabs/FX/AttackerBeam.prefab` (body quad,
+  2 edge arcs, 6 branches, muzzle flare, impact sparks). New tokens
+  `BeamCore`, `BeamAmber`, `BeamRedGold`, `BeamArc`. `PaletteTint` now also
+  colors a `ParticleSystem`.
+- **Cut-in card:** `CutInCard` on `PartyFrame.prefab` with `CutInTiming`,
+  `CutInTimeline`, `CutInPoseTimeline`, `CutInCardView`,
+  `CutInCharacterRig` and `CutInAmbientMotion`. The 13 placeholder layer
+  PNGs were generated in the editor from palette colors, named after the
+  prompt's layers, so the Fable art drops in by overwriting them.
+- HUD text: "Nova Beam" / "NOVA BEAM", the `ico_beam` ability icon, the
+  "Firing" status and the active sweep.
+
+### Tuning notes
+
+- The first beam (core × 3, edges × 2.2, glow 1.6× wide) bloomed into a flat
+  white column that greyed the whole playfield. Core × 1.3, edges × 1.6 and
+  glow 1.5× keep the warm edges visible.
+- Damage per tick is `fireDamage × 0.5` (1 for the Attacker): 30 per cast,
+  a fifth of Marauder's HP, on a 20 s cooldown.
+- The card's title wrapped onto two lines over the kicker; it is now one
+  unwrapped line at 54 pt.
+
+### Verified
+
+All 194 EditMode tests pass (new: `EnemyDamageTests`,
+`BeamColumnDamageTests`, `CutInTimelineTests`, `CutInPoseTimelineTests`,
+and two invulnerability cases in `PlayerHealthTests`). In Play mode on
+Level 1, with the cast forced through `TryUseAbility()` and time slowed for
+the screenshots:
+- the card slid in with the wind-up pose; at 0.8 s the flash and the
+  pointing pose landed as the beam fired;
+- the ship stayed put and invulnerable; the HUD read NOVA BEAM · ACTIVE;
+- at 2.8 s the card was gone and the stats back while the beam still fired;
+  at 3.8 s the lock lifted, the beam was gone, and the cooldown read
+  20 s from the press.
+
+No console errors from the game (the MCP screenshot tool logged its own
+PlayerLoop warnings). An early 12 s test beam also hit Marauder for 80,
+and the damage meter credited NOVA-11. **Not checked live:** a CPU
+Attacker's cast gating, a
+shielded Warden under the beam, and
+a real E press. All of these need a playtest.
+
+### Later in Session 59: the developer's own cut-in frames
+
+The developer chose static PNGs over layers and made a 4-frame animation of
+one pointing pose: `attacker_talk_1..4.png` (smirk, talking, shout with a
+fingertip flash and glowing suit, smirk with the glow still on). All four
+are 1216×362, transparent and aligned. The card was rebuilt around them:
+- `CutInFrame` (TalkClosed, TalkOpen, Shout, Afterglow) replaces
+  `CutInPose`.
+- `CutInPoseTimeline.FrameAt` flips the talk frames every 0.12 s until the
+  snap, holds the shout 0.6 s, then the afterglow.
+- `CutInCharacterRig` swaps one `Portrait` sprite.
+- `CutInAmbientMotion` became `CutInSpeedLines` (the hair sway needed
+  layers).
+
+The 13 generated placeholder layers were deleted. The title shrank to 44 pt
+and moved right, because the pointing hand ran into it. 194 EditMode tests
+pass. In Play mode (loaded from the main menu), the talking frames show
+while the card slides in, and the shout lands with the beam.
+
+## Session 60 — Tank Super Shield + Taunt Magnet (Art Phases 4 and 6)
+
+The second role reworked in the Nova Beam's style. The developer wanted
+Taunt kept, made visible and nearly always available, plus a new big
+ability. The spec is
+`docs/superpowers/specs/2026-11-18-tank-super-shield-taunt-design.md`.
+
+### Decisions
+
+- **Keys:** E = Super Shield (E stays "the superpower" for every role, so
+  the cut-in follows E). Taunt moves to key 1 / gamepad Y, the existing
+  `Combo1` action (only the Attacker used it). No new input action.
+- **Super Shield:** refills the shield and grows the arc to **2.5× the
+  normal arc** in width and height, centered on the ship. First asked for
+  as 3/4 of the screen; the developer then chose to size it from the Tank
+  so it survives screen changes. 4 s, every arc hit free (the developer's
+  pick: a 3/4-screen arc could drain all 20 points in one barrage), 25 s
+  cooldown. Not locked, not invulnerable: moving the wall is the point.
+- **Taunt:** 3 s active, 4 s cooldown, a magnet showing the whole time.
+  To keep the magnet honest, Marauder now holds the taunter as its target
+  for the window; Warden's window takes the Tank's number.
+- **Art:** Claude Design prompts for the Combat FX and Neon Fleet HUD
+  projects (`ArtSource/Tank/claude-design-prompts.md`); the developer draws
+  the pilot frames.
+
+### Built
+
+- `TankAbilitySettings` replaces `tauntCooldown` and the three shield-arc
+  fields on `PlayerAbility` (re-set on `Ship.prefab`, arc height 0.2 as
+  before; every ship, human or CPU, spawns from it. The old
+  `Teammate.prefab` is referenced nowhere).
+- `PlayerAbilityTank` now composes `TankShieldArc` (the arc moved out of it,
+  plus `SetScale`, the look swap and `FreeBlock`), `TankSuperShield` (the
+  4 s cast, driven by the pure `SuperShieldTimeline`) and `TankTaunt`
+  (cooldown, window, `TauntMagnetVisual` from `TauntMagnetTimeline`).
+  `ShieldArcShape` and `ShieldArcSpriteFit` are the pure arc maths.
+- `Bullet.HitPlayer` asks `TankShieldArc.Absorbs` first.
+- `BossEvents.Taunt` and both bosses' `TauntedBy` take the seconds;
+  `MarauderBossAggro` holds the taunter; `WardenBoss.tauntWindowDuration`
+  is gone.
+- `AIControllerTank`: taunts on `ShouldTaunt`, Super Shield at ≤ 50% shield.
+- HUD: `CutInCardView.Bind` picks a `CutInRoleArt` per role and recolors
+  the card; `PlayerAbility.SuperpowerElapsed` / `SuperpowerSnapSeconds`
+  drive it. `TauntKeyView` + `TauntDisplay` add the Tank's Taunt box
+  (built in `PartyFrame.prefab` from the combo box). The Tank's ability
+  cell reads SUPER SHIELD; the Role Select card reads SUPER SHIELD and
+  KEY 1 · TAUNT (the card only has two lines).
+- Art intake: the Combat FX ZIP's 13 frames, imported like the existing FX
+  (192 px/unit); `tank_talk_2` / `_4` (200 px/unit); the HUD screenshots
+  in `ArtSource/Tank/hud-reference/`. `tank_talk_1` / `_3` were saved web
+  pages, not images, and `ico_supershield` / `ico_magnet` weren't
+  exported, so placeholders stand in (frames `2, 2, 4, 4`; `ico_shieldarc`,
+  `ico_taunt`).
+
+### Verified
+
+All 206 EditMode tests pass (new: `ShieldArcShapeTests`,
+`SuperShieldTimelineTests`, `TauntMagnetTimelineTests`,
+`TauntDisplayTests`, and Marauder's held-taunt case). In Play mode on
+Level 1, triggering the CPU Tank's abilities through `TryUseAbility()` /
+`TryTaunt()`:
+- the shield refilled from 5 to 20; mid-cast the arc was 2.5× wide
+  (4.5 local units, 2.7 world), centered on the ship, the design sprite's
+  caps on the collider's ends, free block on, the shimmer frames cycling,
+  and the shield still 20 after ~10 s under fire (with the duration
+  stretched for the check);
+- after the cast the arc was back to 1.8 and the cooldown counting from 25 s;
+- the magnet played its sustain loop; the Tank's frame showed PULLING and
+  SUPER SHIELD · ACTIVE, its card bound to SUPER SHIELD; Marauder's panel
+  read TANK · TAUNTED.
+
+No console errors or warnings. **Not checked live:** a real key-1 / E
+press as a human Tank, the cut-in card mid-slide, Warden and Halcyon. All
+numbers need a playtest.
+
+### Later in Session 60: the remaining art
+
+The developer re-exported `tank_talk_1` / `_3` as proper 1216×362
+transparent PNGs, aligned with frames 2 and 4, and Claude Design exported
+`ico_supershield` / `ico_magnet` (48×48, white for tinting, like the other
+HUD icons). All are imported like their neighbours and wired in: the card
+plays all four frames, the ability cell and Taunt box use the new icons.
+The unused `Teammate.prefab` (no scene, prefab or script referenced it;
+every ship spawns from `Ship.prefab`) was deleted.
+
+### Later in Session 60: docs pass and provisional audio items
+
+A pass over the docs for anything the Nova Beam and Tank work left stale:
+- `systems/input.md`: the action list now matches `PlayerControls`
+  (movement is on the arrow keys, not WASD; `Combo1..3` on keys 1/2/3 and
+  gamepad North / LB / RB, with `Combo1` also the Tank's Taunt).
+- `current-state.md`: the how-to-test steps use the arrow keys, name keys
+  1/2/3, and describe the Attacker's E as the Nova Beam (it still said
+  Big Shot); shields refill from the Medic's aura or the Super Shield;
+  Taunt on Halcyon shows the magnet.
+- `systems/player-roles.md` (shield refill) and
+  `systems/bosses/halcyon-boss.md` (taunt feedback) likewise.
+
+New roadmap items (`roadmap.md`'s "Provisional audio", with pointers from
+`art-roadmap.md` Phases 6 and 7): placeholder **voice lines for the cut-in
+cards** (a shout on the snap frame), **menu music** (one loop on the
+persistent `MenuBackground`, so it carries across the five screens) and
+**level music** (one loop in `Level.unity`, per boss later). The final
+FMOD pass stays last.
+
+### Later in Session 60: first Tank tuning
+
+The developer's numbers, before a playtest:
+- **Taunt cooldown 4 s → 8 s.** It's still a 3 s hold, so the magnet is
+  up 3 s out of every 8 instead of almost always.
+- **Super Shield 2.5× → 3.5×** (about 3.8 world units, two thirds of the
+  playfield's width) and **4 s → 9 s**. Cooldown unchanged at 25 s.
+
+Changed in `TankAbilitySettings` and `Ship.prefab` (the only serialized
+copy). The design sprites were drawn for 2.5×, so they now stretch 1.4×
+to fit. `SuperShieldTimelineTests`' flicker case had 3.05 s hard-coded
+(inside the old 4 s cast); it now finds an even flicker step from the
+settings, and `TauntDisplayTests`' cooldown case reads the cooldown from
+the settings. All 206 EditMode tests pass. Not playtested yet.
+
+## Session 61 — Provisional Audio (Menu Music, Level Music, Cut-in Voices)
+
+The roadmap's "Provisional audio" item, with the developer's four files.
+
+### Decisions
+
+- **Plain `AudioSource`s, no `AudioMixer` yet.** Unity can't create a mixer
+  from a script, and nothing reads volumes until a Settings screen exists;
+  the mixer comes with that screen.
+- **Voice on the press, not the snap.** The clips are full lines (Tank
+  ~3 s, Attacker ~6 s), longer than the card (~2.5 s), so they start on the
+  cast's first frame and play their build-up over the wind-up. This drops
+  the old roadmap rule that a clip must fit the wind-up.
+- **MP3s imported as-is.** The songs aren't written to loop, so the MP3
+  encoder gap at the loop point doesn't matter.
+- **All four files committed**, the developer's call. Both songs are
+  commercial or uncleared placeholders; `Assets/Audio/SOURCES.md` records
+  that they must be replaced before any build is shared.
+- **Music plays on under the pause menu**; voices freeze with the card.
+
+### What changed
+
+- `Assets/Audio/Music/` (`Menu_Neverending_DowntownBinary.mp3`,
+  `Level_LoseMyMind.mp3`: Streaming, Vorbis 70) and
+  `Assets/Audio/Voice/<Role>/` (Decompress On Load, Vorbis 70), plus
+  `SOURCES.md`. The `®` was dropped from the level track's filename.
+- New `MusicTrack`: plays its `AudioSource` and, when the track ends,
+  restarts it at `startAtSeconds` instead of the intro. A `Music` object
+  with one sits in `MenuBackground.unity` (all five menu screens) and in
+  `Level.unity` (every boss; `startAtSeconds` is 0 until the developer
+  picks the part of the song to start on).
+- `CutInRoleArt.voice` (Attacker and Tank set on `PartyFrame.prefab`),
+  `CutInCardView.voiceSource` (an `AudioSource` on `CutInCard`), and
+  `CutInTimeline.CastStarted` deciding the press frame (two new tests).
+- `PauseUI.SetPaused` sets `AudioListener.pause` along with
+  `Time.timeScale`, and clears it on Restart, Change Roles and Quit,
+  since it's static and would survive the scene load. The music sources
+  have Ignore Listener Pause on.
+
+All 208 EditMode tests pass. In Play mode the menu track plays from
+`MenuBackground`, and a seek to the end with `startAtSeconds = 60` came
+back at 62 s, so the loop goes back to the start point. Voices are
+checked by ear by the developer.
+
+### Later in Session 61: level music synced to boss combat
+
+The developer asked for the level track a bit quieter (`AudioSource`
+volume 1 → **0.7**) and for the song's **1:27 to land exactly when boss
+combat starts**: not when the boss appears, but when the entrance is over
+and the ships can move to attack it.
+
+The pre-fight isn't a fixed length: after the timed intro (4 s), free
+movement (4 s), waves (15 s) and before the timed entrance (4 s),
+`LevelSequencer` waits for the last wave enemy to die. So new
+`BossMusicCue` (on `Level.unity`'s `Music`, wired to the sequencer):
+- starts the song at 1:27 minus the timed steps (27 s → 1:00), read from
+  the sequencer's own fields so retuning them keeps the sync;
+- when `BossEntrance` begins (always `bossEntranceDuration` before
+  combat), checks the song position and, if it's more than 0.25 s off,
+  dips the volume out and back in (0.3 s each, `MusicTrack.JumpTo`) around
+  a seek that lands 1:27 on the combat frame;
+- on `BossCombat`, moves the loop point to 1:27, so a long fight replays
+  the fight part, not the pre-fight.
+
+Known edge: pausing during the 4 s entrance shifts the hit, because the
+music plays on under pause while the sequencer stops.
+
+### Later in Session 61: first Nova Beam tuning
+
+The developer's numbers, before a playtest: **wind-up 0.8 s → 1.3 s** and
+**beam 3 s → 5 s** (cooldown unchanged at 20 s), so the cast is 6.3 s,
+invulnerable and locked in place throughout. Changed in
+`AttackerBeamSettings`' defaults and `Ship.prefab` (the only serialized
+copy). The cut-in's snap follows the wind-up on its own
+(`PlayerAbility.SuperpowerSnapSeconds`), so the shout now lands at 1.3 s;
+the card still slides out at 2.3 s.
+
+### Later in Session 61: new Attacker voice
+
+The developer replaced the Attacker's cut-in voice with a new recording
+(~4.1 s, was ~6 s). Same filename (`Assets/Audio/Voice/Attacker/attacker_voice_final_flash.wav`)
+and `.meta`, so `PartyFrame.prefab`'s reference didn't change. It now ends
+inside the Nova Beam cast.
+Then the beam came back down, **5 s → 3.5 s**, so the cast is now 4.8 s
+(1.3 s wind-up + 3.5 s beam); the ~4.1 s voice line ends just before it.
+Then the wind-up went up, **1.3 s → 1.8 s**, so the cast is 5.3 s
+(1.8 s + 3.5 s beam).
+
+The 1.8 s wind-up made the cut-in card leave (fixed at 2.3 s) before the
+shout's 0.6 s hold ended. `CutInTiming.slideOutAt` became
+`slideOutAfterSnapSeconds` (1.5 s, the original gap) with a computed
+`SlideOutAt` = snap + 1.5 s, so the shout and afterglow always get the
+same screen time: the Attacker's card now leaves at 3.3 s, the Tank's at
+1.9 s (was 2.3 s). `PartyFrame.prefab` resaved with the new field; one new
+test. All 209 EditMode tests pass.
+
+### Next: provisional sound effects
+
+Added to `roadmap.md` ("Provisional sound effects", under "Art & audio"),
+with pointers from `current-state.md` and `art-roadmap.md`: placeholder
+SFX for the ships (fire, combo shots, each ability, hit, down), bullets
+(enemy shots, boss telegraphs), hits (on the boss and enemies, shield
+blocks, death bursts, phase change and defeat) and optionally the UI.
+To decide when built: one-shots without a singleton, a cap on copies of
+the same sound for bullet curtains, and whether the `AudioMixer` comes
+with them.
+
+### Later in Session 61: volume balance
+
+The developer wanted the cut-in voices louder and the music quieter. The
+voice sources were already at 1.0 (`AudioSource`'s maximum) and both clips
+peak within 0.6 dB of full scale, so they can't be boosted without
+clipping; the balance comes from the music instead: level track
+0.7 → **0.5**, menu track 1.0 → **0.8**.
+
+## Session 62 — Provisional Sound Effects
+
+The developer exported a Claude Design SFX set (`combat_fx_sfx.zip`, 95
+WAVs, 44.1 kHz mono, named after the Combat FX sprites). 92 were imported
+into `Assets/Audio/SFX/`, keeping the zip's folders; the three
+`*_demo.wav` sequence previews were left out. Full wiring is in
+[systems/audio.md](systems/audio.md).
+
+### Decisions (asked before building)
+
+- **`AudioMixer` now**, not at the Settings screen: `GameMixer` with
+  Music / Voice / SFX groups and a Compressor on SFX. The music and voice
+  sources were routed into it with their volumes unchanged.
+- **AI teammates' shots at full volume**, the same as the human's.
+- **Missing sounds stay silent** and are listed for a second Claude Design
+  batch: Medic aura, Support speed boost, ship going down, boss phase
+  change and defeat, the Warden core's shielded hit, the UI.
+
+### How it's built
+
+- No audio manager: each emitter owns its `AudioSource` and calls the
+  static `SfxPlayback`.
+- `SfxVoiceLimit` (static, per clip) refuses a clip that started under
+  0.03 s ago or already has 3 copies playing, so the Marauder's 12-bullet
+  ring and the Warden's 10-rod wall each sound once.
+- Hit sounds play from the object that **outlives** the moment: the
+  shooter's ship for a landed shot, the hit ship for an enemy bullet
+  (playing that bullet's `BulletSfx.impact`). Bullets themselves only play
+  their spawn sound.
+- The Super Shield and Taunt sounds follow their visual timelines' frame
+  changes. Two catches came up while wiring:
+  - The shield's ending frame flickers with Idle, so `SuperShieldSfx`
+    plays its ending once per cast.
+  - The death bursts last only 0.24 s, shorter than their sounds, so
+    `SpriteSequence` now hides the sprite and waits for its `AudioSource`
+    before destroying itself.
+- `Enemy.Despawn` replaces `Die()` for a wave enemy drifting off the
+  bottom of the screen. It used to spawn an unseen burst (and, for an
+  explosive enemy, fragments) off-screen, which would also have played a
+  death sound.
+
+### Verification
+
+- All 220 EditMode tests pass, 11 of them new (`SfxVoiceLimitTests`,
+  `SfxCueTests`).
+- Play mode, checked by reading which clips the limiter had claimed:
+  - **Marauder:** each role's shots, hit-confirms, hits taken, wave bullets
+    and fragments, boss shots, missile launch and hit, the Nova Beam's
+    wind-up / start / sparks / end, the Super Shield's expand / blocks /
+    ending / collapse, the Taunt's activate / end, all four combo sounds.
+  - **Warden:** turret bursts, the big shot, the Lockdown wall.
+- Whether a dense volley sounds right (no clipping, no wall of noise) is
+  for the developer's ears.
+
+### Seen, not fixed
+
+Reloading `Level` mid-play from a script threw a
+`NullReferenceException` in `PartyFrameManager.Awake` →
+`PlayerAbility.SuperpowerSnapSeconds`: the party frame's `Awake` ran
+before the ship's, so `roleComponent` was null. It's unrelated to audio;
+worth checking whether the pause menu's Restart hits it too.
+
+### Later in Session 62: louder superpowers
+
+The developer found the superpower sounds too quiet. They were already
+at cue volume 1.0, and the clips are mastered about as loud as a normal
+shot (−17 to −24 dB RMS, while the voices are −13 to −16 dB). Added a
+`Superpowers` group under `SFX` in `GameMixer` at **+6 dB**. `Ship.prefab`
+got its own superpower one-shot source; that source and the Nova Beam,
+Super Shield and Taunt loop sources now output to the new group. The
+Super Shield's block sound stays on plain SFX.
+
+## Session 63 — Controls Rebind (WASD, Q/E/R/T, shoulder buttons)
+
+A side fix for comfort: moving on the arrow keys and casting on E and
+1/2/3 was awkward to hold together.
+
+### Decisions (asked before building)
+
+- **Ability keys fill from Q**: Q = the superpower on every role, then a
+  role's extra abilities take E, R, T in order. Only the Attacker (Nova
+  Beam + three combo slots) reaches T. This replaces "E is the superpower
+  on every role"; the cut-in still follows the `Ability` action, whatever
+  key it's on.
+- **Gamepad, left to right:** L1 = superpower, R1 / L2 / R2 = the combo
+  slots. Fire stays on South (Cross / A).
+- **Arrow keys kept** as a second movement binding next to WASD.
+
+### What changed
+
+- `PlayerControls.inputactions`: a new WASD composite on `Move`; `Ability`
+  on `q` / `leftShoulder`; `Combo1..3` on `e` `r` `t` / `rightShoulder`
+  `leftTrigger` `rightTrigger`. The action names didn't change, so no code
+  changed (`OnAbility`, `OnCombo1..3`, and `AIController`'s direct calls).
+- `PartyFrame.prefab`: combo keycaps read E / R / T, and the Taunt keycap
+  reads E. `RoleCardText`: the Tank's line reads `KEY E`.
+- Comments and docs naming the old keys were updated (`input.md`,
+  `current-state.md`, `player-roles.md`, `hud-layout.md`, `overview.md`,
+  `art-roadmap.md`, `cards.md`, AGENTS.md).
+
+### Verification
+
+- `PlayerControls` reimported with no console errors. Its bindings, read
+  back in the Editor, match the table in `systems/input.md`.
+- All 220 EditMode tests pass.
+- Keyboard and pad feel are for the developer to check by hand (the Input
+  System settings keep simulated keys from reaching the game).
+
+### Open
+
+- The HUD keycaps show keyboard letters to a gamepad player too.
+- `cards.md`'s planned gamepad layout (Focus on Left Trigger, card 3 on
+  Right Shoulder) now collides with the combo slots. It's flagged there for
+  the deck-layer work.
+
+## Session 64 — Medic Sanctuary + Support Echo Gate
+
+The last two superpowers. Brainstormed with the developer first; the art
+and sound are delegated to Claude through written prompts.
+
+### Decisions (asked before building)
+
+- **Medic: Sanctuary**, a dome left where the Medic stands (picked over a
+  channeled revive and healing tethers).
+- **Support: Echo Gate**, the developer's own idea: a gate that multiplies
+  regular shots passing through it, superpower shots excluded. A black
+  hole (Singularity) was picked first, then dropped once the developer
+  noticed it overlapped the Tank: on the Support it worked as a moving
+  bullet shield (the Super Shield in purple), and its pull looked like the
+  Taunt magnet.
+- The gate is **dropped in place**, shows the Support **holding** it, and
+  **vanishes if the Support dies**.
+- **Aura Boost and Speed Boost are dropped**, not moved to E.
+- **Calls made while building, flagged for the developer:**
+  - enemy bullets pass through the gate (else a second Tank wall);
+  - a 3-shot ±12° fan at full damage each, credited to the shooter;
+  - combo shots don't split;
+  - the passive Medic aura stays;
+  - the dome closes if the Medic dies;
+  - the warping grid is deferred with the black hole.
+
+### What changed
+
+- Prompts: `ArtSource/Medic/` and `ArtSource/Support/claude-design-prompts.md`
+  (Combat FX frames, HUD icon, SFX table each), and
+  `ArtSource/CutIns/Medic/` and `ArtSource/CutIns/Support/fable-prompt.md`
+  (four `<role>_talk_1..4` pilot frames, an editable character each).
+- Spec: `docs/superpowers/specs/2026-11-19-medic-sanctuary-support-echo-gate-design.md`.
+- `Bullet`: `Kind` (set by `PlayerController.SpawnBullet`), `IsEcho`,
+  `SetSpeedFactor`, `Redirect`, `OwnerObject`.
+- Shared by both placed powers: `ZonePhaseTiming`, `ZoneFrame`, the pure
+  `ZonePowerTimeline`, `ZonePowerSfx` (base of `MedicSfx` / `EchoGateSfx`),
+  `KinematicTrigger` (bullets have no Rigidbody2D, so a zone needs its own
+  kinematic body to get trigger messages), `ZoneAudio`.
+- Medic: `MedicSanctuarySettings`, `HealArea` + `MedicHeal` (the aura's
+  heal pulse, now shared with the dome), `SanctuaryZone`, `MedicSanctuary`;
+  `PlayerAbilityMedic` keeps only the passive aura.
+- Support: `SupportEchoGateSettings`, the pure `EchoSplit`, `EchoGateZone`,
+  `EchoGateLook`, `EchoGateHoldVisual`, `SupportEchoGate`;
+  `PlayerAbilityPartyBuffRing` deleted. `PlayerController`'s buff
+  multipliers stay for the card layer.
+- `PlayerAbility` reports the cut-in clock and cooldown for all four
+  roles; `AbilityTimes.ActiveRemaining` is now public and feeds
+  `PlayerAbilityLabels`. CPU rules in `AIControllerMedic` /
+  `AIControllerSupport`, which also retire the "always cast" Medic stopgap.
+- `CutInCharacterRig` hides the portrait when a role has no frames, so
+  the new Medic and Support entries on `PartyFrame.prefab` play with the
+  title alone. `Ship.prefab` has `MedicSfx` and `EchoGateSfx` on the
+  existing superpower sources, with their cues empty. `RoleCardText`
+  describes the new powers.
+
+### Verification
+
+- Compiles with no console errors or warnings; all 227 EditMode tests
+  pass, including the new `ZonePowerTimelineTests` and `EchoSplitTests`.
+- Play mode in `Level.unity`, casting through code:
+  - both powers spawned, and the cut-in clock advanced;
+  - 24 of 29 player shots on screen were split copies;
+  - an enemy bullet inside the dome was slowed, and none outside;
+  - killing the Support ended the cast at once, hid the tether and left
+    the gate up for its shatter frame;
+  - no errors through two full casts.
+- Not checked by eye: how the placeholders look, and the CPU Medic and
+  Support casting on their own in a real fight.
+
+### Open
+
+- The delegated art, pilot frames, voice lines and sounds.
+- CPU allies don't move under an Echo Gate on purpose.
+- Every number needs a playtest; 3× regular damage through the gate is
+  strong on purpose.
+
+### Later in Session 64: the delegated art and sounds landed
+
+The developer ran the six Claude Design prompts and dropped three exports
+in the project root (`combat_fx.zip`, `combat_fx_sfx.zip`,
+`neon_fleet_hud_assets.zip`, full re-exports of each project). Only the
+new pieces were taken:
+- 15 PNGs into `Assets/Art/CombatFX/Superpowers/Medic/` and `Support/`;
+- 12 WAVs into `Assets/Audio/SFX/Superpowers/Medic/` and `Support/`
+  (`medic_aura_tick` came under `Auras/Player/` in the ZIP);
+- `ico_sanctuary` and `ico_echogate` into `Assets/Art/UI/HUD/icons/`.
+
+The ZIPs were deleted afterwards.
+
+- **Checked before import:**
+  - every size and name matches the prompts;
+  - the WAVs are 44.1 kHz mono 16-bit;
+  - the dome's corners sit about 386 px from the centre (the code assumes
+    384), and the gate's nodes are 461 px apart;
+  - the dome fill is 2–13% opaque.
+- **Wired:**
+  - the import settings were copied from the Tank's Super Shield frames,
+    the existing icons and the Tank's sounds;
+  - every sprite and cue is assigned on `Ship.prefab`'s `ShipCombatFx`,
+    `MedicSfx` and `EchoGateSfx` (all volumes 1, like the Tank's);
+  - in `PartyFrame.prefab`'s ability cell, `roleIcons` now holds the new
+    icons in place of `ico_aura` / `ico_speed`, which remain on the speed
+    chip.
+- **Play-mode screenshot:**
+  - the dome and gate draw at their gameplay sizes (radius 2, width 2.4);
+  - enemy bullets stay readable over the dome;
+  - the tether and channel ring follow the Support;
+  - both cut-in cards show in role colors with the title;
+  - no console errors.
+- **Still open:** the pilots' frames and voice lines.

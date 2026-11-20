@@ -109,7 +109,7 @@ combat start rather than mere visibility. `SetVisible(false)` fires at the
 *start* of the entrance glide, while ships are still frozen for several
 more seconds; enabling `MinionSpawner` there too let kamikaze minions spawn
 and overlap ships that couldn't react yet (`PlayerController.enabled ==
-false` during the freeze means `FixedUpdate`/`ResolveShipCollisions` never
+false` during the freeze means `FixedUpdate`/`ShipCollisionResolver.Resolve` never
 runs) — contact would silently do nothing even though the overlap was
 plainly visible. `MarauderBoss.OnEnable()` fires later, exactly when
 `LevelSequencer` sets `bossObject.enabled = true` at `BossCombat` — by
@@ -171,6 +171,11 @@ Standalone empty GameObject in each level scene.
 | Component | Key inspector values |
 | --- | --- |
 | **LevelSequencer.cs** | `ships`: `Player` + all 3 `Teammate_*`; `enemySpawner`: `Spawner`; `bossObject`: the `Boss` instance (`MarauderBoss` in `Level1`, `HalcyonBoss` in `Level2`); `introDuration`/`freeMovementDuration`/`bossEntranceDuration`: 4; `minionPhase1Duration`: 120 (15 in the current scenes, shortened for testing); `offScreenMargin`: 1 |
+
+`BossMusicCue` (on `Level.unity`'s `Music` object, Session 61) reads
+`CurrentState` and the four durations to land the level track's 1:27 on
+the `BossCombat` frame; retuning the durations keeps the sync. See
+[roadmap.md](../roadmap.md)'s "Provisional audio".
 
 The 4 ships' Transform positions in the saved scene are each ship's "home"
 — `LevelSequencer` captures them once in `Awake()`, before anything moves,

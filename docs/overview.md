@@ -22,7 +22,7 @@ deck layer's design.)*
   running beside it. See `systems/cards.md`.
 - **Deck**: each player builds a fixed 10-card deck from their **own role's**
   card pool before the fight. Cards customize a role, they don't replace it —
-  role stats and the signature `E` ability stay exactly as they are, and cards
+  role stats and the signature `Q` ability stay exactly as they are, and cards
   layer on top. See `systems/cards.md`.
 - **Players**: 1-4, each piloting a ship with a defined RPG-style role:
   - Attacker (DPS)

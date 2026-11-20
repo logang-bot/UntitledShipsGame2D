@@ -199,7 +199,7 @@ public class MarauderBoss : MonoBehaviour, IBoss
     }
 
     /// <summary>
-    /// Called by each ship's own PlayerController.ResolveShipCollisions() when
+    /// Called by each ship's own ShipCollisionResolver when
     /// its overlap-resolution math detects it overlapping the boss. `ship` is
     /// always a ship's own root GameObject, so GetComponent is correct here.
     /// </summary>
@@ -231,9 +231,9 @@ public class MarauderBoss : MonoBehaviour, IBoss
         if (CurrentHealth <= 0) Die();
     }
 
-    public void TauntedBy(GameObject taunter)
+    public void TauntedBy(GameObject taunter, float seconds)
     {
-        aggroSystem.TauntedBy(taunter);
+        aggroSystem.TauntedBy(taunter, seconds);
     }
 
     void Die()

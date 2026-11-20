@@ -122,10 +122,11 @@ below.
 
 **Taunt biases re-picks, doesn't redirect.** Unlike `MarauderBoss.TauntedBy`
 (an instant aggro-table overwrite) or Halcyon (no listener at all, a genuine
-no-op), Warden's `TauntedBy(GameObject)` — the listener for every ship's
+no-op), Warden's `TauntedBy(GameObject, float seconds)` — the listener for every ship's
 `PlayerAbility.OnTaunt`, added at runtime to every ship by
 `PartyBossWiring` through `BossEvents.Taunt` — has no single-target aggro
-to redirect. It just opens a `tauntWindowDuration` (3s) window
+to redirect. It just opens a window as long as the Tank's taunt
+(`tauntSeconds`, 3 s; Warden's own `tauntWindowDuration` was removed in Session 60)
 (`TauntedShip`/`TauntActiveUntil`) that `WardenArm.PickWeighted` reads on its
 next re-pick to weight (not force) the draw toward the taunter — see
 "WardenArm.cs" below.
@@ -268,7 +269,7 @@ Tank's own shield/health, per [player-roles.md](../player-roles.md)'s
 "PlayerAbility.cs" — blocks whichever lanes of the wall cross its width for
 free, with zero changes needed to `PlayerAbility.cs` itself. This is the
 mechanic that gives Shield Arc's width a reason to matter, mirroring how
-Halcyon's Static Field gives Support's Speed Boost a reason to matter (see
+Halcyon's Static Field gave Support's Speed Boost (dropped in Session 64) a reason to matter (see
 [halcyon-boss.md](halcyon-boss.md)).
 
 Public API: `CooldownRemaining`, `IsTelegraphing`, `IncomingEdge` (`Edge?`)
@@ -467,7 +468,7 @@ using the per-boss Strategy described in `docs/architecture.md`'s
 "Per-boss AI behavior: Strategy (AIBossTactics)".
 
 - **Taunt:** `ShouldTaunt` is always true, so an AI Tank taunts on
-  cooldown. Taunt always helps here (it biases arm re-picks toward the
+  cooldown (every 8 s, so its magnet is up 3 s out of 8). Taunt always helps here (it biases arm re-picks toward the
   Tank), and there's no "already holding aggro" state to check, unlike
   Marauder.
 - **Arm focus.** While `IsShielded`:

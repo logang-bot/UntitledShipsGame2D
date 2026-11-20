@@ -20,12 +20,6 @@ public class WardenBoss : MonoBehaviour, IBoss
     public float bodyContactDamageMultiplier = 2f;
     public float contactDamageCooldown = 1f;
 
-    [Header("Taunt")]
-    // How long a Taunt biases arm re-picks toward the taunter - Warden has no
-    // aggro table to hard-redirect, so Taunt instead weights the next few
-    // random re-picks (see WardenArm.PickWeighted).
-    public float tauntWindowDuration = 3f;
-
     [Header("Ships")]
     public GameObject[] ships; // drag Player + 3 Teammates - proximity/targeting data only, no aggro
 
@@ -120,13 +114,14 @@ public class WardenBoss : MonoBehaviour, IBoss
     /// <summary>
     /// Persistent listener for every ship's PlayerAbility.OnTaunt. Unlike
     /// MarauderBoss.TauntedBy (an instant aggro overwrite), Warden has no
-    /// single-target aggro to redirect - this just opens a biasing window
-    /// WardenArm.PickWeighted reads on its next re-pick.
+    /// single-target aggro to redirect - this just opens a biasing window,
+    /// as long as the Tank's taunt, that WardenArm.PickWeighted reads on its
+    /// next re-picks.
     /// </summary>
-    public void TauntedBy(GameObject taunter)
+    public void TauntedBy(GameObject taunter, float seconds)
     {
         TauntedShip = taunter;
-        TauntActiveUntil = Time.time + tauntWindowDuration;
+        TauntActiveUntil = Time.time + seconds;
     }
 
     /// <summary>

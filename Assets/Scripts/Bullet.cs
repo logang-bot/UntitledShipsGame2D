@@ -11,13 +11,19 @@ public class Bullet : MonoBehaviour
     public Vector2 Direction => direction;
     public float Speed => speed;
     public string Owner => owner;
+    public GameObject OwnerObject => ownerObject;
+    /// <summary>Which player shot this is; the Echo Gate splits only Regular ones.</summary>
+    public PlayerShotKind Kind { get; set; }
+    /// <summary>A shot the Echo Gate already split, so it never splits again.</summary>
+    public bool IsEcho { get; set; }
 
     void Awake() { Active.Add(this); }
     void OnDestroy() { Active.Remove(this); }
 
     private Vector2 direction;
     private float speed;
-    
+    private float speedFactor = 1f;
+
     private GameObject ownerObject; // shooter reference, for boss aggro attribution
 private string owner; // "Player" or "Enemy" - determines what it can hit
 
@@ -73,10 +79,19 @@ public void Init(Vector2 dir, float spd, string ownerTag, GameObject ownerObj = 
         ScheduleLifetimeCleanup();
     }
 
+    /// <summary>Scales the flight speed while it lasts (the Medic's Sanctuary sets 0.4, then back to 1).</summary>
+    public void SetSpeedFactor(float factor) => speedFactor = factor;
+
+    public void Redirect(Vector2 dir)
+    {
+        direction = dir.normalized;
+        FaceDirection();
+    }
+
     void Update()
     {
         if (homingTarget != null && homingTarget.gameObject.activeInHierarchy) SteerTowardTarget();
-        transform.Translate(direction * speed * Time.deltaTime, Space.World);
+        transform.Translate(direction * speed * speedFactor * Time.deltaTime, Space.World);
     }
 
     private void SteerTowardTarget()
@@ -94,23 +109,36 @@ void OnTriggerEnter2D(Collider2D other)
 
     private void HitEnemy(Collider2D other)
     {
-        DamageBoss(other);
-        DamageMinorEnemy(other);
+        if (EnemyDamage.TryDamage(other.gameObject, damage, ownerObject)) ConfirmHitToShooter();
         Destroy(gameObject);
     }
 
-    private void DamageBoss(Collider2D other)
+    private void ConfirmHitToShooter()
     {
-        if (other.TryGetComponent(out MarauderBoss boss)) boss.TakeDamage(damage, ownerObject);
-        if (other.TryGetComponent(out HalcyonBoss halcyonBoss)) halcyonBoss.TakeDamage(damage, ownerObject);
-        if (other.TryGetComponent(out WardenBoss wardenBoss)) wardenBoss.TakeDamage(damage, ownerObject);
-        if (other.TryGetComponent(out WardenArmHealth wardenArm)) wardenArm.TakeDamage(damage, ownerObject);
+        if (ownerObject != null && ownerObject.TryGetComponent(out ShipSfx sfx)) sfx.PlayShotHit();
     }
 
-    private void DamageMinorEnemy(Collider2D other)
+    /// <summary>A Super Shield arc stops the bullet for free; anything else player-tagged takes the hit.</summary>
+    private void HitPlayer(Collider2D other)
     {
-        if (other.TryGetComponent(out Enemy enemy)) enemy.TakeDamage(damage);
-        if (other.TryGetComponent(out Minion minion)) minion.TakeDamage(damage);
+        if (TankShieldArc.Absorbs(other)) PlayBlockOn(other);
+        else DamagePlayer(other);
+        Destroy(gameObject);
+    }
+
+    private void PlayBlockOn(Collider2D other)
+    {
+        ShipSfx sfx = other.GetComponentInParent<ShipSfx>();
+        if (sfx != null) sfx.PlayBlock();
+    }
+
+    /// <summary>
+    /// Before TakeDamage: a killing hit deactivates the ship, and a disabled
+    /// AudioSource can't start a sound.
+    /// </summary>
+    private void PlayHitOn(PlayerHealth health)
+    {
+        if (health.TryGetComponent(out ShipSfx sfx)) sfx.PlayBulletHit(GetComponent<BulletSfx>());
     }
 
     /// <summary>
@@ -118,11 +146,12 @@ void OnTriggerEnter2D(Collider2D other)
     /// Tank's wide shield-arc trigger - can route the hit to its ship's own
     /// PlayerHealth, not just a ship's own body collider.
     /// </summary>
-    private void HitPlayer(Collider2D other)
+    private void DamagePlayer(Collider2D other)
     {
         PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
-        if (health != null) health.TakeDamage(Mathf.RoundToInt(damage));
-        Destroy(gameObject);
+        if (health == null || health.IsInvulnerable) return;
+        PlayHitOn(health);
+        health.TakeDamage(Mathf.RoundToInt(damage));
     }
 
 }

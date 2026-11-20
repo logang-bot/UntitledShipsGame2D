@@ -112,6 +112,34 @@ public class PlayerHealthTests
     }
 
     [Test]
+    public void TakeDamage_WhileInvulnerable_IsIgnored()
+    {
+        PlayerHealth h = CreatePlayerHealth();
+        bool damaged = false;
+        h.OnDamaged.AddListener(() => damaged = true);
+        h.GrantInvulnerability(5f);
+
+        h.TakeDamage(4);
+
+        Assert.IsTrue(h.IsInvulnerable);
+        Assert.AreEqual(3, h.CurrentShield);
+        Assert.AreEqual(5, h.CurrentHealth);
+        Assert.IsFalse(damaged);
+    }
+
+    [Test]
+    public void TakeDamage_AfterInvulnerabilityRunsOut_HitsAgain()
+    {
+        PlayerHealth h = CreatePlayerHealth();
+        h.GrantInvulnerability(-1f);
+
+        h.TakeDamage(2);
+
+        Assert.IsFalse(h.IsInvulnerable);
+        Assert.AreEqual(1, h.CurrentShield);
+    }
+
+    [Test]
     public void RestoreShield_DoesNotExceedMaxShield()
     {
         PlayerHealth h = CreatePlayerHealth();
